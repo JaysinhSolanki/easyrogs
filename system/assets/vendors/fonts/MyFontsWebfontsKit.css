@@ -1,0 +1,55 @@
+/**
+ * @license
+ * MyFonts Webfont Build ID 3858817, 2020-01-21T16:43:19-0500
+ * 
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are 
+ * explicitly restricted from using the Licensed Webfonts(s).
+ * 
+ * You may obtain a valid license at the URLs below.
+ * 
+ * Webfont: Authenia-Solid by Mika Melvas
+ * URL: https://www.myfonts.com/fonts/mika-melvas/authenia/solid/
+ * Copyright: Copyright &#x00A9; 2017 by Mika Melvas. All rights reserved.
+ * Licensed pageviews: 10,000
+ * 
+ * 
+ * 
+ * © 2020 MyFonts Inc
+*/
+
+
+/* @import must be at top of file, otherwise CSS will not work */
+@import url("//hello.myfonts.net/count/3ae181");
+
+  
+@font-face {font-family: 'Authenia-Solid';src: url('webfonts/3AE181_0_0.eot');src: url('webfonts/3AE181_0_0.eot?#iefix') format('embedded-opentype'),url('webfonts/3AE181_0_0.woff2') format('woff2'),url('webfonts/3AE181_0_0.woff') format('woff'),url('webfonts/3AE181_0_0.ttf') format('truetype');}
+ .mylogo
+{
+	font-family: Authenia-Solid !important;
+	font-weight:bold; 
+}
+.f32
+{
+	font-size:32px !important
+}
+.f36
+{
+	font-size:36px !important
+}
+.f40
+{
+	font-size:40px !important
+}
+.f42
+{
+	font-size:42px !important
+}
+.f48
+{
+	font-size:48px !important
+}
+.f55
+{
+	font-size:55px !important
+}

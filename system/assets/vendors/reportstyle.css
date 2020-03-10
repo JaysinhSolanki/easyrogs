@@ -1,0 +1,60 @@
+
+.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
+    border: none;
+}
+
+.firsttwotrs th
+{
+	border: none !important;
+	/*font-weight:600 !important;	*/
+	font-size:10px !important;
+}
+.fromright
+{
+	float:right;
+	margin-left:4px;	
+}
+.typescolor td:not(:first-child)
+{
+	color:#54C8F4;		
+}
+.catcolor
+{
+	color:#007AEA;	
+	/*text-decoration:underline;
+	text-align:center !important;*/
+	padding-left:30px !important;
+}
+.catpadding
+{
+	padding-left:10px !important;	
+}
+.specifictrborder
+{
+	border-bottom: 3px solid !important;	
+	border-color:#DDDDDD !important;
+}
+.collapsecolor table tr
+{
+	background-color:#F9F9F9 !important;	
+}
+.inflowsoutflows
+{
+	font-weight:bold !important;	
+}
+.sortbtnclr
+{
+	font-weight:bold;
+}
+.sortbtnviewtypeclr
+{
+	font-weight:bold;
+}
+.amounttoright
+{
+	text-align:right !important;	
+}
+.orignalamounttxt
+{
+	font-size:12px !important;	
+}
