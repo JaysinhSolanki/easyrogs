@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Expects one argument, the branch to deploy: master, dev
+
 date &&
 
 git stash &&
@@ -7,6 +9,6 @@ git stash &&
 git stash pop &&
 (git add * || true) &&
 (git commit -am "HOTFIXES TO $(date)" || true ) &&
-git checkout master && 
+git checkout $1 && 
 git pull
 
