@@ -47,7 +47,6 @@ $navbtn .="	<a class=\"btn btn-mini btn-danger\" id=deleteactions onmouseover=\"
 /********** END DUMMY SET ***************/
 ?>
 </head>
-
 <div id="subgrid"></div>
 <div id="<?php echo $div;?>">
 <?php 

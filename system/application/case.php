@@ -508,16 +508,16 @@ body.modal-open
                 
             </select>
         </div>
-				<div class="form-group" id="div_attr_email" style="display:none;">
-					<label for="caseteam_attr_name">Email</label>
-					<input type="text" placeholder="Party Email" class="form-control m-b"  name="client_email" id="client_email" >
-				</div>
-        <div class="form-group" id="div_attr" style="display:none;">
+        <div class="form-group" id="div_attr_email" style="display:none;">
+            <label for="caseteam_attr_name">Email</label>
+            <input type="text" placeholder="Party Email" class="form-control m-b"  name="client_email" id="client_email" >
+        </div>
+        <?php /*?><div class="form-group" id="div_attr" style="display:none;">
             <label for="caseteam_attr_name">Attorney:</label>
             <select name="other_attorney_id[]" id="other_attorney_id" style="width:100%" class="form-control  m-b loadattr select2-multiple" multiple="multiple">
             	<option value="">Select Attorney</option>
             </select>
-        </div>
+        </div><?php */?>
       </div>
       <div class="modal-footer">
         <a class="btn btn-success" href="javascript:;" onclick="addCaseClient(<?php echo $id; ?>)"><i class="fa fa-save"></i> Save</a>
@@ -791,19 +791,20 @@ function deleteCaseClient(id)
 function addAttryFunction(type)
 {
 	$(".disableclass").val("");
-	switch(type) {
-		case 'Others':
-			$("#div_attr").show();
-			$("#div_attr_email").hide();
-		break;
-		case '':
-			$("#div_attr").hide();
-			$("#div_attr_email").hide();
-		break;
-		default:
-			$("#div_attr").hide();
-			$("#div_attr_email").show();
-		break;
+	if(type == 'Others')
+	{
+		$("#div_attr").show();
+		$("#div_attr_email").hide();
+	}
+	else if(type == '')
+	{
+		$("#div_attr").hide();
+		$("#div_attr_email").hide();
+	}
+	else
+	{
+		$("#div_attr").hide();
+		$("#div_attr_email").show();
 	}
 }
 function loadmodaldelete(id,attorney_type,case_team_id,case_id,is_userteammember)
