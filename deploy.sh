@@ -6,7 +6,7 @@ date &&
 
 git stash &&
 (git checkout hotfix || git checkout -b hotfix) &&
-git stash pop &&
+(git stash pop || true) &&
 (git commit -am "HOTFIXES TO $(date)" || true ) &&
 git checkout $1 && 
 git pull
