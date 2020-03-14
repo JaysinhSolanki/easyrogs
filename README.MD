@@ -43,7 +43,7 @@ The changes will be automatically deployed as specified below.
 
 The deployments pipeline works using a pull strategy, automatically deploying any changes to the repo every minute, as follows:
 
-* Any changes pushed to the `dev` branch will be deployed here: https://dev.easyrogs.com . We use dev to.easyrogs.com as staging server.
+* Any changes pushed to the `dev` branch will be deployed here: https://dev.easyrogs.com . We use dev.easyrogs.com as staging server.
 * Any changes pushed to the `master` branch will be deployed here: https://www.easyrogs.com. This is the production version.
 
 
