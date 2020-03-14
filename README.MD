@@ -14,10 +14,11 @@ Update `settings.php` with your local DB config.
 
 The suggested development flow is as follows:
 
-1. Create a branch from `master`.
+1. Update your local and create a branch from `master`.
 
     e.g.
     ```bash
+    $ git pull origin master
     $ git checkout -b bugs/my-bug-fix
     ```
 
@@ -29,7 +30,7 @@ The suggested development flow is as follows:
     ```bash
     $ git add *
     $ git commit -am "Your commit message"
-    $ git push origin my-bug-fix
+    $ git push origin bugs/my-bug-fix
     ```
 
 4. Create a pull request from your branch to `dev` or `master`
@@ -42,8 +43,8 @@ The changes will be automatically deployed as specified below.
 
 The deployments pipeline works using a pull strategy, automatically deploying any changes to the repo every minute, as follows:
 
-* Any changes pushed to the `dev` branch will be deployed here: https://dev.easyrogs.com
-* Any changes pushed to the `master` branch will be deployed here: https://www.easyrogs.com
+* Any changes pushed to the `dev` branch will be deployed here: https://dev.easyrogs.com . We use dev to.easyrogs.com as staging server.
+* Any changes pushed to the `master` branch will be deployed here: https://www.easyrogs.com. This is the production version.
 
 
 #### Happy coding!
