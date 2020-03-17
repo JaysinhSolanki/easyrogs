@@ -9,5 +9,7 @@ git stash &&
 (git stash pop || true) &&
 (git commit -am "HOTFIXES TO $(date)" || true ) &&
 git checkout $1 && 
-git pull
+git pull &&
+composer install &&
+vendor/bin/poorman-migrations migrate
 
