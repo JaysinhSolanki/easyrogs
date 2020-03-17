@@ -10,6 +10,6 @@
     ]
   },
   "require": {
-    "soft4good/poorman-migrations": "^1.2"
+    "soft4good/poorman-migrations": "^1.3"
   }
 }

@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4585ba34ebf7c95af408b03ecf4e9338",
+    "content-hash": "cdbf7450270f10ca77bdcae02a74c7a6",
     "packages": [
         {
             "name": "soft4good/poorman-migrations",
-            "version": "1.2",
+            "version": "1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/soft4good/poorman-migrations.git",
-                "reference": "547adf76a8e32379d41108e066a40963ccf53b97"
+                "reference": "14d1c1f7cd0a5097209b2260edd7f2f8d88e9400"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/soft4good/poorman-migrations/zipball/547adf76a8e32379d41108e066a40963ccf53b97",
-                "reference": "547adf76a8e32379d41108e066a40963ccf53b97",
+                "url": "https://api.github.com/repos/soft4good/poorman-migrations/zipball/14d1c1f7cd0a5097209b2260edd7f2f8d88e9400",
+                "reference": "14d1c1f7cd0a5097209b2260edd7f2f8d88e9400",
                 "shasum": ""
             },
             "require": {
@@ -47,7 +47,7 @@
                 "sql",
                 "standalone"
             ],
-            "time": "2020-03-17T19:37:28+00:00"
+            "time": "2020-03-17T23:42:43+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
