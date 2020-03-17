@@ -4,10 +4,7 @@
 
 date &&
 
-git stash &&
-(git checkout hotfix || git checkout -b hotfix) &&
-(git stash pop || true) &&
-(git commit -am "HOTFIXES TO $(date)" || true ) &&
+git stash save "HOTFIXES TO $(date)" &&
 git checkout $1 && 
 git pull &&
 composer install &&
