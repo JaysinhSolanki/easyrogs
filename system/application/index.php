@@ -2,7 +2,7 @@
 ob_start();
 @session_start();
 $domain	=	"";
-require_once("../settings.php");
+require_once("../bootstrap.php");
 if(!isset($_SESSION['addressbookid']))
 {
 	header("Location: ".DOMAIN."userlogin.php");

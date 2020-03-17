@@ -1,6 +1,6 @@
 <?php
 //ob_start();
-require_once("../system/settings.php"); 
+require_once("../system/bootstrap.php"); 
 include_once($_SESSION['library_path']."classes/AdminDAO.php");	 
 include_once($_SESSION['library_path']."classes/functions.php");	 
 include_once($_SESSION['library_path']."classes/login.class.php"); 

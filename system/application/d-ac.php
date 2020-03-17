@@ -1,6 +1,6 @@
 <?php
 @session_start();
-require_once("../settings.php");
+require_once("../bootstrap.php");
 include_once("../library/classes/AdminDAO.php");
 $AdminDAO		=	new AdminDAO();
 $randno			=	rand();

@@ -8,7 +8,7 @@ setcookie('rememberme','', time()+(86400*30), "/");
 setcookie("rememberme",'', time()-3600);
 @session_destroy();
 
-require_once("../settings.php");
+require_once("../bootstrap.php");
 require_once("../includes/classes/AdminDAO.php");
 $AdminDAO	=	new AdminDAO();	
 //include_once("../includes/classes/filter.php");	

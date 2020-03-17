@@ -5,7 +5,7 @@ setcookie('rememberme','', time()+(86400*30), "/");
 setcookie("rememberme",'', time()-3600); 
 @session_destroy();
 
-require_once("../settings.php");
+require_once("../bootstrap.php");
 require_once(SYSTEMPATH."library/classes/AdminDAO.php");
 $AdminDAO	=	new AdminDAO();	
 include_once(SYSTEMPATH."library/classes/login.class.php");

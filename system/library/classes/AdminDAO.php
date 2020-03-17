@@ -5,7 +5,7 @@
 **********************************************************************************/ 
 //error_reporting(E_ERROR); 
 //require_once($_SESSION['system_path']."includes/classes/DBManager.php");
-//require_once($_SESSION['system_path']."settings.php");
+//require_once($_SESSION['system_path']."bootstrap.php");
 //error_reporting(0);
 // start of the class
 class AdminDAO 

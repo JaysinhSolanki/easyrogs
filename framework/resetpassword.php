@@ -1,7 +1,7 @@
 <?php
 //error_reporting(E_ERROR | E_WARNING | E_PARSE);
 @session_start();	
-require_once("../system/settings.php"); 
+require_once("../system/bootstrap.php"); 
 include_once($_SESSION['library_path']."classes/AdminDAO.php");		
 if($_SESSION['addressbookid'])
 {

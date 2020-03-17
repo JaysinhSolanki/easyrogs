@@ -1,6 +1,6 @@
 <?php
 @session_start();
-require_once("../settings.php");
+require_once("../bootstrap.php");
 require_once("../library/classes/AdminDAO.php");
 $AdminDAO	=	new AdminDAO();	
 include_once("../library/classes/login.class.php");

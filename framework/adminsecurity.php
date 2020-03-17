@@ -13,7 +13,7 @@ if(empty($_SESSION['includes_path']))
 //**********************************************************
 $path	=	$_SESSION['library_path'];//str_replace("//","/",$_SERVER['DOCUMENT_ROOT'].$str[0]); 
 /*********************************************************/
-require_once($_SESSION['system_path']."settings.php");
+require_once($_SESSION['system_path']."bootstrap.php");
 require_once($_SESSION['system_path']."library/helper.php");
 require_once($path."classes/functions.php");
 require_once($path."classes/paging.class.php");

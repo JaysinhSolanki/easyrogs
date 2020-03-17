@@ -1,5 +1,5 @@
 <?php
-require_once("../settings.php");
+require_once("../bootstrap.php");
 require_once(FRAMEWORK_PATH."head.php");
 ?>
 <body class="blank">
