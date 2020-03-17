@@ -1,0 +1,15 @@
+{
+  "name": "easyrogs/webapp",
+  "description": "EasyRogs Webapp",
+  "scripts": {
+    "post-update-cmd": [
+      "vendor/bin/poorman-migrations setup"
+    ],
+    "post-install-cmd": [
+      "vendor/bin/poorman-migrations setup"
+    ]
+  },
+  "require": {
+    "soft4good/poorman-migrations": "^1.2"
+  }
+}

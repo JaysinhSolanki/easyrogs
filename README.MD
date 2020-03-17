@@ -7,6 +7,7 @@
 Clone this repo and:
 
 ```bash
+$ composer install
 $ cp system/settings.sample.php system/settings.php
 ```
 
@@ -45,6 +46,12 @@ The deployments pipeline works using a pull strategy, automatically deploying an
 
 * Any changes pushed to the `dev` branch will be deployed here: https://dev.easyrogs.com . We use dev.easyrogs.com as staging server.
 * Any changes pushed to the `master` branch will be deployed here: https://www.easyrogs.com. This is the production version.
+* New migrations will run automatically.
 
+## DB Migrations
+
+Database migrations are implemented using [Poorman Migrations](https://packagist.org/packages/soft4good/poorman-migrations). Please refer to the documentation [here](https://github.com/soft4good/poorman-migrations/blob/master/README.md).
+
+Our composer setup already takes care of installing the package and running the setup task, you only need to update the created `.env` file with your database credentials.
 
 #### Happy coding!
