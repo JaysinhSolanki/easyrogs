@@ -206,13 +206,13 @@ body.modal-open
                 <div class="col-md-3">
                     <input type="text" placeholder="Number" class="form-control m-b"  name="case_number" id="case_number" value="<?php echo htmlentities($case['case_number']); ?>" <?php echo $disabledClass; ?>>
                 </div>
-                <div class="col-md-2">
+                <!--<div class="col-md-2">
                     <label>Filed<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
                 </div>
                 <div class="col-md-3">
                     <input type="text"  name="filed" id="filed" placeholder="Filed Date" class="form-control m-b datepicker" value="<?php echo $case['date_filed']=='0000-00-00'?'':dateformat($case['date_filed']);?>" <?php echo $disabledClass; ?>>
                 </div>
-                <div class="col-md-1"></div>
+                <div class="col-md-1"></div>-->
             </div>
             
             <div class="row">
@@ -241,7 +241,7 @@ body.modal-open
                 <div class="col-md-1"></div>
             </div>
             
-            <div class="row">
+            <!--<div class="row">
             	<div class="col-md-1"></div>
                 <div class="col-md-2">
                     <label>Judge</label>
@@ -256,7 +256,7 @@ body.modal-open
                     <input type="text" placeholder="Department" class="form-control m-b"  name="department" id="department" value="<?php echo htmlentities($case['department']); ?>" <?php echo $disabledClass; ?>>
                 </div>
                 <div class="col-md-1"></div>
-            </div>
+            </div>-->
             
             
             <div class="row">
