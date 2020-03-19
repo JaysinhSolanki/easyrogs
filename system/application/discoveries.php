@@ -115,7 +115,7 @@ $iscaseteammember	=	$AdminDAO->getrows("attorney a,case_team ct",
                 	<tr>
                     <?php /*?>	<th>Name</th><?php */?>
                     	<td width="20px"></td>
-                    	<th>Discovery</th>
+                    	<th>Title</th>
                     	<th>Propounding</th>
                     	<th>Responding</th>
                         <th	 width="9%">Served On</th>

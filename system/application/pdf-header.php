@@ -59,11 +59,13 @@
             <br /><br />
             <h3 style="font-weight:normal">
 			<?php 
-			echo $form_name;
+			echo strtoupper($form_name);
 			if(!empty($con_Details))
 			{
 				
-				echo "<br><br><i>Served in conjunction with <br>".$con_Details['con_discovery_name']." [Set ".$con_Details['con_setnumber']."]</i>";
+				$conjunction = $con_Details['con_discovery_name']." [Set ".$con_Details['con_setnumber']."]";
+				$conjunction = ucwords(strtolower($conjunction));
+				echo "<br><br><i>Served in conjunction with <br>$conjunction</i>";
 			}
 			?>
             </h3>
