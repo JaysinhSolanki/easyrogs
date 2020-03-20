@@ -245,7 +245,7 @@ else if($discovery_type == 2) // If served discovery is internal then we save PO
 		}
 		else 
 		{
-			$emailURL			=	DOMAIN."userlogin.php?outside=1";
+			$emailURL			=	DOMAIN;
 		}	
 		$emailURL			=	"<a href='{$emailURL}'>{$emailURL}</a>";
 		ob_start();
