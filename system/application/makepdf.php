@@ -371,7 +371,12 @@ if(in_array($form_id,array(1,2)))
 														conjunction_setnumber 	= 	'$set_number'");
 	if(sizeof($isConWithDiscovery) > 0)
 	{
-		$isconwithdiscoveryid	=	$isConWithDiscovery[0]['id'];	
+		$isconwithdiscoveryid 	=	$isConWithDiscovery[0]['id'];	
+		$conjunction_setnumbers	=	$isConWithDiscovery[0]['conjunction_setnumber'];	
+		if($is_served == 1)
+		{
+			$con_Details	=	array("con_discovery_name" => "REQUESTS FOR ADMISSION", "con_setnumber" => $conjunction_setnumbers);
+		}
 	}
 }
 if(in_array($form_id,array(4)))
@@ -395,6 +400,7 @@ if(in_array($form_id,array(4)))
 														set_number			 	= 	'$set_number' AND
 														form_id IN (1,2)");*/
 }
+
 ob_start(); 
 ?>
 <style>
