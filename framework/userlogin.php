@@ -163,7 +163,7 @@ require_once("head.php");
 <?php
 	require_once("../jsinclude.php");
 	
-	if(sizeof(json_decode($errors)) > 0)
+	if( $errors && sizeof(json_decode($errors)) > 0 )
 	{
 	?>
 		<script type="text/javascript">
