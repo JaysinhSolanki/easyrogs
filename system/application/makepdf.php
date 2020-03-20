@@ -187,7 +187,7 @@ else
 	$form_name = strtoupper("RESPONSE TO ".$discovery_name);
 	
 }
-$form_name 			= 	$form_name." [SET ".$set_number."]";
+$form_name 			= 	$form_name." [SET ".numberTowords( $set_number )."]";
 
 
 
