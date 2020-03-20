@@ -282,13 +282,13 @@ body.modal-open
                     <label>Trial<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text"  onchange="calculated_discovery_cutoff_date(this.value)" name="trial" id="trial" placeholder="Trial Date" class="form-control m-b datepicker" value="<?php echo $case['trial']=='0000-00-00'?'':dateformat($case['trial']);?>" <?php echo $disabledClass; ?>>
+                    <input type="text"  onchange="calculated_discovery_cutoff_date(this.value)" name="trial" id="trial" placeholder="Trial Date" class="form-control m-b datepicker" value="<?php echo $case['trial']=='0000-00-00'?'':dateformat($case['trial']);?>" <?php echo $disabledClass; ?> data-date-start-date="0d" data-date-end-date="+5y">
                 </div>
                 <div class="col-md-2">
                     <label>Discovery Cutoff<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text"  name="discovery_cutoff" id="discovery_cutoff" placeholder="Discovery Cutoff" class="form-control datepicker" value="<?php echo $case['discovery_cutoff']=='0000-00-00'?'':dateformat($case['discovery_cutoff']);?>" <?php echo $disabledClass; ?>>
+                    <input type="text"  name="discovery_cutoff" id="discovery_cutoff" placeholder="Discovery Cutoff" class="form-control datepicker" value="<?php echo $case['discovery_cutoff']=='0000-00-00'?'':dateformat($case['discovery_cutoff']);?>" <?php echo $disabledClass; ?> data-date-start-date="0d" data-date-end-date="+5y">
                 	<i class="fa fa-university" aria-hidden="true"></i> Code Civ.Proc., &sect;&sect; 2016.060 <?php  echo instruction(12) ?>, 2024.020 <?php  echo instruction(13) ?>.
                 </div>
                 <div class="col-md-1"></div>
@@ -658,7 +658,7 @@ $( document ).ready(function()
 	}
 	?>
 	showreminders(<?php echo $case['allow_reminders']; ?>);
-	$('.datepicker').datepicker({format: 'm-d-yyyy',autoclose:true, startDate: "-5y"});
+	$('.datepicker').datepicker({format: 'm-d-yyyy',autoclose:true});
 	$( ".select2-multiple" ).select2();
 	loadAttoneysFunction(<?php echo $id; ?>,2,"loadattoneys2");
 	//attDropdownFunction();
