@@ -6,7 +6,7 @@ $AdminDAO		=	new AdminDAO();
 include_once("../library/classes/functions.php");
 include_once("../library/helper.php");
 
-$fDebug = fopen('/home/easyrogs/public_html/system/application/debug.log','a+');
+$fDebug = fopen('debug.log','a+');
 
 /*
 ini_set('display_errors', 1);

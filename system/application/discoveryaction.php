@@ -392,7 +392,7 @@ else
 $doc_uid = $_POST['uid'];
 if(in_array($form_id,array(4,3)))
 {
-	$olddocuments			=	$_SESSION['documents'][$doc_uid];
+	$olddocuments			=	isset($_SESSION['documents'][$doc_uid]) ? $_SESSION['documents'][$doc_uid] : [];
 	$getdescovery_details	=	$AdminDAO->getrows("discoveries","*","id='$id'");
 	$attorney_id			=	$getdescovery_details[0]['attorney_id'];
 	$discovery_id			=	$getdescovery_details[0]['id'];

@@ -121,6 +121,7 @@ function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $frome
 **/
 function pdf($filename = "", $footertext = "", $downloadORwrite = '')
 {
+	ini_set("pcre.backtrack_limit", "1000000");
     global $html;
     if ($html=="") {
         echo "Please provide HTML to PDF function";
@@ -156,18 +157,20 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
     if ($footertext != "") {
         $mpdf->SetFooter($footertext);
     }
-
-    $mpdf->WriteHTML($html);
-
+	$doc = new DOMDocument();
+	@$doc->loadHTML($html);
+    $mpdf->WriteHTML($doc->saveHTML());
+	
     if ($filename!="") {
         if ($downloadORwrite != 1) {
-            $mpdf->Output($filename, "d");
+            $mpdf->Output($filename, "D");
         } else {
             $mpdf->Output($filename, "F");
         }
     } else {
         $mpdf->Output();
     }
+    ob_end_flush();
 }
 /**
 * FUNCTION FOR DATE FORMAT
