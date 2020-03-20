@@ -17,10 +17,14 @@ function send_email($to=array(),$subject="Testing Email",$bodyhtml,$fromemail="s
 		$headers .= "Return-Path: $fromemail\r\n";
 		if(sizeof($to)>0)
 		{
+/*
 			foreach($to as $t)
 			{
 				if(mail($t, $subject, $bodyhtml, $headers));//{echo "success".$t.$bodyhtml;}else {echo 'error';}
 			}
+*/
+			$tos = implode(",", $to);
+			if(mail($tos, $subject, $bodyhtml, $headers));//{echo "success".$t.$bodyhtml;}else {echo 'error';}
 		}
 	}
 	/*else if($emailtype == 2)
