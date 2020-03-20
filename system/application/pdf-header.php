@@ -63,7 +63,7 @@
 			if(!empty($con_Details))
 			{
 				$conjunction = $con_Details['con_discovery_name']." [Set ".numberTowords($con_Details['con_setnumber'])."]";
-				$conjunction = ucwords(strtolower($conjunction));
+				$conjunction = str_replace("set", "Set", ucwords(strtolower($conjunction)) );
 				echo "<br><br><i>Served in conjunction with <br>$conjunction</i>";
 			}
 			?>
