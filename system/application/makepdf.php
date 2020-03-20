@@ -508,7 +508,7 @@ ob_start();
 					continue;
 				}
 				
-                if($question_type_id != 1)
+                if($question_type_id) // change by Hassan for sub elements
                 {
                     $subQuestions	=	$AdminDAO->getrows('discovery_questions dq,questions q',
 		
