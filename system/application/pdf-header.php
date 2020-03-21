@@ -80,7 +80,7 @@
     </tr>
     <tr>
     	<td>SET NO.:</td>
-        <td><?php echo strtoupper($set_number) ?></td>
+        <td><?php echo numberTowords(strtoupper($set_number)) ?></td>
     </tr>
 	
   </tbody>
