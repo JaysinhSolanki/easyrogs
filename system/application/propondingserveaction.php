@@ -253,7 +253,7 @@ else if($discovery_type == 2) // If served discovery is internal then we save PO
 		<p>
         <?php /*?>Hi <?php echo $list['attorney_name']?>,<br /><?php */?>
 		You are hereby served with <?php echo $proponding_name."'s ".$discovery_name; ?> (attached).<br />
-        If you're not already using <i>EasyRogs</i>, click <?php echo $emailURL ?> for a complimentary membership. Plus, the Service Charge is waived through February 29, 2020. <br /><br /><i>EasyRogs</i> makes Discovery Easy, Saves Time & Money, and Protects our Environment. 
+        If you're not already using <i>EasyRogs</i>, click <?php echo $emailURL ?> for a complimentary membership. Plus, the Service Charge is waived through April 30, 2020. <br /><br /><i>EasyRogs</i> makes Discovery Easy, Saves Time & Money, and Protects our Environment. 
         <br />   
         --
 		<?php echo $senderName."<br>".$senderFirm."<br>".$senderAddress."<br>".$senderPhone."<br>"; ?><a href="mailto:<?php echo $senderEmail;?>"><?php echo $senderEmail;?></a>
