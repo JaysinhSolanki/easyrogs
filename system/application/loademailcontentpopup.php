@@ -16,7 +16,7 @@ $getState				=	$AdminDAO->getrows("system_state","*","pkstateid = :id",array(":i
 $atorny_state			=	$getState[0]['statename'];
 $atorny_state_short		=	$getState[0]['statecode'];
 
-$senderAddress			=	makeaddress($_SESSION['addressbookid']);//$senderDetail['address']."<br>Street#".$senderDetail['street'].", ".$senderDetail['cityname'].", ".$atorny_state_short.", ".$senderDetail['zip'];
+$senderAddress			=	makeaddress($_SESSION['addressbookid'], 1);//$senderDetail['address']."<br>Street#".$senderDetail['street'].", ".$senderDetail['cityname'].", ".$atorny_state_short.", ".$senderDetail['zip'];
 
 
 //Responding Details
@@ -32,7 +32,7 @@ $email_solicitation		=	$emaildata[0]['email_salutation'];
 
 if($email_solicitation == "")
 {
-	$email_solicitation = "Hi {$responding_name},";
+	$email_solicitation = "{$responding_name} ,";
 }
 //Case Details
 $casedetails		=	$AdminDAO->getrows("cases","*","id = :id",array(":id"=>$case_id));
@@ -49,6 +49,8 @@ ob_start();
 <?php echo $senderAddress; ?><br />
 <a href="mailto:<?php echo $senderEmail;?>"><?php echo $senderEmail;?></a><br />
 <?php echo $senderPhone; ?><br />
+<br />
+<br />
 <?php echo "&copy; ".date('Y')." EasyRogs.com"; ?>
 </p>
 <?php
