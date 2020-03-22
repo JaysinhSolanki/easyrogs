@@ -3766,3 +3766,15 @@ ul.h-list li:hover a {
 .tooltip {
     white-space: pre-line;
 }
+.panel-primary {
+    border-color: transparent;
+}
+.panel-primary > .panel-heading {
+    color: #6a6c6f;
+    background-color: #ffffff;
+    border-color: #ffffff;
+}
+.panel-primary > .panel-body table thead > tr {
+	background: #324A5D;
+    color: #fff;
+}
