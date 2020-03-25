@@ -12,9 +12,7 @@ class SessionUser {
 
   function __construct($addressBookId) {
     $this->addrBookModel = new SystemAddressBook();
-    $this->user = $this->addrBookModel->getBy([
-      'pkaddressbookid' => $addressBookId
-    ], 1);
+    $this->user = $this->addrBookModel->find($addressBookId);
   }
 
   function searchableGroupIds() { return [3, 4]; } // attorney and support
