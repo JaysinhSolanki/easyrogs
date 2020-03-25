@@ -11,7 +11,8 @@ $ composer install
 $ cp system/settings.sample.php system/settings.php
 ```
 
-Update `ROOTURL` and `ROOTPATH` with your local values in `settings.php`.
+* Update `ROOTURL` and `ROOTPATH` with your local values in `settings.php`.
+* Set your DB credentials in `.env`
 
 The suggested development flow is as follows:
 

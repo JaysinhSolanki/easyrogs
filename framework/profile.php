@@ -132,7 +132,7 @@ body.modal-open {
                             <label>Email</label>
                         </div>-->
                         <div class="col-md-3" style="display:flex">
-                            <input type="email" onkeyUp="checkEmail('<?=$uid ?>',this.value)" value="<?php echo $user['email'];?>" id="email" class="form-control" name="email" <?php if($uid != ""){echo "readonly";} ?> placeholder="Email">
+                            <input type="email" onkeyUp="checkEmail('<?= $user['email'] ?>',this.value)" value="<?php echo $user['email'];?>" id="email" class="form-control" name="email" <?php if($uid != ""){echo "readonly";} ?> placeholder="Email">
                         	 <span style="color: red;">*</span>
                         </div>
                         <div class="col-md-3">
@@ -157,13 +157,13 @@ body.modal-open {
 					</div>
 					</div>
                      <br>
-                    <?php /*?><div class="row">
+                    <div class="row">
                       	 <br />
                          <br />	
                          <div class="form-group col-lg-12" id="myteamDiv"  <?php if($user['fkgroupid'] != 3){?>style="display:none;"<?php } ?>>
                             <?php include_once($_SESSION['admin_path'].'myteam.php')?>
                         </div>
-                    </div><?php */?>
+                    </div>
                     
                     <div>
                        	 <?php
@@ -224,80 +224,4 @@ body.modal-open {
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-<script>
-function verifyEmail()
-{
-	var email	=	$('#email').val();
-	if(email == "")
-	{
-		$("#verification_msg").html("Please enter your email.");
-	}
-	else
-	{
-		$.post( "<?=$_SESSION['admin_url']; ?>verifyemail.php", { email: email })
-		.done(function( data ) 
-		{
-			if(data == "success")
-			{
-				$("#verification_msg").html("Verification code has been sent to you on your email.");
-			}
-			else
-			{
-				$("#verification_msg").html("Error.");
-			}
-		});
-	}
-	$("#verification_msg").show();
-	setTimeout(function(){ $("#verification_msg").html("")}, 3000);
-}
-function deleteAccountFunction()
-{	
-Swal.fire({
- title: "Are you sure to permanently delete Your Account?",
-  text: "Once deleted, you will not be able to recover account!",
-icon: 'warning',
-showCancelButton: true,
-confirmButtonColor: '#187204',
-cancelButtonColor: '#C2391B',
-confirmButtonText: "Yes, delete it!"
-}).then((result) => {
-if (result.value) {
- window.location.replace("deletemyaccount.php");
-}
-});
-	
-}
-
-function barnoFunction(id)
-{
-	 if($("#fkgroupid").prop("checked") == true)
-	 {
-		 $("#barnumber").show();
-		 $("#myteamDiv").show();
-	 }
-	 else
-	 {
-		 $("#barnumber").hide();
-		 $("#myteamDiv").hide();
-	 }
-	/*if(id == 3)
-	{
-		$("#barnumber").show();
-	}
-	else
-	{
-		$("#barnumber").hide();
-	}*/
-}
-function checkEmail(uid,email)
-{
-	if(email == '<?=$user['email']?>')
-	{
-		$(".verifyDiv").hide();
-	}
-	else
-	{
-		$(".verifyDiv").show();
-	}
-}
-</script>
+<script src="/system/assets/sections/profile.js"></script>

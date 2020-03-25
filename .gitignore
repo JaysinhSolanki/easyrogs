@@ -9,3 +9,5 @@ settings.php
 .env
 .env.*
 vendor
+/tmp/templates_c/*
+!/tmp/templates_c/.keep
