@@ -430,7 +430,7 @@ body.modal-open
                     <div class="form-group">
                         <label class=" col-sm-2 control-label">Served<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
                         <div class="col-sm-6">
-                        	<input type="text"  name="served" id="served" placeholder="Served Date" class="form-control m-b datepicker" value="<?php echo $discovery['served']=='0000-00-00' || $discovery['served']==''?'':dateformat($discovery['served']);?>">
+                        	<input type="text"  name="served" id="served" placeholder="Served Date" class="form-control m-b datepicker" value="<?php echo $discovery['served']=='0000-00-00' || $discovery['served']==''?'':dateformat($discovery['served']);?>" data-date-end-date="0d">
                         </div>
                         <div class="col-sm-2">
                             <button type="button" id="calculateduedatepopup_btn" class="btn btn-info" <?php /*if($id<=0){ ?>disabled="disabled"<?php }*/?> onclick="calculateduedatepopup();" >
