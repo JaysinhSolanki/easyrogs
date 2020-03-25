@@ -1626,6 +1626,7 @@ body {
   width: 100%;
   position: fixed;
   z-index: 1000;
+  top: 0px;
 }
 .fixed-navbar #wrapper {
   top: 62px;
@@ -3777,4 +3778,13 @@ ul.h-list li:hover a {
 .panel-primary > .panel-body table thead > tr {
 	background: #324A5D;
     color: #fff;
+}
+
+#invite-member-form{
+  display: none;
+  margin-top: 10px;
+}
+
+#invite-member-form .form-group{
+  margin-bottom: 0px !important;
 }

@@ -1,3 +1,39 @@
+// not const, need these in the global scope (window object)
+API_BASE = '/system/application';
+FORMAT_JSON = 'json';
+FORMAT_HTML = 'html';
+
+getTeam = (success, error, format = FORMAT_HTML) => {
+	$.get( API_BASE + '/get-team.php', {format: format}, success)
+	 .fail(error);
+}
+
+deleteTeamMember = (memberId, success, error) => {
+	$.post( API_BASE + '/delete-team-member.php', {memberId: memberId}, success)
+	 .fail(error)
+}
+
+addTeamMember = (memberId, name, email, success, error) => {
+	$.post( API_BASE + '/add-team-member.php', 
+		{memberId: memberId, name: name, email: email}, 
+		success, 'json'
+	).fail(error)
+}
+
+confirmAction = (options) => {
+	return Swal.fire({
+    title: "Are you sure?",
+    text:  "You will not be able to undo this action!",
+    icon:  "warning",
+    showCancelButton: true,
+    confirmButtonColor: '#187204',
+    cancelButtonColor: '#C2391B',
+		confirmButtonText: "Yes, delete it!",
+		...options
+	});
+}
+
+// LEGACY
 function loadAttoneysFunction(case_id,attorney_type,loaddiv)
 {
 	//alert(case_id+" "+attorney_type);

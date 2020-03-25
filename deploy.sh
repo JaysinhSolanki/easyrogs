@@ -8,5 +8,5 @@ git stash save "HOTFIXES TO $(date)" &&
 git checkout $1 && 
 git pull &&
 composer install &&
-vendor/bin/poorman-migrations migrate
+./poorman migrate
 
