@@ -133,7 +133,7 @@ else if($discovery_type == 2) // If served discovery is internal then we save PO
 	$case_title			=	$discovery_data['case_title'];
 	$is_send			=	$discovery_data['is_send'];
 	$set_number			=	$discovery_data['set_number'];
-	$discovery_name		=	$discovery_data['discovery_name']." [Set ".$set_number."]";
+	$discovery_name		=	$discovery_data['discovery_name']." [Set ".numberTowords( $set_number )."]";
 	$atorny_name		=	$discovery_data['atorny_fname']." ".$discovery_data['atorny_mname']." ".$discovery_data['atorny_lname'];
 	$atorny_address		=	$discovery_data['atorny_address'];
 	$atorny_city		=	$discovery_data['cityname'];
