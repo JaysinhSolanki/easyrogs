@@ -38,7 +38,7 @@
       ];
 
       $this->connect($dbConfig ? $dbConfig : [
-        'dsn'      => "mysql:dbname=" . DBNAME . ";host=" . $DBHOST,
+        'dsn'      => "mysql:dbname=" . DBNAME . ";host=" . DBHOST,
         'username' => DBUSER,
         'password' => DBPASS
       ]);
