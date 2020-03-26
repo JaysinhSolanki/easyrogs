@@ -42,7 +42,7 @@ if($respond == "")
 }
 if($response_id == 0 || $response_id == "")
 {
-	$responsename		=	 "Response to ".$discovery_name." [Set ".$set_number."]";
+	$responsename		=	 "Response to ".$discovery_name." [Set ".numberTowords( $set_number )."]";
 	$fields_responses	=	 array("responsename","fkdiscoveryid","created_by");
 	$values_responses	=	 array($responsename,$discovery_id,$_SESSION["addressbookid"]);
 	$response_id		=	 $AdminDAO->insertrow("responses",$fields_responses,$values_responses);	

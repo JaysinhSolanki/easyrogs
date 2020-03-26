@@ -47,7 +47,6 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 											d.id 			as discovery_id,
 											d.uid,
 											d.type,
-											d.,
 											d.propounding,
 											d.responding,
 											d.discovery_name,
@@ -59,14 +58,7 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 											a.firstname 	as atorny_fname,
 											a.lastname 		as atorny_lname,
 											d.attorney_id	as attorney_id,
-											a.email,
-											(CASE WHEN (form_id = 1 OR form_id = 2) 
-											 THEN
-												  f.form_instructions 
-											 ELSE
-												  d.discovery_instructions 
-											 END)
-											 as instructions 
+											a.email
 											',
 											/*(d.responding_uid 			= :uid OR d.propounding_uid = :uid) AND */
 											"
@@ -232,7 +224,7 @@ else
 {
 	$discovery_name	.= $discovery_data['discovery_name'];
 }
-$discovery_name	.= " [Set ".$set_number."]";
+$discovery_name	.= " [Set ".numberTowords( $set_number )."]";
 
 ?>
 
@@ -974,7 +966,7 @@ if($email_solicitation == "")
 
 ob_start();
 ?>
-<h4><?php echo $discovery_name." [Set ".$set_number."]"; ?> is submitted successfully from the client.</h4>
+<h4><?php echo $discovery_name." [Set ".numberTowords( $set_number )."]"; ?> is submitted successfully from the client.</h4>
 <ul style="padding-left:5px">
 	<li><b>Case Title:</b> <?php echo $case_title ?></li>
     <li><b>Case#:</b> <?php echo $case_number ?></li>

@@ -85,7 +85,7 @@ $form_id						=	$discovery_data['form_id'];
 $set_number						=	$discovery_data['set_number'];
 $atorny_name					=	$discovery_data['atorny_fname']." ".$discovery_data['atorny_lname'];
 $attorney_id					=	$discovery_data['attorney_id'];
-$form_name						=	$discovery_data['form_name']." [Set ".$set_number."]";
+$form_name						=	$discovery_data['form_name']." [Set ".numberTowords( $set_number )."]";
 $short_form_name				=	$discovery_data['short_form_name'];
 $send_date						=	$discovery_data['send_date'];
 $email							=	$discovery_data['email'];
@@ -104,7 +104,7 @@ else
 	$form_name = strtoupper("RESPONSE TO ".$discovery_name);
 	
 }
-$form_name 			= 	$form_name." [Set ".$set_number."]";
+$form_name 			= 	$form_name." [Set ".numberTowords( $set_number )."]";
 /***************************************
 Query For Forms 1,2,3,4,5 Questions 
 ****************************************/
