@@ -258,7 +258,7 @@ body.modal-open
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="text-center m-b-md">
-                <h3><?php echo $discovery_name ?></h3>
+                <h3><?php echo str_replace("set", "Set", ucwords(strtolower($discovery_name)) ); ?></h3>
             </div>
             <div class="hpanel">
                 <div class="panel-body">
