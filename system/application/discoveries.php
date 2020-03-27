@@ -90,14 +90,14 @@ $iscaseteammember	=	$AdminDAO->getrows("attorney a,case_team ct",
 <div class="col-lg-12">
     <div class="hpanel">
         <div class="panel-heading" align="center">
-            <h3 align="center"><strong><?php echo $discoveries[0]['case_title'];?></strong></h3>  
+            <h3 align="center"><small>Discovery for</small><br /><strong><?php echo $discoveries[0]['case_title'];?></strong></h3>  
         </div>
         <div class="panel-body">
             <div class="panel panel-primary">
             <div class="panel-heading">
             <div class="row">
             	<div class="col-md-8">
-                	<span style="font-size:18px; font-weight:600">Discovery</span>
+                <!--<span style="font-size:18px; font-weight:600">Discovery</span>-->
                 </div>
                 <div class="col-md-4" align="right">
                 	<p style="text-align: center;width: 290px;"> Create Discovery as the:</p>
