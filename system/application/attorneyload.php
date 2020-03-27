@@ -23,12 +23,19 @@ if($attorney_type == 1)
 }
 else if($attorney_type == 2)
 {
+/*
 	$attorneys			=	$AdminDAO->getrows("attorney",
 										"attorney.*", 
 										"case_id 		= 	:case_id 	AND 
 										attorney_type	=	2 			AND
 										attorney_email 	!= 	:owner_email GROUP BY attorney_email", 
 										array(":case_id"=>$case_id,":owner_email" => $_SESSION['loggedin_email']),"attorney_name", "ASC");
+*/
+    $attorneys			=	$AdminDAO->getrows("attorney",
+										"attorney.*", 
+										"case_id 		= 	:case_id 	AND 
+										attorney_type	=	2", 
+										array(":case_id"=>$case_id),"attorney_name", "ASC");
 }
 else if($attorney_type == 3)
 {
