@@ -2,12 +2,13 @@
 require_once("adminsecurity.php");
 $attorney_type		=	$_POST['attorney_type'];
 $attorney_name		=	$_POST['attorney_name'];
-$client_id			=	$_POST['client_id'];
+$client_id			=	isset($_POST['client_id']) ? $_POST['client_id'] : [];
 $case_id			=	$_POST['case_id'];
 $fkaddressbookid	=	$_SESSION['addressbookid'];
 $attorney_email		=	$_POST['attorney_email'];
 $editattorney_id	=	$_POST['editattorney_id'];
 $alreadyExists		=	array();
+$AdminDAO->displayquery = 1;
 if($attorney_type == 1)
 {
 	$alreadyExists	=	$AdminDAO->getrows("attorney","*", "attorney_email = :attorney_email AND fkaddressbookid = :fkaddressbookid AND attorney_type = :attorney_type ", array(":attorney_type"=>$attorney_type,":attorney_email"=>$attorney_email,":fkaddressbookid"=>$fkaddressbookid));
