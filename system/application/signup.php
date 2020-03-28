@@ -83,7 +83,7 @@ $newsignup = 1;
             <div class="text-center m-b-md">
            		<h2><?php echo $systemmaintitle; ?></h2>
                 <h3></h3>
-                <small>Create your account &reg;</small>
+                <small>Create your account</small>
             </div>
             <div class="hpanel">
                 <div class="panel-body">
@@ -116,21 +116,21 @@ $newsignup = 1;
 							?>
                         </div>
 						<hr>
-                        <?php /*?><div class="row">
+                        <div class="row">
                         	<div class="col-md-2">
                             	<label><input name="fkgroupid" onClick="barnoFunction()" id="fkgroupid" type="checkbox" value="1"> Attorney?</label>
                             </div>
                             <div class="col-md-3">
                                 <div id="barnumber" style="display:none;">
                                 	<div style="display:flex" >
-                                	<input type="text" id="barnumber" class="form-control" name="barnumber" placeholder="Bar No.">
+                                	<input type="c" id="barnumber" class="form-control" name="barnumber" placeholder="Bar No." maxlength="15" />
                                     <span style="color: red;">*</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-7"></div>
-                        </div><?php */?>
-                        <div class="row">
+                        </div>
+                        <?php /*?><div class="row">
                         	<div class="col-md-2">
                             	<label>Bar No.</label>
                             </div>
@@ -142,7 +142,7 @@ $newsignup = 1;
                                 </div>
                             </div>
                             <div class="col-md-2"></div>
-                        </div>
+                        </div><?php */?>
                         <br>
                         <div class="row">
                         	<div class="col-md-2">
