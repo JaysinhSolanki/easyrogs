@@ -45,14 +45,7 @@ $discovery_id		=	$_POST['discovery_id'];
 												a.companyname	as atorny_firm,
 												d.attorney_id	as attorney_id,
 												a.email,
-												a.attorney_info,
-												(CASE WHEN (form_id = 1 OR form_id = 2) 
-												 THEN
-													  f.form_instructions 
-												 ELSE
-													  d.discovery_instructions 
-												 END)
-												 as instructions 
+												a.attorney_info 
 												',
 												"d.id 			= :id AND 
 												d.case_id 		= c.id AND  

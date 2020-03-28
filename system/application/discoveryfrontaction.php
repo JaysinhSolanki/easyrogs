@@ -15,7 +15,7 @@ $response_id					=	$_POST['response_id'];
 $supp							=	$_POST['supp'];
 
 $have_main_question				=	$_POST['have_main_question'];
-$answers						=	$_POST['answer'];
+$answers						=	isset($_POST['answer']) ? $_POST['answer'] : [];
 $subanswers						=	$_POST['subanswer'];
 $uid							=	$_POST['uid'];
 $introduction					=	$_POST['introduction'];
