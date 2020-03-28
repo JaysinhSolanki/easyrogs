@@ -158,12 +158,6 @@ body.modal-open
             <h3><strong>
 			<?php 
 			echo $pagetitle; 
-			if($pagetitle != "Add Case")
-			{
-				?>
-                <a href="#"><i style="font-size:20px" data-placement="top" data-toggle="tooltip" title="" class="fa fa-info-circle tooltipshow client-btn" aria-hidden="true" data-original-title="<?php echo $ownernameemail; ?>"></i></a>
-                <?php
-			}
 			?>
             
             </strong></h3>
