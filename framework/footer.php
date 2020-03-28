@@ -6,7 +6,7 @@
 </div>
 
 <div class="col-md-12" style="margin-top:20px !important">
-<div class="footer text-center" style="background-color:#f7f9fa"> <span> All rights reserved © <?php echo date('Y');?> EasyRogs. U.S. Patent Pending</span>  </div>
+<div class="footer text-center" style="background-color:#f7f9fa"> <span> All rights reserved &copy; <?php echo date('Y');?> EasyRogs. U.S. Patent Pending</span>  </div>
 </div>
 
 
@@ -22,8 +22,8 @@ require_once("{$_SESSION['system_path']}jsinclude.php");
           <span aria-hidden="true" style="font-size: 36px;">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-        <?php  require_once("{$_SESSION['system_path']}application/faqs.php"); ?>
+      <div class="modal-body" id="load_faq_modal_content">
+        
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -31,7 +31,20 @@ require_once("{$_SESSION['system_path']}jsinclude.php");
     </div>
   </div>
 </div>
+<style>
+	body.modal-open {
+	    position: static !important;
+	}
+</style>
 <script>
+	function PopupfaqModal()
+	{
+	    $.post( "loadfaqpopupcontent.php",{}).done(function( data ) 
+	    {
+	        $("#load_faq_modal_content").html(data);
+	        $('#faqModal').modal('toggle');
+	    }); 
+	}
   function checksession()
    {
 	  $.post( "<?php echo $_SESSION['framework_url'] ?>checksession.php",function( data )
