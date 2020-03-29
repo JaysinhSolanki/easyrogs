@@ -71,7 +71,7 @@ $form_id						=	$discovery_data['form_id'];
 $set_number						=	$discovery_data['set_number'];
 $atorny_name					=	$discovery_data['atorny_fname']." ".$discovery_data['atorny_lname'];
 $attorney_id					=	$discovery_data['attorney_id'];
-$form_name						=	$discovery_data['form_name']." [SET ".$set_number."]";
+$form_name						=	$discovery_data['form_name']." [Set ".$set_number."]";
 $short_form_name				=	$discovery_data['short_form_name'];
 $send_date						=	$discovery_data['send_date'];
 $email							=	$discovery_data['email'];
@@ -80,7 +80,7 @@ $type							=	$discovery_data['type'];
 $introduction					=	$discovery_data['introduction'];
 $propounding					=	$discovery_data['propounding'];
 $responding						=	$discovery_data['responding'];
-$discovery_name					=	$discovery_data['discovery_name']." [SET ".$set_number."]";
+$discovery_name					=	$discovery_data['discovery_name']." [Set ".$set_number."]";
 /*
 //Responding Party
 $respondingdetails		=	$AdminDAO->getrows("clients","*","id = :id",array(":id"=>$responding));

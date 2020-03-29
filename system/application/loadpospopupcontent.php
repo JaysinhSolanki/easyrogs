@@ -212,7 +212,7 @@ td, th {
                  I am over the age of 18 years and not a party to the within action. My business address is <?php echo $senderAddress; ?>. My electronic service address is <?php echo $senderEmail ?>.
                  <br />
                  <br />
-                 On <?php echo date('F j, Y'); ?>, I electronically served <?php echo $discovery_name." [SET ".$set_number."]" ?> upon the following:
+                 On <?php echo date('F j, Y'); ?>, I electronically served <?php echo $discovery_name." [Set ".$set_number."]" ?> upon the following:
                 </td>
             </tr>
           </tbody>

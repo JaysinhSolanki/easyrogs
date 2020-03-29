@@ -116,6 +116,31 @@ function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $frome
     }
 }//end of send_email()
 
+
+function convertYoutube($string) {
+    return preg_replace(
+        "/\s*[a-zA-Z\/\/:\.]*youtu(be.com\/watch\?v=|.be\/)([a-zA-Z0-9\-_]+)([a-zA-Z0-9\/\*\-\_\?\&\;\%\=\.]*)/i",
+        "<br /><iframe src=\"//www.youtube.com/embed/$2\" allowfullscreen width='100%' height='400'></iframe>",
+        $string
+    );
+}
+
+function replaceUrls($string) {
+	$url = $string[0];
+	if (filter_var($url, FILTER_VALIDATE_URL)) {
+	    $images_allowed = array('gif', 'png', 'jpg', 'svg', 'jpeg');
+		$ext = pathinfo($string[0], PATHINFO_EXTENSION);
+		if (in_array($ext, $images_allowed)) {
+		    return '<br /><img src="'. $url .'" alt="." />';
+		}
+		$video_allowed = array('mp4');
+		if (in_array($ext, $video_allowed)) {
+		    return '<br /><video style=" width: 100%; " id="v1" loop="" controls=""><source src="'. $url .'" type="video/mp4"></video>';
+		}
+	}
+	return $url;
+}
+
 /**
 * FUNCTION FOR GENERATE PDF
 **/
