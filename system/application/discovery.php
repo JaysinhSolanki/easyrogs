@@ -265,36 +265,30 @@ body.modal-open
     <div class="col-lg-12">
         <div class="hpanel">
             <div class="panel-heading text-center">
+	            <small>
+                    <?php 
+					if($id>0)
+					{
+						if(@$supp == 1)
+						{
+							echo "<strong>Supplemental-Amended Discovery</strong>";
+							$discovery['discovery_name']	=	"SUPPLEMENTAL-AMENDED ".$discovery['discovery_name'];
+						}
+						else
+						{
+							echo "<strong>Edit Discovery</strong>";	
+						}
+					}
+					else
+					{
+						echo "<strong>Add Discovery</strong>";
+					}
+					?>
+                    </small>
                 <h3 align="center"><strong><?php echo $case_title; ?></strong></h3>
             </div>
             <div class="panel-body">
             	<div class="panel panel-primary">
-                    <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <span style="font-size:18px; font-weight:600">
-                            <?php 
-							if($id>0)
-							{
-								if(@$supp == 1)
-								{
-									echo "<strong>Supplemental-Amended Discovery</strong>";
-									$discovery['discovery_name']	=	"SUPPLEMENTAL-AMENDED ".$discovery['discovery_name'];
-								}
-								else
-								{
-									echo "<strong>Edit Discovery</strong>";	
-								}
-							}
-							else
-							{
-								echo "<strong>Add Discovery</strong>";
-							}
-							?>
-                            </span>
-                        </div>
-                    </div>
-                    </div>
                     <div class="panel-body">
                         <form  name="discoveriesform" id="discoveriesform" class="form form-horizontal" method="post">
                 	<input type="hidden" name="type" value="<?php echo $type ?>" id="type"  />
