@@ -79,7 +79,9 @@ $type							=	$discovery_data['type'];
 $introduction					=	$discovery_data['introduction'];
 $propounding					=	$discovery_data['propounding'];
 $responding						=	$discovery_data['responding'];
-$discovery_name					=	$discovery_data['discovery_name']." [SET ".$set_number."]";
+echo numberTowords($set_number);
+die;
+$discovery_name					=	$discovery_data['discovery_name']." [SET ". numberTowords($set_number) ."]";
 
 //Responding Party
 $respondingdetails		=	$AdminDAO->getrows("clients","*","id = :id",array(":id"=>$responding));
