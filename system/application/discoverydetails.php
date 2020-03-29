@@ -82,7 +82,7 @@ $form_id                        =   $discovery_data['form_id'];
 $set_number                         =   $discovery_data['set_number'];
 $atorny_name                    =   $discovery_data['atorny_fname']." ".$discovery_data['atorny_lname'];
 $attorney_id                    =   $discovery_data['attorney_id'];
-$form_name                      =   $discovery_data['form_name']." [SET ".$set_number."]";
+$form_name                      =   $discovery_data['form_name']." [Set ".$set_number."]";
 $short_form_name                =   $discovery_data['short_form_name'];
 $send_date                      =   $discovery_data['send_date'];
 $email                          =   $discovery_data['email'];
@@ -106,7 +106,7 @@ if ($view == 1) {
 } else {
     $form_name = strtoupper("RESPONSE TO ".$discovery_name);
 }
-$form_name          =   $form_name." [SET ".$set_number."]";
+$form_name          =   $form_name." [Set ".$set_number."]";
 /***************************************
 Query For Forms 1,2,3,4,5 Questions
 ****************************************/
@@ -163,7 +163,7 @@ if ($response_id > 0) {
     if ($supp == 1) {
         $getResponse        =   $AdminDAO->getrows("responses", "*", "fkdiscoveryid = :fkdiscoveryid AND fkresponseid != 0", array(":fkdiscoveryid"=>$discovery_id));
         $totalResponses         =   sizeof($getResponse)+1;
-        $form_name          =   strtoupper(numToOrdinalWord($totalResponses))." RESPONSE TO ".$discovery_name." [SET ".$set_number."]";
+        $form_name          =   strtoupper(numToOrdinalWord($totalResponses))." RESPONSE TO ".$discovery_name." [Set ".$set_number."]";
     }
 } else {
     $discovery_verification     =   "";
