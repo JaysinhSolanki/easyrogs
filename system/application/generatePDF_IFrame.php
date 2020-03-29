@@ -79,8 +79,7 @@ $type							=	$discovery_data['type'];
 $introduction					=	$discovery_data['introduction'];
 $propounding					=	$discovery_data['propounding'];
 $responding						=	$discovery_data['responding'];
-echo numberTowords($set_number);
-die;
+
 $discovery_name					=	$discovery_data['discovery_name']." [SET ". numberTowords($set_number) ."]";
 
 //Responding Party
