@@ -276,12 +276,12 @@ body.modal-open
 						}
 						else
 						{
-							echo "<strong>Edit Discovery</strong>";	
+							echo "<strong>Edit Discovery for</strong>";	
 						}
 					}
 					else
 					{
-						echo "<strong>Add Discovery</strong>";
+						echo "<strong>Add Discovery for</strong>";
 					}
 					?>
                     </small>
