@@ -392,6 +392,10 @@ body.modal-open
 } ?>>
                                 <?php
                                 if ($question_type_id != 1) {
+                                    
+
+                                    //$AdminDAO->displayquery=1;
+/*
                                     $subQuestions   =   $AdminDAO->getrows(
                                         'discovery_questions dq,questions q',
                                         'dq.id as discovery_question_id,
@@ -403,13 +407,27 @@ body.modal-open
                                                                         q.sub_part as sub_part,
                                                                         q.is_pre_defined as is_pre_defined,
                                                                         have_main_question',
-                                        "q.question_number 	= 	:question_number AND  
+                                        "q.question_number  =   :question_number AND
                                                             q.id 				= 	 dq.question_id  AND
-                                                            dq.discovery_id 	= 	:discovery_id AND 
+                                                            dq.discovery_id     =   :discovery_id AND
                                                             q.sub_part 			!=   '' GROUP BY question_id",
                                         array(":question_number"=>$question_number,":discovery_id"=>$discovery_id)
                                     );
-
+*/
+                                    $subQuestions   =   $AdminDAO->getrows(
+                                        'questions q',
+                                        'q.id as question_id,
+                                                                        q.question_type_id as question_type_id,
+                                                                        q.form_id as form_id,
+                                                                        q.question_title as question_title,
+                                                                        q.question_number as question_number,
+                                                                        q.sub_part as sub_part,
+                                                                        q.is_pre_defined as is_pre_defined,
+                                                                        have_main_question',
+                                        "q.question_number 	= 	:question_number AND  
+                                                            q.sub_part 			!=   '' GROUP BY question_id",
+                                        array(":question_number"=>$question_number)
+                                    );
 
                                     if (sizeof($subQuestions) > 0) {
                                         $subquestuions_string   =   "";
@@ -509,6 +527,7 @@ body.modal-open
                                             }
                                             //$AdminDAO->displayquery=1;
                                         } else {
+                                            //Hassan Editings
                                             ?>
                                             <p> 
                                                 <b>Q No. <?php echo $question_number;?><?php echo $have_main_question==0?"&nbsp;($sub_part)":""?>: </b>
@@ -553,6 +572,8 @@ body.modal-open
 ?>style="display:none" <?php
 } ?>>
                                                         <?php
+                                                            //print_r($subQuestions);
+
                                                         foreach ($subQuestions as $data) {
                                                             $question_id            =   $data['question_id'];
                                                             $question_type_id       =   $data['question_type_id'];

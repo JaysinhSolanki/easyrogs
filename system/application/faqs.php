@@ -44,7 +44,7 @@ p {
 											<div class="panel-body">
 				                                <a data-toggle="collapse" data-parent="#accordion" href="#question-<?php echo $counter; ?>" aria-expanded="false" class="collapsed faq-question">
 				                                    <i class="fa fa-chevron-down pull-right text-muted"></i>
-				                                    <?php echo "<strong> Q". ($key+1) . ": </strong>" . $faqs['question']; ?>
+				                                    <?php echo $faqs['question']; ?>
 				                                </a>
 				                                <div id="question-<?php echo $counter; ?>" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
 				                                    <hr>
