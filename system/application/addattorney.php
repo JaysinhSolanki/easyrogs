@@ -8,7 +8,7 @@ $fkaddressbookid	=	$_SESSION['addressbookid'];
 $attorney_email		=	$_POST['attorney_email'];
 $editattorney_id	=	$_POST['editattorney_id'];
 $alreadyExists		=	array();
-$AdminDAO->displayquery = 1;
+//$AdminDAO->displayquery = 1;
 if($attorney_type == 1)
 {
 	$alreadyExists	=	$AdminDAO->getrows("attorney","*", "attorney_email = :attorney_email AND fkaddressbookid = :fkaddressbookid AND attorney_type = :attorney_type ", array(":attorney_type"=>$attorney_type,":attorney_email"=>$attorney_email,":fkaddressbookid"=>$fkaddressbookid));
