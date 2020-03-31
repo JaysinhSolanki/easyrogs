@@ -201,6 +201,7 @@ function showhidequestions(parentid,uid)
 		{ 
 			$('.dependent_checked_'+parentid).prop('checked', true);
 			$('.dependent_checked_val_'+parentid).val(1);
+			$(".row_"+parentid).find('input[name="is_selected[]"]').val(1);
 		}, 500);
 		
 	}
@@ -211,6 +212,7 @@ function showhidequestions(parentid,uid)
 		{ 
 			$('.dependent_checked_'+parentid).prop('checked', false);
 			$('.dependent_checked_val_'+parentid).val(0);
+			$(".row_"+parentid).find('input[name="is_selected[]"]').val(0);
 		}, 500);
 	}
 }
