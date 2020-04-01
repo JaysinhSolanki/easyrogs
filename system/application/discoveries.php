@@ -101,9 +101,9 @@ $iscaseteammember	=	$AdminDAO->getrows("attorney a,case_team ct",
                 </div>
                 <div class="col-md-4" align="right">
                 	<p style="text-align: center;width: 290px;"> Create Discovery as the:</p>
-                	<button  class="btn btn-success" onclick="javascript: selecttab('47_tab','discovery.php?pid=<?php echo $case_id;?>&type=1','47');"> <!--<i class="fa fa-play fa-rotate-180"></i>--> Propounder <?php instruction(4) ?></button>
+                	<button  class="btn btn-success" onclick="javascript: selecttab('47_tab','discovery.php?pid=<?php echo $case_id;?>&type=1','47');"> <!--<i class="fa fa-play fa-rotate-180"></i>--> Propounder <?php instruction(4, '#fff') ?></button>
                 	<span style="padding-left:3px;padding-right:3px">or</span>
-                    <button  class="btn btn-success" onclick="javascript: selecttab('47_tab','discovery.php?pid=<?php echo $case_id;?>&type=2','47');"> <!--<i class="fa fa-play"></i>--> Respondent <?php instruction(5) ?></button>
+                    <button  class="btn btn-success" onclick="javascript: selecttab('47_tab','discovery.php?pid=<?php echo $case_id;?>&type=2','47');"> <!--<i class="fa fa-play"></i>--> Respondent <?php instruction(5, '#fff') ?></button>
                 </div>
             </div>
             </div>

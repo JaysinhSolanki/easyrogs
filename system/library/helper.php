@@ -275,7 +275,7 @@ function finalResponseGenerate($objection, $answer)
 /**
 * FUNCTION FOR INSTRUCTION
 **/
-function instruction($id)
+function instruction($id, $color="")
 {
     global $AdminDAO;
     $results            =   $AdminDAO->getrows("instructions", "*", "pkinstructionid = :id", array(":id"=>$id));
@@ -289,7 +289,8 @@ function instruction($id)
     if ($title == "") {
         $title = "No title found.";
     }
-    echo '<a href="#"><i style="font-size:16px" data-placement="'.$placement.'" data-toggle="tooltip" title="'.$title.'" class="fa fa-info-circle tooltipshow" aria-hidden="true"></i></a>';
+    $color = (($color) ? "color:$color" : '');
+    echo '<a href="#"><i style="font-size:16px;'. $color .'" data-placement="'.$placement.'" data-toggle="tooltip" title="'.$title.'" class="fa fa-info-circle tooltipshow" aria-hidden="true"></i></a>';
 }
 /**
 * FUNCTION FOR GETTING ANSWER OF DEPENDENT PARENT QUESTION
