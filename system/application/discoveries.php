@@ -78,6 +78,7 @@ $iscaseteammember	=	$AdminDAO->getrows("attorney a,case_team ct",
 											array("email"=>$loggedin_email,"fkcaseid"=>$case_id));
 
 //$AdminDAO->displayquery=0;
+
 ?>
 <style>
 .list-menu
@@ -90,7 +91,7 @@ $iscaseteammember	=	$AdminDAO->getrows("attorney a,case_team ct",
 <div class="col-lg-12">
     <div class="hpanel">
         <div class="panel-heading" align="center">
-            <h3 align="center"><small>Discovery for</small><br /><strong><?php echo $discoveries[0]['case_title'];?></strong></h3>  
+            <h3 align="center"><small>Discovery for</small><br /><strong><?php echo getcasename($case_id);?></strong></h3>  
         </div>
         <div class="panel-body">
             <div class="panel panel-primary">
@@ -1149,9 +1150,9 @@ $iscaseteammember	=	$AdminDAO->getrows("attorney a,case_team ct",
 						?>
                         <tr>
                         	<td align="center" colspan="9">
-                                <div class="alert alert-danger text-center" role="alert">
+                                <!--<div class="alert alert-danger text-center" role="alert">
                                 Sorry no discovery found.
-                                </div>
+                                </div>-->
                             </td>
                         </tr>
                         <?php
