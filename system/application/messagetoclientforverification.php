@@ -89,7 +89,7 @@ $discovery_id		=	$_POST['discovery_id'];
 	$senderPhone	=	$senderDetail['phone'];
 	$senderFirm		=	$senderDetail['companyname'];
 	$senderName		=	$senderDetail['firstname']." ".$senderDetail['lastname'];	
-	$senderAddress	=	makeaddress($_SESSION['addressbookid']);
+	$senderAddress	=	makeaddress($_SESSION['addressbookid'], 1);
 	
 	
 	if($actiontype == 1) //Send message to client for verification
