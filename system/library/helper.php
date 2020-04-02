@@ -184,6 +184,7 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
     }
 	$doc = new DOMDocument();
 	@$doc->loadHTML($html);
+	
     $mpdf->WriteHTML($doc->saveHTML());
 	
     if ($filename!="") {
