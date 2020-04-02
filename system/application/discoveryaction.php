@@ -547,7 +547,7 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 		$senderName		.=	" ".$senderDetail['middlename'];
 	}
 	$senderName		.=	" ".$senderDetail['lastname'];
-	$senderAddress	=	makeaddress($_SESSION['addressbookid']);//$senderDetail['address'].", ".$senderDetail['cityname'].", ".$senderDetail['street'];
+	$senderAddress	=	makeaddress($_SESSION['addressbookid'], 1);//$senderDetail['address'].", ".$senderDetail['cityname'].", ".$senderDetail['street'];
 
 	
 	
@@ -628,7 +628,7 @@ if($isemail==1)
 	{
 		
 		
-		$email_solicitation 	=	"Hi $responding_name";	
+		$email_solicitation 	=	"$responding_name,";	
 		//$attr_email				=	$responding_email;	
 		$emailURL				=	DOMAIN."discoveryfront.php?uid=".$uid;
 		ob_start();
@@ -640,7 +640,7 @@ if($isemail==1)
 		<?php echo $senderName; ?><br /> 
 		<?php echo $senderAddress; ?><br />
         <a href="mailto:<?php echo $senderEmail ?>" target="_top"><?php echo $senderEmail ?></a><br />
-		<?php echo $senderPhone; ?><br />
+		<?php echo $senderPhone; ?><br /><br />
 		All rights reserved &copy; <?php echo date('Y');?> EasyRogs. U.S. Patent Pending
 		</p>
 		<?php
