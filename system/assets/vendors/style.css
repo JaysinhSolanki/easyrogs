@@ -2823,6 +2823,12 @@ h6 {
 .form-control {
   border-color: ##cccccc !important;
 }
+textarea.form-control {
+    height: 90px;
+}
+p textarea.form-control {
+    height: 55px;
+}
 .input-group-addon {
   background: #fafbfc;
   border-color: #e4e5e7 !important;

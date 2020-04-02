@@ -16,6 +16,7 @@
 	padding: 5px 10px 5px 10px;
 	border:0px solid #A2A9B1;
 	border-collapse: collapse;
+	font-size: 16px;
 }
 @page :right {
 	footer: htmlpagefooter ;

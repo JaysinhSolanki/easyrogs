@@ -594,12 +594,12 @@ ob_start();
 									if($final_response == "")
 									{
 									?>
-										<p><?php echo finalResponseGenerate($objection,$answer); ?></p>   
+										<p><?php echo finalResponseGenerate($objection,$answer); ?></p><br />
                                     <?php
 									}
 									else
 									{
-										echo "<p>".$final_response."</p>";
+										echo "<p>".$final_response."</p><br />";
 									}
 									?>
 								<?php
@@ -618,12 +618,12 @@ ob_start();
 										if($final_response == "")
 										{
 										?>
-											<p><?php echo finalResponseGenerate($objection,$answer); ?></p>   
+											<p><?php echo finalResponseGenerate($objection,$answer); ?></p><br />   
 										<?php
 										}
 										else
 										{
-											echo "<p>".$final_response."</p>";
+											echo "<p>".$final_response."</p><br />";
 										}
 										?>
                                         
@@ -751,22 +751,22 @@ ob_start();
 											?>
 											<?php /*if($type == 2) { ?><b><u>Interrogatory</u></b><?php } */?>
 											<p><?php echo "(".$sub_part.") ".$question_title ?></p>
-											<br>
+											
                                             <b><u>Response</u></b>
 											<?php /*?><p><?php echo finalResponseGenerate($objection,$answer); ?></p><?php */?>
                                             <?php
-											if($final_response == "")
+	                                            $attached_response = finalResponseGenerate($objection,$answer);
+											if($final_response == "" && $attached_response != null)
 											{
 											?>
-												<p><?php echo finalResponseGenerate($objection,$answer); ?></p>   
+												<p><?php echo $attached_response; ?></p><br />  
 											<?php
 											}
 											else
 											{
-												echo "<p>".$final_response."</p>";
+												echo "<p>".$final_response."</p><br />";
 											}
 											?>
-                                            <br />
                                             <?php
 										}
 									}
@@ -774,7 +774,6 @@ ob_start();
 							}
 						}
 						?>
-                        <br /><br />
                     </td>
                 </tr>    
 				<?php
