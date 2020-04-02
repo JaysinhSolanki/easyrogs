@@ -37,7 +37,7 @@ body.modal-open {
                 <div class="panel-body">
                     <form name="profileform" action="#" method="post" id="profileform">
                 	<hr>
-                    <?php /*?><div class="row">
+                    <div class="row">
                         <div class="col-md-2">
                             <label><input name="fkgroupid" <?php if($user['fkgroupid'] == 3){echo "checked";} ?> onClick="barnoFunction()" id="fkgroupid" type="checkbox" value="1"> Attorney?</label>
                         </div>
@@ -47,8 +47,8 @@ body.modal-open {
                             </div>
                         </div>
                         <div class="col-md-7"></div>
-                    </div><?php */?>
-                    <div class="row">
+                    </div>
+                    <?php /*?><div class="row">
                         <div class="col-md-2">
                             <label>Bar No.</label>
                         </div>
@@ -60,7 +60,7 @@ body.modal-open {
                             </div>
                         </div>
                         <div class="col-md-1"></div>
-                    </div>
+                    </div><?php */?>
                     <br>
                     <div class="row">
                         <div class="col-md-2">
