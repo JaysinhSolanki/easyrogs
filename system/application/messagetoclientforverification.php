@@ -116,6 +116,7 @@ $discovery_id		=	$_POST['discovery_id'];
 		
 		ob_start();
 		?>
+		<?php echo $responding_name. ","; ?>
 		<h4>Please click on the following link to respond to discovery in your case: <a href='<?php echo $emailURL; ?>'><?php echo $emailURL; ?></a>.</h4> 
 		<p>Feel free to email me at <a href="mailto:<?php echo $senderEmail;?>"><?php echo $senderEmail;?></a><?php if($senderPhone != ""){ echo " or call ".$senderPhone;  }?> if you have any questions.</p>
 		<p>
