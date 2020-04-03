@@ -8,16 +8,17 @@ error_reporting(E_ALL);*/
 $discovery_id		=	$_POST['discovery_id'];
 $posstate			=	$_POST['posstate']; 
 $pos_text			=	$_POST['pos_text'];
-$poscity			=	$_POST['poscity'];
-$respond			=	$_POST['respond'];
+$poscity				=	$_POST['poscity'];
+$posaddress			=	$_POST['posaddress'];
+$respond				=	$_POST['respond'];
 $discovery_type		=	$_POST['discovery_type'];
-$response_id		=	$_POST['response_id'];
+$response_id			=	$_POST['response_id'];
 
 $pos_updated_by		=	$_SESSION['addressbookid'];
 $pos_updated_at		=	date("Y-m-d H:i:s");
 $replace_text		=	'<span style="display:none" id="signtime"></span>';
-$pos_updated_at_date		=	date("n/j/Y",strtotime($pos_updated_at));
-$pos_updated_at_time		=	str_replace(array('am','pm'),array('a.m','p.m'),date("g:i a",strtotime($pos_updated_at)));
+$pos_updated_at_date	=	date("n/j/Y",strtotime($pos_updated_at));
+$pos_updated_at_time	=	str_replace(array('am','pm'),array('a.m','p.m'),date("g:i a",strtotime($pos_updated_at)));
 $replace_with		=	"<i>Electronically Served at ".$pos_updated_at_date." ".$pos_updated_at_time.". Pacific Time.</i>";
 $pos_text			=	str_replace($replace_text,$replace_with,$pos_text);
 
