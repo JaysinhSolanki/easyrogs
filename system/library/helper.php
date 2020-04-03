@@ -241,6 +241,13 @@ function getcasename($case_id)
     $data               =   $results[0];
     return $data['case_title'];
 }
+function getstate($pkaddressbookid)
+{
+	global $AdminDAO;
+    $results            =   $AdminDAO->getrows("system_addressbook,system_state", "*", "pkaddressbookid = :id AND fkstateid = pkstateid", array(":id"=>$pkaddressbookid));
+    $data               =   $results[0];
+    return $data['statecode'];
+}
 /**
 * FUNCTION FOR ADDRESS MAKE
 **/

@@ -136,6 +136,7 @@ $senderEmail		=	$senderDetail['email'];
 $senderPhone		=	$senderDetail['phone'];
 $senderName			=	$senderDetail['firstname']." ".$senderDetail['lastname'];	
 $senderAddress		=	makeaddress($attr_id);//;$senderDetail['address'].", ".$senderDetail['cityname'].", ".$senderDetail['statecode']." ".$senderDetail['zip'];
+$getstate		=	getstate($attr_id);
 
 //$servicelists	=	$AdminDAO->getrows("attorney","*", "case_id = :case_id  AND attorney_type = :attorney_type", array(":case_id"=>$case_id,":attorney_type"=>2));
 $loggedin_email		=	$_SESSION['loggedin_email'];
@@ -209,10 +210,10 @@ td, th {
             </tr>
             <tr>
                 <td align="justify">
-                 I am over the age of 18 years and not a party to the within action. My business address is <?php echo $senderAddress; ?>. My electronic service address is <?php echo $senderEmail ?>.
+                 I am over the age of 18 years and not a party to the within action. My business address is <br /><input type="text" name="pos_address" id="pos_address" placeholder="Enter your address" value="<?php echo $senderAddress; ?>" size="50"/>. My electronic service address is <?php echo $senderEmail ?>.
                  <br />
                  <br />
-                 On <?php echo date('F j, Y'); ?>, I electronically served <?php echo $discovery_name." [Set ".$set_number."]" ?> upon the following:
+                 On <?php echo date('F j, Y'); ?>, I electronically served <?php echo str_replace("set", "Set", ucwords(strtolower($discovery_name." [Set ".numberTowords( $set_number )."]")) ); ?> upon the following:
                 </td>
             </tr>
           </tbody>
@@ -224,11 +225,12 @@ td, th {
                 <th align="center">Person Served</th>
                 <th align="center">Party Served</th>
                 <th align="center">E-service Address</th>
-                <th align="center">EasyRogs</th>
+<!--                 <th align="center">EasyRogs</th> -->
             </tr>
             <?php
 			foreach($servicelists as $list)
 			{
+/*
 				$isEasyRogsMember	=	$AdminDAO->getrows("system_addressbook","*","email = :email", array(":email"=>$list['attorney_email']));
 				//dump($isEasyRogsMember);
 				if(sizeof($isEasyRogsMember) > 0)
@@ -239,13 +241,14 @@ td, th {
 				{
 					$ismember	=	"";
 				}
+*/
 				
 			?>
              <tr>
                 <td align="left"><?php echo $list['attorney_name']; ?></td>
                 <td align="left"><?php echo $list['client_name']; ?></td>
                 <td align="left"><?php echo $list['attorney_email']; ?></td>
-                <td align="center"><?php echo $ismember; ?></td>
+                <!--<td align="center"><?php echo $ismember; ?></td>-->
             </tr>
             <?php
 			}
@@ -258,7 +261,7 @@ td, th {
                 <td align="justify">
                 <br />
                  <br />
-                I declare under penalty of perjury under the laws of the State of California that the above is true and correct. Executed on <?php echo date('F j, Y') ?> at <span id="citystate"><input type="text" name="pos_city" id="pos_city" placeholder="Enter your city..." />, <input type="text" name="pos_state" id="pos_state" value="California" /></span>. <span style='display:none' id='signtime'></span>
+                I declare under penalty of perjury under the laws of the State of California that the above is true and correct. Executed on <?php echo date('F j, Y') ?> at <span id="citystate"><input type="text" name="pos_city" id="pos_city" placeholder="Enter your city..." value="<?php echo $senderDetail['cityname']; ?>"/>, <input type="text" name="pos_state" id="pos_state" value="<?php echo $getstate; ?>" /></span>. <span style='display:none' id='signtime'></span>
                  <br />
                  <br />
                 </td>
@@ -285,6 +288,7 @@ td, th {
 <input type="hidden" name="response_id" value="<?php echo $response_id ?>" />
 <input type="hidden" name="pos_text" id="pos_text" value="" />
 <input type="hidden" name="posstate" id="posstate" value="" />
+<input type="hidden" name="posaddress" id="posaddress" value="" />
 
 <input type="hidden" name="poscity" id="poscity" value="" />
 <input type="hidden" name="respond" value="<?php echo $respond ?>" />
