@@ -23,7 +23,7 @@
         'insert'           => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
         'insertIgnore'     => 'INSERT IGNORE INTO %1$s (%2$s) VALUES (%3$s)',
         'dropTable'        => 'DROP TABLE IF EXISTS `%1$s`',
-        'createTable'		  => 'CREATE TABLE IF NOT EXISTS `%1$s` %2$s',
+        'createTable'		   => 'CREATE TABLE IF NOT EXISTS `%1$s` %2$s',
         'createTableCopy'  => 'CREATE TABLE `%1$s` LIKE `%2$s`',
         'copyTableData'    => 'INSERT `%2$s` SELECT * FROM `%1$s`',
         'wipeTable'        => 'DELETE FROM `%1$s`',
@@ -43,8 +43,6 @@
         'username' => DBUSER,
         'password' => DBPASS
       ]);
-      
-      $this->createTables();
     }
 
     private function connect( $dbConfig )
@@ -142,11 +140,15 @@
 
       return $tmpTable;
     }
-    public function createTables()
+    
+    public function createTables( $tablesMap )
     {
-      $tables = array("faq_area" => '( id INT(9) UNSIGNED AUTO_INCREMENT PRIMARY KEY, area_title text NOT NULL )', "faqs" => '( id INT(9) UNSIGNED AUTO_INCREMENT PRIMARY KEY, area_id INT(9) NOT NULL DEFAULT 0, question text NOT NULL, answer text NOT NULL)');
-      foreach($tables as $table_name => $table_value){
-	      $this->writeQuery( $this->queryTemplates['createTable'],       [], ['table_name' => $table_name, 'table_value' => $table_value] );
+      $query = $this->queryTemplates['createTable'];
+      foreach($tablesMap as $tableName => $tableDeffinition){
+	      $this->writeQuery( $query, [], [
+          'name'        => $tableName,
+          'deffinition' => $tableDeffinition
+        ]);
       }
     }
 
