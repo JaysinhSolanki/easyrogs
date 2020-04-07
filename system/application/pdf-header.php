@@ -16,7 +16,9 @@
 	padding: 5px 10px 5px 10px;
 	border:0px solid #A2A9B1;
 	border-collapse: collapse;
-	font-size: 16px;
+}
+.wikitable1 tr td{
+	font-size: 16pt;
 }
 @page :right {
 	footer: htmlpagefooter ;
