@@ -751,7 +751,7 @@ ob_start();
 											?>
 											<?php /*if($type == 2) { ?><b><u>Interrogatory</u></b><?php } */?>
 											<p><?php echo "(".$sub_part.") ".$question_title ?></p>
-											
+											<!-- changes by Hassan -->
                                             <b><u>Response</u></b><br />
 											<?php /*?><p><?php echo finalResponseGenerate($objection,$answer); ?></p><?php */?>
                                             <?php
