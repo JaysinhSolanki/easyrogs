@@ -17,9 +17,6 @@
 	border:0px solid #A2A9B1;
 	border-collapse: collapse;
 }
-.wikitable1 tr td{
-	font-size: 16pt;
-}
 @page :right {
 	footer: htmlpagefooter ;
 }
