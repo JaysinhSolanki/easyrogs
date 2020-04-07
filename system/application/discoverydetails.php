@@ -520,6 +520,9 @@ body.modal-open
                                                     echo "<p><b>$extra_text_field_label: </b>$extra_text</p>";
                                                 }
                                                 if (in_array($question_type_id, array(1,2)) && $respond == 1) {
+	                                                if( $objection == "" && $question_number == '12.2'){
+		                                               $objection = "Objection, this interrogatory seeks information protected by the attorney work product privilege because it reflects counsel’s evaluation of the case by revealing which witnesses counsel deemed important enough to interview. Nacht & Lewis Architects, Inc. v. Superior Court (1996) 47 Cal.App.4th 214, 217.";
+	                                                }
                                                     ?>
                                                     <?php /*?>&nbsp;&nbsp;<a href="javascript:;" class="btn-info btn-sm" onclick="addObjectionFunction('<?php echo $discovery_question_id; ?>')">Add Objection</a><?php */?>
                                                     <textarea style="background-color: antiquewhite;"  id="objection_<?php echo $discovery_question_id; ?>" class="form-control" name="objection[<?php echo $discovery_question_id ?>]" placeholder="Objection" required><?php echo html_entity_decode($objection) ?></textarea>
