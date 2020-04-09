@@ -609,7 +609,6 @@ ob_start();
 								?>
                                 	<br>
 									<b><u>Response</u></b>
-									<p>
 										<?php
 										if(strtolower($answer) == 'yes'){$answer= "Yes";} 
 										elseif(strtolower($answer) == 'no'){$answer =  "No";}
@@ -626,8 +625,6 @@ ob_start();
 											echo "<p>".$final_response."</p><br />";
 										}
 										?>
-                                        
-									</p>
 								<?php   
 							}
 							if($question_type_id != 1)
