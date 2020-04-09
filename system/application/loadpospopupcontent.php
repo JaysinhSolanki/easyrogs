@@ -213,7 +213,7 @@ td, th {
                  I am over the age of 18 years and not a party to the within action. My business address is <br /><input type="text" name="pos_address" id="pos_address" placeholder="Enter your address" value="<?php echo $senderAddress; ?>" size="50"/>. My electronic service address is <?php echo $senderEmail ?>.
                  <br />
                  <br />
-                 On <?php echo date('F j, Y'); ?>, I electronically served <?php echo str_replace("set", "Set", ucwords(strtolower($discovery_name." [Set ".numberTowords( $set_number )."]")) ); ?> upon the following:
+                 On <?php echo date('F j, Y'); ?>, I electronically served <?php echo str_replace(["set", "For", "Of"], ["Set", "for", "of"], ucwords(strtolower($discovery_name." [Set ".numberTowords( $set_number )."]")) ); ?> upon the following:
                 </td>
             </tr>
           </tbody>

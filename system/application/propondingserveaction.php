@@ -253,7 +253,7 @@ else if($discovery_type == 2) // If served discovery is internal then we save PO
 		?>
 		<p>
         <?php echo $list['attorney_name']?>,<br />
-		You are hereby served with <?php echo $proponding_name."'s ". str_replace("set", "Set", ucwords(strtolower($discovery_name)) ); ?> (attached).<br />
+		You are hereby served with <?php echo $proponding_name."'s ". str_replace(["set", "For", "Of"], ["Set", "for", "of"], ucwords(strtolower($discovery_name)) ); ?> (attached).<br />
         If you're not already using <i>EasyRogs</i>, click <?php echo $emailURL ?> for a complimentary membership. Plus, the Service Charge is waived through April 30, 2020. <br /><br /><i>EasyRogs</i> makes Discovery Easy, Saves Time & Money, and Protects our Environment. 
         <br />   
         --
