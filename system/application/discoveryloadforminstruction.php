@@ -13,13 +13,14 @@ if($viewonly == "")
 {
 	$viewonly = 0;
 }
+
 if($discovery_id != '')
 {
 	$discoveries	=	$AdminDAO->getrows('discoveries',"*","id	= :id ",array('id'=>$discovery_id));
 	$discovery		=	$discoveries[0];
 	$incidentoption	=	$discovery['incidentoption'];
 	$incidenttext	=	$discovery['incidenttext'];
-	$instruction_text=	html_entity_decode($discovery['discovery_instructions']);
+	$instruction_text=	html_entity_decode($discovery['discovery_instrunctions']);
 }
 
 

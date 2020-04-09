@@ -606,7 +606,11 @@ $(document).ready(function()
     <?php
     if ($id > 0) {
         ?>
-        loadinstructions('<?php echo $discovery['id']?>','<?php echo $discovery['form_id']?>')
+        setTimeout(function()
+	    {
+	        loadinstructions('<?php echo $discovery['id']?>','<?php echo $discovery['form_id']?>')
+	    },200);
+        
         loadformquestions('<?php echo $discovery['form_id']?>','<?php echo $discovery['id']?>');
         loaddocsFunction('<?php echo $discovery['form_id']?>');
         loaduploadeddocs();
