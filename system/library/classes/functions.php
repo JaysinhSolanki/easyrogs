@@ -797,8 +797,8 @@ function getDraft($tbl,$pkfield,$savefields=array(),$where='')
 		}
 	}
 	//$AdminDAO->displayquery=1;
-	$fields		=	array($pkfield);
-	$values		=	array('NULL');
+	$fields		=	array();
+	$values		=	array();
 	if(sizeof($savefields) > 0)
 	{
 		foreach($savefields as $field => $val)
@@ -812,6 +812,7 @@ function getDraft($tbl,$pkfield,$savefields=array(),$where='')
 	print_r($values);
 	echo "</pre>";
 	exit;*/
+
 	$id	=	$AdminDAO->insertrow($tbl,$fields,$values);
 	return $id;
 	exit;

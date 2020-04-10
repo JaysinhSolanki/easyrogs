@@ -1,6 +1,6 @@
 <?php
 
-  class BaseModel
+  abstract class BaseModel
   {
     protected $db;
     protected $queryTemplates;
@@ -34,8 +34,8 @@
         'getByLimit'       => 'SELECT * FROM %1$s WHERE %2$s LIMIT %3$d',
         'getSorted'        => 'SELECT * FROM %1$s ORDER BY %2$s LIMIT %3$d, %4$d',
         'deleteBy'         => 'DELETE   FROM %1$s WHERE %2$s',
-        'updateBy'         => 'UPDATE        %1$s SET %2$s, updated_at = NOW() WHERE %3$s',
-        'updateIgnoreBy'   => 'UPDATE IGNORE %1$s SET %2$s, updated_at = NOW() WHERE %3$s',
+        'updateBy'         => 'UPDATE        %1$s SET %2$s WHERE %3$s',
+        'updateIgnoreBy'   => 'UPDATE IGNORE %1$s SET %2$s WHERE %3$s',
       ];
 
       $this->connect($dbConfig ? $dbConfig : [
@@ -344,7 +344,7 @@
 
       $whereConditions = ["1 = 1"];
       foreach( $conditions as $name => $value ) {
-        $whereConditions[] = "$name = :$name";
+        $whereConditions[] = "$name = $value";
       }
 
       $modifiers = [$tableName, implode( ',', $setValues ), implode( ' AND ', $whereConditions )];
@@ -352,13 +352,15 @@
       return $this->writeQuery( $this->queryTemplates[$queryTemplate], $fieldsMapping, $modifiers );
     }
 
-    function getOrInsertBy( $tableName, $fieldsMapping )
+    function getOrInsertBy($tableName, $conditions, $fields = null)
     {
-      if ($this->existsBy($tableName, $fieldsMapping)) {
-        return $this->getBy( $tableName, $fieldsMapping, 1 );
+      $fields = $fields ? $fields : $conditions;
+
+      if ($this->existsBy($tableName, $conditions)) {
+        return $this->getBy( $tableName, $conditions, 1 );
       }
       else {
-        $id = $this->insert($tableName, $fieldsMapping);
+        $id = $this->insert($tableName, $fields);
         if ($id) {
           return $this->getBy($tableName, ['id' => $id], 1);
         }
@@ -375,6 +377,17 @@
         'exitCode' => $exitCode
       ];
     }
+
+    static function pluck($items, $key) {
+      return array_map(function($item) use ($key) {
+        return $item[$key];
+      }, $items);
+    }
+
+    static function pluckIds($items, $id = 'id') {
+      return BaseModel::pluck($items, $id);
+    }
+
   }
 
 ?>

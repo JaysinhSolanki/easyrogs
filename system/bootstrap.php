@@ -24,6 +24,9 @@
   $smarty->template_dir = __DIR__ . '/templates';
   $smarty->compile_dir  = __DIR__ . '/../tmp/templates_c';
 
+  // lib
+  require_once __DIR__ . '/library/classes/httpresponse.php';
+
   // models
   require_once(__DIR__ . '/models/index.php');
 
@@ -45,4 +48,4 @@
   require_once(__DIR__ . '/library/classes/sessionuser.php');
   $currentUser = isset($_SESSION['addressbookid']) 
                  ? new SessionUser($_SESSION['addressbookid']) 
-                 : nil;
+                 : null;

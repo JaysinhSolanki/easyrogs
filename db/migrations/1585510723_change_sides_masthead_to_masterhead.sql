@@ -1,0 +1,5 @@
+START TRANSACTION;
+
+  ALTER TABLE `sides` CHANGE COLUMN `masthead` `masterhead` VARCHAR(255) NOT NULL ;
+
+COMMIT;

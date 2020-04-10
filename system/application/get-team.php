@@ -14,7 +14,7 @@
     if ($format === 'json') {
       die(json_encode([
         'id' => $team['id'],
-        'members' => SystemAddressBook::publishable($members)
+        'members' => User::publishable($members)
       ]));
     }
     else {

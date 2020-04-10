@@ -282,7 +282,7 @@ $newsignup = 1;
                         
                         <div class="form-group col-lg-12" id="savebtns">
 							<?php
-                            buttonsave('signupaction.php','profileform','wrapper','cases.php?pkscreenid=44',0);
+                            buttonsave('signupaction.php','profileform','wrapper','get-cases.php?pkscreenid=44',0);
                             ?>
                             <a style="" href="userlogin.php" class="btn btn-danger buttonid">
                             <i class="fa fa-close"></i>

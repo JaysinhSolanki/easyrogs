@@ -36,7 +36,11 @@ if($owner == 1)
 	{
 		msg(313,2);
 	}
-	/*if($caseowner == 1)
+	if($case_attorney == "")
+	{
+		msg(335,2);
+	}
+/*if($caseowner == 1)
 	{
 		if($case_attorney == "")
 		{
@@ -81,20 +85,37 @@ if($owner == 1)
 		$discovery_cutoff	=	dateformat($discovery_cutoff,2);
 		$discovery_cutoff	=	date("Y-m-d",strtotime($discovery_cutoff));
 	}
-	$fields	=	array('jurisdiction','county_name','case_number','judge_name','department','case_title','plaintiff','defendant','court_address','uid','is_draft','allow_reminders','discovery_cutoff','trial','date_filed');
-	$values	=	array($jurisdiction,$county_name,$case_number,$judge_name,$department,$case_title,$plaintiff,$defendant,'--',$uid,0,$allow_reminders,$discovery_cutoff,$trial,$filed);
+	$fields	=	array('jurisdiction','county_name','case_number','judge_name','department','case_title','plaintiff','defendant','court_address','uid','is_draft','allow_reminders','discovery_cutoff','trial','date_filed', 'masterhead');
+	$values	=	array($jurisdiction,$county_name,$case_number,$judge_name,$department,$case_title,$plaintiff,$defendant,'--',$uid,0,$allow_reminders,$discovery_cutoff,$trial,$filed, $masterhead);
 	if($caseowner == 1)
 	{
 		$fields[]	=	"attorney_id";
 		$values[]	=	$_SESSION['addressbookid'];
-		$fields[]	=	"case_attorney";
-		$values[]	=	$_SESSION['addressbookid'];//$case_attorney;
-		/*
-		$fields[]	=	"masterhead";
-		$values[]	=	$masterhead;
-		*/
 	}
-	$AdminDAO->updaterow("cases",$fields,$values," id = :id", array("id"=>$id));
+
+	if ($case_attorney) {
+		$attorneySide = $sidesModel->getByUserAndCase($case_attorney, $id);
+		$currentSide =  $sidesModel->getByUserAndCase($currentUser->id, $id);
+		if ( $attorneySide && $currentSide && $attorneySide['id'] != $currentSide['id'] ) {
+			HttpResponse::successPayload([
+				"pkerrorid" => "409",
+				"messagetype" => "4",
+				"messagetext" => "Attorney is already in a conflicting side."
+			]);
+		}
+		$fields[]	=	"case_attorney";
+		$values[]	=	$case_attorney;
+	}
+
+	// Update case and team if attorney changed
+	$fieldsMap = [];
+	foreach( $fields as $idx => $field) { // convert to fields hash
+		if ($values[$idx] !== '') {
+			$fieldsMap[$field] = $values[$idx];
+		}		
+	}
+
+	$casesModel->updateCase($id, $fieldsMap, true);
 }
 /********************************************
 * Send invitation emails to case team members.

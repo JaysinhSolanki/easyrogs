@@ -151,7 +151,7 @@ $servicelists		=	$AdminDAO->getrows(
 												ON 		
 												clients.id		=	client_attorney.client_id
 													
-											","attorney.*,clients.client_name", "attorney.case_id = :case_id AND attorney.attorney_type = :attorney_type AND attorney.attorney_email != '$loggedin_email'", array(":case_id"=>$case_id,":attorney_type"=>2), "attorney.attorney_name", "ASC");
+											","attorney.*,clients.client_name", "attorney.case_id = :case_id AND attorney.attorney_type = :attorney_type", array(":case_id"=>$case_id,":attorney_type"=>2), "attorney.attorney_name", "ASC");
 //$AdminDAO->displayquery=0;
 //dump($servicelists);
 //dump($attorneys);

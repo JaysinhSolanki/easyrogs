@@ -2,7 +2,12 @@
 require_once("adminsecurity.php");
 $case_id		=	$_POST['case_id'];
 
-$parties		=	$AdminDAO->getrows("clients","*", "case_id = :case_id ", array(":case_id"=>$case_id));
+$cases = new CaseModel();
+$parties = $cases->getClients($case_id);
+
+// backward comp
+$parties =	array_merge($parties, $AdminDAO->getrows("clients","*", "case_id = :case_id ", array(":case_id"=>$case_id))); 
+
 $servicelists	=	$AdminDAO->getrows("attorney","*", "case_id = :case_id  AND attorney_type = :attorney_type", array(":case_id"=>$case_id,":attorney_type"=>2));
 
 if(sizeof($parties) > 0 /*&& sizeof($servicelists) == 0*/)

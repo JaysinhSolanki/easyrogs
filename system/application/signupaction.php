@@ -114,8 +114,8 @@ if(!empty($_SESSION['addressbookid']) && $invited_uid == "" && $newsignup == '')
 		}
 	}
 	
-	$fields					=	array('email','firstname','middlename','lastname','companyname','address','street','cityname','fkstateid','zip','phone','fkadmittedstateid','barnumber','fkcountryid','fkgroupid');
-	$values					=	array($email,$firstname,$middlename,$lastname,$companyname,$address,$street,$city,$fkstateid,$zipcode,$phone,$fkadmittedstateid,$barnumber,254,$fkgroupid);
+	$fields					=	array('email','firstname','middlename','lastname','companyname','address','street','cityname','fkstateid','zip','phone','fkadmittedstateid','barnumber','fkcountryid','fkgroupid', 'masterhead');
+	$values					=	array($email,$firstname,$middlename,$lastname,$companyname,$address,$street,$city,$fkstateid,$zipcode,$phone,$fkadmittedstateid,$barnumber,254,$fkgroupid, $masterhead);
 	$AdminDAO->updaterow('system_addressbook',$fields,$values," pkaddressbookid = {$_SESSION['addressbookid']}");
 	$_SESSION['groupid']		=	$fkgroupid;
 	$_SESSION['loggedin_email']	=	$email;

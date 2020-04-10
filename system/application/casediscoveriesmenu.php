@@ -30,7 +30,7 @@ $case	=	$cases[0];
                                 <li><a href="javascript:;" onclick="javascript: selecttab('47_tab','discovery.php?pid=<?php echo $case['id'];?>','47');">Create new Discovery.</a></li>
                                 <li><a href="javascript:;" onclick="javascript: selecttab('45_tab','discoveries.php?pid=<?php echo $case['id'];?>','45');">Edit existing Discovery.</a></li>
                                 <li><a href="javascript:;" onclick="javascript: selecttab('45_tab','discoveries.php?pid=<?php echo $case['id'];?>','45');">Respond to Discovery.</a></li>
-                                <li><a href="javascript:;" onclick="javascript: selecttab('45_tab','cases.php','45');">Delete Case.</a></li>
+                                <li><a href="javascript:;" onclick="javascript: selecttab('45_tab','get-cases.php','45');">Delete Case.</a></li>
                             </ul>
                         </div>
                     </div>

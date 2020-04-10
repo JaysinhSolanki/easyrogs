@@ -1,18 +1,19 @@
 <?php
+require_once __DIR__ . '/../bootstrap.php';
+
 @session_start();
-include_once("../bootstrap.php");
 include_once("../library/classes/AdminDAO.php");
 $AdminDAO		=	new AdminDAO();
 include_once("../library/classes/functions.php");
 include_once("../library/helper.php");
 
-$fDebug = fopen('debug.log','a+');
+$fDebug = fopen(__DIR__ . '/../../logs/debug.log','a+');
 
 /*
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 */
-error_reporting(0);
+//error_reporting(0);
 $respond			=	0;
 $uid				=	@$_GET['id'];
 $view				=	$_GET['view'];
@@ -63,6 +64,7 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,forms f',
 											d.declaration_text,
 											d.declaration_updated_by,
 											d.declaration_updated_at,
+											d.attorney_id as discovery_attorney_id,
 											d.incidenttext, d.incidentoption,d.personnames1,d.personnames2,d.in_conjunction,d.interogatory_type,d.conjunction_setnumber,
 											f.form_name	 	as form_name,
 											f.short_form_name as short_form_name,
@@ -101,7 +103,8 @@ $form_id			=	$discovery_data['form_id'];
 $set_number			=	$discovery_data['set_number'];
 $case_attorney		=	$discovery_data['case_attorney'];
 $masterhead			=	$discovery_data['masterhead'];
-	
+$discovery_attorney_id = $discovery_data['discovery_attorney_id'];
+
 $form_name				=	$discovery_data['form_name']." [SET ".$set_number."]";
 $short_form_name		=	$discovery_data['short_form_name'];
 	
@@ -126,6 +129,35 @@ $declaration_text		=	$discovery_data['declaration_text'];
 $declaration_updated_by	=	$discovery_data['declaration_updated_by'];
 $declaration_updated_at	=	$discovery_data['declaration_updated_at'];
 $proponding_attorney	=	$discovery_data['proponding_attorney'];
+
+
+// Sides Masterhead----------
+$masterhead = '';
+
+$users = new User();
+$sides = new Side();
+
+$attorneyId = $response_id ? null : $proponding_attorney;
+$clientId 	= $response_id ? $responding : $propounding;
+$user = $users->getByAttorneyId($attorneyId);
+$side = $user 
+				? $sides->getByUserAndCase($user['pkaddressbookid'], $case_id)
+				: $sides->getByClientAndCase($clientId, $case_id);
+
+if ($side){
+	$masterhead = $sides->getMasterHead($side);
+}
+// ----------------
+
+if($type == 1)//External
+{
+	$is_served				=	$discovery_data['is_served'];
+	$pos_text				=	$discovery_data['pos_text'];
+	$submit_date			=	$discovery_data['submit_date'];
+	$served					=	$discovery_data['served'];
+	$served_date			=	date("F d, Y",strtotime($served));
+	
+}
 
 if($response_id > 0)
 {
@@ -163,16 +195,6 @@ else
 	$verification_by_name	=	"";
 	$verification_datetime	=	"";
 	$verification_signed_by	=	"";
-}
-
-if($type == 1)//External
-{
-	$is_served				=	$discovery_data['is_served'];
-	$pos_text				=	$discovery_data['pos_text'];
-	$submit_date			=	$discovery_data['submit_date'];
-	$served					=	$discovery_data['served'];
-	$served_date			=	date("F d, Y",strtotime($served));
-	
 }
 
 

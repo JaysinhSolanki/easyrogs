@@ -1,7 +1,8 @@
 <?php
+require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 //dump($_SESSION);
-$case_id		=	$_GET['case_id'];
+$case_id		=	$_REQUEST['case_id'];
 $id				=	$_POST['id'];
 $addressbookid	=	$_SESSION['addressbookid'];
 $caseDetails	=	$AdminDAO->getrows("cases","*", "id = :case_id", array(":case_id"=>$case_id));
@@ -16,14 +17,39 @@ else
 	$enable			=	0;
 	$disabledClass	=	"disabled";
 }
+
+$sides = new Side();
+$currentSide = $sides->getByUserAndCase($currentUser->id, $case_id);
+
 if(isset($id) && $id>0)
 {
-	$clients	=	$AdminDAO->getrows("clients","*", "id = :id ", array(":id"=>$id));
-	echo json_encode($clients[0]);
+	$clients		=	$AdminDAO->getrows("clients","*", "id = :id ", array(":id"=>$id));
+	$client = $clients[0];
+	$clientSide = $sides->getByClientAndCase($id, $case_id);
+	if ( $client['client_type'] != Client::CLIENT_TYPE_PRO_PER) {
+		$client['client_type'] = $currentSide['id'] == $clientSide['id'] 
+														 ? Client::CLIENT_TYPE_US 
+														 : Client::CLIENT_TYPE_OTHER;
+	}    
+	if ($client['client_type'] === Client::CLIENT_TYPE_OTHER) {
+		unset($client['client_email']);
+	}
+	echo json_encode($client);
 }
 else
 {
 	$clients	=	$AdminDAO->getrows("clients","*", "case_id = :case_id ", array(":case_id"=>$case_id), "client_name", "ASC");
+	foreach($clients as &$client) {
+    if ( $client['client_type'] != Client::CLIENT_TYPE_PRO_PER) {
+      $client['client_type'] = $currentSide['id'] == $clientSide['id'] 
+                               ? Client::CLIENT_TYPE_US 
+                               : Client::CLIENT_TYPE_OTHER;
+    }    
+		$clientSide = $sides->getByClientAndCase($client['id'], $case_id);
+		if ($currentSide['id'] != $clientSide['id']) {
+			unset($client['client_email']);
+		}
+	}
 		//dump($clients);
 	?>
 	<table class="table table-bordered table-hover table-striped" id="table_clients" width="100%">
@@ -124,9 +150,9 @@ else
 				{
 				?>
                 <td>
-					<a href="javascript:;" title="Edit" onclick="editCaseClient(<?php echo $data['id']; ?>)"><i class="fa fa-edit fa-2x"></i>
+					<a href="javascript:;" title="Edit" onclick="editCaseClient(<?php echo $data['id']; ?>, <?= $case_id ?>)"><i class="fa fa-edit fa-2x"></i>
 						</a>
-					<a href="javascript:;" onclick="deleteCaseClient(<?php echo $data['id']; ?>)"><i class="fa fa-trash fa-2x" style="color:red"></i></a>
+					<a href="javascript:;" onclick="deleteCaseClient(<?php echo $data['id']; ?>, <?= $case_id ?>)"><i class="fa fa-trash fa-2x" style="color:red"></i></a>
 				</td> 
                 <?php
 				}

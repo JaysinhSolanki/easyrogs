@@ -27,8 +27,7 @@
   	<tr><th colspan="2"><h2 align="center"></h2></th></tr>
     <tr>
     	<td>
-            <?php //echo nl2br($masterhead);?> 
-            <?php echo "<br>$atorny_name<br>$atorny_firm<br>$atorny_address, $atorny_street<br>$atorny_city, $atorny_state_short $atorny_zip<br>$atorny_phone<br>$atorny_email"; ?>
+            <?php echo nl2br($masterhead);?> 
         </td>
     </tr>
     <tr> 

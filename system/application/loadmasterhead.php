@@ -144,7 +144,11 @@ if($atorny_email != "")
  
 $headText	=	str_replace("<NL>","\n",$headText)
 ?>
-<textarea style="width: 383px; height: 135px;resize: none;" placeholder="Masthead " class="form-control m-b"  name="masterhead" id="masterhead"><?php echo html_entity_decode($headText); ?></textarea>
+<?php 
+	$users = new User();
+	$masterHead = $users->getMasterHead($case_attorney);
+?>
+<textarea style="width: 383px; height: 135px;resize: none;" placeholder="Masthead " class="form-control m-b"  name="masterhead" id="masterhead"><?php echo html_entity_decode($masterHead); ?></textarea>
 <?php 
 
 //echo $headText;

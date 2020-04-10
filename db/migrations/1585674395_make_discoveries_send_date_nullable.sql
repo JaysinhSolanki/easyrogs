@@ -1,0 +1,5 @@
+START TRANSACTION;
+
+  ALTER TABLE `discoveries` CHANGE COLUMN `send_date` `send_date` DATETIME NULL;
+
+COMMIT;

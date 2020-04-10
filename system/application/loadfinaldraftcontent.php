@@ -49,7 +49,7 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 												 THEN
 													  f.form_instructions 
 												 ELSE
-													  d.discovery_instructions 
+													  d.discovery_instrunctions 
 												 END)
 												 as instructions 
 												',

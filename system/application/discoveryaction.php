@@ -311,8 +311,8 @@ else
 {
 	
 	$uid		=	$AdminDAO->generateuid('discoveries');
-	$fields		=	array('uid','type','discovery_name','case_id','form_id','attorney_id','set_number','propounding','responding','send_date','question_number_start_from','incidenttext','incidentoption','personnames2','personnames1');
-	$values		=	array($uid,$type,$discovery_name,$case_id,$form_id,$attorney_id,(int)$set_number,$propounding,$responding,$send_date,$question_number_start_from,$incidenttext,$incidentoption,$personnames2,$personnames1);	
+	$fields		=	array('uid','type','discovery_name','case_id','form_id','attorney_id','set_number','propounding','responding','question_number_start_from','incidenttext','incidentoption','personnames2','personnames1');//, 'name_prefix', 'proponding_attorney', 'propounding_uid', 'responding_uid', 'discovery_instrunctions', 'discovery_introduction', 'pos_state', 'pos_text', 'pos_city', 'pos_updated_by', 'pos_updated_at', 'is_served', 'declaration_text', 'declaration_updated_by', 'declaration_updated_at', 'in_conjunction', 'conjunction_with', 'conjunction_setnumber', 'interogatory_type', 'is_final_draft_created', 'finaldraft_instruction', 'dec_state', 'dec_city', 'parentid', 'grand_parent_id', 'response_create');
+	$values		=	array($uid,$type,$discovery_name,$case_id,(int)$form_id,$attorney_id,(int)$set_number,$propounding,$responding,$question_number_start_from,$incidenttext,(int)$incidentoption,$personnames2,$personnames1);//, $name_prefix, (int)$proponding_attorney, $propounding_uid, $responding_uid, $discovery_instrunctions, $discovery_introduction, $pos_state, $pos_text, $pos_city, (int)$pos_updated_by, date('Y-m-d H:i:s'), (int)$is_served, $declaration_text, (int)$declaration_updated_by, date('Y-m-d H:i:s'), (int)$in_conjunction, (int)$conjunction_with, (int)$conjunction_setnumber, (int)$interogatory_type, (int)$is_final_draft_created, $finaldraft_instruction, $dec_state, $dec_city,(int)$parentid, (int)$grand_parent_id, (int)$response_create);
 	if($type == 2)
 	{
 		$fields[]	=	"proponding_attorney";

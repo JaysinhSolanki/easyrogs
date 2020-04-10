@@ -22,9 +22,8 @@
     }
 
     public function byAddressBookId($addressBookId) {
-      return $this->getOrInsertBy('teams', [
-        'system_addressbook_id' => $addressBookId
-      ]);
+      $fields = ['system_addressbook_id' => $addressBookId];
+      return $this->getOrInsertBy('teams', $fields);
     }
 
     public function getMembers($teamId) {
@@ -46,7 +45,7 @@
       return $this->readQuery($query, [
         'team_id' => $teamId,
         'email'   => $email
-      ])['count'] > 0;
+      ])[0]['count'] > 0;
     }
 
     public function memberExists($teamId, $addressBookId) {
@@ -64,3 +63,5 @@
     }
 
   }
+
+  $teamsModel = new Team();

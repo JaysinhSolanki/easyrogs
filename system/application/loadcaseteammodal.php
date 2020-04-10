@@ -1,6 +1,7 @@
 <?php
-require_once("adminsecurity.php");
-$case_id			=	$_POST['case_id'];
+  require_once("adminsecurity.php");
+
+	$case_id			=	$_POST['case_id'];
 
 /**
 * Edit Case

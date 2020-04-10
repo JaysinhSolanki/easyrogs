@@ -32,6 +32,9 @@
 <script src="<?php echo VENDOR_URL;?>jquery.uploadfile.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
 
+<!-- easyrogs --> 
+<script src="/system/application/custom.js"></script>
+
 <script type="text/javascript">
 function loadToolTipForClientBtn(c_id='')
 {

@@ -52,8 +52,19 @@ $cases	=	$AdminDAO->getrows("cases c,attorneys_cases ac",
 //print_r($cases);
 //$AdminDAO->displayquery=0;
 
+// backward comp
+if ($sideCases) {
+	$caseIds = BaseModel::pluck($cases, 'id');
+	foreach($sideCases as $sideCase) {
+		if (!in_array("$sideCase[id]", $caseIds)) {
+			$cases[] = $sideCase;
+		}
+	}
+}
+$cases = $sideCases;
 ?>
 <div id="screenfrmdiv" style="display: block;">
+
 <div class="col-lg-12">
     <div class="hpanel">
         <div class="panel-heading" align="center">
@@ -74,11 +85,11 @@ $cases	=	$AdminDAO->getrows("cases c,attorneys_cases ac",
                 </table><?php */?>
                 </div>
                 <div class="col-md-8" align="right">
-                	<a href="javascript:;" class="btn btn-success" onclick="javascript: selecttab('46_tab','case.php','46');"><i class="fa fa-plus"></i> Add New Case</a>
+                	<a href="javascript:;" class="btn btn-success" onclick="javascript: selecttab('46_tab','get-case.php','46');"><i class="fa fa-plus"></i> Add New Case</a>
                 </div>
             </div>
             </div>
-            
+
             <div class="panel-body">
             	<div class="row">
                 <div class="col-md-12" style="margin-top:10px">
@@ -147,13 +158,13 @@ $cases	=	$AdminDAO->getrows("cases c,attorneys_cases ac",
                                     <td>
                                     <?php if($case['trial'] != "0000-00-00") {echo dateformat($case['trial']);} else{echo "-";}?>
                                     </td>
-                                    <td align="right">
-                                    <a href="javascript:;" class="btn btn-info" title="Edit case" id="newcase" onclick="javascript: selecttab('46_tab','case.php?id=<?php echo $case['id'];?>','46');"><i class="fa fa-edit"></i> Edit</a>
+                                    <td style="text-align: right">
+                                    <a href="javascript:;" class="btn btn-info" title="Edit case" id="newcase" onclick="javascript: selecttab('46_tab','get-case.php?id=<?php echo $case['id'];?>','46');"><i class="fa fa-edit"></i> Edit</a>
                                     <?php
 									/*if($isowner==1)
 									{
 									?>
-                                    <a href="javascript:;" class="btn btn-info" title="Edit case" id="newcase" onclick="javascript: selecttab('46_tab','case.php?id=<?php echo $case['id'];?>','46');"><i class="fa fa-edit"></i> Edit</a>
+                                    <a href="javascript:;" class="btn btn-info" title="Edit case" id="newcase" onclick="javascript: selecttab('46_tab','get-case.php?id=<?php echo $case['id'];?>','46');"><i class="fa fa-edit"></i> Edit</a>
 									<?php
 									}
 									else
@@ -181,15 +192,5 @@ $cases	=	$AdminDAO->getrows("cases c,attorneys_cases ac",
 </div>
 <script src="<?php echo VENDOR_URL; ?>sweetalert.min.js"></script>
 <script>
-$(function () 
-{
-	/*$('#datatable').dataTable(
-	{
-		"searching": false,
-		"paging":   false,
-		"ordering": false,
-		"info":     false
-	});*/
-});
-
+	erInviteControl();
 </script>

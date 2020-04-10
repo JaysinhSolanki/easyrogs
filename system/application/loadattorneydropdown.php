@@ -77,7 +77,7 @@ foreach($catTypes as $catType)
         <table class='table'>
         <tr><th>Select</th><th>Client</th><th>Role</th></tr>
         <?php
-		if(sizeof($arrayClients[$catType]) > 0)
+		if($arrayClients && sizeof($arrayClients[$catType]) > 0)
 		{
 			foreach($arrayClients[$catType] as $client_data)
 			{

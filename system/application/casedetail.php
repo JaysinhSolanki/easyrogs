@@ -74,7 +74,7 @@ body.modal-open
             	<div class="col-md-1"></div>
                 <div class="col-md-10">
                 	<h4>Case Details <small class="pull-right"><?php
-                        buttoncancel(44,'cases.php');
+                        buttoncancel(44,'get-cases.php');
                     ?> </small></h4>
                     
                     <hr />
@@ -252,7 +252,7 @@ body.modal-open
             <div class="form-group row">
             	<div class="col-sm-offset-3 col-sm-8" align="right"> 
 					<?php
-                        buttoncancel(44,'cases.php');
+                        buttoncancel(44,'get-cases.php');
                     ?> 
                 </div>
             </div>
@@ -286,9 +286,3 @@ body.modal-open
 
   </div>
 </div>
-<script src="custom.js"></script>
-
-
-
-
-

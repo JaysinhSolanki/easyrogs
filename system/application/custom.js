@@ -4,8 +4,7 @@ FORMAT_JSON = 'json';
 FORMAT_HTML = 'html';
 
 getTeam = (success, error, format = FORMAT_HTML) => {
-	$.get( API_BASE + '/get-team.php', {format: format}, success)
-	 .fail(error);
+	$.get( API_BASE + '/get-team.php', {format: format}, success).fail(error);
 }
 
 deleteTeamMember = (memberId, success, error) => {
@@ -14,10 +13,18 @@ deleteTeamMember = (memberId, success, error) => {
 }
 
 addTeamMember = (memberId, name, email, success, error) => {
-	$.post( API_BASE + '/add-team-member.php', 
+	$.post( API_BASE + '/post-team-member.php', 
 		{memberId: memberId, name: name, email: email}, 
-		success, 'json'
+		success, FORMAT_JSON
 	).fail(error)
+}
+
+getTeamAttorneys = (success, error) => {
+	$.get( API_BASE + '/get-team-attorneys.php', success).fail(error);
+}
+
+getAttorney = (id, success, error) => {
+	$.get( API_BASE + '/get-attorney.php', {id: id}, success, FORMAT_JSON).fail(error);
 }
 
 confirmAction = (options) => {
@@ -33,7 +40,98 @@ confirmAction = (options) => {
 	});
 }
 
-// LEGACY
+// .er-invite
+const erInviteControl = (selector = '.er-invite') => {
+	$(selector).each((idx, elm) => {
+		const fieldPrefix = $(elm).data('fieldPrefix') || 'user';
+		const placeHolder = $(elm).data('placeHolder') || 'Find users by Name or Bar Number. Start typing...';
+		const filters = $(elm).data('filters');
+		const inviteOnly = $(elm).data('inviteOnly');
+		const idSuffix = Date.now();
+		const formId = `er-invite-form-${idSuffix}`;
+		const selectId = `er-invite-select-${idSuffix}`;
+		const ctaId = `er-invite-cta-${idSuffix}`
+		const btnClass = `er-invite-btn-${idSuffix}`;
+
+		$(elm).html(`
+			<div  id="er-invite-${idSuffix}">
+				<select class="form-control m-b attr_names" name="${fieldPrefix}_id" id="${selectId}"></select>
+				<div style="float: right; margin-top: 3px" id="${ctaId}">
+					<span style="font-size: 11px;">Can't find the user?</span> <button  type="button" class="${btnClass} btn btn-xs btn-warning">Send Invite &raquo;</button>
+				</div>
+			</div>  
+			<div class="row invite-member-form" id="${formId}">
+				<div class="form-group col-md-6">
+					<input type="text" placeholder="Name" class="form-control" name="${fieldPrefix}_name" />
+				</div>
+				<div class="form-group col-md-6">
+					<input type="text" placeholder="Email" class="form-control"  name="${fieldPrefix}_email" />
+				</div>  
+			</div>
+		`);
+		$(`#${selectId}`).select2({
+			placeholder: placeHolder,
+			ajax: {
+				url: API_BASE + `/search-users.php?${filters}`,
+				dataType: FORMAT_JSON,
+				delay: 250,
+				allowClear: true,
+			},
+			width: '100%',
+			language: {
+				noResults: () => `No Results Found <button  type="button" class="btn btn-xs btn-warning ${btnClass}">Send Invite &raquo;</button>`,
+			},
+			escapeMarkup: (markup) => markup
+		}).on('select2:select', (e) => {
+			if ($(e.target).val()) {
+				$(`#${ctaId}`).show();
+				$(`#${formId}`).hide();
+			}
+		});
+		$(document).on( 'click', `.${btnClass}`, () => {
+			$(`#${ctaId}`).hide();
+			$(`#${formId}`).show();
+			$(`#${selectId}`).val(null).trigger('change.select2').select2('close');
+			$(`#${formId} .form-control:first`).focus();        
+		});
+		if ( inviteOnly ) {
+			$(`#${formId}`).show();
+			$(`#er-invite-${idSuffix}`).hide();
+		}
+	});
+};
+	
+// .er-team-attorney-select
+const erTeamAttorneySelectControl = (done = null, selector = '.er-team-attorney-select') => {
+	getTeamAttorneys(
+		(response) => {
+			const attorneys = JSON.parse(response);
+			$(selector).each((idx, elm) => {
+				$(elm).html('');
+				$.each(attorneys, (idx, attorney) => {
+					$(elm).append(`
+						<option value="${attorney['id']}" ${attorney['id'] == $(elm).data('value') ? 'selected="selected"' : ''}>
+							${attorney['full_name']}
+						</option>
+					`);
+				});
+			});
+			done && done();
+		},
+		(e) => console.error(e),
+	)
+}
+  
+const showResponseMessage = (response) => {
+  switch(response.type) {
+    case 'warning': toastr.warning(response.msg); break;
+    case 'info': toastr.info(response.msg); break;
+    case 'success': toastr.success(response.msg); break;
+    case 'error': toastr.error(response.msg); break;
+  }
+}
+
+// LEGACY ----------------------------------------------------------------------
 function loadAttoneysFunction(case_id,attorney_type,loaddiv)
 {
 	//alert(case_id+" "+attorney_type);
@@ -110,9 +208,9 @@ function editAttorney(id,attorney_type,case_id)
 		//addcaseteam(id);
 	}
 }
-function editCaseClient(id)
+function editCaseClient(id, caseId)
 {
-	addparty(id);
+	addparty(id, caseId);
 }
 function addNewCaseTeamAttorney(case_id)
 {
@@ -147,7 +245,7 @@ function addNewCaseTeamAttorney(case_id)
 			}
 			else
 			{
-				loadCaseAttorneys(obj.case_id);
+				//loadCaseAttorneys(obj.case_id);
 				loadAttoneysFunction(obj.case_id,3,"loadattoneys3");	
 			}
 			$('#modalcaseteam').modal('toggle');
@@ -164,10 +262,9 @@ function addAttorney(case_id,attorney_type)
 	var attorney_email	=	$("#attorney_email").val();
 	//var client_id		=	$("#client_id").val();
 	var client_id 		= 	$("input[name='client_id[]']:checked").map(function(){return $(this).val();}).get();
-	console.log(client_id);
 	var editattorney_id	=	$("#editattorney_id").val();
 	$("#msgAttr").html("");
-	$.post( "addattorney.php", { attorney_email: attorney_email, attorney_name: attorney_name,client_id:client_id,attorney_type:attorney_type,case_id: case_id,editattorney_id:editattorney_id}).done(function( data ) 
+	$.post( "post-service-list-user.php", { attorney_email: attorney_email, attorney_name: attorney_name,client_id:client_id,attorney_type:attorney_type,case_id: case_id,editattorney_id:editattorney_id}).done(function( data ) 
 	{
 		var obj = JSON.parse(data); 
 		if(obj.type == "success")
@@ -178,8 +275,8 @@ function addAttorney(case_id,attorney_type)
 			var loaddiv;
 			if(obj.attorney_type == 2)
 			{
-				//attDropdownFunction();
-				loadClientsFunction(obj.case_id);	
+				attDropdownFunction();
+				//loadClientsFunction(obj.case_id);	
 				loaddiv	=	"loadattoneys2";
 			}
 			else if(obj.attorney_type == 3)
@@ -191,12 +288,13 @@ function addAttorney(case_id,attorney_type)
 				loaddiv	=	"loadattoneys";
 			}
 			loadAttoneysFunction(obj.case_id,obj.attorney_type,loaddiv);
+			loadCasePeople(case_id);
 		}
 		else
 		{
 			$("#msgAttr").html(obj.msg);
 		}
-	}); 
+	}).fail((response) => showResponseMessage(JSON.parse(response.responseText))); 
 }
 /*function addMyAttorneyToCase(attorney_id,case_id)
 {

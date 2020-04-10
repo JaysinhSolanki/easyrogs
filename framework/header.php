@@ -58,7 +58,15 @@ navbar.navbar-static-top a, .nav.navbar-nav li a {
 </style>
 <div id="header" class="" style="background-color:#f7f9fa">
     <div class="color-line"> </div>
-    <div id="logo" class="light-version"> <h4 style="color:#34495e; font-size:17px; font-weight:600; "><a class="mylogo f32" href="index.php"><?php echo $systemmaintitle;?></a></h4> </div>
+    <div id="logo" class="light-version"> 
+        <h4 style="color:#34495e; font-size:17px; font-weight:600; ">
+            <a class="mylogo f32" href="index.php">
+                <?php echo $systemmaintitle;?> 
+                <?php if ($_ENV['APP_ENV'] !== 'prod'): ?>
+                  <div style="font-family: Arial; color: white; font-size: 12px; display: inline-block; background-color: red; padding: 3px; text-transform: uppercase"><?= $_ENV['APP_ENV'] ?></div>
+                <?php endif; ?>
+            </a>
+        </h4> </div>
     <nav role="navigation">
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
@@ -69,7 +77,7 @@ navbar.navbar-static-top a, .nav.navbar-nav li a {
                 </li>
             	<li class="dropdown"  id="profile-right">
                 	<h4 style="color:#34495e !important; font-size:12px !important; font-weight:500 !important; padding-top:10px; margin-right:20px;">  
-                        <a href="javascript:void(0);" onclick="selecttab('44_tab','cases.php','44');"><b>Cases</b></a> 
+                        <a href="javascript:void(0);" onclick="selecttab('44_tab','get-cases.php','44');"><b>Cases</b></a> 
                     </h4>
                 </li>
             	<li class="dropdown"  id="profile-right">
@@ -79,7 +87,7 @@ navbar.navbar-static-top a, .nav.navbar-nav li a {
                 </li>
                 <li class="dropdown"  id="profile-right">
                 	<h4 style="color:#34495e !important; font-size:12px !important; font-weight:500 !important; padding-top:10px; margin-right:20px;">  
-                        <a href="javascript:;" onclick="javascript: selecttab('8_tab','<?php echo FRAMEWORK_URL; ?>profile.php','8');">
+                        <a href="javascript:;" onclick="javascript: selecttab('8_tab','/system/application/get-profile.php','8');">
  	                       <b>My Profile</b>
                         </a>
                     </h4>

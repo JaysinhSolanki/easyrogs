@@ -23,7 +23,22 @@ $cases	=	$AdminDAO->getrows(
 								array(
 										":attorney_id"=>$_SESSION['addressbookid']
 									 )
-							  );
+								);
+
+$casesModel = new CaseModel();
+$sideCases = $casesModel->getByUser($currentUser->id);
+
+// backward comp
+if ($sideCases) {
+	$caseIds = BaseModel::pluck($cases, 'id');
+	foreach($sideCases as $sideCase) {
+		if (!in_array("$sideCase[id]", $caseIds)) {
+			$cases[] = $sideCase;
+		}
+	}
+}
+
+															
 //dump($cases);
 ?>
 
@@ -54,18 +69,18 @@ $cases	=	$AdminDAO->getrows(
 								if(sizeof($cases) > 0)
 								{
 								?>
-                                <li><a href="javascript:;" onclick="javascript: selecttab('44_tab','cases.php','44');">Work on Cases.</a></li>
+                                <li><a href="javascript:;" onclick="javascript: selecttab('44_tab','get-cases.php','44');">Work on Cases.</a></li>
                                 <?php
 								}
                                 else
                                 {
 								?>
-                                 <li><a href="javascript:;" onclick="javascript: selecttab('46_tab','case.php','46');">Work on Cases.</a></li>
+                                 <li><a href="javascript:;" onclick="javascript: selecttab('46_tab','get-case.php','46');">Work on Cases.</a></li>
                                 <?php
                                	}
                                 ?>
-                                <li><a href="javascript:;" onclick="javascript: selecttab('8_tab','profile.php','8');">Edit My Profile.</a></li>
-                                <li><a href="javascript:;" onclick="javascript: selecttab('44_tab','cases.php','44');">Logout.</a></li>
+                                <li><a href="javascript:;" onclick="javascript: selecttab('8_tab','/system/application/get-profile.php','8');">Edit My Profile.</a></li>
+                                <li><a href="javascript:;" onclick="javascript: selecttab('44_tab','get-cases.php','44');">Logout.</a></li>
                             </ul>
                         </div>
                     </div>
@@ -80,13 +95,13 @@ $(document).ready(function(){
 	if(sizeof($cases) > 0)
 	{
 	?>
-	selecttab('44_tab','cases.php','44');
+	selecttab('44_tab','get-cases.php','44');
 	<?php
 	}
 	else
 	{
 	?>
-	selecttab('46_tab','case.php','46');
+	selecttab('46_tab','get-case.php','46');
 	<?php
 	}
 	?>

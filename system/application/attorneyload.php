@@ -19,27 +19,30 @@ else
 }
 if($attorney_type == 1)
 {
-	$attorneys		=	$AdminDAO->getrows("attorney","*", "fkaddressbookid = :fkaddressbookid AND attorney_type = :attorney_type", array(":fkaddressbookid"=>$fkaddressbookid,":attorney_type"=>$attorney_type), "attorney_name", "ASC");
+	$attorneys = $AdminDAO->getrows(
+		"attorney", "*", 
+		"fkaddressbookid = :fkaddressbookid AND attorney_type = :attorney_type", 
+		[":fkaddressbookid" => $fkaddressbookid, ":attorney_type" =>$attorney_type], 
+		"attorney_name", "ASC"
+	);
 }
 else if($attorney_type == 2)
 {
-/*
-	$attorneys			=	$AdminDAO->getrows("attorney",
-										"attorney.*", 
-										"case_id 		= 	:case_id 	AND 
-										attorney_type	=	2 			AND
-										attorney_email 	!= 	:owner_email GROUP BY attorney_email", 
-										array(":case_id"=>$case_id,":owner_email" => $_SESSION['loggedin_email']),"attorney_name", "ASC");
-*/
-    $attorneys			=	$AdminDAO->getrows("attorney",
-										"attorney.*", 
-										"case_id 		= 	:case_id 	AND 
-										attorney_type	=	2", 
-										array(":case_id"=>$case_id),"attorney_name", "ASC");
+	$attorneys = $AdminDAO->getrows(
+		"attorney", "attorney.*", 
+		"case_id = :case_id AND attorney_type	=	2 GROUP BY attorney_email", 
+		[":case_id" => $case_id],
+		"attorney_name", "ASC"
+	);
 }
 else if($attorney_type == 3)
 {
-	$attorneys		=	$AdminDAO->getrows("attorney a ,case_team ct","a.*,ct.id as case_team_id", "ct.attorney_id = a.id AND ct.fkcaseid = :case_id AND ct.is_deleted  = 0 AND a.fkaddressbookid = :fkaddressbookid", array(":case_id"=>$case_id,":fkaddressbookid"=>$fkaddressbookid), "attorney_name", "ASC");
+	$attorneys = $AdminDAO->getrows(
+		"attorney a, case_team ct", "a.*, ct.id AS case_team_id", 
+		"ct.attorney_id = a.id AND ct.fkcaseid = :case_id AND ct.is_deleted = 0 AND a.fkaddressbookid = :fkaddressbookid", 
+		[":case_id" => $case_id, ":fkaddressbookid" => $fkaddressbookid],
+		"attorney_name", "ASC"
+	);
 }
 
 if($attorney_type == 3)

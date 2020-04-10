@@ -1,5 +1,8 @@
 <?php
-@session_start();
+@session_start(); 
+
+require_once __DIR__ . '/../bootstrap.php';
+
 require_once("adminsecurity.php");
 $id             =   @$_GET['id'];
 $supp       =   @$_GET['supp'];
@@ -100,79 +103,92 @@ if ($id != '') {
 	Manage Proponding  and Responding Clients
 ****************************************/
 
-if (empty($checkOwnerCase) && !empty($isServiceListMember)) {
-    $client_attorney_id     =   array();
-    if (!empty($isServiceListMember)) {
-        foreach ($isServiceListMember as $isServiceListMemberData) {
-            $client_attorney_id[]   =   $isServiceListMemberData['client_attorney_id'];
-        }
-    }
+$currentSide = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
 
-    $sl_attorney_id     =   implode(",", $client_attorney_id);
+$ownClients 	= $sidesModel->getClients($currentSide['id']);
+$otherClients = $sidesModel->getOtherClients($currentSide['id'], $case_id);
+
+// DEPRECATION ROW (sides) ---------------------------------------------------
+// if(empty($checkOwnerCase) && !empty($isServiceListMember))
+// {	
+// 	$client_attorney_id	=	array();
+// 	if(!empty($isServiceListMember))
+// 	{
+// 		foreach($isServiceListMember as $isServiceListMemberData)
+// 		{
+// 			$client_attorney_id[]	=	$isServiceListMemberData['client_attorney_id'];
+// 		}
+// 	}
+	
+// 	$sl_attorney_id	=	implode(",",$client_attorney_id);
+	
+	
+// 	$clientsData	=	$AdminDAO->getrows("clients c,client_attorney ca",
+// 													"c.*", 
+// 													"c.id		=	ca.client_id AND 
+// 													ca.id 		IN ($sl_attorney_id)", 
+// 													array());
+	
+// 	//dump($clientsData);
+// 	$myclients		=	array();
+// 	foreach($clientsData as $cdata)
+// 	{
+// 		$myclientIds[]	=	$cdata['id'];
+// 		$myclients[]	=	array("client_type"=>$cdata['client_type'],"client_name"=>$cdata['client_name']);
+// 		$myclientType	=	$cdata['client_type'];
+// 	}
+// 	if(!empty($myclientIds))
+// 	{
+// 		$myclientsIdsList	=	implode(",",$myclientIds);
+// 	}
+// 	/*if($myclientType == "Others")
+// 	{
+// 		$otherWhere	=	" client_type IN ('Us','Pro per') AND id NOT IN ($myclientsIdsList) ";
+// 	}
+// 	else
+// 	{
+// 		$otherWhere	=	" client_type IN ('Others') AND id NOT IN ($myclientsIdsList) ";
+// 	}*/
+// 	$otherWhere		=	" id NOT IN ($myclientsIdsList) ";
+// 	$ownclients		=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND id IN ($myclientsIdsList)", array(":case_id"=>$case_id), "client_name", "ASC");
+	
+// 	$otherclients	=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND $otherWhere ", array(":case_id"=>$case_id), "client_name", "ASC");
 
 
-    $clientsData    =   $AdminDAO->getrows(
-        "clients c,client_attorney ca",
-        "c.*",
-        "c.id		=	ca.client_id AND 
-													ca.id 		IN ($sl_attorney_id)",
-        array()
-    );
+// 	if($type == 1) //External
+// 	{
+// 		$propondingClients	=	$ownclients;
+// 		$respondingClients	=	$otherclients;
+	
+// 	}
+// 	else if($type == 2) //Internal
+// 	{
+// 		$propondingClients	=	$otherclients;
+// 		$respondingClients	=	$ownclients;
+// 	}
+		
+// }
+// else
+// {
+// 	$ownclients		=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND client_type IN ('Us','Pro per')", array(":case_id"=>$case_id), "client_name", "ASC");
+// 	$otherclients	=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND client_type IN ('Others')", array(":case_id"=>$case_id), "client_name", "ASC");
+// ------------------------------------------------
 
-    //dump($clientsData);
-    $myclients      =   array();
-    foreach ($clientsData as $cdata) {
-        $myclientIds[]  =   $cdata['id'];
-        $myclients[]    =   array("client_type"=>$cdata['client_type'],"client_name"=>$cdata['client_name']);
-        $myclientType   =   $cdata['client_type'];
-    }
-    if (!empty($myclientIds)) {
-        $myclientsIdsList   =   implode(",", $myclientIds);
-    }
-    /*if($myclientType == "Others")
+	if($type == 1) //External
 	{
-		$otherWhere	=	" client_type IN ('Us','Pro per') AND id NOT IN ($myclientsIdsList) ";
+		$propondingClients	=	$ownClients;
+		$respondingClients	=	$otherClients;
+	
 	}
-	else
+	else if($type == 2) //Internal
 	{
-		$otherWhere	=	" client_type IN ('Others') AND id NOT IN ($myclientsIdsList) ";
-	}*/
-    $otherWhere         =   " id NOT IN ($myclientsIdsList) ";
-    $ownclients         =   $AdminDAO->getrows("clients", "*", "case_id=:case_id AND id IN ($myclientsIdsList)", array(":case_id"=>$case_id), "client_name", "ASC");
+		$propondingClients	=	$otherClients;
+		$respondingClients	=	$ownClients;
+	}
 
-    $otherclients   =   $AdminDAO->getrows("clients", "*", "case_id=:case_id AND $otherWhere ", array(":case_id"=>$case_id), "client_name", "ASC");
-    if ($type == 1) { //External
-        $propondingClients  =   $ownclients;
-        $respondingClients  =   $otherclients;
-    } elseif ($type == 2) { //Internal
-        $propondingClients  =   $otherclients;
-        $respondingClients  =   $ownclients;
-    }
-} else {
-    $ownclients         =   $AdminDAO->getrows("clients", "*", "case_id=:case_id AND client_type IN ('Us','Pro per')", array(":case_id"=>$case_id), "client_name", "ASC");
-    $otherclients   =   $AdminDAO->getrows("clients", "*", "case_id=:case_id AND client_type IN ('Others')", array(":case_id"=>$case_id), "client_name", "ASC");
-
-    if ($type == 1) { //External
-        $propondingClients  =   $ownclients;
-        $respondingClients  =   $otherclients;
-    } elseif ($type == 2) { //Internal
-        $propondingClients  =   $otherclients;
-        $respondingClients  =   $ownclients;
-    }
-}
-/*echo "<br><br><br><br><br><br>";
-echo "<pre>";
-echo "<h1>Proponding List</h1>";
-print_r($propondingClients);
-echo "<h1>Responding List</h1>";
-print_r($respondingClients);
-exit;*/
-
-
-
-
-
-
+// DEPRECATION ROW (sides) ------------------------------------------------
+// }
+// ------------------------------------------------
 
 /****************************************
 	Load Documents Array if Form 5 case

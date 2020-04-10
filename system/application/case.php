@@ -41,33 +41,11 @@ if($id > 0)
 	$attorney_id	=	$case['attorney_id'];
 	$pagetitle	=	$casename;
 	$loggedin_email		=	$_SESSION['loggedin_email'];
-	$iscaseteammember	=	$AdminDAO->getrows("attorney a,case_team ct",
-															"ct.id",
-															"a.id 				= 	ct.attorney_id 	AND 
-															ct.is_deleted 		= 	0 				AND 
-															ct.fkcaseid 		= 	:fkcaseid 		AND 
-															a.attorney_email 	= 	:email",
-															array("email"=>$loggedin_email,"fkcaseid"=>$id));
+	
 	/*
 	* Check Owner is logged in or not
 	*/
 	
-	if($attorney_id == $_SESSION['addressbookid'])
-	{
-		$caseowner			=	1;
-	}
-	else
-	{
-		$caseowner			=	0;
-	}
-	if(!empty($iscaseteammember))
-	{
-		$caseteammember		=	1;
-	}
-	else
-	{
-		$caseteammember		=	0;
-	}
 	if($case_attorney == $_SESSION['loggedin_email'])
 	{
 		$caseteamattorney	=	1;
@@ -104,7 +82,11 @@ if($pagetitle == "")
 }
 $states		=	$AdminDAO->getrows('system_state','*',"fkcountryid = :fkcountryid AND statecode = 'CA' ",array(":fkcountryid"=>254), 'statename', 'ASC');
 $counties	=	$AdminDAO->getrows('system_county','*',"",array(), 'countyname', 'ASC');
-$parties	=	$AdminDAO->getrows("clients","*", "case_id = :case_id ", array(":case_id"=>$id), "client_name", "ASC");
+
+$cases = new CaseModel();
+$parties = $cases->getClients($id);
+
+$parties =	array_merge($parties, $AdminDAO->getrows("clients","*", "case_id = :case_id ", array(":case_id"=>$id), "client_name", "ASC"));
 //$brokercompanies	=	$AdminDAO->getrows('broker_companies','*');
 
 
@@ -168,8 +150,8 @@ body.modal-open
             	<div class="col-md-3"></div>
                 <div class="col-md-3" align="left"> 
 				<?php
-					buttonsave('caseaction.php','clientform','wrapper','cases.php?pkscreenid=44',0);
-					buttoncancel(44,'cases.php');
+					buttonsave('caseaction.php','clientform','wrapper','get-cases.php?pkscreenid=44',0);
+					buttoncancel(44,'get-cases.php');
 					
 					?> 
                 </div>
@@ -195,10 +177,12 @@ body.modal-open
             <div class="row">
             	<div class="col-md-1"></div>
                 <div class="col-md-2">
-                    <label>Number<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+                    <label>Number<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                 </div>
                 <div class="col-md-3">
                     <input type="text" placeholder="Number" class="form-control m-b"  name="case_number" id="case_number" value="<?php echo htmlentities($case['case_number']); ?>" <?php echo $disabledClass; ?>>
+                </div>
+                <div class="col-md-6">
                 </div>
                 <!--<div class="col-md-2">
                     <label>Filed<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
@@ -207,7 +191,7 @@ body.modal-open
                     <input type="text"  name="filed" id="filed" placeholder="Filed Date" class="form-control m-b datepicker" value="<?php echo $case['date_filed']=='0000-00-00'?'':dateformat($case['date_filed']);?>" <?php echo $disabledClass; ?>>
                 </div>
                 <div class="col-md-1"></div>-->
-            </div>
+							</div>
             
             <div class="row">
             	<div class="col-md-1"></div>
@@ -269,24 +253,43 @@ body.modal-open
                 </div>
                 <div class="col-md-1"></div>
             </div>
-            
-            <div class="row" style="margin-bottom:10px">
-            	<div class="col-md-1"></div>
-                <div class="col-md-2">
-                    <label>Trial<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+						
+						<?php if ($caseowner): ?>
+							<div class="row" style="margin-bottom:10px">
+								<div class="col-md-1"></div>
+									<div class="col-md-2">
+											<label>Trial<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+									</div>
+									<div class="col-md-3">
+											<input type="text"  onchange="calculated_discovery_cutoff_date(this.value)" name="trial" id="trial" placeholder="Trial Date" class="form-control m-b datepicker" value="<?php echo $case['trial']=='0000-00-00'?'':dateformat($case['trial']);?>" <?php echo $disabledClass; ?> data-date-start-date="0d" data-date-end-date="+5y">
+									</div>
+									<div class="col-md-2">
+										<label>Discovery Cutoff<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+									</div>
+									<div class="col-md-3">
+											<input type="text"  name="discovery_cutoff" id="discovery_cutoff" placeholder="Discovery Cutoff" class="form-control datepicker" value="<?php echo $case['discovery_cutoff']=='0000-00-00'?'':dateformat($case['discovery_cutoff']);?>" <?php echo $disabledClass; ?> data-date-start-date="0d" data-date-end-date="+5y">
+										<i class="fa fa-university" aria-hidden="true"></i> Code Civ.Proc., &sect;&sect; 2016.060 <?php  echo instruction(12) ?>, 2024.020 <?php  echo instruction(13) ?>.
+									</div>
+									<div class="col-md-1"></div>
+								</div>
+						<?php endif; ?>		
+						
+						<div class="row">
+							<div class="col-md-1"></div>
+							<div class="col-md-2">
+                    <label>Primary Attorney<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text"  onchange="calculated_discovery_cutoff_date(this.value)" name="trial" id="trial" placeholder="Trial Date" class="form-control m-b datepicker" value="<?php echo $case['trial']=='0000-00-00'?'':dateformat($case['trial']);?>" <?php echo $disabledClass; ?> data-date-start-date="0d" data-date-end-date="+5y">
-                </div>
+									<select class="er-team-attorney-select form-control" name="case_attorney" id="case_attorney" data-value="<?= $currentPrimaryAttorneyId ?>" <?php echo $disabledClass; ?>></select>
+								</div>
                 <div class="col-md-2">
-                    <label>Discovery Cutoff<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+                    <label>Masthead<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text"  name="discovery_cutoff" id="discovery_cutoff" placeholder="Discovery Cutoff" class="form-control datepicker" value="<?php echo $case['discovery_cutoff']=='0000-00-00'?'':dateformat($case['discovery_cutoff']);?>" <?php echo $disabledClass; ?> data-date-start-date="0d" data-date-end-date="+5y">
-                	<i class="fa fa-university" aria-hidden="true"></i> Code Civ.Proc., &sect;&sect; 2016.060 <?php  echo instruction(12) ?>, 2024.020 <?php  echo instruction(13) ?>.
+                  <textarea name="masterhead" class="form-control" cols="50" rows="7" wrap="off" style="overflow: hidden"><?= $currentSide ? $currentSide['masterhead'] : '' ?></textarea>
                 </div>
                 <div class="col-md-1"></div>
-            </div>
+            	</div>
             
             <?php /*?><div class="row">
             	<div class="col-md-1"></div>
@@ -305,28 +308,43 @@ body.modal-open
                 <div class="col-md-1"></div>
             </div><?php */?>
              <hr />
+						 
            	<?php
 			if($owner == 1)
 			{
 			?>
             <div class="row">
             <div class="col-md-11" style="text-align:right">
-                <a href="javascript:;"  class="pull-right btn btn-success btn-small" onclick="addparty()" style="margin-bottom:10px !important"><i class="fa fa-plus"></i> Add New</a>
+                <a href="javascript:;"  class="pull-right btn btn-success btn-small" onclick="addparty('', <?= $id ?>)" style="margin-bottom:10px !important"><i class="fa fa-plus"></i> Add New</a>
             </div>
             <div class="col-md-1"></div>
             </div>
             <?php
 			}
 			?>
-            
             <div class="row">  
                 <div class="col-md-1"></div>
                 <div class="col-md-2">
                     <label>Parties</label>
                 </div>
-                <div class="col-md-8" id="loadclients">
-                    
+                <div class="col-md-8" id="loadclients"></div>
+								
+                <div class="col-md-1"></div>
+            </div>
+            <br />
+            <div class="row">
+            	<div class="col-md-11" style="text-align:right">
+                <a href="javascript:;"  class="pull-right btn btn-success btn-small" id="add-user-btn" style="margin-bottom:10px !important"><i class="fa fa-plus"></i> Add New</a>
+            	</div>
+            	<div class="col-md-1"></div>
+            </div>
+
+            <div class="row">  
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <label>Team</label>
                 </div>
+                <div class="col-md-8" id="loadusers"></div>
                 <div class="col-md-1"></div>
             </div>
             <br />
@@ -411,6 +429,10 @@ body.modal-open
             <?php
 			}*/
 			?>
+						 <div class="container" >
+							 <div id="sides-container">
+						 </div>
+
             
             <input type="hidden" name="id" value ="<?php echo $id;?>" />
             <input type="hidden" name="uid" value ="<?php echo $uid;?>" />
@@ -422,8 +444,8 @@ body.modal-open
             <div class="form-group">
             	<div class="col-sm-offset-3 col-sm-3" align="left">
 				<?php
-					buttonsave('caseaction.php','clientform','wrapper','cases.php?pkscreenid=44',0);
-					buttoncancel(44,'cases.php');
+					buttonsave('caseaction.php','clientform','wrapper','get-cases.php?pkscreenid=44',0);
+					buttoncancel(44,'get-cases.php');
 					?> 
                 
                 </div>
@@ -479,11 +501,11 @@ body.modal-open
       <div class="modal-body">
         <div class="form-group">
         	<input type="hidden" id="party_client_id" name="party_client_id" value="" />
-            <label for="caseteam_attr_name">Name</label>
+            <label for="caseteam_attr_name">Name</label><span class="redstar" style="color:#F00" title="This field is compulsory">*</span>
             <input type="text" placeholder="Party Name" class="form-control m-b"  name="client_name" id="client_name">
         </div>
         <div class="form-group">
-            <label for="caseteam_attr_email">Role</label>
+            <label for="caseteam_attr_email">Role</label><span class="redstar" style="color:#F00" title="This field is compulsory">*</span>
             <select name="clientroles" id="clientroles" class="form-control">
                 <option value="">Party Role</option>
                 <option value="Plaintiff">Plaintiff</option>
@@ -493,26 +515,24 @@ body.modal-open
             </select>
         </div>
         <div class="form-group">
-            <label for="caseteam_attr_name">Representation</label>
+            <label for="caseteam_attr_name">Representation</label><span class="redstar" style="color:#F00" title="This field is compulsory">*</span>
             <select name="clienttypes" id="clienttypes" class="form-control" onchange="addAttryFunction(this.value)">
-                <option value="">Who represents this Party?</option>
-                <option value="Us">Us</option>
-                <option value="Others">Another Attorney</option>
-                <option value="Pro per">Pro per</option>
-                
+							<option value="">Who represents this Party?</option>
+							<option value="Us">Us</option>
+							<option value="Others">Another Attorney</option>
+							<option value="Pro per">Pro per</option>
             </select>
         </div>
-        <div class="form-group" id="div_attr_email" style="display:none;">
-            <label for="caseteam_attr_name">Email</label>
-            <input type="text" placeholder="Party Email" class="form-control m-b"  name="client_email" id="client_email" >
+        <div class="form-group" id="div_attr" style="display:none;">
+					<label for="caseteam_attr_name">Attorney:</label><span class="redstar" style="color:#F00" title="This field is compulsory">*</span>
+					<select class="er-team-attorney-select form-control" name="primary_attorney_id" id="primary_attorney_id" value="<?= $currentPrimaryAttorneyId ?>"></select>
         </div>
-        <?php /*?><div class="form-group" id="div_attr" style="display:none;">
-            <label for="caseteam_attr_name">Attorney:</label>
-            <select name="other_attorney_id[]" id="other_attorney_id" style="width:100%" class="form-control  m-b loadattr select2-multiple" multiple="multiple">
-            	<option value="">Select Attorney</option>
-            </select>
-        </div><?php */?>
+				<div class="form-group" style="display: none" id="div_attr_email">
+					<label for="caseteam_attr_name">Email</label><span class="redstar" style="color:#F00" title="This field is compulsory">*</span>
+					<input type="text" placeholder="Party Email" class="form-control m-b"  name="client_email" id="client_email" >
+				</div>
       </div>
+
       <div class="modal-footer">
         <a class="btn btn-success" href="javascript:;" onclick="addCaseClient(<?php echo $id; ?>)"><i class="fa fa-save"></i> Save</a>
         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
@@ -523,6 +543,42 @@ body.modal-open
 
   </div>
 </div>
+
+<!-- user modal -->
+<div id="userModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+		<!-- Modal content-->
+    <div class="modal-content">
+			<form id="submit-user-form">
+				<div class="modal-header" style="padding: 15px;">
+					<h5 class="modal-title" id="exampleModalLongTitle" style="font-size: 22px;">Enter User</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px !important;font-size: 25px !important;">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label for="user_name">Name</label>
+						<input type="text" placeholder="Name" class="form-control m-b"  name="name" id="user_name" required />
+					</div>
+					<div class="form-group">
+							<label for="user_email">Email</label>
+							<input type="text" placeholder="Email" class="form-control m-b" name="email" id="user_email" required />
+					</div>
+					<input type="hidden" name="case_id" value="<?= $id ?>" />
+				</div>
+
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save</a>
+					<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
+					<i id="msgClient" style="color:red"></i>
+				</div>
+			</form>
+    </div>
+  </div>
+</div>
+
+
 <div id="viewreminders" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
@@ -577,8 +633,18 @@ body.modal-open
 </div>
 <?php /*?><script src="<?php echo VENDOR_URL; ?>sweetalert.min.js"></script><?php */?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-<script src="custom.js"></script>
 <script type="text/javascript">
+
+const setMastHead = (attorneyId = null) => {
+  const id = attorneyId ? attorneyId : $('#case_attorney').val();
+  getAttorney(id, 
+    (attorney) => $('textarea[name=masterhead]').html(attorney.masterhead),
+    (e) => console.error(e)
+  );
+}
+$(document).on( 'change', '#case_attorney', () => { setMastHead() });
+
+
 function loadServiceListModal(case_id,attr_id = '')
 {
 	$.post( "loadservicelistmodal.php",{case_id: case_id,attr_id:attr_id}).done(function(resp)
@@ -587,32 +653,9 @@ function loadServiceListModal(case_id,attr_id = '')
 		$("#serviceListModal").modal("toggle");
 		$("#msgAttr").html("");
 	});
-	//
 }
-/*function addservicelist(id='') 
-{
-	$('#otherModal').modal('show');
-	attDropdownFunction();
-	if(id>0)
-	{
-		$.post( "editattorney.php",{id: id}).done(function(resp)
-		{
-			var obj = JSON.parse(resp);
-			$("#editattorney_id").val(obj.id);
-			$("#attorney_name").val(obj.attorney_name);
-			$("#attorney_email").val(obj.attorney_email);
-			$("#client_id").val(obj.client_id);
-		});
-	}
-	else
-	{
-		$("#editattorney_id").val("");
-		$("#attorney_name").val("");
-		$("#attorney_email").val("");
-		$("#client_id").val("");
-	}
-}*/
-function addparty(id='')
+
+function addparty(id='', caseId)
 {
 	$("#party_client_id").val(0);
 	$('#partyModal').modal('show');
@@ -624,10 +667,9 @@ function addparty(id='')
 	$('#div_attr_email').hide();
 	if(id>0)
 	{
-		$.post( "clientsload.php",{id: id}).done(function(resp)
+		$.post( "clientsload.php",{id: id, case_id: caseId}).done(function(resp)
 		{
 			var obj = JSON.parse(resp);
-			console.log(obj);
 			$("#party_client_id").val(obj.id);
 			$("#client_name").val(obj.client_name);
 			$("#clientroles").val(obj.client_role);
@@ -642,6 +684,32 @@ function addparty(id='')
 }
 $( document ).ready(function() 
 {
+	$('#submit-user-form').on('submit', (e) => {
+		e.preventDefault();
+		const formData = new FormData(e.target);
+		const params = Array.from(formData.keys()).reduce(
+			(acc, key) => {acc[key] = formData.get(key); return acc; }, {}
+		);
+		$.post('post-case-user.php', params, (response) => {
+			$('#userModal').modal('hide');
+			loadCasePeople(params.case_id);
+		}).fail((response) => {
+			$('#userModal').modal('hide');
+			showResponseMessage(JSON.parse(response.responseText));
+		});
+	});
+	$('#add-user-btn').on('click', () => $('#userModal').modal('show') );
+	$(document).on('click', '.delete-user-btn', async (e) => {
+		const params = $(e.target).parent().data();
+		confirm = await confirmAction();
+		if ( confirm.value ) {
+			$.post('delete-case-user.php', params, (response) => {
+				loadCasePeople(params.case_id);
+				showResponseMessage(response);				
+			}).fail((response) => showResponseMessage(response))
+		}
+	});
+
 	<?php
 	if($case_attorney == 0 || $case_attorney == "")
 	{
@@ -653,15 +721,13 @@ $( document ).ready(function()
 	?>
 	showreminders(<?php echo $case['allow_reminders']; ?>);
 	$('.datepicker').datepicker({format: 'm-d-yyyy',autoclose:true});
-	$( ".select2-multiple" ).select2();
+
 	loadAttoneysFunction(<?php echo $id; ?>,2,"loadattoneys2");
-	//attDropdownFunction();
-	loadClientsFunction(<?php echo $id; ?>);
+	loadCasePeople(<?php echo $id; ?>);
+	loadSides(<?php echo $id; ?>);
 	addMyAttorneyToCase(<?php echo $id; ?>);
-	loadCaseAttorneys(<?php echo $id; ?>);
-	<?php /*?>loadMyTeamFunction(<?php echo $id; ?>);
-	loadAttoneysFunction(<?php echo $id; ?>,3,"loadattoneys3");<?php */?>
 });
+
 function loadCaseAttorneys(case_id)
 {
 	$.post( "loadcaseattorney.php",{case_id:case_id}).done(function( data ) 
@@ -669,6 +735,7 @@ function loadCaseAttorneys(case_id)
 		$("#case_attorney").html(data);
 	});
 }
+
 function deleteLeaveCases(case_id,delete_or_leave)
 {
 	if(delete_or_leave == 1)
@@ -691,17 +758,25 @@ function deleteLeaveCases(case_id,delete_or_leave)
 	if (result.value) {
 	$.post( "deleteleavecase.php", { case_id: case_id, delete_or_leave: delete_or_leave }).done(function( data ) 
 	{
-		selecttab('44_tab','cases.php','44');
+		selecttab('44_tab','get-cases.php','44');
 	});
 	}
 	});
 	$( ".swal-button-container:first" ).css( "float", "right" );
 }
 
-function loadClientsFunction(case_id)
-{
-	$("#loadclients").load("clientsload.php?case_id="+case_id)
+function loadCasePeople(case_id) {
+	loadSides(case_id);
+	$("#loadclients").load("get-case-clients.php?format=html&case_id="+case_id)
+	$("#loadusers").load("get-case-users.php?format=html&case_id="+case_id)
 }
+
+function loadSides(caseId)
+{
+	//$("#sides-container").load(`get-sides.php?case_id=${caseId}&format=html`);
+	
+}
+
 function addCaseClient(case_id)
 {
 	var other_attorney_id	= 	{};
@@ -711,11 +786,26 @@ function addCaseClient(case_id)
 	var clientroles			=	$("#clientroles").val();
 	var clienttypes			=	$("#clienttypes").val();
 	var client_email		=	$("#client_email").val();
-	other_attorney_id		=	$("#other_attorney_id").val();
+	var other_attorney_id		=	$("select[name=other_attorney_id]").val();
+	var other_attorney_name		=	$("input[name=other_attorney_name]").val();
+	var other_attorney_email		=	$("input[name=other_attorney_email]").val();
+	var primary_attorney_id		=	$("select[name=primary_attorney_id]").val();
+	
 	$("#msgClient").html("");
-	$.post( "addcaseclient.php", {id:id, case_id:case_id,client_name: client_name, clientroles: clientroles,clienttypes:clienttypes,client_email:client_email,other_attorney_id:other_attorney_id}).done(function( data ) 
+	$.post( "post-case-client.php", {
+		id:id, 
+		case_id:case_id,
+		client_name: client_name, 
+		clientroles: clientroles,
+		clienttypes:clienttypes,
+		client_email:client_email,
+		other_attorney_id:other_attorney_id,
+		other_attorney_name:  other_attorney_name,
+		other_attorney_email: other_attorney_email,
+		primary_attorney_id: primary_attorney_id
+	}, 'json').done(function( data ) 
 	{
-		var obj = JSON.parse(data);
+		obj = data;
 		if(obj.type == "success")
 		{
 			$('.modal').modal('hide');
@@ -725,16 +815,23 @@ function addCaseClient(case_id)
 			//$("#other_attorney_id").val([]);
 			$('#other_attorney_id').val(null).trigger('change');
 			$("#client_email").val('');
-			loadClientsFunction(obj.case_id);
+			loadCasePeople(obj.case_id);
+			loadSides(obj.case_id);
 			//attDropdownFunction();
 			checkPartiesFoundShowServiceList(obj.case_id);
 			//loadAttoneysFunction(obj.case_id,2,"loadattoneys2");
 			
 		}
 		else
-		{
-			$("#msgClient").html(obj.msg);
+		{			
+			showResponseMessage(obj);
 		}
+	}).fail( (e) => {
+		const obj = JSON.parse(e.responseText);
+		showResponseMessage(obj);
+		if (obj.field == 'primary_attorney_id') {
+				$("#div_attr").show();
+			}
 	});
 }
 function checkPartiesFoundShowServiceList(case_id)
@@ -746,7 +843,7 @@ function checkPartiesFoundShowServiceList(case_id)
 	});
 }
 
-function deleteCaseClient(id)
+function deleteCaseClient(id, case_id)
 {
 	Swal.fire({
 	title: "Are you sure you want to delete this Party?",
@@ -759,35 +856,24 @@ function deleteCaseClient(id)
 	}).then((result) => {
 	if (result.value) {
 		$("#client_"+id).remove();
-		$.post( "clientdelete.php", { id: id} );
+		$.post( "delete-case-client.php", { id: id, case_id: case_id}, () => { loadCasePeople(case_id)} );
 		checkPartiesFoundShowServiceList(<?php echo $id ?>);
 	}
 	});
-	/*swal({
-		title: "Are you sure to permanently delete?",
-		text: "You will not be able to undo this action!",
-		icon: "warning",
-		buttons: true,
-		reverseButtons: false,
-		dangerMode: true,
-	})
-	.then((willDelete) => {
-		if (willDelete) 
-		{
-			$("#client_"+id).remove();
-			$.post( "clientdelete.php", { id: id} );
-			checkPartiesFoundShowServiceList(<?php echo $id ?>);
-		}	 
-	});*/
 	$( ".swal-button-container:first" ).css( "float", "right" );
 }
 
 function addAttryFunction(type)
 {
 	$(".disableclass").val("");
+	if (type == 'Others' || type == 'Us') {
+		$("#bring_team_checkbox").show();
+	}
+	else {
+		$("#bring_team_checkbox").hide();
+	}
 	if(type == 'Others')
 	{
-		$("#div_attr").show();
 		$("#div_attr_email").hide();
 	}
 	else if(type == '')
@@ -814,7 +900,7 @@ function modaldeleteaction()
 	$.post( "caseattorneydelete.php",$( "#deleteform" ).serialize()).done(function( data ) 
 	{
     	loadAttoneysFunction(data,3,"loadattoneys3");
-		loadCaseAttorneys(data);
+		//loadCaseAttorneys(data);
 		$("#delete_modal").modal("toggle");
   	});
 }
@@ -853,4 +939,12 @@ function loadmasterhead()
 		$("#masterheadDiv").html(data);
 	});
 }
+
+  erInviteControl();
+  <?php if ($currentPrimaryAttorneyId): ?>
+    erTeamAttorneySelectControl();
+		setMastHead(<?= $currentPrimaryAttorneyId ?>);
+  <?php else: ?>  
+    erTeamAttorneySelectControl( setMastHead );
+  <?php endif; ?>  	
 </script>

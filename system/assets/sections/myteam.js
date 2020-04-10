@@ -21,60 +21,46 @@ const onDeleteTeamMember = async (e) => {
     });
 }
 
-const onAddTeamMember = (e) => {
-  const memberId = $('select#member_id').val();
-  const name     = $('input#member_name').val();
-  const email    = $('input#member_email').val();
+const onSubmitTeamMember = (e) => {
+  const memberId = $('select[name="member_id"]').val();
+  const name     = $('input[name="member_name"]').val();
+  const email    = $('input[name="member_email"]').val();
+  
+  valid = memberId || (name && email);
+
+  if (!valid) {
+    toastr.error('Please select or invite an user');
+    return;
+  }
 
   addTeamMember(memberId, name, email, 
     (response) => {
-      toastr.info(response.msg);
+      showResponseMessage(response);
       loadTeam();
-      $('input#member_name, input#member_email').val('');
+      $('input[name="member_name"], input[name="member_email"]')
+        .val('')
+        .first()
+        .focus();
+      $('#memberModal').modal('hide');
     },
-    (response) => toastr.error(response.msg),
+    (e) => showResponseMessage(e.responseJSON)
   )
 }
 
-const onMemberSelectChange = (e) => {
-  const displayForm = $('select#member_id').val() == '0';
-  $('#invite-member-form').css('display', displayForm ? 'block' : 'none');
-  if (displayForm) {
-    $('#member_name').focus()
-  }  
+const onAddTeamMember = (e) => {
+  $('#memberModal').modal('show');
 }
 
 $(document).ready(() => {
-  // tooltips
+  // controls
+  erInviteControl();
   $('[data-toggle="tooltip"]').tooltip();
 
   // render team
   loadTeam();
   
-  // controls
-  $('select#member_id').select2({
-    placeholder: 'Find or invite member by Name or Bar Number. Start typing...',
-    ajax: {
-      url: API_BASE + '/search-users.php',
-      dataType: 'json',
-      delay: 250,
-      allowClear: true,
-      processResults: function (data) {
-        data.results.push({id: '0', text: 'Invite Member'});
-        return data;
-      }
-    }
-  })
-
   // Hooks
   $(document).on('click', 'a.delete-team-member', onDeleteTeamMember);
+  $(document).on('click', 'a#submit-team-member-btn', onSubmitTeamMember);
   $(document).on('click', 'a#add-team-member-btn', onAddTeamMember);
-  $(document).on('select2:select', 'select#member_id', onMemberSelectChange);
 });
-
-
-// LEGACY
-function addmyteammember()
-{
-	$('#addmyteammember').modal('show');
-}
