@@ -29,7 +29,8 @@
                           LEFT JOIN sides_users AS su
                             ON su.side_id = s.id
                         WHERE su.system_addressbook_id = :user_id
-                              OR s.primary_attorney_id = :user_id',
+                              OR s.primary_attorney_id = :user_id
+                        ORDER BY c.case_title ASC',
         
         'getAllClients' => 'SELECT c.*
                             FROM clients AS c
