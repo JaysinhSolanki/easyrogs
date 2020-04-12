@@ -6,8 +6,7 @@ date &&
 
 git stash save "HOTFIXES TO $(date)" &&
 git checkout $1 && 
-git fetch --all &&
-git reset --hard &&
-composer install &&
+git pull &&
+`which composer` install &&
 ./poorman migrate
 
