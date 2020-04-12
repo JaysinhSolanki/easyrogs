@@ -134,9 +134,13 @@ $senderDetails		=	$AdminDAO->getrows("system_addressbook","*","pkaddressbookid =
 $senderDetail		=	$senderDetails[0];
 $senderEmail		=	$senderDetail['email'];
 $senderPhone		=	$senderDetail['phone'];
-$senderName			=	$senderDetail['firstname']." ".$senderDetail['lastname'];	
+$senderName			=	$senderDetail['firstname']." ".$senderDetail['lastname'];
+$system_address            =   $AdminDAO->getrows("system_addressbook,system_state", "*", "pkaddressbookid = :id AND fkstateid = pkstateid", array(":id"=>$attr_id));
+$result_address      =   $system_address[0];
+
+// $address            =   $result_address['statename'].", ".$result_address['street'] .$result_address['cityname']. $result_address['statecode']. $result_address['zip'];
 $senderAddress		=	makeaddress($attr_id);//;$senderDetail['address'].", ".$senderDetail['cityname'].", ".$senderDetail['statecode']." ".$senderDetail['zip'];
-$getstate		=	getstate($attr_id);
+$getstate		=	$result_address['statename'];
 
 //$servicelists	=	$AdminDAO->getrows("attorney","*", "case_id = :case_id  AND attorney_type = :attorney_type", array(":case_id"=>$case_id,":attorney_type"=>2));
 $loggedin_email		=	$_SESSION['loggedin_email'];
@@ -210,7 +214,7 @@ td, th {
             </tr>
             <tr>
                 <td align="justify">
-                 I am over the age of 18 years and not a party to the within action. My business address is <br /><input type="text" name="pos_address" id="pos_address" placeholder="Enter your address" value="<?php echo $senderAddress; ?>" size="50"/>. My electronic service address is <?php echo $senderEmail ?>.
+                 I am at least 18 years old and not a party to this action. My business address is <br /><input type="text" name="pos_address" id="pos_address" placeholder="Enter your address" value="<?php echo $result_address['address']; ?>" size="20"/> <input type="text" name="pos_street" id="pos_street" placeholder="Enter your street" value="<?php echo $result_address['street']; ?>" size="20"/> <input type="text" name="pos_cityname" id="pos_cityname" placeholder="Enter your city" value="<?php echo $result_address['cityname']; ?>" /> <input type="text" name="pos_statecode" id="pos_statecode" placeholder="Enter your state" value="<?php echo $result_address['statecode']; ?>" /> <input type="text" name="pos_zip" id="pos_zip" placeholder="Enter your zip" value="<?php echo $result_address['zip']; ?>" size="20"/><br /> My electronic service address is <?php echo $senderEmail ?>.
                  <br />
                  <br />
                  On <?php echo date('F j, Y'); ?>, I electronically served <?php echo str_replace(["set", "For", "Of"], ["Set", "for", "of"], ucwords(strtolower($discovery_name." [Set ".numberTowords( $set_number )."]")) ); ?> upon the following:
@@ -289,6 +293,10 @@ td, th {
 <input type="hidden" name="pos_text" id="pos_text" value="" />
 <input type="hidden" name="posstate" id="posstate" value="" />
 <input type="hidden" name="posaddress" id="posaddress" value="" />
+<input type="hidden" name="posstreet" id="posstreet" value="" />
+<input type="hidden" name="poscityname" id="poscityname" value="" />
+<input type="hidden" name="posstatecode" id="posstatecode" value="" />
+<input type="hidden" name="poszip" id="poszip" value="" />
 
 <input type="hidden" name="poscity" id="poscity" value="" />
 <input type="hidden" name="respond" value="<?php echo $respond ?>" />

@@ -10,6 +10,10 @@ $posstate			=	$_POST['posstate'];
 $pos_text			=	$_POST['pos_text'];
 $poscity				=	$_POST['poscity'];
 $posaddress			=	$_POST['posaddress'];
+$posstreet			=	$_POST['posstreet'];
+$posstatecode		=	$_POST['posstatecode'];
+$poszip				=	$_POST['poszip'];
+$poscityname			=	$_POST['poscityname'];
 $respond				=	$_POST['respond'];
 $discovery_type		=	$_POST['discovery_type'];
 $response_id			=	$_POST['response_id'];
@@ -221,7 +225,7 @@ else if($discovery_type == 2) // If served discovery is internal then we save PO
 		$senderName		.=	" ".$senderDetail['middlename'];
 	}
 	$senderName		.=	" ".$senderDetail['lastname'];
-	$senderAddress	=	makeaddress($_SESSION['addressbookid'],1);//$senderDetail['address'].", ".$senderDetail['cityname'].", ".$senderDetail['street'];
+	$senderAddress	=	$posaddress .", ". $posstreet	."<br>".  $poscityname .", ". $posstatecode ." ". $poszip; //$senderDetail['address'].", ".$senderDetail['cityname'].", ".$senderDetail['street'];
 	
 	//dump($servicelists);
 	//exit;
@@ -253,7 +257,7 @@ else if($discovery_type == 2) // If served discovery is internal then we save PO
 		?>
 		<p>
         <?php echo $list['attorney_name']?>,<br />
-		You are hereby served with <?php echo $proponding_name."'s ". str_replace(["set", "For", "Of"], ["Set", "for", "of"], ucwords(strtolower($discovery_name)) ); ?> (attached).<br />
+		You are hereby served with <?php echo $proponding_name."'s ". str_replace("set", "Set", ucwords(strtolower($discovery_name)) ); ?> (attached).<br />
         If you're not already using <i>EasyRogs</i>, click <?php echo $emailURL ?> for a complimentary membership. Plus, the Service Charge is waived through April 30, 2020. <br /><br /><i>EasyRogs</i> makes Discovery Easy, Saves Time & Money, and Protects our Environment. 
         <br />   
         --
