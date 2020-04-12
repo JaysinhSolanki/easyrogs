@@ -1169,6 +1169,10 @@ function servePOS()
     var pos_state   =   $("#pos_state").val();
     var pos_city    =   $("#pos_city").val();
     var pos_address =   $("#pos_address").val();
+    var pos_street =   $("#pos_street").val();
+    var pos_cityname =   $("#pos_cityname").val();
+    var pos_statecode =   $("#pos_statecode").val();
+    var pos_zip =   $("#pos_zip").val();
     var error       =   0;
     var msg         =   "";
     if(pos_address == "")
@@ -1176,7 +1180,23 @@ function servePOS()
         error   =   1;
         msg     =   "Please enter address.";
     }
-    if(pos_city == "")
+    if(pos_street == "")
+    {
+        error   =   1;
+        msg     =   "Please enter street.";
+    }
+    if(pos_statecode == "")
+    {
+        error   =   1;
+        msg     =   "Please enter statecode.";
+    }
+    if(pos_zip == "")
+    {
+        error   =   1;
+        msg     =   "Please enter zip.";
+    }
+
+    if(pos_city == "" || pos_cityname == "")
     {
         error   =   1;
         msg     =   "Please enter city.";
@@ -1198,6 +1218,10 @@ function servePOS()
         $("#pos_text").val(poshtml);
         $("#posstate").val(pos_state);
         $("#posaddress").val(pos_address);
+        $("#posstreet").val(pos_street);
+        $("#posstatecode").val(pos_statecode);
+        $("#poszip").val(pos_zip);
+        $("#poscityname").val(pos_cityname);
         $("#poscity").val(pos_city);
         setTimeout(function()
         {
