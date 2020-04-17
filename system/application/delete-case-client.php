@@ -14,7 +14,7 @@
 
   // instantiate models
   $cases = new CaseModel();
-  $cases->removeClient($caseId, $clientId, true);
+  $cases->removeClient($caseId, $clientId);
 
   // LEGACY --------------------------------------------------------------------
   require_once __DIR__ . '/clientdelete.php';

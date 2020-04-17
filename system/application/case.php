@@ -773,8 +773,9 @@ function loadCasePeople(case_id) {
 
 function loadSides(caseId)
 {
-	//$("#sides-container").load(`get-sides.php?case_id=${caseId}&format=html`);
-	
+	<?php if (in_array($_ENV['APP_ENV'], ['dev', 'local', 'development'])): ?>
+		$("#sides-container").load(`get-sides.php?case_id=${caseId}&format=html`);
+	<?php endif; ?>
 }
 
 function addCaseClient(case_id)

@@ -60,8 +60,6 @@
     }
 
     function setSideAttorney($side, $attorneyId, $updateTeam = true) {
-      global $AdminDAO, $currentUser;
-
       $attorney = $this->users->find($attorneyId);
       
       if ($updateTeam) {
@@ -71,44 +69,9 @@
         'primary_attorney_id' => $attorneyId,
         'masterhead'          => $attorney['masterhead']
       ]);
-      
-      // add attorney to service list (BACKWARD COMP)
-      $caseId = $side['case_id'];
-      $slAttorney = $this->getBy('attorney', ['case_id' => $caseId, 'attorney_email' => $attorney['email']], 1);
-      if (!$slAttorney) {
-        $slAttorneyId = $this->insert('attorney', [
-          'uid'             => $AdminDAO->generateuid('attorney'),
-          'case_id'         => $caseId,
-          'attorney_name'   => User::getFullName($attorney),
-          'attorney_email'  => $attorney['email'],
-          'fkaddressbookid' => $attorneyId,
-          'attorney_type'   => 2,
-          'updated_at'      => date('Y-m-d H:i:s'),
-          'updated_by'      => $currentUser->id
-        ], true);
-        if ( (int)$slAttorneyId ) {
-          $slAttorney = $this->getBy('attorney', ['id' => $slAttorneyId], 1);
-        }        
-      }
-      if ($slAttorney) {
-        $clients = $this->sides->getClients($side['id']);
-        foreach($clients as $client) {
-          $exists = $this->existsBy('client_attorney', [
-            'case_id'     => $caseId,
-            'attorney_id' => $slAttorney['id'],
-            'client_id'   => $client['id'],
-          ]);
-          if (!$exists) {
-            $this->insert('client_attorney', [
-              'case_id'     => $caseId,
-              'attorney_id' => $slAttorney['id'],
-              'client_id'   => $client['id'],
-              'updated_at'  => date('Y-m-d H:i:s'),
-              'updated_by'  => $currentUser->id
-            ], true);
-          }
-        }
-      }
+
+      // add attorney to service list
+      $this->sides->updateServiceListForPrimaryAttorney($side['id']);
     }
 
     function updateCase($caseId, $fieldsMap, $updateTeam = false) {
@@ -131,35 +94,22 @@
       }
     }
 
-    function removeClient($caseId, $clientId, $cleanupSides = false) {
+    function removeClient($caseId, $clientId) {
       $query = $this->queryTemplates['removeClient'];
       $this->writeQuery($query, [
         'case_id' => $caseId,
         'client_id' => $clientId
       ]);
-      if ($cleanupSides) {
-        $this->sides->cleanupCase($caseId);
-      }      
+      
+      $this->sides->cleanupCase($caseId);
     }
 
     function getClients($caseId) {
       global $currentUser;
 
-      $sides = new Side();
-      $userSide = $sides->getByUserAndCase($currentUser->id, $caseId);
-      $clients = $sides->getClients($userSide['id']);
-      
-      // BACKWARD COMP
-      // $clientIds = BaseModel::pluck($clients, 'id');
-      // $oldClients = $this->getBy('clients', ['case_id' => $caseId]);
-      // collect non-repeating old clients
-      // foreach($oldClients as $oldClient) {
-      //   if ( !in_array($oldClient['id'], $clientIds ) ) {
-      //     $clients[] = $oldClient;
-      //   }
-      // }
+      $userSide = $this->sides->getByUserAndCase($currentUser->id, $caseId);
 
-      return $clients;
+      return $this->sides->getClients($userSide['id']);
     }
 
     function getUsers($caseId) {

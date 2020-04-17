@@ -19,8 +19,8 @@
 
   // do validation
   $valid = ($caseId && $clientName && $clientRole && $clientType )
-            && 
-            ($clientType == Client::CLIENT_TYPE_OTHER || $clientEmail);
+           && 
+           ($clientType == Client::CLIENT_TYPE_OTHER || $clientEmail);
   if ( !$valid ) {
     HttpResponse::malformed('Invalid input, please verify the required fields.');
   }
@@ -48,7 +48,7 @@
       HttpResponse::notFound('Client not found.');
     }
     // reset client status on case and update client
-    $cases->removeClient($caseId, $clientId, true);
+    $cases->removeClient($caseId, $clientId);
     $clients->updateClient($client['id'], $clientFields);
   }
   else {

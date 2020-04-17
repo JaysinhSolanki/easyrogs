@@ -12,9 +12,6 @@
     </div>    
   </div>  
   <div class="panel-body">
-    <button class="btn btn-primary btn-xs  pull-right add-side-client">
-      <i class="fa fa-plus"></i> Add Client
-    </button>
     <h5>Clients</h5>
     <br/>
     <table class="table table-striped table-hover">
@@ -39,9 +36,6 @@
       {/foreach}
     </table>
     <hr/>
-    <button class="btn btn-primary btn-xs pull-right add-side-client">
-      <i class="fa fa-plus"></i> Add Staff
-    </button>
     <h5>Staff</h5>
     <br/>
     <table class="table table-striped  table-hover">

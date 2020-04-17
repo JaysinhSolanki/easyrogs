@@ -138,7 +138,7 @@
     }
     
     function find($id) {
-      $this->getBy('sides', ['id' => $id])[0];
+      return $this->getBy('sides', ['id' => $id], 1);
     }
 
     // $client - a client id OR a hash with client data
@@ -150,10 +150,12 @@
       if ( !$side['role'] && $role) {
         $this->updateSide($sideId, ['role' => $role]);
       }
-      return $this->insert('sides_clients', [
+      $this->insert('sides_clients', [
         'side_id'   => $sideId,
         'client_id' => $clientId        
       ], true);
+
+      $this->updateServiceListForPrimaryAttorney($side);
     }
 
     // $user - user id OR a hash with user data
@@ -212,6 +214,7 @@
 
     function cleanupClients($sideId) {
       return $this->deleteBy('sides_clients', ['side_id' => $sideId]);
+      $this->updateServiceListForPrimaryAttorney($sideId);
     }
 
     function removeUser($sideId, $userId) {
@@ -339,6 +342,52 @@
       }
 
       return $masterhead;      
+    }
+
+    // $attorney: user hash or id 
+    // $side:  side hash or id
+    function updateServiceListForPrimaryAttorney($side) {
+      global $AdminDAO, $currentUser, $usersModel;
+      
+      $side = is_array($side) ? $side : $this->find($side);
+      if ( !$side['primary_attorney_id'] ) {
+        return false;
+      }
+      $attorney = $usersModel->find($side['primary_attorney_id']);
+
+      $caseId = $side['case_id'];
+      $slAttorney = $this->getBy('attorney', ['case_id' => $caseId, 'attorney_email' => $attorney['email']], 1);
+      if (!$slAttorney) {
+        $slAttorneyId = $this->insert('attorney', [
+          'uid'             => $AdminDAO->generateuid('attorney'),
+          'case_id'         => $caseId,
+          'attorney_name'   => User::getFullName($attorney),
+          'attorney_email'  => $attorney['email'],
+          'fkaddressbookid' => $attorney['pkaddressbookid'],
+          'attorney_type'   => 2,
+          'updated_at'      => date('Y-m-d H:i:s'),
+          'updated_by'      => $currentUser->id
+        ], true);
+        if ( (int)$slAttorneyId ) {
+          $slAttorney = $this->getBy('attorney', ['id' => $slAttorneyId], 1);
+        }        
+      }
+      if ($slAttorney) {
+        $this->deleteBy('client_attorney', [ // delete all clients for attorney service list
+          'case_id'     => $caseId,
+          'attorney_id' => $slAttorney['id']
+        ]);
+        $clients = $this->getClients($side['id']);
+        foreach($clients as $client) {
+          $this->insert('client_attorney', [
+            'case_id'     => $caseId,
+            'attorney_id' => $slAttorney['id'],
+            'client_id'   => $client['id'],
+            'updated_at'  => date('Y-m-d H:i:s'),
+            'updated_by'  => $currentUser->id
+          ], true);
+        }
+      }
     }
 
   }
