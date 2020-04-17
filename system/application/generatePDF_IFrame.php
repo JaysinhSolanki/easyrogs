@@ -103,7 +103,8 @@ if($response_id > 0)
 $PDFname	=	strtoupper($discovery_name).".pdf";
 //if($type == 2)
 $fileName	=	SYSTEMPATH."uploads/documents/".$uid."/".$PDFname;
-if (!file_exists($fileName)) 
+$useCache = !in_array($_ENV['APP_ENV'], ['dev', 'local', 'development']);
+if ( !$useCache || !file_exists($fileName)) 
 {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL,DOMAIN."makepdf.php?id=".$uid."&downloadORwrite=1&view={$view}&active_attr_email={$active_attr_email}&response_id={$response_id}");

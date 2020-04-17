@@ -131,7 +131,7 @@ $declaration_updated_at	=	$discovery_data['declaration_updated_at'];
 $proponding_attorney	=	$discovery_data['proponding_attorney'];
 
 
-// Sides Masterhead----------
+// Sides Masterhead ----------
 $masterhead = '';
 
 $users = new User();
@@ -139,25 +139,18 @@ $sides = new Side();
 
 $attorneyId = $response_id ? null : $proponding_attorney;
 $clientId 	= $response_id ? $responding : $propounding;
-$user = $users->getByAttorneyId($attorneyId);
-$side = $user 
-				? $sides->getByUserAndCase($user['pkaddressbookid'], $case_id)
-				: $sides->getByClientAndCase($clientId, $case_id);
+$user = $attorneyId ? $users->getByAttorneyId($attorneyId) : null;
+$signingClient 	 = $clientsModel->find($clientId);  
+$signingSide     = $user ? 
+	                  $sides->getByUserAndCase($user['pkaddressbookid'], $case_id)
+                    : $sides->getByClientAndCase($clientId, $case_id);
+$signingAttorney = $user ? $user : $sides->getPrimaryAttorney($signingSide['id']);
 
-if ($side){
-	$masterhead = $sides->getMasterHead($side);
+if ($signingSide){
+	$masterhead = $sides->getMasterHead($signingSide);
 }
+$masterhead = $masterhead ? $masterhead : $users->getMasterHead($signingAttorney); // if the side doesnt have a masthead yet...
 // ----------------
-
-if($type == 1)//External
-{
-	$is_served				=	$discovery_data['is_served'];
-	$pos_text				=	$discovery_data['pos_text'];
-	$submit_date			=	$discovery_data['submit_date'];
-	$served					=	$discovery_data['served'];
-	$served_date			=	date("F d, Y",strtotime($served));
-	
-}
 
 if($response_id > 0)
 {
@@ -181,11 +174,11 @@ if($response_id > 0)
 }
 else
 {
-	$is_served				=	$responseDetail['isserved'];
-	$served					=	$responseDetail['servedate'];
-	$submit_date			=	$responseDetail['submit_date'];
-	$is_submitted			=	$responseDetail['is_submitted'];
-	$pos_text				=	$responseDetail['postext'];
+	$is_served				=	$discovery_data['is_served'] || $discovery_data['served'];
+	$served				  	=	$discovery_data['served'];
+	$submit_date			=	$discovery_data['send_date'];
+	$is_submitted			=	$discovery_data['is_send'];
+	$pos_text				=	$discovery_data['pos_text'];
 	$served_date			=	date("F d, Y",strtotime($served));
 	
 	$is_verified			=	"";
@@ -197,8 +190,15 @@ else
 	$verification_signed_by	=	"";
 }
 
-
-
+if($type == 1)//External
+{
+	$is_served				=	$discovery_data['is_served'] || $discovery_data['served'];
+	$pos_text				=	$discovery_data['pos_text'];
+	$submit_date			=	$discovery_data['submit_date'];
+	$served					=	$discovery_data['served'];
+	$served_date			=	date("F d, Y",strtotime($served));
+	
+}
 
 if($view == 1)
 {
@@ -306,18 +306,10 @@ else
 * Check to see login attorney is responding party attorney or not
 **/
 
-if($view == 1) //1 = Discovery, 0 = Response
-{
-	$att_for_client_name		=	$proponding_name;
-	$att_for_client_email		=	$proponding_email;
-	$att_for_client_role		=	$proponding_role;
-}
-else 
-{
-	$att_for_client_name		=	$responding_name;
-	$att_for_client_role		=	$responding_role;	
-	$att_for_client_email		=	$responding_email;	
-}	
+$att_for_client_name  =	$signingClient['client_name'];
+$att_for_client_email =	$signingClient['client_name'];
+$att_for_client_role  =	$signingClient['client_role'];
+
 /****************************************************
 Function for getting responding or proponding details
 ****************************************************/
@@ -1055,7 +1047,7 @@ ob_start();
         <tr>
         	<td align="left" valign="top"><?php echo date('F j, Y'); ?></td>
             <td align="right">
-                By: <?php echo ($atorny_name); ?><br>
+                By: <?= User::getFullName($signingAttorney) ?><br>
                 Attorney for <?php echo $att_for_client_role."<br>".$att_for_client_name ?> 
                 <br />
             	Signed electronically,<br><img src="<?php echo ASSETS_URL; ?>images/court.png" style="width: 18px;padding-right: 3px;"> Cal. Rules of Court, rule 2.257

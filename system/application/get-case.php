@@ -28,7 +28,6 @@
   $currentPrimaryAttorneyId = $currentPrimaryAttorney['pkaddressbookid'];
   if ( !$currentPrimaryAttorneyId && $currentUser->isAttorney() ) {
     $currentPrimaryAttorneyId = $currentUser->id;
-    var_dump($currentPrimaryAttorneyId);
   }
   
   // LEGACY --------------------------------------------------------------------

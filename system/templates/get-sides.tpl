@@ -4,7 +4,7 @@
 <div class="panel panel-default">
   <div class="panel-heading">
     <div class="row">
-      <div class="col-md-6 side-role">SIDE {$sideNumber + 1}</div>
+      <div class="col-md-6 side-role">SIDE {$side.id}</div>
       <div class="col-md-6">
         <strong class="attorney-label">Primary Attorney:</strong>
         <span class="attorney-name">{$side.attorney.full_name}</span>  
