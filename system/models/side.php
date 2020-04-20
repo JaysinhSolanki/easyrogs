@@ -121,7 +121,7 @@
     // $attorney - an attorney id OR a hash with system_addressbook data
     // $attorney can be NULL 
     function create($clientRole, $caseId, $attorney) {
-      // set master head from primary attorney if specified
+      // set master head from $attorney if specified
       if ( $attorney ) {
         $users = new User();
         $attorney = is_array($attorney) ? $attorney : $users->find($attorney);

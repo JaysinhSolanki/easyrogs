@@ -16,7 +16,7 @@
 
   $side = $sides->getByUserAndCase($currentUser->id, $caseId);
   if(!$side) {
-    HttpResponse::notFound('Please set a primary attorney before adding team users.');
+    HttpResponse::notFound('Please set a lead counsel before adding team users.');
   }
   $user = User::publishable($users->expressFindOrCreate($name, $email));
   $sides->addUser($side['id'], $user);

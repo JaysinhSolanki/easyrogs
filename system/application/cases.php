@@ -132,7 +132,7 @@ $cases = $sideCases;
 									continue;
 								}
 								/**
-								* 1) Creator 2) Case Team Membber 3) Primary Attorney
+								* 1) Creator 2) Case Team Membber 3) Primary Attorney [!]
 								**/
 								if($attorney_id == $_SESSION['addressbookid']  || $case_attorney == $loggedin_email)
 								{

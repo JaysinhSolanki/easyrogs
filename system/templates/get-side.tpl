@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col-md-6 side-role">{$side.role}</div>
       <div class="col-md-6">
-        <strong class="attorney-label">Primary Attorney:</strong>
+        <strong class="attorney-label">Lead Counsel:</strong>
         <span class="attorney-name">{$side.attorney.firstname} {$side.attorney.middlename} {$side.attorney.lastname}</span>  
       </div>
     </div>    
@@ -44,7 +44,7 @@
       <tr>
         <th>Name</th>
         <th>Role</th>
-        <th>Primary Attorney?</th>
+        <th>Lead Counsel?</th>
         <th></th>
       </tr>  
       {foreach item=user from=$side.users}

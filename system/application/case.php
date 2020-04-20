@@ -277,7 +277,7 @@ body.modal-open
 						<div class="row">
 							<div class="col-md-1"></div>
 							<div class="col-md-2">
-                    <label>Primary Attorney<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
+                    <label>Lead Counsel<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                 </div>
                 <div class="col-md-3">
 									<select class="er-team-attorney-select form-control" name="case_attorney" id="case_attorney" data-value="<?= $currentPrimaryAttorneyId ?>" <?php echo $disabledClass; ?>></select>
