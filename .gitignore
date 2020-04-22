@@ -6,6 +6,7 @@ settings.php
 .ftpquota
 .well-known
 *.log
+/logs/**
 .env
 .env.*
 vendor

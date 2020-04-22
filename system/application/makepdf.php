@@ -464,13 +464,12 @@ ob_start();
 <!-- 			HEADER PAGE 						 -->
 <!-- =================================================== -->
 <?php include_once('pdf-header.php');?>
-<br />
+<br/>
 <!-- =================================================== -->
 <!-- 			QUESTIONS PAGE 						 -->
 <!-- =================================================== -->
 <p class="break-page1"></p>
-<table class="wikitable1 tabela1">
-    <tbody>
+<div class="wikitable1 tabela1">
         <?php
         if(in_array($form_id,array(1,2)))
         {
@@ -567,8 +566,7 @@ ob_start();
 					}
 				}
                 ?>
-                <tr>
-                    <td colspan="2">
+                    <div class='q-row'>
                         <h3>INTERROGATORY NO. <?php echo $question_number ?>:</h3>
                         <?php if($question_type_id == 3 && $view == 0) 
 						{ 
@@ -577,15 +575,16 @@ ob_start();
 						{
 						?>
 							<?php if($view == 0) { ?><b><u>Interrogatory</u></b> <?php }?>
-                            <p><?php echo $question_title.$subquestuions_string; ?></p>
+                            <p class='q-subquestion'><?php echo $question_title.$subquestuions_string; ?></p>
                             <?php
 							if($has_extra_text == 1)
 							{
-								echo "<br><p><b>$extra_text_field_label: </b><br />$extra_text</p>";
+								echo "<br/><p class='q-extra'><b>$extra_text_field_label: </b><br/>$extra_text</p>";
 							}
 						}
 						?>
-						<?php //echo "Total Sub Questions:".sizeof($subQuestions)."<br>Question Type Id: ".$question_type_id."<br>Question Type Id: ".$question_type_id; ?>
+						<?php //echo "Total Sub Questions:".sizeof($subQuestions)."<br/>Question Type Id: ".$question_type_id."<br/>Question Type Id: ".$question_type_id; 
+						?>
                         <?php
 						if($view == 1)
 						{
@@ -593,7 +592,7 @@ ob_start();
 							{
 								?>
                         		<b><u>Objection</u></b>
-                        		<p><?php echo $objection; ?></p>
+                        		<p class='q-objection'><?php echo $objection; ?></p>
                         		<?php
 							}
 						}
@@ -602,18 +601,19 @@ ob_start();
 							if($question_type_id == 1 || ($question_type_id == 3 && sizeof($subQuestions) == 0) )
 							{
 								?>
-                                	<br>
+                                	<br/>
 									<b><u>Response</u></b>
                                     <?php
 									if($final_response == "")
 									{
 									?>
-										<p><?php echo finalResponseGenerate($objection,$answer); ?></p><br />
+										<p class='q-response'><?php echo finalResponseGenerate($objection,$answer); ?></p>
+										<br/>
                                     <?php
 									}
 									else
 									{
-										echo "<p>".$final_response."</p><br />";
+										echo "<p class='q-response'>".$final_response."</p><br/>";
 									}
 									?>
 								<?php
@@ -621,7 +621,7 @@ ob_start();
 							else if($question_type_id == 2 )
 							{
 								?>
-                                	<br>
+                                	<br/>
 									<b><u>Response</u></b>
 										<?php
 										if(strtolower($answer) == 'yes'){$answer= "Yes";} 
@@ -631,12 +631,13 @@ ob_start();
 										if($final_response == "")
 										{
 										?>
-											<p><?php echo finalResponseGenerate($objection,$answer); ?></p><br />   
+											<p class='q-response'><?php echo finalResponseGenerate($objection,$answer); ?></p>
+											<br/>   
 										<?php
 										}
 										else
 										{
-											echo "<p>".$final_response."</p><br />";
+											echo "<p class='q-response'>".$final_response."</p><br/>";
 										}
 										?>
 								<?php   
@@ -691,16 +692,16 @@ ob_start();
 													foreach($con_SubQuestions as $con_SubQuestion)
 													{
 													?>
-														<p>(<?php echo $con_SubQuestion['question_no'].") ".$con_SubQuestion['question']; ?></p>
+														<p class='q-subquestion'>(<?php echo $con_SubQuestion['question_no'].") ".$con_SubQuestion['question']; ?></p>
 													
 													<?php
 													}
-													echo "<br>";
+													echo "<br/>";
 												}
 												/*foreach($con_SubQuestions as $con_SubQuestion)
 												{
 												?>
-                                                    <p>(<?php echo $con_SubQuestion['question_no'].") ".$con_SubQuestion['sub_answer']; ?></p>
+                                                    <p class='q-subquestion'>(<?php echo $con_SubQuestion['question_no'].") ".$con_SubQuestion['sub_answer']; ?></p>
                                                 
                                                 <?php
 												}*/
@@ -709,17 +710,17 @@ ob_start();
 											$count++;
 										}
 										?>
-                                        <br>
+                                        <br/>
                                         <b><u>Response</u></b>
-                                        <p><?=nl2br($final_response)?></p>
+                                        <p class='q-response'><?=nl2br($final_response)?></p>
                                         <?php
 									}
 									else
 									{
 										?>
-                                        <br>
+                                        <br/>
                                         <b><u>Response</u></b>
-                                        <p></p>
+                                        <p class='q-response'></p>
                                         <?php
 										
 									}
@@ -761,21 +762,23 @@ ob_start();
 											}
 											?>
 											<?php /*if($type == 2) { ?><b><u>Interrogatory</u></b><?php } */?>
-											<p><?php echo "(".$sub_part.") ".$question_title ?></p>
+											<p class='q-question'><?php echo "(".$sub_part.") ".$question_title ?></p>
 											<!-- changes by Hassan -->
-                                            <b><u>Response</u></b><br />
-											<?php /*?><p><?php echo finalResponseGenerate($objection,$answer); ?></p><?php */?>
+                                            <b><u>Response</u></b>
+											<br/>
+											<?php /*?><p class='q-response'><?php echo finalResponseGenerate($objection,$answer); ?></p><?php */?>
                                             <?php
 	                                            $attached_response = finalResponseGenerate($objection,$answer);
 											if($final_response == "" && $attached_response != null)
 											{
 											?>
-												<p><?php echo $attached_response; ?></p><br />  
+												<p class='q-response'><?php echo $attached_response; ?></p>
+												<br/>  
 											<?php
 											}
 											else
 											{
-												echo "<p>".$final_response."</p><br />";
+												echo "<p class='q-response'>".$final_response."</p><br/>";
 											}
 											?>
                                             <?php
@@ -785,8 +788,7 @@ ob_start();
 							}
 						}
 						?>
-                    </td>
-                </tr>    
+                </div>    
 				<?php
             }
         }
@@ -824,41 +826,39 @@ ob_start();
 				}
 				
 				?>
-                 <tr>
-                    <td colspan="2">
+                    <div class='q-row'>
                     	<h3>REQUEST NO. <?php echo $question_number ?>:</h3>
                         <!--<b><u>Request</u></b>-->
-                        <p><?php echo $question_title; ?></p>
+                        <p class='q-question'><?php echo $question_title; ?></p>
                         <?php
 						if($view != 1)
 						{ 
 						?>
-                        	<br>
+                        	<br/>
 							<b><u>Response</u></b>
-							<?php /*?><p><?php echo finalResponseGenerate($objection,$answer);?></p> <?php */?>
+							<?php /*?><p class='q-response'><?php echo finalResponseGenerate($objection,$answer);?></p> <?php */?>
                             <?php
 							if($final_response == "")
 							{
 							?>
-								<p><?php echo finalResponseGenerate($objection,$answer); ?></p>   
+								<p class='q-response'><?php echo finalResponseGenerate($objection,$answer); ?></p>   
 							<?php
 							}
 							else
 							{
-								echo "<p>".$final_response."</p>";
+								echo "<p class='q-response'>".$final_response."</p>";
 							}
 						}
 						else if($respond == 1)
 						{
 						?>
                         <b><u>Objection</u></b>
-                        <p><?php echo $objection; ?></p>
+                        <p class='q-objection'><?php echo $objection; ?></p>
                         <?php
 						}
 						?>
-                        <br /><br />
-                </td>
-                </tr>
+                        <br/><br/>
+                </div>
                  <!--
                  Comment Sub Answers of RFA's on PDF part because
                  RFAS – The subparts and their answers don't go into the final Response to Requests for Admission. 
@@ -868,14 +868,12 @@ ob_start();
                  -->
                  <?php /*?>
 				 	
-				 	<tr>
-                 	<td colspan="2">
+                 	<div class='q-section'>
 					<?php
 					if(strtolower($answer) == 'deny')
 					{
 						?>
-						<table class="wikitable tabela">
-							<tbody>
+						<div class="wikitable tabela">
 							<?php
 							foreach($generalQuestions as $generalQuestion)
 							{
@@ -883,24 +881,20 @@ ob_start();
 								$subQuestionAnswers	=	$AdminDAO->getrows('question_admit_results',"*",":discovery_question_id = discovery_question_id AND :question_admit_id = question_admit_id",array("discovery_question_id" => $discovery_question_id, "question_admit_id" => $question_admit_id));
 								$subQuestionAnswer	=	@$subQuestionAnswers[0]; 
 								?>
-								<tr>
-									<td align="left">
+								<div class='q-row'>
                                     <b><?php echo $generalQuestion['question_no'] ?>) </b><?php echo $generalQuestion['question'] ?>
-                                    </td>
-                                </tr>
-                                <tr>
-									<td align="left"><?php echo "<b>ANS:</b>";  echo $subQuestionAnswer['sub_answer'] ?></td>
-								</tr>
+                                </div>
+                                <div class='q-row'>
+									<?php echo "<b>ANS:</b>";  echo $subQuestionAnswer['sub_answer'] ?>
+								</div>
 								<?php
 							}
 							?>
-							</tbody>
-						</table>
+						</div>
 						<?php
 					}
 					?> 
-					</td>
-				</tr>
+				</div>
 				 <?php */?> 
 				<?php	
 			} 
@@ -938,8 +932,7 @@ ob_start();
 					$final_response 		=	"";
 				}
                 ?>
-                <tr>
-                    <td colspan="2">
+                <div class='q-row'>
                     	<?php
 						if($form_id == 5)
 						{
@@ -966,12 +959,12 @@ ob_start();
                             <?php
 						}*/
 						?>
-                        <p><?php echo $question_title; ?></p>
+                        <p class='q-question'><?php echo $question_title; ?></p>
                         <?php
                         if($view != 1)
                         { 
                         ?>
-                        	<br>
+                        	<br/>
                             <b><u>Response</u></b>
                             <?php
                             if($form_id == 5)
@@ -1002,60 +995,63 @@ ob_start();
                             }
                             /*else if($form_id == 3)
                             {
-                                 echo "<p>".$answer."</p>";
+                                 echo "<p class='q-response'>".$answer."</p>";
                             }*/
 							?>
-                           <?php /*?> <p><?php echo finalResponseGenerate($objection,$answer); ?></p><?php */?>
+                           <?php /*?> <p class='q-response'><?php echo finalResponseGenerate($objection,$answer); ?></p><?php */?>
                             <?php
 							if($final_response == "")
 							{
 							?>
-								<p><?php echo finalResponseGenerate($objection,$answer); ?></p>   
+								<p class='q-response'><?php echo finalResponseGenerate($objection,$answer); ?></p>   
 							<?php
 							}
 							else
 							{
-								echo "<p>".$final_response."</p>";
+								echo "<p class='q-response'>".$final_response."</p>";
 							}
                         }
 						else if($respond == 1)
 						{
 							?>
 							<b><u>Objection</u></b>
-							<p><?php echo $objection; ?></p>
+							<p class='q-objection'><?php echo $objection; ?></p>
 							<?php
 						}
                         ?>
-                        <br /><br />
-                    </td>
-                </tr>
-					<?php
+                        <br/><br/>
+                </div>
+				<?php
             }												
         }
         ?>
-        <?php /*?><tr>
-            <td  colspan="2">
-            	<br />
+        <?php /*?><div class='q-row'>
+            	<br/>
 	            Dated: <?php echo $served_date."  |  ".strtoupper($atorny_firm); ?>
-            </td>
-        </tr><?php */?>
-        
-        <tr>
-        	<td width="60%"></td>
-        	<td><br /><hr></td>
-        </tr>
-        <tr>
-        	<td align="left" valign="top"><?php echo date('F j, Y'); ?></td>
-            <td align="right">
-                By: <?= User::getFullName($signingAttorney) ?><br>
-                Attorney for <?php echo $att_for_client_role."<br>".$att_for_client_name ?> 
-                <br />
-            	Signed electronically,<br><img src="<?php echo ASSETS_URL; ?>images/court.png" style="width: 18px;padding-right: 3px;"> Cal. Rules of Court, rule 2.257
-            </td>
-        </tr>
-    </tbody>
-</table>
+        </div><?php */?>
 
+<table>
+	<tbody>
+		<tr>
+			<td width="60%"></td>
+			<td>
+				<br/>
+				<hr/>
+			</td>
+		</tr>
+		<tr>
+			<td align="left" valign="top"><?php echo date('F j, Y'); ?></td>
+			<td align="right">
+				By: <?= User::getFullName($signingAttorney) ?><br/>
+				Attorney for <?php echo $att_for_client_role . "<br/>" . $att_for_client_name ?><br/>
+				Signed electronically,<br/>
+				<img src="<?php echo ASSETS_URL; ?>images/court.png"
+							style="width: 18px;padding-right: 3px;" /> Cal. Rules of Court, rule 2.257
+			</td>
+		</tr>
+	</tbody>
+</table>
+</div>
 <!-- =================================================== -->
 <!-- 			VERIFICATION PAGE 						 -->
 <!-- =================================================== -->
@@ -1071,20 +1067,19 @@ if($is_verified > 0)
     </tr>
     <tr>
     	<td  colspan="2" align="justify">
-            <p>I am the <?php echo $verification_by_name ?> in this action, and I have read the foregoing <b><?php echo $form_name; ?></b> and know its contents. The matters stated therein are true based on my own knowledge, except as to those matters stated on information and belief, and as to those matters I believe them to be true.
+            <p class='declaration'>I am the <?php echo $verification_by_name ?> in this action, and I have read the foregoing <b><?php echo $form_name; ?></b> and know its contents. The matters stated therein are true based on my own knowledge, except as to those matters stated on information and belief, and as to those matters I believe them to be true.
             </p>
-            <br />
-            <p>I declare under penalty of perjury under the laws of the State of California that the foregoing is true and correct. Executed on <?php echo date("F j, Y",strtotime($verification_datetime)); ?> at <?php echo $verification_city.", ".$verification_state; ?>. <i>Electronically Signed at <?php echo date("n/j/Y",strtotime($verification_datetime))." ".str_replace(array('am','pm'),array('a.m','p.m'),date("g:i a",strtotime($verification_datetime))) ?>. Pacific Time.</i> 
-            
+            <br/>
+            <p class='declaration'>I declare under penalty of perjury under the laws of the State of California that the foregoing is true and correct. Executed on <?php echo date("F j, Y",strtotime($verification_datetime)); ?> at <?php echo $verification_city.", ".$verification_state; ?>. <i>Electronically Signed at <?php echo date("n/j/Y",strtotime($verification_datetime))." ".str_replace(array('am','pm'),array('a.m','p.m'),date("g:i a",strtotime($verification_datetime))) ?>. Pacific Time.</i> 
             </p>
         </td>
     </tr>
     <?php /*?><tr>
         <td colspan="2" align="right">
-        	<br /><br />
-            <?php echo strtoupper($responding_name); ?>
-            <br />
-            Signed electronically,<br>Cal. Rules of Court, rule 2.257
+        	<br/><br/>
+            <?php echo strtoupper($responding_name); ?><br/>
+			Signed electronically,<br/>
+			Cal. Rules of Court, rule 2.257
         </td>
     </tr><?php */?>
   </tbody>
@@ -1093,7 +1088,10 @@ if($is_verified > 0)
   <tbody>
     <tr>
         <td align="left"><?php echo date('F j, Y',strtotime($verification_datetime)); ?></td>
-        <td align="right">By: <?php echo $verification_signed_by; ?><br /> Signed electronically<br />Cal. Rules of Court, rule 2.257</td>
+        <td align="right">By: <?php echo $verification_signed_by; ?><br/> 
+			Signed electronically<br/>
+			Cal. Rules of Court, rule 2.257
+		</td>
     </tr>
   </tbody>
 </table>
@@ -1139,7 +1137,10 @@ ob_clean();
 $footertext			=	'<table width="100%" style="margin-top:30px;">
 						<tr>
 							<td width="5%" style="line-height:3px"></td>
-							<td style="line-height:18px" align="center">{PAGENO}<br><br>'.$form_name.'<br>All rights reserved © '.date("Y").' EasyRogs. U.S. Patent Pending</td>
+							<td style="line-height:18px" align="center">{PAGENO}<br/>
+								<br/>' . $form_name . '<br/>
+								All rights reserved © ' . date("Y") . ' EasyRogs. U.S. Patent Pending
+							</td>
 							<td width="5%"  style="text-align: right; line-height:3px"></td>
 						</tr>
 						</table>';

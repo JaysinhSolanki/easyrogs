@@ -182,8 +182,11 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
     if ($footertext != "") {
         $mpdf->SetFooter($footertext);
     }
-	$doc = new DOMDocument();
-	@$doc->loadHTML($html);
+    $doc = new DOMDocument();
+    @$doc->loadHTML($html);
+    // file_put_contents( ROOTPATH .'logs/html-org.htm', $html );
+    // file_put_contents( ROOTPATH .'logs/html-dom.htm', $doc->saveHTML() );
+    //return;
 	
     $mpdf->WriteHTML($doc->saveHTML());
 	
