@@ -497,26 +497,26 @@ body.modal-open
     <!-- Modal content-->
     <div class="modal-content" id="existing-case-modal-content">
     <div class="modal-header" style="padding: 15px;">
-        <h5 class="modal-title" id="existing-case-modal-header" style="font-size: 22px;"></h5>
+        <h5 class="modal-title" id="existing-case-modal-header" style="font-size: 22px;">Join Case</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px !important;font-size: 25px !important;">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <h3 class="text-center">This case already exists.</h3> 
+        <h4 class="text-center join-case-text"></h4>
         <br/>
-        <div class="form-group">
-          <label>Request to Join as representing</label>
+        <div class="form-group join-case-clients">
+          <label>Request to join representing</label>
           <select name="client" id="join-existing-case-client" class="form-control">
-            <option>Select a Client</option>
+            <option>Select a Party</option>
 					</select>
 					<input type="hidden" value="" id="join-existing-case-id" />
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-success" id="join-existing-case-btn">Join</button>
-        <button class="btn btn-warning save-case-btn" data-dismiss="modal" data-force="true"><i class="fa fa-save"></i> Save Anyway</a>
-        <button class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
+        <button class="btn btn-success join-action-btn" id="join-existing-case-btn">Join</button>
+        <button class="btn btn-warning join-action-btn save-case-btn" data-dismiss="modal" data-force="true"><i class="fa fa-save"></i> Create New Case</a>
+        <button class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
       </div>
     </div>
   </div>

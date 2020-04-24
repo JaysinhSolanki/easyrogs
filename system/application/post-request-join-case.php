@@ -11,10 +11,15 @@
     HttpResponse::malformed('case_iD and client_id are required.');
   }
 
-  $side = $sidesModel->getByClientAndCase($clientId, $caseId);
-  if ( !$side ) {
+  if ( !$client = $clientsModel->find($clientId) ) {
+    HttpResponse::notFound('Client not found.');
+  }
+  if ( !$side = $sidesModel->getByClientAndCase($clientId, $caseId) ) {
     HttpResponse::notFound('Client side not found on case.');
   }
+
+  $case = $casesModel->find($side['case_id']);
+
   $sideUsers = $sidesModel->getAllUsers($side['id']);
   if ($sideUsers) {
     $sidesModel->addUser($side['id'], $currentUser->user, false);
@@ -24,7 +29,10 @@
       'case_id'        => $caseId
     ]);
 
-    HttpResponse::success('Request sent successfully!');    
+    HttpResponse::success(
+      "Your request has been forwarded to $client[client_name]’s Team. You’ll be notified when it’s granted.",
+      ['awaiting_request' => true]
+    );
   }
   else {
     $sidesModel->addUser($side['id'], $currentUser->user); // add user directly
@@ -33,5 +41,8 @@
     if ($currentUser->isAttorney()) {
       $sidesModel->updateServiceListForAttorney($side, $currentUser->user);
     }
-    HttpResponse::success('You have been added to the case successfully!');
+    HttpResponse::success(
+      "Your request to join $case[case_title] has been granted.",
+      ['awaiting_request' => false]
+    );
   }

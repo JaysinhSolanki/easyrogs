@@ -4,11 +4,17 @@ submitCase = () => {
 }
 
 showExistingCaseModal = (aCase) => {
-  $('#existing-case-modal-header').html(aCase.case_title);
   $('#join-existing-case-id').val(aCase.id);
+  $('.join-action-btn, .join-case-clients').show();
+  $('.join-case-text').html(`
+    <strong>${aCase.case_title}</strong> <br/>
+    ${aCase.county_name} County Case No. ${aCase.case_number} 
+    <br/><br/>
+    <strong>Already exists.</strong>
+  `);
   getCaseClients(aCase.id, 
     (clients) => {
-      $('#join-existing-case-client').html(`<option value="">Select a Client</option>`);
+      $('#join-existing-case-client').html(`<option value="">Select a Party</option>`);
       for(k in clients) {
         $('#join-existing-case-client').append(
           `<option value="${clients[k].id}">${clients[k].client_name}</option>`
@@ -69,9 +75,15 @@ $('#join-existing-case-btn').on('click', function() {
   
   joinCase(caseId, clientId,
     (response) => {
-      showResponseMessage(response);
-      $('#existing-case-modal').modal('hide').on('hidden.bs.modal', () => {
-        $('#wrapper').load('get-cases.php');
+      $('.join-case-clients, .join-action-btn').hide();
+      $('.join-case-text').html(`${response.msg}`);
+      $('#existing-case-modal').on('hidden.bs.modal', () => {
+        if (response.awaiting_request) {
+          $('#wrapper').load('get-cases.php');
+        }
+        else {
+          $('#wrapper').load(`get-case.php?id=${caseId}`);
+        }        
       });      
     },
     (e) => showResponseMessage(e)
