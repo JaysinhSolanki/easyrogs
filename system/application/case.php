@@ -668,7 +668,7 @@ body.modal-open
 </div>
 <?php /*?><script src="<?php echo VENDOR_URL; ?>sweetalert.min.js"></script><?php */?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-<script src="/system/application/custom.js"></script>
+<script src="<?= ROOTURL ?>system/application/custom.js"></script>
 <script type="text/javascript">
 // TODO: move all this to case.js
 // this whole JS code needs to get rid of PHP dependency...
@@ -988,4 +988,4 @@ function loadmasterhead()
 	
 	isDraft = <?= $is_draft ? 'true' : 'false' ?>;
 </script>
-<script src="/system/assets/sections/case.js"></script>
+<script src="<?= ROOTURL ?>system/assets/sections/case.js"></script>

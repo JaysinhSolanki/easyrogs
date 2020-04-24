@@ -33,7 +33,7 @@
 <script src="//cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
 
 <!-- easyrogs --> 
-<script src="/system/application/custom.js"></script>
+<script src="<?= ROOTURL ?>system/application/custom.js"></script>
 
 <script type="text/javascript">
 function loadToolTipForClientBtn(c_id='')

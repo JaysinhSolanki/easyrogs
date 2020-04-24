@@ -40,4 +40,4 @@
   </div>
 </div>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> 
-<script src="/system/assets/sections/myteam.js"></script>
+<script src="{ROOTURL}system/assets/sections/myteam.js"></script>

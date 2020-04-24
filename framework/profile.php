@@ -185,4 +185,4 @@ body.modal-open {
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-<script src="/system/assets/sections/profile.js"></script>
+<script src="<?= ROOTURL ?>system/assets/sections/profile.js"></script>
