@@ -30,8 +30,8 @@
                                  WHERE s.case_id = :case_id 
                                        AND sc.client_id = :client_id',
         
-        'getUsers' => 'SELECT u.* 
-                       FROM system_addressbook as u
+        'getUsers' => 'SELECT u.*, su.active AS side_active
+                       FROM system_addressbook AS u
                             INNER JOIN sides_users AS su 
                               ON su.system_addressbook_id = u.pkaddressbookid
                             INNER JOIN sides AS s
@@ -159,11 +159,12 @@
     }
 
     // $user - user id OR a hash with user data
-    function addUser($sideId, $user) {
+    function addUser($sideId, $user, $active = true) {
       $userId = is_array($user) ? $user['pkaddressbookid'] : $user;
       return $this->insert('sides_users', [
-        'side_id' => $sideId,
-        'system_addressbook_id' => $userId
+        'side_id'               => $sideId,
+        'system_addressbook_id' => $userId,
+        'active'                => $active
       ], true);
     }
 
@@ -188,6 +189,16 @@
       return User::publishable(
         $this->readQuery($query, ['side_id' => $sideId])
       );
+    }
+
+    function getAllUsers($sideId) {
+      $query = $this->queryTemplates['getUsers'];
+      $users = $this->readQuery($query, ['side_id' => $sideId]);
+      $primaryAttorney = $this->getPrimaryAttorney($sideId);
+      if ($primaryAttorney) {
+        $users[] = $primaryAttorney;
+      }
+      return $users;
     }
 
     function getClients($sideId) {
@@ -229,14 +240,22 @@
     }
 
     function addAttorneyTeam($sideId, $attorneyId) {
+      global $casesModel;
+
       $teams = new Team();
       $team = $teams->byAddressBookId($attorneyId);
       $teamMembers = $teams->getMembers($team['id']);
       
-      $this->cleanupUsers($sideId);
-      
+      $side = $this->find($sideId);
+      $this->cleanupUsers($sideId);      
+
       foreach($teamMembers as $teamMember) {
-        $this->addUser($sideId, $teamMember);
+        $userId = $teamMember['pkaddressbookid'];
+        $caseId = $side['case_id'];
+        // check the user is not already in another side of the case.
+        if ( !$casesModel->userInCase($caseId, $userId ) ) {
+          $this->addUser($sideId, $teamMember);
+        }
       }
     }
 
@@ -344,16 +363,36 @@
       return $masterhead;      
     }
 
-    // $attorney: user hash or id 
+    function activateUser($sideId, $userId) {
+      return $this->update('sides_users', 
+        ['active' => true], 
+        [
+          'side_id'               => $sideId,
+          'system_addressbook_id' => $userId
+        ],
+        true
+      );
+    }
+
     // $side:  side hash or id
     function updateServiceListForPrimaryAttorney($side) {
-      global $AdminDAO, $currentUser, $usersModel;
+      global $usersModel;
       
       $side = is_array($side) ? $side : $this->find($side);
       if ( !$side['primary_attorney_id'] ) {
         return false;
       }
-      $attorney = $usersModel->find($side['primary_attorney_id']);
+
+      $this->updateServiceListForAttorney($side, $side['primary_attorney_id']);
+    }
+
+    // $side:  side hash or id
+    // $attorney: user hash or id 
+    function updateServiceListForAttorney($side, $attorney) {
+      global $AdminDAO, $currentUser, $usersModel;
+      
+      $side     = is_array($side) ? $side : $this->find($side);
+      $attorney = is_array($attorney) ? $attorney : $usersModel->find($attorney);
 
       $caseId = $side['case_id'];
       $slAttorney = $this->getBy('attorney', ['case_id' => $caseId, 'attorney_email' => $attorney['email']], 1);

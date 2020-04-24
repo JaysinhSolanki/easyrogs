@@ -42,6 +42,7 @@
       <tr>
         <th>Name</th>
         <th>Role</th>
+        <th>Active</th>
         <th>Lead Counsel?</th>
         <!--<th></th> -->
       </tr>  
@@ -49,6 +50,13 @@
       <tr>
         <td><strong>{$user.firstname} {$user.middlename} {$user.lastname}</strong></td>
         <td>{if {$user.group_name}}{$user.group_name}{else}Unknown{/if}</td>
+        <td>
+          {if $user.is_primary || $user.side_active}
+            Yes
+          {else}
+            No <!-- &nbsp; <a class="btn btn-xs btn-warning side-change-primary" data-side-id="{$side.id}" data-user-id="{$user.pkaddressbookid}">Make Primary</a>-->
+          {/if}
+        </td>
         <td>
           {if $user.is_primary}
             Yes

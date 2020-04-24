@@ -3,8 +3,8 @@
     const TABLE = 'system_addressbook';
 
     const PUBLISHABLE_KEYS = [
-      'pkaddressbookid', 'firstname', 'middlename', 
-      'lastname', 'email', 'address', 'barnumber', 'masterhead', 'fkgroupid'
+      'pkaddressbookid', 'firstname', 'middlename', 'lastname', 'email', 
+      'address', 'barnumber', 'masterhead', 'fkgroupid', 'side_active'
     ];
 
     const SEARCH_FIELDS = [
@@ -67,6 +67,10 @@
       return $this->getBy(self::TABLE, ['pkaddressbookid' => $id], 1);
     }
 
+    function findByUID($uid) {
+      return $this->getBy(self::TABLE, ['uid' => $uid], 1);
+    }
+
     function findAttorney($id) {
       return $this->getBy(self::TABLE, [
         'pkaddressbookid' => $id,
@@ -127,6 +131,8 @@
     }
 
     function expressFindOrCreate($name, $email, $groupId = null) {
+      global $jobsQueue;
+
       $user = $this->getByEmail($email);
       if (!$user) {
         $nameParts = explode(' ', $name);
@@ -136,7 +142,6 @@
           'email'     => $email,
           'fkgroupid' => $groupId
         ]);
-        // TODO: trigger invite email job
       }
       return $user;
     }
@@ -202,6 +207,14 @@
       }
     
       return $user;
+    }
+
+    static function inCollection($user, $users, $key = 'pkaddressbookid' ) {
+      return parent::inCollection($user, $users, $key);
+    }
+
+    static function isAttorney($user) {
+      return $user['fkgroupid'] == self::ATTORNEY_GROUP_ID;
     }
 
   }

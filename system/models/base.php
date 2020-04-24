@@ -388,6 +388,10 @@
       return BaseModel::pluck($items, $id);
     }
 
+    static function inCollection($needle, $haystack, $key) {
+      return in_array($needle[$key], self::pluck($haystack, $key));
+    }
+
   }
 
 ?>

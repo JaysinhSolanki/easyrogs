@@ -149,10 +149,11 @@ body.modal-open
             <div class="form-group row">
             	<div class="col-md-3"></div>
                 <div class="col-md-3" align="left"> 
-				<?php
-					buttonsave('caseaction.php','clientform','wrapper','get-cases.php?pkscreenid=44',0);
-					buttoncancel(44,'get-cases.php');
-					
+								<button type="button" class="btn btn-success buttonid save-case-btn" data-style="zoom-in">
+								<i class="fa fa-save"></i>
+								<span class="ladda-label">Save</span><span class="ladda-spinner"></span></button>
+					<?php
+						buttoncancel(44,'get-cases.php');
 					?> 
                 </div>
                 <div class="col-md-5" align="right"> 
@@ -443,8 +444,10 @@ body.modal-open
             
             <div class="form-group">
             	<div class="col-sm-offset-3 col-sm-3" align="left">
-				<?php
-					buttonsave('caseaction.php','clientform','wrapper','get-cases.php?pkscreenid=44',0);
+								<button type="button" class="btn btn-success buttonid save-case-btn" data-style="zoom-in" >
+								<i class="fa fa-save"></i>
+								<span class="ladda-label">Save</span><span class="ladda-spinner"></span></button>
+					<?php
 					buttoncancel(44,'get-cases.php');
 					?> 
                 
@@ -488,6 +491,38 @@ body.modal-open
     </div>
   </div>
 </div>
+
+<div id="existing-case-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content" id="existing-case-modal-content">
+    <div class="modal-header" style="padding: 15px;">
+        <h5 class="modal-title" id="existing-case-modal-header" style="font-size: 22px;"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px !important;font-size: 25px !important;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h3 class="text-center">This case already exists.</h3> 
+        <br/>
+        <div class="form-group">
+          <label>Request to Join as representing</label>
+          <select name="client" id="join-existing-case-client" class="form-control">
+            <option>Select a Client</option>
+					</select>
+					<input type="hidden" value="" id="join-existing-case-id" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" id="join-existing-case-btn">Join</button>
+        <button class="btn btn-warning save-case-btn" data-dismiss="modal" data-force="true"><i class="fa fa-save"></i> Save Anyway</a>
+        <button class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div id="partyModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
@@ -633,8 +668,10 @@ body.modal-open
 </div>
 <?php /*?><script src="<?php echo VENDOR_URL; ?>sweetalert.min.js"></script><?php */?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="/system/application/custom.js"></script>
 <script type="text/javascript">
-
+// TODO: move all this to case.js
+// this whole JS code needs to get rid of PHP dependency...
 const setMastHead = (attorneyId = null) => {
   const id = attorneyId ? attorneyId : $('#case_attorney').val();
   getAttorney(id, 
@@ -943,9 +980,12 @@ function loadmasterhead()
 
   erInviteControl();
   <?php if ($currentPrimaryAttorneyId): ?>
-    erTeamAttorneySelectControl();
+    erTeamAttorneySelectControl(<?= $id ?>);
 		setMastHead(<?= $currentPrimaryAttorneyId ?>);
   <?php else: ?>  
-    erTeamAttorneySelectControl( setMastHead );
-  <?php endif; ?>  	
+    erTeamAttorneySelectControl(<?= $id ?>, setMastHead);
+	<?php endif; ?>  	
+	
+	isDraft = <?= $is_draft ? 'true' : 'false' ?>;
 </script>
+<script src="/system/assets/sections/case.js"></script>

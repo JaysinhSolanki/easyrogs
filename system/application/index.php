@@ -57,5 +57,11 @@ ob_end_flush();
 }
 </style>
 <script>
- 
+  // handle redirect actions
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  switch( urlParams.get('notify') ) {
+    case 'granted-join-request': toastr.info('Request Granted successfully!'); break;
+    case 'denied-join-request':  toastr.info('Request Denied successfully.'); break;
+  }
 </script>

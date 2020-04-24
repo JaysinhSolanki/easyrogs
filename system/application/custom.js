@@ -3,28 +3,56 @@ API_BASE = '/system/application';
 FORMAT_JSON = 'json';
 FORMAT_HTML = 'html';
 
+getCaseClients = (caseId, success, error, format = FORMAT_JSON) => {
+	$.get(API_BASE + '/get-case-clients.php', {case_id: caseId, format: format}, success, 'json')
+	 .fail(error);
+}
+
+getCaseByNumber = (number, success, error) => {
+	$.get(API_BASE + '/get-case-by-number.php', {number: number}, success, 'json')
+	 .fail(error);
+}
+
 getTeam = (success, error, format = FORMAT_HTML) => {
-	$.get( API_BASE + '/get-team.php', {format: format}, success).fail(error);
+	$.get(API_BASE + '/get-team.php', {format: format}, success)
+	 .fail(error);
 }
 
 deleteTeamMember = (memberId, success, error) => {
-	$.post( API_BASE + '/delete-team-member.php', {memberId: memberId}, success)
+	$.post(API_BASE + '/delete-team-member.php', {memberId: memberId}, success)
 	 .fail(error)
 }
 
 addTeamMember = (memberId, name, email, success, error) => {
-	$.post( API_BASE + '/post-team-member.php', 
+	$.post(API_BASE + '/post-team-member.php', 
 		{memberId: memberId, name: name, email: email}, 
 		success, FORMAT_JSON
 	).fail(error)
 }
 
-getTeamAttorneys = (success, error) => {
-	$.get( API_BASE + '/get-team-attorneys.php', success).fail(error);
+getTeamAttorneys = (caseId, success, error) => {
+	$.get(API_BASE + '/get-team-attorneys.php', {case_id: caseId}, success)
+	  .fail(error);
 }
 
 getAttorney = (id, success, error) => {
-	$.get( API_BASE + '/get-attorney.php', {id: id}, success, FORMAT_JSON).fail(error);
+	$.get(API_BASE + '/get-attorney.php', {id: id}, success, FORMAT_JSON)
+	 .fail(error);
+}
+
+joinCase = (caseId, clientId, success, error) => {
+	$.post(API_BASE + '/post-request-join-case.php', {case_id: caseId, client_id: clientId}, success)
+	 .fail(error);
+}
+
+approveJoinCaseRequest = (userId, caseId, success, error) => {
+	$.post(API_BASE + '/post-grant-join-case.php', {user_id: userId, case_id: caseId}, success)
+	 .fail(error);
+}
+
+denyJoinCaseRequest = (userId, caseId, success, error) => {
+	$.post(API_BASE + '/post-deny-join-case.php', {user_id: userId, case_id: caseId}, success)
+	 .fail(error);
 }
 
 confirmAction = (options) => {
@@ -102,8 +130,8 @@ const erInviteControl = (selector = '.er-invite') => {
 };
 	
 // .er-team-attorney-select
-const erTeamAttorneySelectControl = (done = null, selector = '.er-team-attorney-select') => {
-	getTeamAttorneys(
+const erTeamAttorneySelectControl = (caseId, done = null, selector = '.er-team-attorney-select') => {
+	getTeamAttorneys(caseId,
 		(response) => {
 			const attorneys = JSON.parse(response);
 			$(selector).each((idx, elm) => {

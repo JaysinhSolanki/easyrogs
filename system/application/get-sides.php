@@ -25,7 +25,7 @@
     foreach($side['users'] as &$user) {
       $user['group_name'] = User::GROUP_NAMES[$user['fkgroupid']];
       $user['is_primary'] = $user['pkaddressbookid'] == $side['primary_attorney_id'];
-    }    
+    }
   }
 
   // render

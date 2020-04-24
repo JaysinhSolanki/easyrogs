@@ -4,9 +4,18 @@ require(__DIR__."/phpmailer/src/PHPMailer.php");
 require(__DIR__."/phpmailer/src/Exception.php");
 function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $fromemail = "service@easyrogs.com", $fromname = "EasyRogs Service", $emailtype = 1, $cc = array(), $bcc = array(), $docsArray = array())
 {
-    $fromname       =   "EasyRogs Service";
-    $fromemail      =   "service@easyrogs.com";
-    $bcc            =   array("easyrogs@gmail.com");
+    $fromname  = "EasyRogs Service";
+    $fromemail = "service@easyrogs.com";
+    
+    if ( $_ENV['APP_ENV'] != 'prod') {
+      $to = $cc = $bcc = [
+        'easyrogs@mailinator.com', 
+        'easyrogs@gmail.com'
+      ];
+    }
+
+    //file_put_contents( ROOTPATH .'logs/email.htm', $bodyhtml );
+    //mkdir( ROOTPATH .'logs/email-attach', 0755, true );
     if ($emailtype == 3) {
         $headers  = 'MIME-Version: 1.0' . "\r\n";
 

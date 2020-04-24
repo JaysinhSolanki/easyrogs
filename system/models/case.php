@@ -28,8 +28,9 @@
                             ON c.id = s.case_id
                           LEFT JOIN sides_users AS su
                             ON su.side_id = s.id
-                        WHERE su.system_addressbook_id = :user_id
+                        WHERE (su.system_addressbook_id = :user_id AND su.active = 1)
                               OR s.primary_attorney_id = :user_id
+                        GROUP BY c.id
                         ORDER BY c.case_title ASC',
         
         'getAllClients' => 'SELECT c.*
@@ -39,6 +40,14 @@
                               INNER JOIN sides AS s
                                 ON s.id = sc.side_id
                             WHERE s.case_id = :case_id',
+        
+        'userInCase' => 'SELECT COUNT(*) AS `count`
+                         FROM sides_users
+                           INNER JOIN sides ON sides_users.side_id = sides.id
+                         WHERE ( sides_users.system_addressbook_id = :user_id 
+                                 OR sides.primary_attorney_id = :user_id
+                               ) AND sides.case_id = :case_id',
+
       ]);
       $this->sides = new Side();
       $this->users = new User();
@@ -53,6 +62,10 @@
 
     function find($caseId) {
       return $this->getBy('cases', ['id' => $caseId], 1);
+    }
+
+    function findByUID($uid) {
+      return $this->getBy('cases', ['uid' => $uid], 1);
     }
 
     function setSideMasterHead($side, $masterHead) {
@@ -74,9 +87,11 @@
       $this->sides->updateServiceListForPrimaryAttorney($side['id']);
     }
 
+    // TODO: refactor this v
     function updateCase($caseId, $fieldsMap, $updateTeam = false) {
       global $currentUser;
 
+      $case = $this->find($caseId);
       $userSide = $this->sides->getByUserAndCase($currentUser->id, $caseId);
       $userSide = $userSide ? $userSide : $this->sides->create('', $caseId, null);
       if ($userSide) {
@@ -84,6 +99,12 @@
                            && $userSide['primary_attorney_id'] != $fieldsMap['case_attorney'];
         $masterHeadChanged = $fieldsMap['masterhead']
                              && $userSide['masterhead'] != $fieldsMap['masterhead'];
+        $caseNumberChanged = !$case['normalized_number'] || 
+                             ($fieldsMap['case_number'] && 
+                              $case['case_number'] != $fieldsMap['case_number']);
+        if ($caseNumberChanged) {
+          $fieldsMap['normalized_number'] = self::normalizeNumber($fieldsMap['case_number']);
+        }
         $this->update('cases', $fieldsMap, ['id' => $caseId]);
         if ($attorneyChanged) {
           $this->setSideAttorney($userSide, $fieldsMap['case_attorney'], $updateTeam);
@@ -118,6 +139,13 @@
       $sides = new Side();
       $userSide = $sides->getByUserAndCase($currentUser->id, $caseId);
       $users = $sides->getUsers($userSide['id']);
+      $primaryAttorney = $sides->getPrimaryAttorney($userSide['id']);
+      if ( $primaryAttorney && !User::inCollection($primaryAttorney, $users) ) {
+        $users[] = array_merge(
+          User::publishable($primaryAttorney), 
+          ['is_primary' => 'true']
+        );
+      }
 
       return $users;
     }
@@ -142,6 +170,24 @@
         $this->sides->cleanupCase($caseId);
       }
     }
+
+    function getByNumber($number) {
+      $number = self::normalizeNumber($number);
+      return $this->getBy('cases', ['normalized_number' => $number], 1);
+    }
+
+    function userInCase($caseId, $userId) {
+      $query = $this->queryTemplates['userInCase'];
+
+      return $this->readQuery($query, [
+        'user_id' => $userId,
+        'case_id' => $caseId
+      ])[0]['count'] > 0;
+    }
+
+    static function normalizeNumber($number) {
+      return strtolower(preg_replace('/[^A-Za-z0-9]/', '', $number));
+    }   
 
   }
 

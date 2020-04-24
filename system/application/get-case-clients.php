@@ -16,7 +16,7 @@
 	foreach($clients as &$client) {
     $clientSide = $sides->getByClientAndCase($client['id'], $caseId);
     if ( $client['client_type'] != Client::CLIENT_TYPE_PRO_PER) {
-      $client['client_type'] = $currentSide['id'] == $clientSide['id'] 
+      $client['client_type'] = $currentSide && $currentSide['id'] == $clientSide['id'] 
                                ? Client::CLIENT_TYPE_US 
                                : Client::CLIENT_TYPE_OTHER;
     }    

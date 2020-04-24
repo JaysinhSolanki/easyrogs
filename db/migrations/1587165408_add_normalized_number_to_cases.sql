@@ -1,0 +1,5 @@
+START TRANSACTION;
+  
+  ALTER TABLE `cases` ADD COLUMN `normalized_number` VARCHAR(255) NULL;
+
+COMMIT;
