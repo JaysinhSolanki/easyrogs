@@ -51,6 +51,8 @@
       fwrite( $this->fpAllLogs, "$time [$level] $message \n" );
     }
 
+    public function debug($message) { $this->log($message); }
+    public function info($message)  { $this->log($message, self::INFO); }
+    public function warn($message)  { $this->log($message, self::WARN); }
+    public function error($message) { $this->log($message, self::ERROR); }    
   }
-
-?>
