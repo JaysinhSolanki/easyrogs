@@ -7,20 +7,23 @@
   $dotEnv->load();
   require_once(__DIR__ . "/settings.php");
   
+  // lib
+  require_once __DIR__ . '/library/classes/httpresponse.php';
+  require_once __DIR__ . '/library/classes/AdminDAO.php';
+  require_once __DIR__ . '/library/classes/logger.class.php';
+  require_once __DIR__ . '/library/helper.php';  
+
   // logging
   error_reporting(E_ALL & ~E_NOTICE);
   ini_set("log_errors", 1);
   ini_set("error_log", LOGS_DIR . "/errors.log");
+  
+  $logger = new Logger();
 
   // templates
   $smarty = new Smarty();
   $smarty->template_dir = __DIR__ . '/templates';
   $smarty->compile_dir  = __DIR__ . '/../tmp/templates_c';
-
-  // lib
-  require_once __DIR__ . '/library/classes/httpresponse.php';
-  require_once __DIR__ . '/library/classes/AdminDAO.php';
-  require_once __DIR__ . '/library/helper.php';
 
   // globals
   date_default_timezone_set("America/Los_Angeles");
