@@ -17,4 +17,16 @@ class SessionUser {
   function isAttorney() {
     return $this->user['fkgroupid'] == User::ATTORNEY_GROUP_ID;
   }
+
+  function canCreateCase() {
+    return !!($this->isAttorney() || $this->getTeamAttorneys());
+  }
+
+  function permissions() {
+    return [
+      'cases' => [
+        'create' => $this->canCreateCase()
+      ]
+    ];
+  }
 }

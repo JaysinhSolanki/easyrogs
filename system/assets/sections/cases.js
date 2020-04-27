@@ -1,4 +1,3 @@
-
 // case search
 $(`select.case-search`).select2({
   placeholder: 'Search by name or number...',
@@ -54,4 +53,18 @@ $('#join-case-btn').on('click', function() {
     (e) => showResponseMessage(e)
   )
   
+});
+
+$('.add-new-case-btn').on( 'click', () => {
+  // check can create case
+  getPermissions(
+    (permissions) => {
+      if (permissions.cases.create) {
+        selecttab('46_tab','get-case.php','46');
+      }
+      else {
+        $('#create-case-error-modal').modal('show');
+      }
+    }
+  )
 });

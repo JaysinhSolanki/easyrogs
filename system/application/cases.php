@@ -42,6 +42,36 @@ if($res_attr_uid != "")
 ?>
 <div id="screenfrmdiv" style="display: block;">
 
+<div id="create-case-error-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+    	<div class="modal-header" style="padding: 15px;">
+        <h5 class="modal-title" id="existing-case-modal-header" style="font-size: 22px;">Error</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px !important;font-size: 25px !important;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4>
+					To create a case you must be either:
+					<br/>
+					<br/>
+					<ol>
+						<li>An attorney, or</li>
+						<li>A member of an attorney's team.</li>
+					</ol>
+					<br/>
+					If you work for an attorney, ask them to add you to their Team.
+				</h4>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="join-case-modal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
@@ -87,7 +117,7 @@ if($res_attr_uid != "")
 							</div>
 							<div class="col-md-8" align="right">
 								<a href="javascript:;" class="btn btn-warning join-case-btn" data-toggle="modal" data-target="#join-case-modal"><i class="fa fa-arrow-circle-right"></i> Join Existing Case</a>
-								<a href="javascript:;" class="btn btn-success" onclick="javascript: selecttab('46_tab','get-case.php','46');"><i class="fa fa-plus"></i> Add New Case</a>
+								<a href="javascript:;" class="btn btn-success add-new-case-btn" ><i class="fa fa-plus"></i> Add New Case</a>
 							</div>
             </div>
             </div>

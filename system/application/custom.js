@@ -3,6 +3,10 @@ API_BASE = '/system/application';
 FORMAT_JSON = 'json';
 FORMAT_HTML = 'html';
 
+getPermissions = (success, error) => {
+	$.get(API_BASE + '/get-permissions.php', success, 'json').fail(error);
+}
+
 getCaseClients = (caseId, success, error, format = FORMAT_JSON) => {
 	$.get(API_BASE + '/get-case-clients.php', {case_id: caseId, format: format}, success, 'json')
 	 .fail(error);
