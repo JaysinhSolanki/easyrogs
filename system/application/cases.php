@@ -42,6 +42,38 @@ if($res_attr_uid != "")
 ?>
 <div id="screenfrmdiv" style="display: block;">
 
+<div id="join-case-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content" id="join-case-modal-content">
+    	<div class="modal-header" style="padding: 15px;">
+        <h5 class="modal-title" id="existing-case-modal-header" style="font-size: 22px;">Join Existing Case</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px !important;font-size: 25px !important;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4 class="join-case-text"></h4>
+        <div class="join-case-search join-case-action">
+					<select class="case-search" id="join-case-id" ></select>
+				</div>
+        <br/>
+        <div class="form-group join-case-clients join-case-action" style="display: none">
+          <label>Request to join representing</label>
+          <select name="client" id="join-case-client" class="form-control">
+            <option>Select a Party</option>
+					</select>
+					<input type="hidden" value="" id="join-existing-case-id" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success join-case-action" id="join-case-btn">Join</button>
+        <button class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="col-lg-12">
     <div class="hpanel">
         <div class="panel-heading" align="center">
@@ -54,6 +86,7 @@ if($res_attr_uid != "")
             	<div class="col-md-4">
 							</div>
 							<div class="col-md-8" align="right">
+								<a href="javascript:;" class="btn btn-warning join-case-btn" data-toggle="modal" data-target="#join-case-modal"><i class="fa fa-arrow-circle-right"></i> Join Existing Case</a>
 								<a href="javascript:;" class="btn btn-success" onclick="javascript: selecttab('46_tab','get-case.php','46');"><i class="fa fa-plus"></i> Add New Case</a>
 							</div>
             </div>
@@ -98,6 +131,4 @@ if($res_attr_uid != "")
 </div>
 </div>
 <script src="<?php echo VENDOR_URL; ?>sweetalert.min.js"></script>
-<script>
-	erInviteControl();
-</script>
+<script src="<?= ROOTURL ?>system/assets/sections/cases.js"></script>

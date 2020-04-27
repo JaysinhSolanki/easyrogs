@@ -47,6 +47,16 @@
                          WHERE ( sides_users.system_addressbook_id = :user_id 
                                  OR sides.primary_attorney_id = :user_id
                                ) AND sides.case_id = :case_id',
+        
+        'search' => 'SELECT cases.id, cases.case_title, cases.case_number, cases.county_name
+                     FROM cases
+                       INNER JOIN sides ON (sides.case_id = cases.id)
+                       INNER JOIN sides_clients ON (sides_clients.side_id = sides.id)
+                     WHERE LOWER(case_title) LIKE :query
+                           OR normalized_number LIKE :case_number
+                     GROUP BY cases.id
+                     ORDER BY cases.id DESC
+                     LIMIT 10'
 
       ]);
       $this->sides = new Side();
@@ -185,9 +195,17 @@
       ])[0]['count'] > 0;
     }
 
+    function search($term) {
+      $query = $this->queryTemplates['search'];
+      return $this->readQuery($query, [
+        'query'       => "%" . strtolower($term) . "%",
+        'case_number' => "%" . self::normalizeNumber($term) . "%"
+      ]);
+    }
+
     static function normalizeNumber($number) {
       return strtolower(preg_replace('/[^A-Za-z0-9]/', '', $number));
-    }   
+    }
 
   }
 

@@ -105,7 +105,7 @@
                   </tr>
                   <tr>
                     <td align="center" valign="top">
-                      <p style="color: #7f7f7f; font-size: 12px; padding: 20px 0;">All rights reserved © 2020 EasyRogs. U.S. Patent Pending.</p>
+                      <p style="color: #7f7f7f; font-size: 12px; padding: 20px 0;">All rights reserved &copy; {$smarty.now|date_format:"%Y"} EasyRogs. U.S. Patent Pending.</p>
                     </td>
                   </tr>
                 </tbody>

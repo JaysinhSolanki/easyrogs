@@ -43,6 +43,8 @@
       $singleUser = isset($users['pkaddressbookid']);
       $users = $singleUser ? [$users] : $users;
       
+      if ( !$users ) { return false; }
+      
       foreach($users as &$user) {
         if (is_array($user)) {
           foreach($user as $key => $value) {
