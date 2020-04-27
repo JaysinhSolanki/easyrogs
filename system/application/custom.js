@@ -360,6 +360,19 @@ function loadModalCaseTeamFunction(case_id=0,attorney_id = 0,makememberofmyteam=
 		$("#modalcaseteam").modal("toggle");
 	});
 }
+
+function toggleAll(selector, self) {
+	const items = $(selector);
+	if( items.length > 0 ) {
+		const newValue = !$(items[0]).prop("checked");
+		items.each( (idx, x) => {
+			x = $(x);
+			if ( x.prop("checked") != newValue ) x.click();
+		} );
+		$(self).prop("checked", newValue);
+	} else console.warn( `${selector} didn't match anything` );
+}
+
 $(document).ready(function(){
   $('.tooltipshow').tooltip({
 	   container: 'body'

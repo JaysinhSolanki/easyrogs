@@ -14,8 +14,10 @@ function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $frome
       ];
     }
 
-    //file_put_contents( ROOTPATH .'logs/email.htm', $bodyhtml );
-    //mkdir( ROOTPATH .'logs/email-attach', 0755, true );
+    // mkdir( ROOTPATH .'logs/email-attach', 0755, true );
+    // file_put_contents( ROOTPATH .'logs/email.htm', $bodyhtml );
+    // file_put_contents( ROOTPATH .'logs/eamail-attach.txt', $docsArray );
+    // return;
     if ($emailtype == 3) {
         $headers  = 'MIME-Version: 1.0' . "\r\n";
 
@@ -193,8 +195,8 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
     }
     $doc = new DOMDocument();
     @$doc->loadHTML($html);
-    // file_put_contents( ROOTPATH .'logs/html-org.htm', $html );
-    // file_put_contents( ROOTPATH .'logs/html-dom.htm', $doc->saveHTML() );
+    file_put_contents( ROOTPATH .'logs/html-org.htm', $html );
+    file_put_contents( ROOTPATH .'logs/html-dom.htm', $doc->saveHTML() );
     //return;
 	
     $mpdf->WriteHTML($doc->saveHTML());

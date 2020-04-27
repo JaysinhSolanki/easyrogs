@@ -91,8 +91,8 @@ if(sizeof($_POST)>0)
 }
 require_once("head.php");
 ?>
-<link rel="stylesheet" href="/system/assets/videopopup.css" />
-<script type="text/javascript" src="/system/assets/videopopup.js"></script>
+<link rel="stylesheet" href="<?= ROOTURL ?>system/assets/videopopup.css" />
+<script type="text/javascript" src="<?= ROOTURL ?>system/assets/videopopup.js"></script>
 <script type="text/javascript">
         jQuery(function ($) {
            $('#vidBox').VideoPopUp({
@@ -134,28 +134,41 @@ require_once("head.php");
 								<span style="vertical-align:middle;">Remember password</span>
                                 <p class="help-block small" style="margin-left:26px">Recommended only if this is your personal computer.</p>
                             </div>
-                            <button class="ladda-button btn btn-success btn-block" data-style="zoom-in">
+                            <button class="ladda-button btn btn-info btn-block" data-style="zoom-in">
                             	<span class="ladda-label">Login</span><span class="ladda-spinner"></span>
                             </button>
                             
-                            <a  href="<?php echo DOMAIN;?>signup.php" style="float:left; margin-top:5px;">Sign up here</a>
                             <a  href="<?php echo $_SESSION['framework_url'];?>forgotpassword.php" style="float:right; margin-top:5px;">Forgot Password?</a>
                         </form>
                 </div>
             </div>
         </div>
         <div class="col-md-12">
-            <div class="hpanel">
+            <div class="hpanel btn-success" style="text-align: center;">
                 <div class="panel-bodys">
-                    <a href="javascript:void(0)" id="video_introduction" class="ladda-button btn btn-intro btn-block">New to EasyRogs? <br />Please watch this short introduction</a>
+                    <a href="javascript:void(0)" id="video_introduction" class="ladda-button btn btn-success btn-block">
+					<div style="font-size: 1.1em;">New to EasyRogs?</div>
+					<div style="font-size: 0.8em;">Please watch this short introduction</div>
+					</a>
                 </div>
                 <div id="vidBox" style="display: none;">
                     <div id="videCont">
-                		<video id="v1" loop controls>
-                            <source src="https://www.easyrogs.com/system/application/demo.mp4" type="video/mp4">
+                		<video id="v1" loop controls style="position: fixed;
+															top: 0; left: 0;
+															max-width: 100vw; max-height: 100vh; 
+															height: auto;
+															">
+                            <source src="<?= ROOTURL ?>system/application/demo.mp4" type="video/mp4">
                         </video>
                     </div>
                 </div>
+				or
+				<button class="ladda-button btn btn-success btn-block" style="padding-bottom: 25px;">
+					<a  href="<?php echo DOMAIN;?>signup.php" style="color: white;">
+						<div style="font-size: 2.2em;">Join</div>
+						<div>Membership is complementary</div>
+					</a>
+				</button>
             </div>
         </div>
     </div>
@@ -176,6 +189,14 @@ require_once("head.php");
 ?>
 </body>
 </html>
+<script type="text/javascript">
+	jQuery(function ($) {
+		$('#loginForm .i-checks').iCheck({
+			checkboxClass: 'icheckbox_square-blue',
+			radioClass: 'iradio_square-blue'
+		})
+	});
+</script>
 <?php
 //ob_end_flush();
 ?>

@@ -87,7 +87,7 @@ navbar.navbar-static-top a, .nav.navbar-nav li a {
                 </li>
                 <li class="dropdown"  id="profile-right">
                 	<h4 style="color:#34495e !important; font-size:12px !important; font-weight:500 !important; padding-top:10px; margin-right:20px;">  
-                        <a href="javascript:;" onclick="javascript: selecttab('8_tab','/system/application/get-profile.php','8');">
+                        <a href="javascript:;" onclick="javascript: selecttab('8_tab','<?= ROOTURL ?>system/application/get-profile.php','8');">
  	                       <b>My Profile</b>
                         </a>
                     </h4>

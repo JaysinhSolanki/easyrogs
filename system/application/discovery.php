@@ -259,6 +259,9 @@ body.modal-open
 .tooltip-inner {
     text-align: center !important;
 }
+.q-checkbox {
+    padding: 0.5em 2em;
+}
 </style>
 <div id="screenfrmdiv" style="display: block;">
     <div class="col-lg-12">
@@ -337,12 +340,13 @@ body.modal-open
                         echo "style='display:none'";
 } ?> id="in_conjunctionDiv">
                     <div class="row form-group">
-                             <label class=" col-sm-2 control-label" style="margin-top: 20px;">In Conjunction with <span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+                             <label class=" col-sm-2 control-label" style="margin-top: 20px;">In Conjunction with <span class="redstar" style="color:#F00" title="This field is compulsory"></span>
                             <div class="col-sm-2" style="margin-top: 25px;">
                                 <input type="checkbox" onclick="inConjunctionForm()" <?php if ($discovery['in_conjunction'] == 1) {
                                     echo "checked";
 } ?> value="1" name="in_conjunction" id="in_conjunction"> <label for="in_conjunction">Form Interrogatories</label>
                             </div>
+                            </label>
                             <div  id="interogatoriesTypeDiv" <?php if ($id == '' || $discovery['in_conjunction'] == 0) {
                                 echo "style='display:none'";
 } ?>>
@@ -1169,34 +1173,34 @@ function servePOS()
     var pos_state   =   $("#pos_state").val();
     var pos_city    =   $("#pos_city").val();
     var pos_address =   $("#pos_address").val();
-    var pos_street =   $("#pos_street").val();
-    var pos_cityname =   $("#pos_cityname").val();
-    var pos_statecode =   $("#pos_statecode").val();
-    var pos_zip =   $("#pos_zip").val();
-    var error       =   0;
-    var msg         =   "";
+    // var pos_street =    $("#pos_street").val();
+    // var pos_cityname =  $("#pos_cityname").val();
+    // var pos_statecode = $("#pos_statecode").val();
+    // var pos_zip =       $("#pos_zip").val();
+    var error =   0;
+    var msg =     "";
     if(pos_address == "")
     {
         error   =   1;
         msg     =   "Please enter address.";
     }
-    if(pos_street == "")
-    {
-        error   =   1;
-        msg     =   "Please enter street.";
-    }
-    if(pos_statecode == "")
-    {
-        error   =   1;
-        msg     =   "Please enter statecode.";
-    }
-    if(pos_zip == "")
-    {
-        error   =   1;
-        msg     =   "Please enter zip.";
-    }
+    // if(pos_street == "")
+    // {
+    //     error   =   1;
+    //     msg     =   "Please enter street.";
+    // }
+    // if(pos_statecode == "")
+    // {
+    //     error   =   1;
+    //     msg     =   "Please enter statecode.";
+    // }
+    // if(pos_zip == "")
+    // {
+    //     error   =   1;
+    //     msg     =   "Please enter zip.";
+    // }
 
-    if(pos_city == "" || pos_cityname == "")
+    if(pos_city == "" /*|| pos_cityname == ""*/ )
     {
         error   =   1;
         msg     =   "Please enter city.";
@@ -1213,15 +1217,25 @@ function servePOS()
     else
     {
         $.LoadingOverlay("show"); 
-        $("#citystate").replaceWith(pos_city+", "+pos_state);
-        var poshtml = $("#poshtml").html();
-        $("#pos_text").val(poshtml);
-        $("#posstate").val(pos_state);
+        $("#citystate").replaceWith( pos_city + ", " + pos_state );
+
+        // we must do this (setAttribute[value]), to update #poshtml.innerHtml
+        $("#pos_address").attr('value', pos_address);
+        $("#pos_state").attr('value', pos_state);
+        $("#pos_city").attr('value', pos_city);
+        var poshtml = $("#poshtml").clone(),
+            _text = $("#pos_18info > #_1").text() + 
+                    $("#pos_18info > input").val() + '. ' +
+                    $("#pos_18info + #_2").text();
+        poshtml.find('#pos_18info').replaceWith( '<p>' + _text + '</p>' );
+
+        $("#pos_text").val(poshtml.html());
         $("#posaddress").val(pos_address);
-        $("#posstreet").val(pos_street);
-        $("#posstatecode").val(pos_statecode);
-        $("#poszip").val(pos_zip);
-        $("#poscityname").val(pos_cityname);
+        // $("#posstreet").val(pos_street);
+        // $("#posstatecode").val(pos_statecode);
+        // $("#poszip").val(pos_zip);
+        // $("#poscityname").val(pos_cityname);
+        $("#posstate").val(pos_state);
         $("#poscity").val(pos_city);
         setTimeout(function()
         {

@@ -54,7 +54,7 @@ if(count($questions)>1)
 					
 					<tbody>
 						<tr>
-							<th style="text-align:center">Select</th>
+							<th style="text-align:center"><label> <input type="checkbox" onclick="toggleAll('label.q-checkbox > input', event.target);" /> Select</label></th>
 							<th style="text-align:center"><?=$s_titleQuestion?></th>
 						</tr>
 					<?php
@@ -72,10 +72,12 @@ if(count($questions)>1)
 						?>
                         <tr id="this_<?php echo $row['id']?>" <?php if($depends_on_question != 0) {?>class="row_<?php echo $depends_on_question; ?>" <?php if(!in_array($depends_on_question,$myquestion)){ ?>style="display:none;" <?php } } ?>>
                             <td  style="vertical-align:middle; text-align:center">
-                                <input id="q_<?php echo $uid;?>" 
-                                onclick="checkquestion('q_<?php echo $uid;?>')<?php if($is_depended_parent ==1 ){ ?>,showhidequestions('<?php echo $row['id']?>','<?php echo $uid;?>')<?php }?>" 
-                                type="checkbox" <?php if(in_array($row['id'],$myquestion)) echo 'checked'?>  value="<?php echo $row['id']?>"
-                                 <?php if($depends_on_question != 0) {?>class='dependent_checked_<?php echo $depends_on_question?>' <?php } ?>>
+								<label class="q-checkbox">
+									<input id="q_<?php echo $uid; ?>" 
+										onclick="checkquestion('q_<?php echo $uid; ?>')<?php if($is_depended_parent ==1 ){ ?>,showhidequestions('<?php echo $row['id'] ?>','<?php echo $uid; ?>')<?php } ?>" 
+										type="checkbox" <?php if(in_array($row['id'],$myquestion)) echo 'checked' ?>  value="<?php echo $row['id'] ?>"
+										<?php if($depends_on_question != 0) { ?>class='dependent_checked_<?php echo $depends_on_question ?>' <?php } ?>>
+								</label>
                             </td>
                             <td style="vertical-align:middle; text-align:left" colspan="2">
                                 <input type="hidden" class="q_<?php echo $uid?> <?php if($depends_on_question != 0) {?>dependent_checked_val_<?php echo $depends_on_question?> <?php } ?>"  name="is_selected[]" value="<?php if(in_array($row['id'],$myquestion)) echo 1;else echo 0;?>">

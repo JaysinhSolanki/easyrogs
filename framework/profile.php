@@ -145,7 +145,7 @@ body.modal-open {
                       <div class="col-md-3">
                         <div class="form-group">
                           <label>Masthead</label>
-                          <textarea name="masterhead"  class="form-control" cols="50" rows="7" wrap="off"><?= $user['masterhead'] ?></textarea>
+                          <textarea name="masterhead"  class="form-control" cols="50" rows="10" style="height: 12em;" wrap="off"><?= $user['masterhead'] ?></textarea>
                         </div>
                       </div>
                     </div>

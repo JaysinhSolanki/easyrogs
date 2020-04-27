@@ -79,7 +79,7 @@ if ($sideCases) {
                                 <?php
                                	}
                                 ?>
-                                <li><a href="javascript:;" onclick="javascript: selecttab('8_tab','/system/application/get-profile.php','8');">Edit My Profile.</a></li>
+                                <li><a href="javascript:;" onclick="javascript: selecttab('8_tab','<?= ROOTURL ?>system/application/get-profile.php','8');">Edit My Profile.</a></li>
                                 <li><a href="javascript:;" onclick="javascript: selecttab('44_tab','get-cases.php','44');">Logout.</a></li>
                             </ul>
                         </div>

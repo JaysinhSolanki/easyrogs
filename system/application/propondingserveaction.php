@@ -6,17 +6,17 @@ include_once($_SESSION['library_path']."helper.php");
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);*/
 $discovery_id		=	$_POST['discovery_id'];
-$posstate			=	$_POST['posstate']; 
 $pos_text			=	$_POST['pos_text'];
-$poscity				=	$_POST['poscity'];
+$posstate			=	$_POST['posstate']; 
+$poscity			=	$_POST['poscity'];
 $posaddress			=	$_POST['posaddress'];
-$posstreet			=	$_POST['posstreet'];
-$posstatecode		=	$_POST['posstatecode'];
-$poszip				=	$_POST['poszip'];
-$poscityname			=	$_POST['poscityname'];
+// $posstreet			=	$_POST['posstreet'];
+// $poscityname			=	$_POST['poscityname'];
+// $posstatecode		=	$_POST['posstatecode'];
+// $poszip				=	$_POST['poszip'];
 $respond				=	$_POST['respond'];
 $discovery_type		=	$_POST['discovery_type'];
-$response_id			=	$_POST['response_id'];
+$response_id		=	$_POST['response_id'];
 
 $pos_updated_by		=	$_SESSION['addressbookid'];
 $pos_updated_at		=	date("Y-m-d H:i:s");
@@ -225,7 +225,8 @@ else if($discovery_type == 2) // If served discovery is internal then we save PO
 		$senderName		.=	" ".$senderDetail['middlename'];
 	}
 	$senderName		.=	" ".$senderDetail['lastname'];
-	$senderAddress	=	$posaddress .", ". $posstreet	."<br>".  $poscityname .", ". $posstatecode ." ". $poszip; //$senderDetail['address'].", ".$senderDetail['cityname'].", ".$senderDetail['street'];
+	$senderAddress	=	$posaddress ;//.", ". $posstreet	."<br>".  $poscityname .", ". $posstatecode ." ". $poszip; 
+	//$senderDetail['address'].", ".$senderDetail['cityname'].", ".$senderDetail['street'];
 	
 	//dump($servicelists);
 	//exit;

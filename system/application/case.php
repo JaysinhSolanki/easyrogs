@@ -287,7 +287,7 @@ body.modal-open
                     <label>Masthead<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
                 </div>
                 <div class="col-md-3">
-                  <textarea name="masterhead" class="form-control" cols="50" rows="7" wrap="off" style="overflow: hidden"><?= $currentSide ? $currentSide['masterhead'] : '' ?></textarea>
+                  <textarea name="masterhead" class="form-control" wrap="off" cols="50" rows="10" style="height: 12em; overflow: hidden"><?= $currentSide ? $currentSide['masterhead'] : '' ?></textarea>
                 </div>
                 <div class="col-md-1"></div>
             	</div>
@@ -424,7 +424,7 @@ body.modal-open
                     <label>Masthead<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                 </div>
                 <div class="col-md-8" id="masterheadDiv">
-                    <textarea style="width: 383px; height: 135px;resize: none;" placeholder="Masthead " class="form-control m-b"  name="masterhead" id="masterhead"><?php echo htmlentities($case['masterhead']); ?></textarea>
+                    <textarea rows="10" style="width: 383px; height: 12em; resize: none;" placeholder="Masthead " class="form-control m-b"  name="masterhead" id="masterhead"><?php echo htmlentities($case['masterhead']); ?></textarea>
                 </div>
                 </div>
             <?php

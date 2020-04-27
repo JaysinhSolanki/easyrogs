@@ -214,10 +214,22 @@ td, th {
             </tr>
             <tr>
                 <td align="justify">
-                 I am at least 18 years old and not a party to this action. My business address is <br /><input type="text" name="pos_address" id="pos_address" placeholder="Enter your address" value="<?php echo $result_address['address']; ?>" size="20"/> <input type="text" name="pos_street" id="pos_street" placeholder="Enter your street" value="<?php echo $result_address['street']; ?>" size="20"/> <input type="text" name="pos_cityname" id="pos_cityname" placeholder="Enter your city" value="<?php echo $result_address['cityname']; ?>" /> <input type="text" name="pos_statecode" id="pos_statecode" placeholder="Enter your state" value="<?php echo $result_address['statecode']; ?>" /> <input type="text" name="pos_zip" id="pos_zip" placeholder="Enter your zip" value="<?php echo $result_address['zip']; ?>" size="20"/><br /> My electronic service address is <?php echo $senderEmail ?>.
-                 <br />
-                 <br />
-                 On <?php echo date('F j, Y'); ?>, I electronically served <?php echo str_replace(["set", "For", "Of"], ["Set", "for", "of"], ucwords(strtolower($discovery_name." [Set ".numberTowords( $set_number )."]")) ); ?> upon the following:
+					<div id="pos_18info" style="width:100%;display:flex;flex-direction:row;align-items:stretch;">
+						<span id="_1" style="flex-shrink:0;align-self:center;">I am at least 18 years old and not a party to this action. My business address is </span> 
+						<input style="margin:5px;width:inherit;" type="text" name="pos_address" id="pos_address" placeholder="Enter your address" value="<?php echo $result_address['address'] .", ". $result_address['street']	." ".  $result_address['cityname'] .", ". $result_address['statecode'] ." ". $result_address['zip']; ?>" size="180"/>
+					</div>
+					<p id="_2">My electronic service address is <?php echo $senderEmail ?>.</p>
+					<?php /*
+					<input type="text" name="pos_street" id="pos_street" placeholder="Enter your street" value="<?php echo $result_address['street']; ?>" size="20"/> 
+					<input type="text" name="pos_cityname" id="pos_cityname" placeholder="Enter your city" value="<?php echo $result_address['cityname']; ?>" /> 
+					<input type="text" name="pos_statecode" id="pos_statecode" placeholder="Enter your state" value="<?php echo $result_address['statecode']; ?>" /> 
+					<input type="text" name="pos_zip" id="pos_zip" placeholder="Enter your zip" value="<?php echo $result_address['zip']; ?>" size="20"/><br/>
+					*/ ?>
+					<br/>
+<!-- original was:
+					str_replace(["set", "For", "Of"], ["Set", "for", "of"], ucwords(strtolower($discovery_name." [Set ".numberTowords( $set_number )."]")) )					 
+-->
+					On <?php echo date('F j, Y'); ?>, I electronically served <?php echo $discovery_name." [Set ".ucwords(strtolower(numberTowords( $set_number )))."]"; ?> upon the following:
                 </td>
             </tr>
           </tbody>
@@ -264,7 +276,6 @@ td, th {
             <tr>
                 <td align="justify">
                 <br />
-                 <br />
                 I declare under penalty of perjury under the laws of the State of California that the above is true and correct. Executed on <?php echo date('F j, Y') ?> at <span id="citystate"><input type="text" name="pos_city" id="pos_city" placeholder="Enter your city..." value="<?php echo $senderDetail['cityname']; ?>"/>, <input type="text" name="pos_state" id="pos_state" value="<?php echo $getstate; ?>" /></span>. <span style='display:none' id='signtime'></span>
                  <br />
                  <br />
@@ -291,14 +302,14 @@ td, th {
 <input type="hidden" name="discovery_type" value="<?php echo $discovery_type ?>" />
 <input type="hidden" name="response_id" value="<?php echo $response_id ?>" />
 <input type="hidden" name="pos_text" id="pos_text" value="" />
-<input type="hidden" name="posstate" id="posstate" value="" />
 <input type="hidden" name="posaddress" id="posaddress" value="" />
-<input type="hidden" name="posstreet" id="posstreet" value="" />
+<input type="hidden" name="posstate" id="posstate" value="" />
+<input type="hidden" name="poscity" id="poscity" value="" />
+<!-- <input type="hidden" name="posstreet" id="posstreet" value="" />
 <input type="hidden" name="poscityname" id="poscityname" value="" />
 <input type="hidden" name="posstatecode" id="posstatecode" value="" />
-<input type="hidden" name="poszip" id="poszip" value="" />
+<input type="hidden" name="poszip" id="poszip" value="" /> -->
 
-<input type="hidden" name="poscity" id="poscity" value="" />
 <input type="hidden" name="respond" value="<?php echo $respond ?>" />
 <?php /*?><div class="form-group">
     <label for="recipient-name" class="col-form-label"></label>  
