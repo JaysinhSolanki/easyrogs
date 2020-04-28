@@ -1,9 +1,9 @@
 <?php
 
   class CaseMailer extends BaseMailer  {
-    const JOIN_REQUEST_SUBJECT    = 'Join Request - %s';
-    const GRANTED_REQUEST_SUBJECT = 'Join Request Granted - %s';
-    const DENIED_REQUEST_SUBJECT  = 'Join Request Denied - %s';
+    const JOIN_REQUEST_SUBJECT    = '%s - Join Request';
+    const GRANTED_REQUEST_SUBJECT = '%s - Join Request Granted';
+    const DENIED_REQUEST_SUBJECT  = '%s - Join Request Denied';
 
     static function joinRequest($requestor, $case) {
       global $sidesModel, $smarty, $usersModel, $casesModel, $logger;

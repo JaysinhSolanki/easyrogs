@@ -1,13 +1,13 @@
 <?php
 
   class DiscoveryMailer extends BaseMailer  {
-    const CLIENT_VERIFICATION_SUBJECT = 'Verification Issue';
-    const CLIENT_RESPONSE_SUBJECT     = 'Response Request';
-    const CLIENT_RESPONDED_SUBJECT    = '%s';
+    const CLIENT_VERIFICATION_SUBJECT = '%s - Verification Issue';
+    const CLIENT_RESPONSE_SUBJECT     = '%s - Response Request';
+    const CLIENT_RESPONDED_SUBJECT    = '%s - Client Response';
     const PROPOUND_SUBJECT            = '%s';
 
     static function clientVerification($discovery) {
-      global $smarty, $discoveriesModel, $usersModel, $clientsModel, $logger;
+      global $smarty, $discoveriesModel, $usersModel, $clientsModel, $logger, $casesModel;
 
       $logContext = 'DISCOVERY_MAILER_CLIENT_VERIFICATION';
       $logParams  = json_encode(['discovery' => $discovery]);
@@ -22,6 +22,9 @@
       if( !$client = $clientsModel->find($discovery['responding']) ) {
         return $logger->error("$logContext Client (id: $discovery[responding]) not found. Params: $logParams");
       }
+      if( !$case = $casesModel->find($discovery['case_id']) ) {
+        return $logger->error("$logContext Case (id: $discovery[case_id]) not found. Params: $logParams");
+      }
       
       $smarty->assign([
         'name'       => $client['client_name'],
@@ -29,14 +32,14 @@
         'actionText' => 'Verify'
       ]);
       $body = $smarty->fetch('emails/discovery-client-verification.tpl');
-      $subject = self::CLIENT_VERIFICATION_SUBJECT;
+      $subject = sprintf(self::CLIENT_VERIFICATION_SUBJECT, $case['case_title']);
       $to = $client['client_email'];
 
       self::sendEmail($to, $subject, $body, User::getFullName($attorney), $attorney['email']);
     }
 
     static function clientResponse($discovery, $actionUser) {
-      global $smarty, $discoveriesModel, $usersModel, $clientsModel, $logger;
+      global $smarty, $discoveriesModel, $usersModel, $clientsModel, $logger, $casesModel;
 
       $logContext = 'DISCOVERY_MAILER_CLIENT_RESPONSE';
       $logParams  = json_encode(['discovery' => $discovery, 'actionUser' => $actionUser]);
@@ -52,6 +55,9 @@
       if( !$client = $clientsModel->find($discovery['responding']) ) {
         return $logger->error("$logContext Client (id: $discovery[responding]) not found. Params: $logParams");
       }
+      if( !$case = $casesModel->find($discovery['case_id']) ) {
+        return $logger->error("$logContext Case (id: $discovery[case_id]) not found. Params: $logParams");
+      }
       
       $smarty->assign([
         'name'        => $client['client_name'],
@@ -62,7 +68,7 @@
         'actionText'  => 'Respond Now'
       ]);
       $body = $smarty->fetch('emails/discovery-client-response.tpl');
-      $subject = self::CLIENT_RESPONSE_SUBJECT;
+      $subject = sprintf(self::CLIENT_RESPONSE_SUBJECT, $case['case_title']);
       $to = $client['client_email'];
 
       self::sendEmail($to, $subject, $body, User::getFullName($actionUser), $actionUser['email']);
@@ -136,7 +142,7 @@
       $discoveryName = $isResponse 
                         ? "RESPONSE TO $discovery[discovery_name]" 
                         : $discovery['discovery_name'];
-      $discoveryName .= "[Set " . numberTowords($discovery['set_number']) . "]";
+      $discoveryName .= " [Set " . numberTowords($discovery['set_number']) . "]";
       
       $smarty->assign([
         'masterhead'      => $usersModel->getMasterHead($actionUser),
