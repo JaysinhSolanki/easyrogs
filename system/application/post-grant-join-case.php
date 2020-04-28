@@ -26,10 +26,6 @@
   }
 
   // send notification
-  Qutee\Task::create('CaseJoinRequestGrantedEmailTask', [
-    'user_id'        => $userId,
-    'case_id'        => $caseId,
-    'action_user_id' => $currentUser->id
-  ]);
+  CaseMailer::grantedRequest($attorney, $caseId, $currentUser->user);
 
   HttpResponse::success('Join request granted successfully!');

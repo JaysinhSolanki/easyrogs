@@ -73,6 +73,22 @@
       return $this->getBy(self::TABLE, ['uid' => $uid], 1);
     }
 
+    function findUnverified($id) {
+      return $this->getBy(self::TABLE, [
+        'pkaddressbookid' => $id,
+        'emailverified'   => null
+      ], 1);
+    }
+    function findInactive($id) { return $this->findUnverified($id); }
+
+    function findVerified($id) {
+      return $this->getBy(self::TABLE, [
+        'pkaddressbookid' => $id,
+        'emailverified'   => 1
+      ], 1);
+    }
+    function findActive($id) { return $this->findVerified($id); }
+
     function findAttorney($id) {
       return $this->getBy(self::TABLE, [
         'pkaddressbookid' => $id,
@@ -84,6 +100,7 @@
       global $currentUser;
       
       $id = $this->insert(self::TABLE, array_merge([
+        'uid'                => $this->generateUID('system_addressbook'),
         'username'           => '',
         'contactperson'      => '',
         'street'             => '',
@@ -217,6 +234,10 @@
 
     static function isAttorney($user) {
       return $user['fkgroupid'] == self::ATTORNEY_GROUP_ID;
+    }
+
+    static function isActive($user) {
+      return $user['emailverified'] == 1;
     }
 
   }

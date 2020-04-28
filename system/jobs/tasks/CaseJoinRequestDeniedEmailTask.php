@@ -2,7 +2,7 @@
   class CaseJoinRequestDeniedEmailTask extends BaseTask implements Qutee\TaskInterface {
     
     public function run() {
-      global $smarty, $usersModel, $casesModel;
+      global $usersModel, $casesModel;
 
       $userId       = $this->data['user_id'];
       $caseId       = $this->data['case_id'];
@@ -20,20 +20,9 @@
 
       $this->log( "Will run with User: $userId, Case: $caseId, Action User: $actionUserId" );      
 
-      $smarty->assign([
-        'requestorName'  => User::getFullName($requestor),
-        'actionUserName' => $actionUser ? User::getFullName($actionUser) : 'a team member',
-        'caseName'       => $case['case_title']
-      ]);
-      $body    = $smarty->fetch('emails/case-join-request-denied.tpl');
-      $subject = "Join Request Denied - $case[case_title]";
-      $toEmail = $requestor['email'];
+      CaseMailer::deniedRequest($requestor, $case, $actionUser);
 
-      $this->log("Will send email to <$toEmail>");
-      
-      send_email($toEmail, $subject, $body);
-
-      $this->log('DONE!');      
+      $this->log('DONE!');
     }
 
   }

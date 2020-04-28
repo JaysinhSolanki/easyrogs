@@ -14,10 +14,6 @@ function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $frome
       ];
     }
 
-    // mkdir( ROOTPATH .'logs/email-attach', 0755, true );
-    // file_put_contents( ROOTPATH .'logs/email.htm', $bodyhtml );
-    // file_put_contents( ROOTPATH .'logs/eamail-attach.txt', $docsArray );
-    // return;
     if ($emailtype == 3) {
         $headers  = 'MIME-Version: 1.0' . "\r\n";
 
@@ -26,75 +22,10 @@ function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $frome
         $headers .= "Reply-To: $fromemail\r\n";
         $headers .= "Return-Path: $fromemail\r\n";
         if (sizeof($to)>0) {
-/*
-			foreach($to as $t)
-			{
-				if(mail($t, $subject, $bodyhtml, $headers));//{echo "success".$t.$bodyhtml;}else {echo 'error';}
-			}
-*/
             $tos = implode(",", $to);
-            if (mail($tos, $subject, $bodyhtml, $headers)) {
-//{echo "success".$t.$bodyhtml;}else {echo 'error';}
-            }
+            mail($tos, $subject, $bodyhtml, $headers);
         }
-    } /*else if($emailtype == 2)
-	{
-		//$SENDGRID_API_KEY	=	"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";
-		$SENDGRID_API_KEY	=	"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";
-
-		require(__DIR__."/sendgrid-php/sendgrid-php.php");
-		//require 'vendor/autoload.php'; // If you're using Composer (recommended)
-
-        $email = new \SendGrid\Mail\Mail();
-		$email->setFrom($fromemail, $fromname);
-		$email->setSubject($subject);
-
-		$email->addContent("text/html", $bodyhtml);
-		$sendgrid = new \SendGrid($SENDGRID_API_KEY);
-		if(!empty($to))
-		{
-			foreach($to as $t)
-			{
-				$email->addTo($t);
-			}
-		}
-		if(!empty($bcc))
-		{
-			foreach($bcc as $bc)
-			{
-				$email->addBcc($bc);
-			}
-		}
-		if(!empty($cc))
-		{
-			foreach($cc as $c)
-			{
-				$email->addCc($c);
-			}
-		}
-		if(!empty($docsArray))
-		{
-			foreach($docsArray as $doc)
-			{
-
-			}
-		}
-
-        try
-		{
-			$response = $sendgrid->send($email);
-			echo "<pre>";
-			print $response->statusCode() . "\n";
-			print_r($response->headers());
-			print $response->body() . "\n";
-            echo "</pre>";
-        }
-        catch (Exception $e)
-		{
-			echo 'Caught exception: '. $e->getMessage() ."\n";
-		}
-
-	}	*/
+    }
     elseif ($emailtype == 1) {
         $mail = new PHPMailer;
         $mail->isHTML(true);
@@ -125,7 +56,7 @@ function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $frome
             $mail->send();
         }
     }
-}//end of send_email()
+}
 
 
 function convertYoutube($string) {
@@ -186,6 +117,7 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
         $mpdf=new mPDF();
         //$mode='', $format='', $font_size='', $font='', $margin_left=3, $margin_right=3, $margin_top=3, $margin_bottom=3, $margin_header='', $margin_footer=6, $orientation=''
     }
+    
 
     $mpdf->setAutoTopMargin = 'stretch';
     $mpdf->setAutoBottomMargin = 'stretch';
@@ -200,7 +132,6 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
     //return;
 	
     $mpdf->WriteHTML($doc->saveHTML());
-	
     if ($filename!="") {
         if ($downloadORwrite != 1) {
             $mpdf->Output($filename, "D");

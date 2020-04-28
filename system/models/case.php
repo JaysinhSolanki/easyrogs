@@ -56,7 +56,13 @@
                            OR normalized_number LIKE :case_number
                      GROUP BY cases.id
                      ORDER BY cases.id DESC
-                     LIMIT 10'
+                     LIMIT 10',
+
+        'getServiceList' => 'SELECT * 
+                             FROM system_addressbook AS u
+                               INNER JOIN attorney AS a ON (a.attorney_email = u.email) 
+                             WHERE a.case_id = :case_id
+                             GROUP BY u.pkaddressbookid'
 
       ]);
       $this->sides = new Side();
@@ -201,6 +207,15 @@
         'query'       => "%" . strtolower($term) . "%",
         'case_number' => "%" . self::normalizeNumber($term) . "%"
       ]);
+    }
+
+    function getServiceList($case) {
+      $query = $this->queryTemplates['getServiceList'];
+
+      $case = is_array($case) ? $case : $this->find($case);
+      if (!$case) { return null; }
+
+      return $this->readQuery($query, ['case_id' => $case['id']]);
     }
 
     static function normalizeNumber($number) {

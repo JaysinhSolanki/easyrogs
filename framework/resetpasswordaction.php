@@ -35,9 +35,7 @@ if($uid != "")
 				$values				=	array($password);
 				$AdminDAO->updaterow('system_addressbook',$fields,$values," uid = '$uid'");
 				$to					=	array($customeremail);
-				$emailmarker		=	"";//array("customername" => $fullname , "submitlogin" => $submitlogin);
-	//send_email($to=array(),$subject="Testing Email",$bodyhtml,$fromemail="aun@gumption.pk",$fromname="Gumption Tech",$emailtype=1)
-				//echo $error	=	$Error->display(131,1,$redirectme);
+				$emailmarker		=	"";
 				$redirectme			=	DOMAIN.'userlogin.php';
 				msg(131,2);
 			}

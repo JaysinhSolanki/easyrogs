@@ -1,57 +1,48 @@
 <?php
-
   class Logger
   {
-    const DEBUG   = 'DEBUG';
-    const INFO    = 'INFO';
-    const WARN    = 'WARN';
-    const ERROR   = 'ERROR';
+    const DEBUG      = 'DEBUG';
+    const INFO       = 'INFO';
+    const WARN       = 'WARN';
+    const ERROR      = 'ERROR';
+    const LOG_LEVELS = [self::DEBUG, self::INFO, self::WARN, self::ERROR];
 
-    protected $fpAllLogs;
-    protected $fpDebugLogs;
-    protected $fpInfoLogs;
-    protected $fpWarningLogs;
-    protected $fpErrorLogs;
+    private $files = [];
+    private $logsDir;
 
     function __construct( $logsDir = LOGS_DIR )
     {
-      $this->fpAllLogs       = fopen( $logsDir . '/all.log',       'a+' );
-      $this->fpDebugLogs     = fopen( $logsDir . '/debug.log',     'a+' );
-      $this->fpInfoLogs      = fopen( $logsDir . '/info.log',      'a+' );
-      $this->fpWarningLogs   = fopen( $logsDir . '/warning.log',   'a+' );
-      $this->fpErrorLogs     = fopen( $logsDir . '/error.log',     'a+' );
+      $this->logsDir = $logsDir;
+      $this->files['ALL'] = fopen( $logsDir . '/all.log', 'a+' );
     }
 
     function __destruct()
     {
-      fclose( $this->fpAllLogs );
-      fclose( $this->fpDebugLogs );
-      fclose( $this->fpInfoLogs );
-      fclose( $this->fpWarningLogs );
-      fclose( $this->fpErrorLogs );
+      foreach($this->files as $file) {
+        fclose($file);
+      }
     }
 
-    public function log($message, $level = self::DEBUG)
+    protected function log($message, $level)
     {
       $time = date('Y-m-d H:i:s');
 
-      switch( $level )
-      {
-        case self::DEBUG: $fpContextLogs = $this->fpDebugLogs; break;
-        case self::INFO:  $fpContextLogs = $this->fpInfoLogs; break;
-        case self::WARN:  $fpContextLogs = $this->fpWarningLogs; break;
-        case self::ERROR: $fpContextLogs = $this->fpErrorLogs; break;
+      $level = trim($level);
+      if (in_array($level, self::LOG_LEVELS)) {
+        $fp = $this->files[$level] = $this->files[$level]
+              ? $this->files[$level] 
+              : fopen($this->logsDir . '/' . strtolower($level) . '.log', 'a+');
       }
 
       if ( is_array( $message ) || is_object( $message ) ) {
         $message = print_r( $message, true );
-      }        
+      }
 
-      fwrite( $fpContextLogs,   "$time $message \n" );
-      fwrite( $this->fpAllLogs, "$time [$level] $message \n" );
+      if ($fp) { fwrite($fp, "$time $message \n"); }
+      fwrite( $this->files['ALL'], "$time [$level] $message \n" );
     }
 
-    public function debug($message) { $this->log($message); }
+    public function debug($message) { $this->log($message, self::DEBUG); }
     public function info($message)  { $this->log($message, self::INFO); }
     public function warn($message)  { $this->log($message, self::WARN); }
     public function error($message) { $this->log($message, self::ERROR); }    

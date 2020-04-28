@@ -27,6 +27,9 @@
     }
     else {
       $teams->addMember($team['id'], $user['pkaddressbookid']);
+      if (!User::isActive($user)) {
+        InvitationMailer::teamInvite($user, $currentUser->user);
+      }
       HttpResponse::success('Member added successfully.');
     }
   }

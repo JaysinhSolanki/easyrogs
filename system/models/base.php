@@ -226,7 +226,7 @@
     {
       $whereConditions = ["1 = 1"];
       foreach( $fieldsMapping as $name => $value ) {
-        $whereConditions[] = "$name = :$name";
+        $whereConditions[] = is_null($value) ? "$name IS NULL" : "$name = :$name";
       }
 
       $modifiers = [
@@ -378,6 +378,14 @@
       ];
     }
 
+    public function generateUID($table, $column = 'uid') {
+      $uid = uniqid('', true);
+      while($this->existsBy($table, [$column => $uid])) {
+        $uid = uniqid('', true);
+      }
+      return $uid;
+    }
+
     static function pluck($items, $key) {
       return array_map(function($item) use ($key) {
         return $item[$key];
@@ -391,6 +399,7 @@
     static function inCollection($needle, $haystack, $key) {
       return in_array($needle[$key], self::pluck($haystack, $key));
     }
+
 
   }
 

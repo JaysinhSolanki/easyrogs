@@ -23,11 +23,9 @@
   $sideUsers = $sidesModel->getAllUsers($side['id']);
   if ($sideUsers) {
     $sidesModel->addUser($side['id'], $currentUser->user, false);
+
     // send emails
-    Qutee\Task::create('CaseJoinRequestEmailTask', [
-      'user_id'        => $currentUser->id,
-      'case_id'        => $caseId
-    ]);
+    CaseMailer::joinRequest($currentUser->user, $case);
 
     HttpResponse::success(
       "Your request has been forwarded to $client[client_name]’s Team. You’ll be notified when it’s granted.",

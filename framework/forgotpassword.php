@@ -37,16 +37,7 @@ if(sizeof($_POST)>0)
 	else
 	{
 		// If valid password then send email for reset password
-		$firstname			=	$addressbookdata[0]['firstname'];
-		$lastname			=	$addressbookdata[0]['lastname'];
-		$uid				=	$addressbookdata[0]['uid'];
-		$fullname			=	$firstname." ".$lastname;	
-		$recoveremaillink	=	"<p>click on the link to reset your password. <a href='".FRAMEWORK_URL."resetpassword.php?verify=2&uid=".$uid."'>Click here</a></p>";
-		$to					=	array($email);
-		$emailmarker		=	array("customername" => $fullname , "recoveremaillink" => $recoveremaillink);
-		send_email($to,'Forgot Password',$recoveremaillink);
-		//send_email($to=array(),$subject="Testing Email",$bodyhtml,$fromemail="aun@gumption.pk",$fromname="Gumption Tech",$emailtype=1)
-		//$error	=	$Error->display(130,1);
+		UserMailer::forgotPassword($addressbookdata[0]);
 		
 		$redirectme	=	FRAMEWORK_URL."forgotpassword.php";
 		$errorData	=	msg(130,1);

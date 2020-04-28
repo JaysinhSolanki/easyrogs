@@ -7,25 +7,31 @@
   $dotEnv->load();
   require_once(__DIR__ . "/settings.php");
   
-  // lib
-  require_once __DIR__ . '/library/classes/httpresponse.php';
-  require_once __DIR__ . '/library/classes/AdminDAO.php';
-  require_once __DIR__ . '/library/classes/logger.class.php';
-  require_once __DIR__ . '/library/helper.php';  
-
   // logging
   error_reporting(E_ALL & ~E_NOTICE);
   ini_set("log_errors", 1);
   ini_set("error_log", LOGS_DIR . "/errors.log");
   
+  require_once __DIR__ . '/library/classes/logger.class.php';
   $logger = new Logger();
+
+  // lib
+  require_once __DIR__ . '/library/classes/httpresponse.php';
+  require_once __DIR__ . '/library/classes/AdminDAO.php';
+  require_once __DIR__ . '/library/helper.php';  
 
   // templates
   $smarty = new Smarty();
   $smarty->template_dir = __DIR__ . '/templates';
   $smarty->compile_dir  = __DIR__ . '/../tmp/templates_c';
 
-  // globals
+  // models
+  require_once(__DIR__ . '/models/index.php');
+
+  // mailing
+  require_once __DIR__ . '/mailers/index.php';
+
+  // globals (LEGACY)
   date_default_timezone_set("America/Los_Angeles");
   $dateformate				    =	'n/j/Y'; 
   $systemmaintitle			  =	"EasyRogs";
@@ -33,9 +39,6 @@
   $screensnotincludes			=	"";
   $AdminDAO 	            = new AdminDAO;
   
-  // models
-  require_once(__DIR__ . '/models/index.php');
-
   // jobs
   $queuePersistor = new Qutee\Persistor\Pdo();
   $queuePersistor->setOptions([

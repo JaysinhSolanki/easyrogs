@@ -64,12 +64,14 @@
                                       <td class="content" align="left" valign="middle" style="padding: 40px 30px 20px;">
                                         <div>
                                           {block name=body}{/block}
+                                          {if !$overwriteSalutation}
                                           <br/>
                                           <br/>
                                           <br/>
                                           Regards,
                                           <br/>
                                           <i>The EasyRogs Team</i>
+                                          {/if}
                                         </div>
                                       </td>
                                     </tr>

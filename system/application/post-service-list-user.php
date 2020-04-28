@@ -37,6 +37,9 @@
 	}
 	elseif (!$userSide) {
 		$sides->addUser($side['id'], $user);
+		if (!User::isActive($user)) {
+			InvitationMailer::caseInvite($user, $currentUser->user, $caseId);
+		}		
 	}
 
 	// LEGACY ----------------------------------------------------------------------

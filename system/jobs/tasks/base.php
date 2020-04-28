@@ -11,12 +11,24 @@
     }
 
     protected function log($msg) {
-      echo "[$this->className] $msg \n";
+      global $logger;
+
+      $message = "[$this->className] $msg";
+
+      $logger->info($message);
+      echo "$message \n";
+
+      return true;
     }
 
     protected function logError($msg) {
-      error_log("[$this->className] $msg");
-      $this->log("ERROR: $msg");
+      global $logger;
+      
+      $message = "[$this->className] $msg";
+
+      $logger->error($message);
+      echo "ERROR: $message \n";
+      
       return false;
     }
 
