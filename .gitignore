@@ -12,3 +12,4 @@ settings.php
 vendor
 /tmp/templates_c/*
 !/tmp/templates_c/.keep
+*.mp4
