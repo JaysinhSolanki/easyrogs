@@ -116,8 +116,8 @@ if($res_attr_uid != "")
             	<div class="col-md-4">
 							</div>
 							<div class="col-md-8" align="right">
-								<a href="javascript:;" class="btn btn-warning join-case-btn" data-toggle="modal" data-target="#join-case-modal"><i class="fa fa-arrow-circle-right"></i> Join Existing Case</a>
-								<a href="javascript:;" class="btn btn-success add-new-case-btn" ><i class="fa fa-plus"></i> Add New Case</a>
+								<a href="javascript:;" class="btn btn-warning join-case-btn" data-toggle="modal" data-target="#join-case-modal"><i class="fa fa-arrow-circle-right"></i> Join a Case</a>
+								<a href="javascript:;" class="btn btn-success add-new-case-btn" ><i class="fa fa-plus"></i> Create a Case</a>
 							</div>
             </div>
             </div>
