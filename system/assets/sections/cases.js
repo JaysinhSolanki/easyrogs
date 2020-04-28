@@ -19,7 +19,7 @@ $(`select.case-search`).select2({
         $('#join-case-client').html(`<option value="">Select a Party</option>`);
         for(k in clients) {
           $('#join-case-client').append(
-            `<option value="${clients[k].id}">${clients[k].client_name}</option>`
+            `<option value="${clients[k].id}">${clients[k].client_role} ${clients[k].client_name}</option>`
           );
         }
         $('.join-case-clients').show()

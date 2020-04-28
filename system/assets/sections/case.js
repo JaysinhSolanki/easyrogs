@@ -17,7 +17,7 @@ showExistingCaseModal = (aCase) => {
       $('#join-existing-case-client').html(`<option value="">Select a Party</option>`);
       for(k in clients) {
         $('#join-existing-case-client').append(
-          `<option value="${clients[k].id}">${clients[k].client_name}</option>`
+          `<option value="${clients[k].id}">${clients[k].client_role} ${clients[k].client_name}</option>`
         );
       }
       $('#existing-case-modal').modal('show');
