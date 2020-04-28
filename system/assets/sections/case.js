@@ -3,27 +3,37 @@ submitCase = () => {
   addform('caseaction.php','clientform','wrapper','get-cases.php');      
 }
 
-showExistingCaseModal = (aCase) => {
-  $('#join-existing-case-id').val(aCase.id);
-  $('.join-action-btn, .join-case-clients').show();
+showExistingCaseModal = (aCase, isTeamMember) => {
   $('.join-case-text').html(`
     <strong>${aCase.case_title}</strong> <br/>
     ${aCase.county_name} County Case No. ${aCase.case_number} 
     <br/><br/>
-    <strong>Already exists.</strong>
+    <strong>${isTeamMember ? 'You are already part of this case' : 'Already exists'}.</strong>
   `);
-  getCaseClients(aCase.id, 
-    (clients) => {
-      $('#join-existing-case-client').html(`<option value="">Select a Party</option>`);
-      for(k in clients) {
-        $('#join-existing-case-client').append(
-          `<option value="${clients[k].id}">${clients[k].client_role} ${clients[k].client_name}</option>`
-        );
-      }
-      $('#existing-case-modal').modal('show');
-    },
-    (e) => console.error(e)
-  )
+
+  if (isTeamMember) {
+    $('.join-action-btn, .join-case-clients').hide();
+    $('.join-action-btn, .join-case-clients').hide();
+    $('.save-case-btn').show();
+    $('#existing-case-modal').modal('show');
+  }
+  else {
+    $('#join-existing-case-id').val(aCase.id);
+    $('.join-action-btn, .join-case-clients').show();
+    getCaseClients(aCase.id, 
+      (clients) => {
+        $('#join-existing-case-client').html(`<option value="">Select a Party</option>`);
+        for(k in clients) {
+          $('#join-existing-case-client').append(
+            `<option value="${clients[k].id}">${clients[k].client_role} ${clients[k].client_name}</option>`
+          );
+        }
+        $('#existing-case-modal').modal('show');
+      },
+      (e) => console.error(e)
+    )
+  }
+
   return true;
 }
 
@@ -51,11 +61,8 @@ $('.save-case-btn').on('click', function() {
   else if (caseNumber) {
     getCaseByNumber(caseNumber, 
       (aCase) => {
-        if (aCase.id && !aCase.team_member) {
-          showExistingCaseModal(aCase)
-        }
-        else if(aCase.team_member) {
-          toastr.warning('You are already part of this case.');
+        if (aCase.id) {
+          showExistingCaseModal(aCase, aCase.team_member)
         }
         else submitCase();
       }

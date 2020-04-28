@@ -9,8 +9,14 @@ $(`select.case-search`).select2({
   },
   width: '100%',
   language: {
-    noResults: () => `No Results Found.`,
-  }  
+    noResults: () => {
+      const term = JSON.parse(event.target.response).term;
+      return term ? `No Results Found. <button class="btn btn-xs btn-success join-add-new-case-btn">Create New Case</button>` : ''
+    },
+  },
+  escapeMarkup: function(markup) {
+    return markup;
+  },
 }).on('select2:select', (e) => {
   const caseId = $(e.target).val();
   if (caseId) {
@@ -28,7 +34,6 @@ $(`select.case-search`).select2({
     )
   }
 });
-
 
 $('#join-case-btn').on('click', function() {
   const caseId   = $('#join-case-id').val();
@@ -51,11 +56,10 @@ $('#join-case-btn').on('click', function() {
       });      
     },
     (e) => showResponseMessage(e)
-  )
-  
+  )  
 });
 
-$('.add-new-case-btn').on( 'click', () => {
+$('.add-new-case-btn').on('click', () => {
   // check can create case
   getPermissions(
     (permissions) => {
@@ -67,4 +71,12 @@ $('.add-new-case-btn').on( 'click', () => {
       }
     }
   )
+});
+
+$(document).on('click', '.join-add-new-case-btn', () => {
+  $('#join-case-modal').on('hidden.bs.modal', () => {
+    $('.add-new-case-btn').trigger('click');
+  });
+  $('.select2-container').hide();
+  $('#join-case-modal').modal('hide');
 });

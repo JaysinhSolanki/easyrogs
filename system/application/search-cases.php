@@ -18,5 +18,5 @@
       ];
     }
   }
-  
-  HttpResponse::successPayload(["results" => $cases]);
+
+  HttpResponse::successPayload(["results" => $cases, 'term' => $term]);

@@ -46,8 +46,14 @@
       self::send(409, $type, $message, $extra); 
     }
 
-    static function successPayload($payload) {
-      self::sendPayload(200, $payload);
+    static function successPayload($payload, $code = 200) {
+      self::sendPayload($code, $payload);
     }
+
+    static function noContent() {
+      http_response_code(204);
+      die();
+    }
+
     
   }
