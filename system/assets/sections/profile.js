@@ -50,11 +50,13 @@ function barnoFunction(id)
 	 {
 		 $("#barnumber").show();
 		 $("#myteamDiv").show();
+		 $("#attorneyMastheadDiv").show();
 	 }
 	 else
 	 {
 		 $("#barnumber").hide();
 		 $("#myteamDiv").hide();
+		 $("#attorneyMastheadDiv").hide();
 	 }
 	/*if(id == 3)
 	{

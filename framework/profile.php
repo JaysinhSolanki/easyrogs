@@ -143,7 +143,7 @@ body.modal-open {
                       </div>
                       
                       <div class="col-md-3">
-                        <div class="form-group">
+                        <div class="form-group" id="attorneyMastheadDiv" <?php if($user['fkgroupid'] != User::ATTORNEY_GROUP_ID){ ?>style="display:none;"<?php } ?>>
                           <label>Masthead</label>
                           <textarea name="masterhead"  class="form-control" cols="50" rows="10" style="height: 12em;" wrap="off"><?= $user['masterhead'] ?></textarea>
                         </div>
@@ -152,7 +152,7 @@ body.modal-open {
                     <div class="row">
                       	 <br />
                          <br />	
-                         <div class="form-group col-lg-12" id="myteamDiv"  <?php if($user['fkgroupid'] != 3){?>style="display:none;"<?php } ?>>
+                         <div class="form-group col-lg-12" id="myteamDiv"  <?php if($user['fkgroupid'] != User::ATTORNEY_GROUP_ID){?>style="display:none;"<?php } ?>>
                             <?php include_once($_SESSION['admin_path'].'myteam.php')?>
                         </div>
                     </div>
