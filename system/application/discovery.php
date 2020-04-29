@@ -202,7 +202,7 @@ if ($id > 0 && in_array($form_id, array(3,4))) {
         foreach ($olddocuments as $data) {
             $doc_purpose    =   $data['document_notes'];
             $doc_name       =   $data['document_file_name'];
-            $doc_path       =   "../uploads/documents/".$data['document_file_name'];
+            $doc_path       =   SYSTEMPATH."uploads/documents/".$data['document_file_name'];
             if ($doc_name != "") {
                 $documents[$uid][]  =   array("doc_name"=>$doc_name,"doc_purpose" => $doc_purpose, "doc_path"=>$doc_path,"status"=>1);
             }
@@ -1217,17 +1217,20 @@ function servePOS()
     else
     {
         $.LoadingOverlay("show"); 
-        $("#citystate").replaceWith( pos_city + ", " + pos_state );
 
-        // we must do this (setAttribute[value]), to update #poshtml.innerHtml
+        // we must do this (setAttribute[value]), to properly get their html
         $("#pos_address").attr('value', pos_address);
         $("#pos_state").attr('value', pos_state);
         $("#pos_city").attr('value', pos_city);
+
         var poshtml = $("#poshtml").clone(),
             _text = $("#pos_18info > #_1").text() + 
                     $("#pos_18info > input").val() + '. ' +
                     $("#pos_18info + #_2").text();
-        poshtml.find('#pos_18info').replaceWith( '<p>' + _text + '</p>' );
+                    
+        poshtml.find('#pos_18info').replaceWith( '<p id="pos_18info">' + _text + '</p>' );
+        poshtml.find('#pos_18info + #_2').replaceWith( '' );
+        poshtml.find("#citystate").replaceWith( pos_city + ", " + pos_state );
 
         $("#pos_text").val(poshtml.html());
         $("#posaddress").val(pos_address);

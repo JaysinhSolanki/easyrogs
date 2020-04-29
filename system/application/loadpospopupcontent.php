@@ -226,9 +226,6 @@ td, th {
 					<input type="text" name="pos_zip" id="pos_zip" placeholder="Enter your zip" value="<?php echo $result_address['zip']; ?>" size="20"/><br/>
 					*/ ?>
 					<br/>
-<!-- original was:
-					str_replace(["set", "For", "Of"], ["Set", "for", "of"], ucwords(strtolower($discovery_name." [Set ".numberTowords( $set_number )."]")) )					 
--->
 					On <?php echo date('F j, Y'); ?>, I electronically served <?php echo $discovery_name." [Set ".ucwords(strtolower(numberTowords( $set_number )))."]"; ?> upon the following:
                 </td>
             </tr>

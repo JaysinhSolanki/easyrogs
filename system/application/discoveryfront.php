@@ -185,7 +185,7 @@ if(sizeof($olddocuments) > 0)
 	{
 		$doc_purpose	=	$data['document_notes'];
 		$doc_name		=	$data['document_file_name'];
-		$doc_path		=	"../uploads/documents/".$data['document_file_name'];
+		$doc_path		=	SYSTEMPATH."uploads/documents/".$data['document_file_name'];
 		if($doc_name != "")
 		{
 			$documents[$uid][]	=	array("doc_name"=>$doc_name,"doc_purpose" => $doc_purpose, "doc_path"=>$doc_path,"status"=>1);		

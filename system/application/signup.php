@@ -1,4 +1,4 @@
-l<?php
+<?php
 @session_start();
 //Destroy session if user already logged in
 setcookie('rememberme','', time()+(86400*30), "/");
@@ -7,7 +7,7 @@ setcookie("rememberme",'', time()-3600);
 
 require_once("../bootstrap.php");
 include_once(SYSTEMPATH."library/classes/login.class.php");
-include_once(SYSTEMPATH."library/classes/error.php");
+//include_once(SYSTEMPATH."library/classes/error.php"); // commented out because it doesn't exist 
 require_once(FRAMEWORK_PATH."head.php");
 include_once(SYSTEMPATH."library/classes/functions.php");
 

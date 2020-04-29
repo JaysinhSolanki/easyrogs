@@ -199,7 +199,7 @@ if (sizeof($olddocuments) > 0) {
     foreach ($olddocuments as $data) {
         $doc_purpose    =   $data['document_notes'];
         $doc_name       =   $data['document_file_name'];
-        $doc_path       =   "../uploads/documents/".$data['document_file_name'];
+        $doc_path       =   SYSTEMPATH."uploads/documents/".$data['document_file_name'];
         if ($doc_name != "") {
             $documents[$uid][]  =   array("doc_name"=>$doc_name,"doc_purpose" => $doc_purpose, "doc_path"=>$doc_path,"status"=>1);
         }
@@ -521,7 +521,7 @@ body.modal-open
                                                 }
                                                 if (in_array($question_type_id, array(1,2)) && $respond == 1) {
 	                                                if( $objection == "" && $question_number == '12.2'){
-		                                               $objection = "Objection, this interrogatory seeks information protected by the attorney work product privilege because it reflects counsel’s evaluation of the case by revealing which witnesses counsel deemed important enough to interview. Nacht & Lewis Architects, Inc. v. Superior Court (1996) 47 Cal.App.4th 214, 217.";
+		                                               $objection = "Objection, this interrogatory seeks information protected by the attorney work product privilege because it reflects counsel's evaluation of the case by revealing which witnesses counsel deemed important enough to interview. Nacht & Lewis Architects, Inc. v. Superior Court (1996) 47 Cal.App.4th 214, 217.";
 	                                                }
                                                     ?>
                                                     <?php /*?>&nbsp;&nbsp;<a href="javascript:;" class="btn-info btn-sm" onclick="addObjectionFunction('<?php echo $discovery_question_id; ?>')">Add Objection</a><?php */?>

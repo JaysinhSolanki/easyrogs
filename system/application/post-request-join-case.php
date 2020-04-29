@@ -28,7 +28,7 @@
     CaseMailer::joinRequest($currentUser->user, $case);
 
     HttpResponse::success(
-      "Your request has been forwarded to $client[client_name]’s Team. You’ll be notified when it’s granted.",
+      "Your request has been forwarded to $client[client_name]'s Team. You'll be notified when it's granted.",
       ['awaiting_request' => true]
     );
   }

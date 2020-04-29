@@ -26,7 +26,7 @@ else
 	$documents[$rp_uid] = array();
 }
 $doc_purpose	=	$_POST['doc_purpose'];
-$target_dir 	= 	"../uploads/documents/";
+$target_dir 	= 	SYSTEMPATH."uploads/documents/";
 $doc_name		=	basename($_FILES["myfile"]["name"]);
 $doc_path 		=	$target_dir . $doc_name;
 if (move_uploaded_file($_FILES["myfile"]["tmp_name"], $doc_path)) 

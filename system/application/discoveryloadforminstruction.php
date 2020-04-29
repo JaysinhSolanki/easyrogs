@@ -1,10 +1,7 @@
 <?php
 @session_start();
-include_once("../bootstrap.php");
-include_once("../library/classes/AdminDAO.php");
-$AdminDAO		=	new AdminDAO();
-include_once("../library/classes/functions.php");
-include_once("../library/helper.php");
+include_once(__DIR__ . "/../bootstrap.php");
+include_once(__DIR__ . "/../library/classes/functions.php");
 $discovery_id	=	$_GET['id']; 
 $form_id		=	$_GET['form_id']; 
 $viewonly		=	$_GET['viewonly']; 

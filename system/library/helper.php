@@ -4,6 +4,7 @@ require(__DIR__."/phpmailer/src/PHPMailer.php");
 require(__DIR__."/phpmailer/src/Exception.php");
 function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $fromemail = "service@easyrogs.com", $fromname = "EasyRogs Service", $emailtype = 1, $cc = array(), $bcc = array(), $docsArray = array())
 {
+    global $logger;
     $fromname  = "EasyRogs Service";
     $fromemail = "service@easyrogs.com";
     
@@ -13,7 +14,6 @@ function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $frome
         'easyrogs@gmail.com'
       ];
     }
-
     if ($emailtype == 3) {
         $headers  = 'MIME-Version: 1.0' . "\r\n";
 
@@ -89,9 +89,10 @@ function replaceUrls($string) {
 function pdf($filename = "", $footertext = "", $downloadORwrite = '')
 {
 	ini_set("pcre.backtrack_limit", "1000000");
-    global $html;
+    global $html, $logger;
     if ($html=="") {
         echo "Please provide HTML to PDF function";
+        $logger->error("$html is empty");
         exit;
     }
 
