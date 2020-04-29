@@ -22,9 +22,9 @@
       }
 
       // normalize params
-      foreach([$to, $cc, $bcc, $attachments] as &$part) {
-        $part = is_array($part) ? $part : [$part];
-      }
+      $to  = is_array($to)  ? $to  : [$to];
+      $cc  = is_array($cc)  ? $cc  : [$cc];
+      $bcc = is_array($bcc) ? $bcc : [$bcc];
 
       // do not send real emails on dev
       if ($_ENV['APP_ENV'] != 'prod') {
