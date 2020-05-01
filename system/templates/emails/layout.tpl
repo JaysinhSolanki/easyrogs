@@ -1,5 +1,5 @@
 {assign var='actionUrl' value=$actionUrl|default:'https://easyrogs.com'}
-{assign var='actionText' value=$actionText|default:'Go to EasyRogs'}
+{assign var='actionText' value=$actionText|default:'Go to EasyRogs.com'}
 <html>
   <head>
     <title>EasyRogs</title>

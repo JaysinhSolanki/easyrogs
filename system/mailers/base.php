@@ -1,6 +1,7 @@
 <?php
 
   class BaseMailer {
+    
     const TESTING_DOMAIN         = 'ezrogs.com';
     const TESTING_DEV_RECIPIENTS = ['easyrogs@mailinator.com', 'easyrogs@gmail.com'];
     const TESTING_PROD_RECIPIENT = 'easyrogs@gmail.com';
@@ -60,6 +61,29 @@
       // send email
       try { 
         $mail->send(); 
+        if ($_ENV['APP_ENV'] != 'prod') {
+          $logger->info("Mail sent to: " .json_encode($to). ", Subject: $subject, Body: \n\r\n\r" .$body. "\n\r\n\r\n\r" );
+
+          // Save copy of the last email
+          $savedir = __DIR__ . '/../_dev';
+          if(!is_dir($savedir)) { mkdir( $savedir, 0755, true ); }
+
+          file_put_contents( $savedir. '/last-email.htm',             $body );
+          file_put_contents( $savedir. '/last-email-attachments.txt', json_encode($attachments) );
+
+          if (is_dir($savedir)) { 
+            array_map( 'unlink', glob("$savedir/attach/*") );
+          } else {
+            mkdir( $savedir. '/attach', 0755, true ); 
+          }
+          foreach($attachments as $attachment) { 
+            if (is_file($attachment['path'])) {
+              copy( $attachment['path'], $savedir .'/attach/'. $attachment['filename'] );
+            } else {
+              $logger->warn("Email attachment not found: " . $attachment['path']);
+            }
+          }
+        }
       }
       catch( Exception $e ) { 
         $logger->error('Send mail failed: ' . $e->getMessage()); 

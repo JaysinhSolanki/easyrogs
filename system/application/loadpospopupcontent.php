@@ -161,12 +161,14 @@ $servicelists		=	$AdminDAO->getrows(
 //dump($attorneys);
 //exit;
 
-
- 
-
 ?>
-<style>
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr"><!-- POSpopup -->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 
+<style>
 .tabela
 	{
 		width:100% !important;
@@ -193,6 +195,7 @@ td, th {
     line-height:25px; 
    }
 </style>
+</head>
 <div class="row">
 	<div class="col-md-12" id="poshtml">
     	<table class="tabela1" style="border:none !important">
@@ -226,7 +229,7 @@ td, th {
 					<input type="text" name="pos_zip" id="pos_zip" placeholder="Enter your zip" value="<?php echo $result_address['zip']; ?>" size="20"/><br/>
 					*/ ?>
 					<br/>
-					On <?php echo date('F j, Y'); ?>, I electronically served <?php echo $discovery_name." [Set ".ucwords(strtolower(numberTowords( $set_number )))."]"; ?> upon the following:
+					On <?php echo date('F j, Y'); ?>, I electronically served <?php echo Discovery::getTitle( $discovery_name, $set_number ) ?> upon the following:
                 </td>
             </tr>
           </tbody>

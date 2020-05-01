@@ -1,13 +1,10 @@
 <?php
 @session_start();
 require_once("../bootstrap.php");
-require_once("../library/classes/AdminDAO.php");
-$AdminDAO	=	new AdminDAO();	
 include_once("../library/classes/login.class.php");
 include_once("../library/classes/error.php");
 require_once(FRAMEWORK_PATH."head.php");
 include_once("../library/classes/functions.php");
-include_once("../library/helper.php");
 header('Content-Type: text/html; charset=ISO-8859-1');
 
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
@@ -258,7 +255,7 @@ body.modal-open
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="text-center m-b-md">
-                <h3><?php echo str_replace(["set", "For", "Of"], ["Set", "for", "of"], ucwords(strtolower($discovery_name)) ); ?></h3>
+                <h3><?php echo Discovery::getTitle($discovery_name) ?></h3>
             </div>
             <div class="hpanel">
                 <div class="panel-body">
@@ -997,7 +994,7 @@ ob_start();
 		}
 		?>
         <div id="verification_text" style="line-height:23px !important; text-align:justify; font-size:13px">
-            <p>I am the <input type='text' name='verification_by_name' id='verification_by_name' value='<?php echo $verification_by_name; ?>' placeholder='Role: Plaintiff, Defendant, etc.'> in this action, and I have read the foregoing <b><?php echo $discovery_name ?></b> and know its contents.
+            <p>I am the <input type='text' name='verification_by_name' id='verification_by_name' value='<?php echo $verification_by_name; ?>' placeholder='Role: Plaintiff, Defendant, etc.'> in this action, and I have read the foregoing <b><?php echo Discovery::getTitle($discovery_name) ?></b> and know its contents.
              The matters stated therein are true based on my own knowledge, except as to those matters stated on information and belief, and as to those matters I believe them to be true.
             </p><p>I declare under penalty of perjury under the laws of the State of California that the foregoing is true and correct.<br>Executed on <?php echo date("F j, Y"); ?> at <input placeholder="City" type='text' name='verification_city' id='verification_city' value='<?php echo $verification_city; ?>'>,
             <input type='text' name='verification_state' id='verification_state' value='<?php echo $verification_state; ?>' placeholder="State">.

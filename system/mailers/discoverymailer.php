@@ -147,7 +147,7 @@
       $smarty->assign([
         'masterhead'      => $usersModel->getMasterHead($actionUser),
         'propoundingName' => $propounding['client_name'],
-        'discoveryName'   => str_replace("set", "Set", ucwords(strtolower($discoveryName)))
+        'discoveryName'   => Discovery::getTitle($discoveryName),
       ]);
 
       foreach($serviceList as $user) {
@@ -161,7 +161,7 @@
         $smarty->assign([
           'name'        => User::getFullName($user),
           'actionUrl'   => $isActive ? DOMAIN : DOMAIN . "signup.php?uid=$invitation[uid]",
-          'actionText'  => $isActive ? 'Go to EasyRogs' : 'Signup to EasyRogs'
+          'actionText'  => $isActive ? 'Go to EasyRogs' : 'Signup at EasyRogs.com'
         ]);
         $body = $smarty->fetch('emails/discovery-propound.tpl');
         $to   = $user['email'];

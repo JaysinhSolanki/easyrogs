@@ -7,12 +7,10 @@ $AdminDAO		=	new AdminDAO();
 include_once("../library/classes/functions.php");
 include_once("../library/helper.php");
 
-$fDebug = fopen(__DIR__ . '/../../logs/debug.log','a+');
+$logger->info("MakePDF: starting");
 
-/*
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-*/
 //error_reporting(0);
 $respond			=	0;
 $uid				=	@$_GET['id'];
@@ -121,7 +119,6 @@ $incidentoption			=	$discovery_data['incidentoption'];
 $incidenttext			=	$discovery_data['incidenttext'];
 $personnames2			=	$discovery_data['personnames2'];
 $personnames1			=	$discovery_data['personnames1'];
-fwrite($fDebug, "$personnames1 - $personnames2 \n");
 $interogatory_type		=	$discovery_data['interogatory_type'];
 $conjunction_setnumber	=	$discovery_data['conjunction_setnumber'];
 $in_conjunction			=	$discovery_data['in_conjunction'];
@@ -417,6 +414,11 @@ if(in_array($form_id,array(4)))
 
 ob_start(); 
 ?>
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr"><!-- makepdf.php -->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <style>
 	.tabela
 	{
@@ -460,6 +462,7 @@ ob_start();
 	page-break-before: always;
 	}
 </style>
+</head>
 <!-- =================================================== -->
 <!-- 			HEADER PAGE 						 -->
 <!-- =================================================== -->
@@ -1165,19 +1168,34 @@ $headerFooterConfiguration = [
 //$mpdf->SetFooter($headerFooterConfiguration);
 //$fileName	=	"{$case_title}-{$atorny_name}.pdf";
 $fileName	=	"{$form_name}.pdf";
-if($downloadORwrite == 1)
-{
+if ($downloadORwrite == 1) {
 	$folderPath	=	$_SESSION['system_path']."uploads/documents/{$uid}";
-	if (!file_exists($folderPath)) 
-	{
+	if (!is_dir($folderPath)) {
 		mkdir($folderPath, 0777, true);
 	}
 	$filePath	=	$folderPath."/".$fileName;
 }
-else
-{
+else {
 	$filePath	=	"{$fileName}";
 }
 
-fclose($fDebug);
-pdf($filePath,$headerFooterConfiguration,@$downloadORwrite);
+try { 
+	pdf( $filePath, $headerFooterConfiguration, @$downloadORwrite );
+	if ($_ENV['APP_ENV'] != 'prod') {
+		$logger->info("PDF created and ". ( $downloadORwrite == 1 ? "saved to" : "sent to browser as"). " '$filePath', generated from html:\n\r\n\r$html\n\r\n\r\n\r" );
+
+		// Save copy of the last PDF generated
+		$savedir = __DIR__ . '/../_dev';
+		if(!is_dir($savedir)) { 
+			mkdir( $savedir, 0755, true ); 
+		}
+
+		file_put_contents( $savedir. '/last-pdf.htm', $html );
+		if ($downloadORwrite == 1) {
+			copy( $filePath,   $savedir. '/last-pdf.pdf' );
+		}
+	}
+} 
+catch( Exception $e ) { 
+	$logger->error('MakePDF failed: ' . $e->getMessage()); 
+}

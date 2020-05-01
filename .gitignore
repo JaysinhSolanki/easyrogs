@@ -8,6 +8,7 @@ settings.php
 .well-known
 *.log
 /logs/**
+/system/_dev/**
 .env
 .env.*
 vendor

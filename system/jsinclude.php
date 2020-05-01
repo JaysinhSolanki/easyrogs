@@ -32,6 +32,9 @@
 <script src="<?php echo VENDOR_URL;?>jquery.uploadfile.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
 
+<!-- isInViewport jQuery plugin @ https://cdnjs.cloudflare.com/ajax/libs/is-in-viewport/3.0.4/isInViewport.js -->
+<script type="text/javascript" src="<?php echo VENDOR_URL;?>is-in-viewport/3.0.4/isInViewport.min.js"></script> 
+
 <!-- easyrogs --> 
 <script src="<?= ROOTURL ?>system/application/custom.js"></script>
 
@@ -51,4 +54,13 @@ function loadToolTipForClientBtn(c_id='')
 		$(".client-btn").attr("data-original-title",data)
 	});
 }
+	$(document).ready(function(){
+		$('video').each(function () {
+			if ($(this).is(":in-viewport")) {
+				$(this)[0].play();
+			} else {
+				$(this)[0].pause();
+			}
+		});
+	});
 </script>

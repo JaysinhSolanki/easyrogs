@@ -1,5 +1,4 @@
-
-
+<!-- pdf-header -->
 <style>
 .tabela1
 {
@@ -61,8 +60,7 @@
 			echo strtoupper($form_name);
 			if(!empty($con_Details))
 			{
-				$conjunction = $con_Details['con_discovery_name']." [Set ".numberTowords($con_Details['con_setnumber'])."]";
-				$conjunction = str_replace(["set", "For", "Of"], ["Set", "for", "of"], ucwords(strtolower($conjunction)) );
+				$conjunction = Discovery::getTitle( $con_Details['con_discovery_name'], $con_Details['con_setnumber'] );
 				echo "<br><br><i>Served in conjunction with <br>$conjunction</i>";
 			}
 			?>

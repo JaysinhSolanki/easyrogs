@@ -77,7 +77,7 @@ function replaceUrls($string) {
 		}
 		$video_allowed = array('mp4');
 		if (in_array($ext, $video_allowed)) {
-		    return '<br /><video style=" width: 100%; " id="v1" loop="" controls=""><source src="'. $url .'" type="video/mp4"></video>';
+		    return '<br /><video style=" width: 100%; " id="v1" x-autoplay controls=""><source src="'. $url .'" type="video/mp4"></video>';
 		}
 	}
 	return $url;
@@ -93,7 +93,7 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
     if ($html=="") {
         echo "Please provide HTML to PDF function";
         $logger->error("$html is empty");
-        exit;
+        return;
     }
 
     //echo $html; exit;
@@ -128,8 +128,8 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
     }
     $doc = new DOMDocument();
     @$doc->loadHTML($html);
-    file_put_contents( ROOTPATH .'logs/html-org.htm', $html );
-    file_put_contents( ROOTPATH .'logs/html-dom.htm', $doc->saveHTML() );
+    // file_put_contents( ROOTPATH .'logs/html-org.htm', $html );
+    // file_put_contents( ROOTPATH .'logs/html-dom.htm', $doc->saveHTML() );
     //return;
 	
     $mpdf->WriteHTML($doc->saveHTML());

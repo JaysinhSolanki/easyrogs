@@ -100,23 +100,23 @@ if($response_id > 0)
 {
 	$discovery_name		=	"RESPONSE TO ".$discovery_name;
 } 
-$PDFname	=	strtoupper($discovery_name).".pdf";
-//if($type == 2)
-$fileName	=	SYSTEMPATH."uploads/documents/".$uid."/".$PDFname;
-$useCache = !in_array($_ENV['APP_ENV'], ['dev', 'local', 'development']);
-if ( !$useCache || !file_exists($fileName)) 
-{
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL,DOMAIN."makepdf.php?id=".$uid."&downloadORwrite=1&view={$view}&active_attr_email={$active_attr_email}&response_id={$response_id}");
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$server_output = curl_exec($ch);
-	curl_close ($ch);	 
+// $PDFname	=	strtoupper($discovery_name).".pdf";
+// //if($type == 2)
+// $fileName	=	SYSTEMPATH."uploads/documents/".$uid."/".$PDFname;
+// $useCache = !in_array($_ENV['APP_ENV'], ['dev', 'local', 'development']);
+// if ( !$useCache || !file_exists($fileName)) 
+// {
+// 	$ch = curl_init();
+// 	curl_setopt($ch, CURLOPT_URL,DOMAIN."makepdf.php?id=".$uid."&downloadORwrite=0&view={$view}&active_attr_email={$active_attr_email}&response_id={$response_id}");
+// 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+// 	$server_output = curl_exec($ch);
+// 	curl_close ($ch);	 
 	
-}
-$urlPDF	=	UPLOAD_URL."documents/".$uid."/".$PDFname;
+// }
+// $urlPDF	=	UPLOAD_URL."documents/".$uid."/".$PDFname;
 
 //FROM PDFjs
-echo $_SESSION['framework_url']."pdfjs/web/viewer.php?url={$urlPDF}";
+echo $_SESSION['framework_url']."pdfjs/web/viewer.php?url=" .DOMAIN. "/makepdf.php?id=" .$uid. "&view=$view";
 //FROM GOOGLE
 //echo "https://docs.google.com/viewerng/viewer?url={$urlPDF}&embedded=true";
 ?>
