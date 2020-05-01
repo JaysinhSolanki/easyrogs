@@ -77,7 +77,7 @@ function replaceUrls($string) {
 		}
 		$video_allowed = array('mp4');
 		if (in_array($ext, $video_allowed)) {
-		    return '<br /><video style=" width: 100%; " id="v1" x-autoplay controls=""><source src="'. $url .'" type="video/mp4"></video>';
+		    return '<br /><video style=" width: 100%; " id="v1" preload="none" x-autoplay controls><source src="'. $url .'" type="video/mp4"></video>';
 		}
 	}
 	return $url;
@@ -126,12 +126,13 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
     if ($footertext != "") {
         $mpdf->SetFooter($footertext);
     }
+    $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
     $doc = new DOMDocument();
     @$doc->loadHTML($html);
     // file_put_contents( ROOTPATH .'logs/html-org.htm', $html );
     // file_put_contents( ROOTPATH .'logs/html-dom.htm', $doc->saveHTML() );
     //return;
-	
+    
     $mpdf->WriteHTML($doc->saveHTML());
     if ($filename!="") {
         if ($downloadORwrite != 1) {

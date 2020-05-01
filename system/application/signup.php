@@ -69,7 +69,7 @@ $newsignup = 1;
       <div class="row">
         <div class="col-md-8 col-md-offset-2">
           <div class="text-center m-b-md">
-            <h2><?= $systemmaintitle; ?></h2>
+            <h2 class="mylogo f48"><?= $systemmaintitle; ?></h2>
             <h3></h3>
             <small>Create your account</small>
           </div>

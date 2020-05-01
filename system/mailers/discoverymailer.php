@@ -161,7 +161,7 @@
         $smarty->assign([
           'name'        => User::getFullName($user),
           'actionUrl'   => $isActive ? DOMAIN : DOMAIN . "signup.php?uid=$invitation[uid]",
-          'actionText'  => $isActive ? 'Go to EasyRogs' : 'Signup at EasyRogs.com'
+          'actionText'  => $isActive ? 'Go to EasyRogs.com' : 'Sign Up at EasyRogs.com'
         ]);
         $body = $smarty->fetch('emails/discovery-propound.tpl');
         $to   = $user['email'];

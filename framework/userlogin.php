@@ -1,11 +1,10 @@
 <?php
 session_start();
-require_once("../bootstrap.php"); 
-include_once("../library/classes/AdminDAO.php");	 
-include_once("../library/classes/functions.php");	 
-//include_once("../library/classes/filter.php");	 
-include_once("../library/classes/login.class.php"); 
-//include_once("../library/classes/error.php");  
+require_once(__DIR__ . "/../system/bootstrap.php");
+include_once(__DIR__ . "/../system/library/classes/functions.php");
+//include_once(__DIR__ . "/../system/library/classes/filter.php");
+include_once(__DIR__ . "/../system/library/classes/login.class.php");
+//include_once(__DIR__ . "/../system/library/classes/error.php");
 if($_GET['outside'] == 1) 
 {
 ?>
@@ -19,7 +18,7 @@ if(!empty($_SESSION['addressbookid']))
 {
 ?>
     <script type="text/javascript">
-		window.location.href =	"index.php";
+		window.location.href =	<?= ROOTURL; ?>"system/application/index.php";
     </script>
 <?php
 } 
@@ -30,7 +29,6 @@ if(!empty($_POST))
 {
 	$email			=	$_POST['email'];
 	$pass			=	$_POST['pass'];
-	//$province		=	$_POST['province'];
 	$rememberme		=	$_POST['rememberme'];
 	$module			=	1;//$_POST['module'];
 }
@@ -55,9 +53,7 @@ if(isset($_COOKIE['rememberme']) && $_COOKIE['rememberme'] != '')
 		{
 			$_SESSION['module']		=	$module;
 			$_SESSION['language']	=	$_POST['language'];
-			//$_SESSION['province']	=	$province;
-			//echo 2222;
-			header("Location: ../application/index.php");
+			header("Location: " .ROOTURL. "system/application/index.php");
 			exit;
 		}
 	}
@@ -69,7 +65,6 @@ if(sizeof($_POST)>0)
 	
 	if($result	== 1)
 	{
-		//$_SESSION['province']	=	$province;
 		$_SESSION['module']		=	$module;
 		if($rememberme==1)
 		{
@@ -79,7 +74,7 @@ if(sizeof($_POST)>0)
 		{
 			setcookie("rememberme","", time()-3600);
 		}
-		header("Location: ../application/index.php");
+		header("Location: " .ROOTURL. "system/application/index.php");
 		exit;
 	}
 	else
@@ -153,11 +148,12 @@ require_once("head.php");
                 </div>
                 <div id="vidBox" style="display: none;">
                     <div id="videCont">
-                		<video id="v1" loop controls style="position: fixed;
-															top: 0; left: 0;
-															max-width: 100vw; max-height: 100vh; 
-															height: auto;
-															">
+                		<video id="v1" preload="none" x-autoplay controls style="
+																				position: fixed;
+																				top: 0; left: 0;
+																				max-width: 100vw; max-height: 100vh; 
+																				height: auto;
+																			">
                             <source src="<?= ROOTURL ?>system/application/demo.mp4" type="video/mp4">
                         </video>
                     </div>
@@ -174,14 +170,12 @@ require_once("head.php");
     </div>
 </div>
 <?php
-	require_once("../jsinclude.php");
+	require_once(__DIR__ . "/../system/jsinclude.php");
 	
 	if( $errors && sizeof(json_decode($errors)) > 0 )
 	{
 	?>
 		<script type="text/javascript">
-		//alert(132);
-		//msg(1111111111111111111111111111);
         msg('<?php echo $errors;?>');
         </script>
     <?php

@@ -14,6 +14,7 @@
   
   require_once __DIR__ . '/library/classes/logger.class.php';
   $logger = new Logger();
+  //$logger->info("Logging is available now..");
 
   // lib
   require_once __DIR__ . '/library/classes/httpresponse.php';
