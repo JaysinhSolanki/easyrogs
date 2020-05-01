@@ -340,13 +340,13 @@ body.modal-open
                         echo "style='display:none'";
 } ?> id="in_conjunctionDiv">
                     <div class="row form-group">
-                             <label class=" col-sm-2 control-label" style="margin-top: 20px;">In Conjunction with <span class="redstar" style="color:#F00" title="This field is compulsory"></span>
+                             <label class=" col-sm-2 control-label" style="margin-top: 20px;">In Conjunction with <span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
                             <div class="col-sm-2" style="margin-top: 25px;">
                                 <input type="checkbox" onclick="inConjunctionForm()" <?php if ($discovery['in_conjunction'] == 1) {
                                     echo "checked";
 } ?> value="1" name="in_conjunction" id="in_conjunction"> <label for="in_conjunction">Form Interrogatories</label>
                             </div>
-                            </label>
+                            
                             <div  id="interogatoriesTypeDiv" <?php if ($id == '' || $discovery['in_conjunction'] == 0) {
                                 echo "style='display:none'";
 } ?>>
