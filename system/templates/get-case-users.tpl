@@ -24,7 +24,7 @@
             <a href="#" class="btn btn-xs approve-join-request btn-warning" data-user-id="{$user.id}" data-case-id="{$caseId}">Approve</a>
             <a href="#" class="btn btn-xs deny-join-request btn-danger" data-user-id="{$user.id}" data-case-id="{$caseId}">Deny</a>
           {/if}
-          {if !$user.is_primary && $user.side_active}
+          {if !$user.is_current_user && !$user.is_primary && $user.side_active}
             <a class="side-delete-user btn btn-small delete-user-btn" data-user_id="{$user.id}" data-case_id="{$caseId}" "title="Delete"><i class="fa fa-trash fa-2x" style="color: red"></i></a>
           {/if}
         </td>

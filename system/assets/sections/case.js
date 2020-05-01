@@ -12,14 +12,14 @@ showExistingCaseModal = (aCase, isTeamMember) => {
   `);
 
   if (isTeamMember) {
-    $('.join-action-btn, .join-case-clients').hide();
-    $('.join-action-btn, .join-case-clients').hide();
-    $('.save-case-btn').show();
+    $('#join-close-btn, #join-case-btn, .join-case-clients').hide();    
+    $('#join-create-case-btn').show();
     $('#existing-case-modal').modal('show');
   }
   else {
     $('#join-existing-case-id').val(aCase.id);
-    $('.join-action-btn, .join-case-clients').show();
+    $('#join-close-btn').hide();
+    $('#join-case-btn, #join-create-case-btn, .join-case-clients').show();
     getCaseClients(aCase.id, 
       (clients) => {
         $('#join-existing-case-client').html(`<option value="">Select a Party</option>`);
@@ -37,24 +37,18 @@ showExistingCaseModal = (aCase, isTeamMember) => {
   return true;
 }
 
-// if case number changes restart the joining flow
-$('input#case_number').on('change', () => { 
-  $('.save-case-btn').data('force', false);
-  $('#existing-case-modal .save-case-btn').data('force', true); 
-});
-
 // This hook handles all save buttons
 // TODO: decouple this logic v
 $('.save-case-btn').on('click', function() {
   const caseNumber = $('input[name=case_number]').val();
-  const force = !!$(this).data('force');
-  
+  const force      = !!$(this).data('force');
+
   if(!isDraft)  { return submitCase(); }
   
   if (force) {
     $('.save-case-btn').data('force', true);
     if ($('#existing-case-modal').is(':visible')) {
-      $('#existing-case-modal').modal('hide').on('hidden.bs.modal', submitCase);
+      $('#existing-case-modal').modal('hide').on('hidden.bs.modal', submitCase );
     }
     else submitCase();    
   }
@@ -73,8 +67,28 @@ $('.save-case-btn').on('click', function() {
   }
 });
 
+$('#join-create-case-btn').on('click', () =>{
+  $('.save-case-btn').data('force', true);
+});
+
+// if case number changes restart the joining flow
+$('input#case_number').on('change', () => { 
+  $('.save-case-btn').data('force', false);
+});
+
+$('input#case_number').on('blur', function() {
+  if (!isDraft) { return }
+  
+  const caseNumber = $(this).val();
+  if (caseNumber) {
+    getCaseByNumber(caseNumber, 
+      (aCase) => aCase.id && showExistingCaseModal(aCase, aCase.team_member)
+    );
+  }
+});
+
 // join case btn
-$('#join-existing-case-btn').on('click', function() {
+$('#join-case-btn').on('click', function() {
   const clientId = $('#join-existing-case-client').val();
   const caseId   = $('#join-existing-case-id').val();
   
@@ -82,7 +96,8 @@ $('#join-existing-case-btn').on('click', function() {
   
   joinCase(caseId, clientId,
     (response) => {
-      $('.join-case-clients, .join-action-btn').hide();
+      $('.join-case-clients, #join-case-btn, #join-create-case-btn').hide();
+      $('#join-close-btn').show();
       $('.join-case-text').html(`${response.msg}`);
       $('#existing-case-modal').on('hidden.bs.modal', () => {
         if (response.awaiting_request) {

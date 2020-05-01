@@ -514,9 +514,9 @@ body.modal-open
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-success join-action-btn" id="join-existing-case-btn">Join</button>
-        <button class="btn btn-warning join-action-btn save-case-btn" data-dismiss="modal" data-force="true"><i class="fa fa-save"></i> Create New Case</a>
-        <button class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+        <button class="btn btn-success" id="join-case-btn">Join</button>
+        <button class="btn btn-warning" id="join-create-case-btn" data-dismiss="modal" ><i class="fa fa-save"></i> Create New Case</a>
+				<button class="btn btn-danger"  id="join-close-btn" type="button"  data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
       </div>
     </div>
   </div>

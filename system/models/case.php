@@ -187,9 +187,16 @@
       }
     }
 
-    function getByNumber($number) {
+    function getByNumber($number, $requireClients = true) {
       $number = self::normalizeNumber($number);
-      return $this->getBy('cases', ['normalized_number' => $number], 1);
+      $cases = $this->getBy('cases', ['normalized_number' => $number]);
+      if ( $requireClients ) {
+        foreach($cases as $case) {
+          $clients = $this->getAllClients($case['id']);
+          if ($clients) { return $case; }
+        }
+      }
+      else return $cases[0];
     }
 
     function userInCase($caseId, $userId) {

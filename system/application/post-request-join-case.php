@@ -35,7 +35,6 @@
   else {
     $sidesModel->addUser($side['id'], $currentUser->user); // add user directly
     // add user to service list if user is an attorney
-    $attorney = $usersModel->findAttorney($userId);
     if ($currentUser->isAttorney()) {
       $sidesModel->updateServiceListForAttorney($side, $currentUser->user);
     }
