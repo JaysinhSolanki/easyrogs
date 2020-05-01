@@ -1,7 +1,7 @@
 <?php
 @session_start();
 error_reporting(E_ALL);
-if($_SESSION['addressbookid'] == '')
+if( !isset($_SESSION) || empty($_SESSION['addressbookid']) )
 {
 	echo "loggedout";
 	exit;
