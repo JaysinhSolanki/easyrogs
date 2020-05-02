@@ -219,7 +219,7 @@ td, th {
                 <td align="justify">
 					<div id="pos_18info" style="width:100%;display:flex;flex-direction:row;align-items:stretch;">
 						<span id="_1" style="flex-shrink:0;align-self:center;">I am at least 18 years old and not a party to this action. My business address is </span> 
-						<input style="margin:5px;width:inherit;" type="text" name="pos_address" id="pos_address" placeholder="Enter your address" value="<?php echo $result_address['address'] .", ". $result_address['street']	." ".  $result_address['cityname'] .", ". $result_address['statecode'] ." ". $result_address['zip']; ?>" size="180"/>
+						<input style="margin:5px;width:inherit;" type="text" name="pos_address" id="pos_address" placeholder="Enter your address" value="<?php echo $result_address['address'] .", ". $result_address['street']	." ".  $result_address['cityname'] .", ". $result_address['statecode'] ." ". $result_address['zip']; ?>" size="180"/><span style="align-self: center;margin-left: -4px;">.</span>
 					</div>
 					<p id="_2">My electronic service address is <?php echo $senderEmail ?>.</p>
 					<?php /*
@@ -229,7 +229,7 @@ td, th {
 					<input type="text" name="pos_zip" id="pos_zip" placeholder="Enter your zip" value="<?php echo $result_address['zip']; ?>" size="20"/><br/>
 					*/ ?>
 					<br/>
-					On <?php echo date('F j, Y'); ?>, I electronically served <?php echo Discovery::getTitle( $discovery_name, $set_number ) ?> upon the following:
+					On <?php echo date('F j, Y'); ?>, I electronically served <?php echo Discovery::getTitle( $discovery_name, $set_number, Discovery::STYLE_AS_IS ) ?> upon the following:
                 </td>
             </tr>
           </tbody>

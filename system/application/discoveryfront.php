@@ -211,17 +211,8 @@ function getRPDetails($rp_id)
 	//$AdminDAO->displayquery=0;
 	return $clients[0];
 }
-$discovery_name	=	"RESPONSE TO ";
- 
-if($discovery_data['discovery_name'] == '')
-{
-	$discovery_name	.= $discovery_data['form_name'];
-}
-else
-{
-	$discovery_name	.= $discovery_data['discovery_name'];
-}
-$discovery_name	.= " [Set ".numberTowords( $set_number )."]";
+
+$discovery_name	= Discovery::getDetails( "Response to ". $discovery_data['discovery_name'] ?? $discovery_data['form_name'], $set_number );
 
 ?>
 
@@ -255,7 +246,7 @@ body.modal-open
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="text-center m-b-md">
-                <h3><?php echo Discovery::getTitle($discovery_name) ?></h3>
+                <h3><?php echo $discovery_name ?></h3>
             </div>
             <div class="hpanel">
                 <div class="panel-body">
@@ -963,7 +954,7 @@ if($email_solicitation == "")
 
 ob_start();
 ?>
-<h4><?php echo $discovery_name." [Set ".numberTowords( $set_number )."]"; ?> is submitted successfully from the client.</h4>
+<h4><?= $discovery_name ?> is submitted successfully from the client.</h4>
 <ul style="padding-left:5px">
 	<li><b>Case Title:</b> <?php echo $case_title ?></li>
     <li><b>Case#:</b> <?php echo $case_number ?></li>

@@ -147,7 +147,7 @@
       $smarty->assign([
         'masterhead'      => $usersModel->getMasterHead($actionUser),
         'propoundingName' => $propounding['client_name'],
-        'discoveryName'   => Discovery::getTitle($discoveryName),
+        'discoveryName'   => Discovery::getTitle($discoveryName,null,Discovery::STYLE_AS_IS),
       ]);
 
       foreach($serviceList as $user) {

@@ -60,7 +60,7 @@
 			echo strtoupper($form_name);
 			if(!empty($con_Details))
 			{
-				$conjunction = Discovery::getTitle( $con_Details['con_discovery_name'], $con_Details['con_setnumber'] );
+				$conjunction = Discovery::getTitle( $con_Details['con_discovery_name'], $con_Details['con_setnumber'], Discovery::STYLE_AS_IS );
 				echo "<br><br><i>Served in conjunction with <br>$conjunction</i>";
 			}
 			?>

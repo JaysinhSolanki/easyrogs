@@ -1,5 +1,5 @@
 <?php
-@session_start(); 
+@session_start();
 
 require_once __DIR__ . '/../bootstrap.php';
 
@@ -20,8 +20,8 @@ $checkOwnerCase     =   $AdminDAO->getrows("cases", "*", "attorney_id = :fkaddre
 $isServiceListMember    =   $AdminDAO->getrows(
     'attorney a,client_attorney ca',
     "*,ca.id as client_attorney_id",
-    "a.attorney_email 	= 	:attorney_email AND 
-							a.id 				= 	ca.attorney_id AND 
+    "a.attorney_email 	= 	:attorney_email AND
+							a.id 				= 	ca.attorney_id AND
 							ca.case_id 			= 	:case_id ",
     array('attorney_email'=>$_SESSION['loggedin_email'],'case_id'=>$case_id)
 );
@@ -45,7 +45,7 @@ $cases      =   $AdminDAO->getrows(
 									c.judge_name 	as judge_name,
 									c.county_name 	as county_name,
 									c.court_address as court_address,
-									c.department 	as department, 
+									c.department 	as department,
 									a.firstname 	as atorny_fname,
 									a.lastname 		as atorny_lname
 									",
@@ -53,7 +53,7 @@ $cases      =   $AdminDAO->getrows(
 									id 				= :case_id AND
 									attorney_id 	= :attorney_id AND
 									pkaddressbookid = attorney_id
-									
+
 									",
     array('case_id'=>$case_id,'attorney_id'=>$_SESSION['addressbookid'])
 );
@@ -110,7 +110,7 @@ $otherClients = $sidesModel->getOtherClients($currentSide['id'], $case_id);
 
 // DEPRECATION ROW (sides) ---------------------------------------------------
 // if(empty($checkOwnerCase) && !empty($isServiceListMember))
-// {	
+// {
 // 	$client_attorney_id	=	array();
 // 	if(!empty($isServiceListMember))
 // 	{
@@ -119,16 +119,16 @@ $otherClients = $sidesModel->getOtherClients($currentSide['id'], $case_id);
 // 			$client_attorney_id[]	=	$isServiceListMemberData['client_attorney_id'];
 // 		}
 // 	}
-	
+
 // 	$sl_attorney_id	=	implode(",",$client_attorney_id);
-	
-	
+
+
 // 	$clientsData	=	$AdminDAO->getrows("clients c,client_attorney ca",
-// 													"c.*", 
-// 													"c.id		=	ca.client_id AND 
-// 													ca.id 		IN ($sl_attorney_id)", 
+// 													"c.*",
+// 													"c.id		=	ca.client_id AND
+// 													ca.id 		IN ($sl_attorney_id)",
 // 													array());
-	
+
 // 	//dump($clientsData);
 // 	$myclients		=	array();
 // 	foreach($clientsData as $cdata)
@@ -151,7 +151,7 @@ $otherClients = $sidesModel->getOtherClients($currentSide['id'], $case_id);
 // 	}*/
 // 	$otherWhere		=	" id NOT IN ($myclientsIdsList) ";
 // 	$ownclients		=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND id IN ($myclientsIdsList)", array(":case_id"=>$case_id), "client_name", "ASC");
-	
+
 // 	$otherclients	=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND $otherWhere ", array(":case_id"=>$case_id), "client_name", "ASC");
 
 
@@ -159,14 +159,14 @@ $otherClients = $sidesModel->getOtherClients($currentSide['id'], $case_id);
 // 	{
 // 		$propondingClients	=	$ownclients;
 // 		$respondingClients	=	$otherclients;
-	
+
 // 	}
 // 	else if($type == 2) //Internal
 // 	{
 // 		$propondingClients	=	$otherclients;
 // 		$respondingClients	=	$ownclients;
 // 	}
-		
+
 // }
 // else
 // {
@@ -178,7 +178,7 @@ $otherClients = $sidesModel->getOtherClients($currentSide['id'], $case_id);
 	{
 		$propondingClients	=	$ownClients;
 		$respondingClients	=	$otherClients;
-	
+
 	}
 	else if($type == 2) //Internal
 	{
@@ -214,20 +214,20 @@ if ($id > 0 && in_array($form_id, array(3,4))) {
 
 ?>
 <style>
-.instruction-collapse [data-toggle="collapse"]:after  
+.instruction-collapse [data-toggle="collapse"]:after
 {
     content: "Hide";
     float: right;
     font-size: 14px;
     line-height: 20px;
-    
+
 }
-.instruction-collapse [data-toggle="collapse"].collapsed:after 
+.instruction-collapse [data-toggle="collapse"].collapsed:after
 {
     content: "Show";
     color: #fff;
 }
-body.modal-open 
+body.modal-open
 {
     position: static !important;
 }
@@ -290,7 +290,7 @@ body.modal-open
                     <input type="hidden" name="type" value="<?php echo $type ?>" id="type"  />
                      <input type="hidden" name="uid" value="<?php echo $uid ?>">
                      <input type="hidden" name="supp" value="<?php echo $supp ?>">
-                    
+
                     <div class="form-group">
                         <label class=" col-sm-2 control-label">Form<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                         <div class="col-sm-8">
@@ -312,7 +312,7 @@ body.modal-open
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class=" col-sm-2 control-label">Name<span class="redstar" style="color:#F00" title="This field is compulsory">*</span> <?php  echo instruction(6) ?></label>
                         <div class="col-sm-3">
@@ -381,7 +381,7 @@ body.modal-open
                                 </div>
                             </div>
                     </div>
-                    
+
                     </div>
                         <?php
                     }
@@ -413,18 +413,18 @@ body.modal-open
                                 ?>
                             </select>
                         </div>
-                    
+
                     </div>
                     <div class="form-group">
                         <?php if ($type == 2) {
-                        ?> 
+                        ?>
                         <label class=" col-sm-2 control-label">Attorney<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                         <div class="col-sm-3" id="loadpropondingattorneysDiv">
                             <select  name="proponding_attorney" id="proponding_attorney"  class="form-control m-b">
-                                
+
                             </select>
                         </div>
-                        
+
                         <?php
 }
                         ?>
@@ -440,9 +440,9 @@ body.modal-open
                         <div class="col-sm-2">
                             <button type="button" id="calculateduedatepopup_btn" class="btn btn-info" <?php /*if($id<=0){ ?>disabled="disabled"<?php }*/?> onclick="calculateduedatepopup();" >
                                <i class="fa fa-calculator" aria-hidden="true"></i> Calculate Due Date <?php  echo instruction(8) ?>
-                            </button>  
+                            </button>
                         </div>
-                    </div> 
+                    </div>
                     <div class="form-group">
                         <label class=" col-sm-2 control-label">Due<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
                         <div class="col-sm-8">
@@ -461,16 +461,16 @@ body.modal-open
                         </div>
                     </div>
                     <div id="loadinstructions" class="row">
-                    
+
                     </div>
-                   
+
                     <div class="row">
                      <div id="loadformquestion"><!--Form Question Here---></div>
                     </div>
                     <input type="hidden" name="instruction_html" id="instruction_html"  />
                     <input type="hidden" name="email_body" id="email_body"  />
                     <input type="hidden" name="email_solicitation" id="email_solicitation"  />
-                      
+
                     <input type="hidden" name="case_id" id="case_id" value ="<?php echo $case_id;?>" />
                     <input type="hidden" name="id" value ="<?php echo $id;?>" />
                     <?php
@@ -482,11 +482,11 @@ body.modal-open
                     ?>
                     <div class="col-md-2"></div>
                     <div class="col-md-8" id="loaddocs" style="display:none">
-                    <hr> 
-                    <ul class="list-group"> 
+                    <hr>
+                    <ul class="list-group">
                         <li class="list-group-item">
                             <div class="">
-                                <p> 
+                                <p>
                                     <h3>Upload your documents here</h3>
                                 </p>
                             </div>
@@ -496,7 +496,7 @@ body.modal-open
                                 <span class="ladda-label">Upload</span><span class="ladda-spinner"></span>
                             </button>
                             <div id="uploadeddocs">
-                                
+
                             </div>
                         </li>
                     </ul>
@@ -520,17 +520,17 @@ body.modal-open
                                         </span>
                                         <a href="#"><i style="font-size:16px" data-placement="top" data-toggle="tooltip" title="" class="fa fa-info-circle tooltipshow client-btn" aria-hidden="true" data-original-title=""></i></a>
                                     <span class="ladda-spinner"></span>
-                                </button>  
+                                </button>
                                 <?php
                             } elseif ($type == 1) {
                             ?>
-                                <a href="javascript:;" class="btn btn-purple" onclick="serveFunction()"><i class="fa fa-share"></i> Serve</a> 
+                                <a href="javascript:;" class="btn btn-purple" onclick="serveFunction()"><i class="fa fa-share"></i> Serve</a>
                                 <span id="errorMsg" style="color:red"></span>
                             <?php
                             }
                             ?>
                         </div>
-                    </div>   
+                    </div>
                 </form>
                     </div>
                     </div>
@@ -549,7 +549,7 @@ body.modal-open
         </button>
       </div>
       <div class="modal-body" id="load_client_modal_content">
-      
+
       </div>
     </div>
   </div>
@@ -564,7 +564,7 @@ body.modal-open
         </button>
       </div>
       <div class="modal-body" id="load_clientemailfound_modal_content">
-        
+
       </div>
     </div>
   </div>
@@ -582,8 +582,8 @@ $(document).ready(function()
     setTimeout(function()
     {
         loadToolTipForClientBtn();
-        
-        
+
+
     }, 1000);
     loadpropondingattorneys('<?php echo $case_id ?>','<?php echo @$proponding ?>','<?php echo @$proponding_attorney ?>');
     $('.tooltipshow').tooltip({
@@ -597,7 +597,7 @@ $(document).ready(function()
     {
             var html = "<div><input type='hidden' name='rp_uid' value='<?php echo $uid ?>' /> <br/>";
             html += "</div>";
-            return html;            
+            return html;
     },
     autoSubmit:false,
     afterUploadAll:function(obj)
@@ -609,20 +609,20 @@ $(document).ready(function()
     $("#extrabutton").click(function()
     {
         extraObj.startUpload();
-    }); 
-    
+    });
+
     callFunction();
     $('.datepicker').datepicker({format: 'm-d-yyyy',autoclose:true, startDate: "-5y"});
-    $('#served').datepicker({format: 'm-d-yyyy',autoclose:true, startDate: "-5y"}).on('changeDate', function (ev) 
+    $('#served').datepicker({format: 'm-d-yyyy',autoclose:true, startDate: "-5y"}).on('changeDate', function (ev)
     {
         calculateduedatepopup();
     });
     setTimeout(function()
     {
-        loadrespondings('<?php echo $case_id; ?>','<?php echo @$discovery['proponding']; ?>','<?php echo @$discovery['responding']; ?>'); 
-        
+        loadrespondings('<?php echo $case_id; ?>','<?php echo @$discovery['proponding']; ?>','<?php echo @$discovery['responding']; ?>');
+
     }, 2000);
-    
+
     <?php
     if ($id > 0) {
         ?>
@@ -630,7 +630,7 @@ $(document).ready(function()
 	    {
 	        loadinstructions('<?php echo $discovery['id']?>','<?php echo $discovery['form_id']?>')
 	    },200);
-        
+
         loadformquestions('<?php echo $discovery['form_id']?>','<?php echo $discovery['id']?>');
         loaddocsFunction('<?php echo $discovery['form_id']?>');
         loaduploadeddocs();
@@ -641,10 +641,10 @@ $(document).ready(function()
     {
         $('#question_number_start_from').val(1);
     }
-    
-    
-    
-    
+
+
+
+
 });
 function loadpropondingattorneys(case_id,client_id,selected)
 {
@@ -705,7 +705,7 @@ function incidentmeans(id)
 }
 function buttonsave()
 {
-    for (instance in CKEDITOR.instances) 
+    for (instance in CKEDITOR.instances)
     {
         CKEDITOR.instances[instance].updateElement();
     }
@@ -718,21 +718,21 @@ function buttonsave()
             addform('discoveryaction.php','discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid=<?php echo $case_id?>');
         }
     },200);
-    
+
 }
 function buttonsaveandsendpopup()
 {
-    
-    $.post( "loademailcontentpopup.php",$("#discoveriesform" ).serialize()).done(function( data ) 
+
+    $.post( "loademailcontentpopup.php",$("#discoveriesform" ).serialize()).done(function( data )
     {
         $("#load_client_modal_content").html(data);
     });
     //$("#load_client_modal_content").load("loademailcontentpopup.php");
-    $('#client_modal').modal('toggle'); 
+    $('#client_modal').modal('toggle');
 }
 function buttonsaveandsend()
 {
-    for (instance in CKEDITOR.instances) 
+    for (instance in CKEDITOR.instances)
     {
         CKEDITOR.instances[instance].updateElement();
     }
@@ -741,7 +741,7 @@ function buttonsaveandsend()
     {
         addform('discoveryaction.php?isemail=1','discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid=<?php echo $case_id?>');
     },200);
-    
+
 }
 function setquestionnumber()
 {
@@ -777,10 +777,10 @@ function setquestionnumber()
                         $('#question_number_start_from').val(msg);
                 }
                 arrangequestionnumber();
-                
+
             });
     }
-    
+
 }
 function arrangequestionnumber()
 {
@@ -800,16 +800,16 @@ function loadnewquestion()
         $('#addnewquestion').append(resp);
         arrangequestionnumber();
         });
-    
+
 }
 function loadformquestions(form_id,id)
 {
     //alert(form_id);
     if(id == "")
     {
-        $("#discovery_name").val($("#form_id option:selected").html()); 
+        $("#discovery_name").val($("#form_id option:selected").html());
     }
-    
+
     $('#loadformquestion').html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='../assets/images/ownageLoader/loader4.gif'></div></div><br/>");
     $('#loadinstructions').html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='../assets/images/ownageLoader/loader4.gif'></div></div><br/>");
     if(form_id > 0)
@@ -841,7 +841,7 @@ function loadformquestions(form_id,id)
                 //$("#start_questionid").hide();
                 $("#instruction_id").hide();
             }
-            
+
         });
         //$('#loadformquestion').load("discoveryloadformquestion.php?form_id="+form_id+"&id="+id);
     }
@@ -881,7 +881,7 @@ function deletenewquestion(id)
 }
 function deletequestion(id)
 {
-    
+
     Swal.fire({
     title: "Are you sure to permanently delete?",
     text: "You will not be able to undo this action!",
@@ -901,7 +901,7 @@ function deletequestion(id)
     /*swal({
         title: "Are you sure to permanently delete?",
         text: "You will not be able to undo this action!",
-        showCancelButton: true, 
+        showCancelButton: true,
         confirmButtonColor: "#DD6B55",
         confirmButtonText: "Yes, delete it!"
     },
@@ -910,7 +910,7 @@ function deletequestion(id)
                 $("#this_"+id).remove();
                 arrangequestionnumber();
             });
-        
+
     });*/
 }
 
@@ -927,17 +927,17 @@ function checkservedate(val)
 }
 function calculateduedatepopup()
 {
-    $.post( "loadpopupcontent.php",$("#discoveriesform" ).serialize()).done(function( data ) 
+    $.post( "loadpopupcontent.php",$("#discoveriesform" ).serialize()).done(function( data )
     {
         $("#load_general_modal_content").html(data);
     });
-    $('#general-width').removeClass('w-900');  
+    $('#general-width').removeClass('w-900');
     $('#general_modal_title').html("Calculate Date");
     $('#general_modal').modal('toggle');
 }
 function calculatedduedateaction()
 {
-    $.post( "calculateduedateaction.php",$("#formduedatecalculation" ).serialize()).done(function( data ) 
+    $.post( "calculateduedateaction.php",$("#formduedatecalculation" ).serialize()).done(function( data )
     {
         $("#due").val(data);
     });
@@ -951,32 +951,32 @@ function serveFunction()
     //START LOADER
     $.LoadingOverlay("show");
     var formid = $("#form_id").val();
-    var isagree =   true; 
+    var isagree =   true;
     if(formid == 1 || formid == 2  || formid == 5)
     {
-        serveFunctionMain(); 
+        serveFunctionMain();
     }
     else if(formid == 3 || formid == 4 )
     {
-        $( ".questionscls" ).each(function(index) 
+        $( ".questionscls" ).each(function(index)
         {
             if($(this).val() > 35 && $(".question_titlecls:eq("+index+")").val() != '')
             {
-                isagree =   false; 
+                isagree =   false;
             }
         });
-        setTimeout(function()       
-        { 
+        setTimeout(function()
+        {
             if(isagree == false && type != 2)
             {
-                PopupForDeclaration(1); 
+                PopupForDeclaration(1);
             }
             else
             {
                 serveFunctionMain();
             }
         }, 1000);
-        
+
     }
     else
     {
@@ -986,16 +986,16 @@ function serveFunction()
 }
 function serveFunctionMain(signDAD=1)
 {
-    for (instance in CKEDITOR.instances) 
+    for (instance in CKEDITOR.instances)
     {
         CKEDITOR.instances[instance].updateElement();
     }
-    $.post( "discoveryaction.php?serve=0",$("#discoveriesform" ).serialize()).done(function( data ) 
+    $.post( "discoveryaction.php?serve=0",$("#discoveriesform" ).serialize()).done(function( data )
     {
-        
+
         setTimeout(function()
         {
-            var obj = JSON.parse(data);  
+            var obj = JSON.parse(data);
             if(obj.messagetype == 4)
             {
                 $.LoadingOverlay("hide");
@@ -1004,11 +1004,11 @@ function serveFunctionMain(signDAD=1)
             else
             {
                 //writeDiscoveryPDF(obj.uid);
-                PopupForPOS(obj.id,signDAD);    
+                PopupForPOS(obj.id,signDAD);
             }
         }, 1000);
-        
-    }); 
+
+    });
 }
 function writeDiscoveryPDF(uid)
 {
@@ -1018,55 +1018,55 @@ function saveFunction()
 {
     var type = '<?php echo $type ?>';
     var formid = $("#form_id").val();
-    var isagree =   true; 
+    var isagree =   true;
     if(formid == 1 || formid == 2 || formid == 5 || formid == '')
     {
-        //PopupForPOS(); 
-        buttonsave(); 
+        //PopupForPOS();
+        buttonsave();
     }
     else if(formid == 3 || formid == 4 )
     {
-        $( ".questionscls" ).each(function(index) 
+        $( ".questionscls" ).each(function(index)
         {
             if($(this).val() > 35 && $(".question_titlecls:eq("+index+")").val() != '')
             {
-                isagree =   false; 
+                isagree =   false;
             }
         });
-        
-        setTimeout(function()       
-        { 
+
+        setTimeout(function()
+        {
             if(isagree == false && type != 2)
             {
-                PopupForDeclaration(2); 
+                PopupForDeclaration(2);
             }
             else
             {
-                buttonsave(); 
+                buttonsave();
             }
         }, 1000);
     }
 }
 function PopupForDeclaration(pos_or_save) //pos_or_save: 1: POS, 2: Save
 {
-    $.post( "loaddeclarationpopupcontent.php?pos_or_save="+pos_or_save,$("#discoveriesform" ).serialize()).done(function( data ) 
+    $.post( "loaddeclarationpopupcontent.php?pos_or_save="+pos_or_save,$("#discoveriesform" ).serialize()).done(function( data )
     {
         $("#load_general_modal_content").html(data);
     });
     $('#general_modal_title').html("DECLARATION FOR ADDITIONAL DISCOVERY");
-    $('#general-width').addClass('w-900');  
+    $('#general-width').addClass('w-900');
     //$('#general_modal').modal('toggle');
     setTimeout(function()
-    { 
+    {
         //END LOADER
         $.LoadingOverlay("hide");
-        $('#general_modal').modal('toggle'); 
+        $('#general_modal').modal('toggle');
     }, 2000);
 }
 function signdeclaration(pos_or_save)
 {
     //console.log($("#formdeclaration" ).serialize());
-    for (instance in CKEDITOR.instances) 
+    for (instance in CKEDITOR.instances)
     {
         CKEDITOR.instances[instance].updateElement();
     }
@@ -1074,7 +1074,7 @@ function signdeclaration(pos_or_save)
     var dec_city    =   $("#dec_city").val();
     var error       =   0;
     var msg         =   "";
-    
+
     if(dec_city == "")
     {
         error   =   1;
@@ -1092,14 +1092,14 @@ function signdeclaration(pos_or_save)
     else
     {
         $.LoadingOverlay("show");
-        $.post( "createsigndeclarationaction.php",$("#formdeclaration" ).serialize()).done(function( data ) 
+        $.post( "createsigndeclarationaction.php",$("#formdeclaration" ).serialize()).done(function( data )
         {
             //alert(data);
             $('#general_modal').modal('toggle');
             //alert("Go to POS (Proof of Service)");
             if(pos_or_save == 1)
             {
-                serveFunctionMain();    
+                serveFunctionMain();
             }
             else
             {
@@ -1143,28 +1143,28 @@ function loaduploadeddocs()
 }
 function deleteDoc(id,rp_uid)
 {
-    $.post( "deletefrontdocs.php", { id: id,rp_uid:rp_uid }).done(function( data ) 
+    $.post( "deletefrontdocs.php", { id: id,rp_uid:rp_uid }).done(function( data )
     {
         loaduploadeddocs();
     });
 }
 function PopupForPOS(discovery_id,signDAD=1)
 {
-    //$.post( "loadpospopupcontent.php",{id: discovery_id}).done(function( data ) 
-    $.post( "loadpospopupcontent.php",{id:discovery_id,respond:0}).done(function( data ) 
+    //$.post( "loadpospopupcontent.php",{id: discovery_id}).done(function( data )
+    $.post( "loadpospopupcontent.php",{id:discovery_id,respond:0}).done(function( data )
     {
         $("#load_general_modal_content").html(data);
     });
     $('#general_modal_title').html("PROOF OF ELECTRONIC SERVICE");
-    $('#general-width').addClass('w-900');  
+    $('#general-width').addClass('w-900');
     //$('#general_modal').modal('toggle');
     setTimeout(function()
-    { 
+    {
         //END LOADER
         $.LoadingOverlay("hide");
         if(signDAD == 1)
         {
-            $('#general_modal').modal('toggle');    
+            $('#general_modal').modal('toggle');
         }
     }, 2000);
 }
@@ -1173,10 +1173,6 @@ function servePOS()
     var pos_state   =   $("#pos_state").val();
     var pos_city    =   $("#pos_city").val();
     var pos_address =   $("#pos_address").val();
-    // var pos_street =    $("#pos_street").val();
-    // var pos_cityname =  $("#pos_cityname").val();
-    // var pos_statecode = $("#pos_statecode").val();
-    // var pos_zip =       $("#pos_zip").val();
     var error =   0;
     var msg =     "";
     if(pos_address == "")
@@ -1184,23 +1180,8 @@ function servePOS()
         error   =   1;
         msg     =   "Please enter address.";
     }
-    // if(pos_street == "")
-    // {
-    //     error   =   1;
-    //     msg     =   "Please enter street.";
-    // }
-    // if(pos_statecode == "")
-    // {
-    //     error   =   1;
-    //     msg     =   "Please enter statecode.";
-    // }
-    // if(pos_zip == "")
-    // {
-    //     error   =   1;
-    //     msg     =   "Please enter zip.";
-    // }
 
-    if(pos_city == "" /*|| pos_cityname == ""*/ )
+    if(pos_city == "")
     {
         error   =   1;
         msg     =   "Please enter city.";
@@ -1212,11 +1193,11 @@ function servePOS()
     }
     if(error == 1)
     {
-        $(".POS_msgdiv").html(msg); 
+        $(".POS_msgdiv").html(msg);
     }
     else
     {
-        $.LoadingOverlay("show"); 
+        $.LoadingOverlay("show");
 
         // we must do this (setAttribute[value]), to properly get their html
         $("#pos_address").attr('value', pos_address);
@@ -1224,10 +1205,10 @@ function servePOS()
         $("#pos_city").attr('value', pos_city);
 
         var poshtml = $("#poshtml").clone(),
-            _text = $("#pos_18info > #_1").text() + 
+            _text = $("#pos_18info > #_1").text() +
                     $("#pos_18info > input").val() + '. ' +
                     $("#pos_18info + #_2").text();
-                    
+
         poshtml.find('#pos_18info').replaceWith( '<p id="pos_18info">' + _text + '</p>' );
         poshtml.find('#pos_18info + #_2').replaceWith( '' );
         poshtml.find("#citystate").replaceWith( pos_city + ", " + pos_state );
@@ -1242,32 +1223,30 @@ function servePOS()
         $("#poscity").val(pos_city);
         setTimeout(function()
         {
-            $.post( "propondingserveaction.php",$("#formPOS" ).serialize()).done(function( data ) 
+            $.post( "propondingserveaction.php",$("#formPOS" ).serialize()).done(function( data )
             {
                 $('#general_modal').modal('toggle');
-                //alert(data);
                 $.LoadingOverlay("hide");
                 response(data);
-                
-            });         
+            });
         }, 2000);
     }
-    
+
 }
 function addrow(rowid)
 {
-    $.get( "<?php echo DOMAIN ?>discoveryaddformquestion.php?totalrows=1", function( data ) 
+    $.get( "<?php echo DOMAIN ?>discoveryaddformquestion.php?totalrows=1", function( data )
     {
         $('#'+rowid).before(data);
         arrangequestionnumber();
-    }); 
+    });
 }
 function checkClientEmailFound(discovery_id,actiontype)
 {
     var client_id   =   $("#responding").val();
-    $.post( "checkclientemailfound.php", { client_id:client_id,discovery_id: discovery_id,actiontype:actiontype}).done(function( data ) 
+    $.post( "checkclientemailfound.php", { client_id:client_id,discovery_id: discovery_id,actiontype:actiontype}).done(function( data )
     {
-        var obj = JSON.parse(data); 
+        var obj = JSON.parse(data);
         if(obj.found == 1)
         {
             buttonsaveandsend();
@@ -1281,7 +1260,7 @@ function checkClientEmailFound(discovery_id,actiontype)
 function callclientemailmodal(discovery_id,actiontype,client_id)
 {
     $("#load_clientemailfound_modal_content").html("");
-    $.post( "loadclientemailmodal.php", { discovery_id: discovery_id,actiontype:actiontype,client_id:client_id}).done(function( data ) 
+    $.post( "loadclientemailmodal.php", { discovery_id: discovery_id,actiontype:actiontype,client_id:client_id}).done(function( data )
     {
         $("#load_clientemailfound_modal_content").html(data);
         $('#clientemailfound_modal').modal('toggle');
@@ -1295,14 +1274,14 @@ function saveclientemail()
     {
         $("#msgAddEmailClientModal").html("Please enter client email.");
     }
-    else  
+    else
     {
-        $.post("saveclientemailaction.php",$("#addClientEmailModal").serialize()).done(function( data) 
-        {   
+        $.post("saveclientemailaction.php",$("#addClientEmailModal").serialize()).done(function( data)
+        {
             $('#clientemailfound_modal').modal('toggle');
             var obj = JSON.parse(data);
             buttonsaveandsend();
-        }); 
+        });
     }
 }
 </script>

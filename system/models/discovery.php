@@ -14,15 +14,28 @@
     function find($id) { return $this->getBy( 'discoveries', ['id' => $id], 1); }
     function findByUID($uid) { return $this->getBy( 'discoveries', ['uid' => $uid], 1); }
 
+    const STYLE_AS_IS     = 'as_IS';
     const STYLE_WORDCAPS  = 'WordCaps';
     const STYLE_ALLCAPS   = 'ALLCAPS';
     const STYLE_LOWERCASE = 'lowercase';
     
-    static function getTitle($name, $set_number = null, $syle = self::STYLE_WORDCAPS ) {
-      if(isset($set)) {
-        $name = $name . " [Set " .numberTowords( $set_number ). "]";
+    static function getTitle($name, $set_number = null, $style = self::STYLE_WORDCAPS ) {
+      global $logger;
+      $logger->info("getTitle: \$name=$name, \$set=$set_number, \$style=$style" );
+      if(isset($set_number)) {
+        $name = $name . " [Set " .ucwords(strtolower( numberTowords( $set_number ) )). "]";
       }
-      return str_replace( ["set","For","Of"], ["Set","for","of"], ucwords(strtolower( $name )) );
+      switch( $style ) {
+        case self::STYLE_LOWERCASE: 
+          $name = strtolower( $name ); break;
+        case self::STYLE_WORDCAPS: 
+          $name = ucwords(strtolower( $name )); break;
+        case self::STYLE_ALLCAPS: 
+          $name = strtoupper( $name ); break;
+        case self::STYLE_AS_IS: 
+      }
+
+      return preg_replace( ["/\bset\b/u","/\bFor\b/u","/\bOf\b/u"], ["Set","for","of"], $name );
     }
 
   }
