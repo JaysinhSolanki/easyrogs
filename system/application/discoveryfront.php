@@ -5,9 +5,7 @@ include_once("../library/classes/login.class.php");
 include_once("../library/classes/error.php");
 require_once(FRAMEWORK_PATH."head.php");
 include_once("../library/classes/functions.php");
-header('Content-Type: text/html; charset=ISO-8859-1');
-
-error_reporting(E_ERROR | E_WARNING | E_PARSE);
+header('Content-Type: text/html; charset=UTF-8');
 
 $uid				=	$_GET['uid'];
 $view				=	$_GET['view']; 

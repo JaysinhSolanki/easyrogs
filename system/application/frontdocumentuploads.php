@@ -1,9 +1,7 @@
 <?php
 @session_start();
-include_once("../library/classes/AdminDAO.php");
-$AdminDAO		=	new AdminDAO();
+require_once("../bootstrap.php");
 include_once("../library/classes/functions.php");
-include_once("../library/helper.php"); 
 
 $rp_uid				=	$_REQUEST['rp_uid'];
 $olddocuments		=	$_SESSION['documents'][$rp_uid];

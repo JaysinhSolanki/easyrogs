@@ -142,12 +142,11 @@
       $discoveryName = $isResponse 
                         ? "RESPONSE TO $discovery[discovery_name]" 
                         : $discovery['discovery_name'];
-      $discoveryName .= " [Set " . numberTowords($discovery['set_number']) . "]";
       
       $smarty->assign([
         'masterhead'      => $usersModel->getMasterHead($actionUser),
         'propoundingName' => $propounding['client_name'],
-        'discoveryName'   => Discovery::getTitle($discoveryName,null,Discovery::STYLE_AS_IS),
+        'discoveryName'   => Discovery::getTitle($discoveryName,$discovery['set_number'],Discovery::STYLE_AS_IS),
       ]);
 
       foreach($serviceList as $user) {
