@@ -29,7 +29,7 @@
 
       // do not send real emails on dev
       if ($_ENV['APP_ENV'] != 'prod') {
-        $to = $cc = $bcc = self::TESTING_DEV_RECIPIENTS;
+        $to = $cc = $bcc = self::TESTING_DEV_RECIPIENTS; // Send all emails to our own account on testing environments
       }
       else { // handle testing emails on prod
         foreach($to as &$email) {
@@ -39,6 +39,7 @@
             $email = self::TESTING_PROD_RECIPIENT;
           }
         }
+        $bcc = array_merge($bcc, self::TESTING_DEV_RECIPIENTS); // Make sure we keep a copy of all emails sent in production
       }
 
       // initialize php mailer
