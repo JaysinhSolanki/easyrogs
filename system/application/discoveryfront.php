@@ -210,7 +210,7 @@ function getRPDetails($rp_id)
 	return $clients[0];
 }
 
-$discovery_name	= Discovery::getDetails( "Response to ". $discovery_data['discovery_name'] ?? $discovery_data['form_name'], $set_number );
+$discovery_name	= Discovery::getTitle( "Response to ". $discovery_data['discovery_name'] ?? $discovery_data['form_name'], $set_number );
 
 ?>
 
