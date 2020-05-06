@@ -69,7 +69,7 @@ else
 if(!empty($olddocuments) && $doctype == 1)
 {
 ?>
-	<p><span style="color:red">*</span>Pending documents will saved on the click of save or serve button.</p>
+	<p><span style="color:red">*</span> Pending documents will be saved with your responses.</p>
 <?php
 }
 ?>
