@@ -17,11 +17,11 @@ if($res_attr_uid != "")
 	$attrfields		=	array('fkaddressbookid');
 	$attrvalues		=	array($addressbookid);
 	$AdminDAO->updaterow("attorney",$attrfields,$attrvalues,"uid = :uid",array("uid"=>$res_attr_uid));
-	
+
 	//Get case id form case_uid
 	$getCaseDetails	=	$AdminDAO->getrows("cases","id","uid = '$case_uid'");
 	$case_id		=	$getCaseDetails[0]['id'];
-	
+
 	//Check already attached with case or not
 	$checkAlreadyExists	=	$AdminDAO->getrows("attorneys_cases","id","case_id = '$case_id' AND attorney_id = '$addressbookid'");
 	if(sizeof($checkAlreadyExists) == 0)
@@ -30,7 +30,7 @@ if($res_attr_uid != "")
 		$attrcase_values		=	array($case_id,$_SESSION['addressbookid']);
 		$AdminDAO->insertrow("attorneys_cases",$attrcase_fields,$attrcase_values);
 	}
-	
+
 	$_SESSION['responded_case_uid']			=	'';
 	$_SESSION['responded_attrorney_uid']	=	'';
 	$_SESSION['responded_discovery_uid']	=	'';
@@ -104,10 +104,36 @@ if($res_attr_uid != "")
   </div>
 </div>
 
+<div id="new-user-video-modal" class="modal fade" role="dialog" style="min-width: 95vw; min-height: 95vh;">
+  <div class="modal-dialog" style="width: 75%; margin:2rem auto; padding:0;">
+    <!-- Modal content-->
+    <div class="modal-content" id="new-user-video-modal-content">
+      <div class="modal-header" style="padding: 15px;">
+        <h5 class="modal-title" id="existing-case-modal-header" style="text-align:center; font-size: 22px;">Get Started Using EasyRogs</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px !important;font-size: 25px !important;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+            <div id="videCont">
+                <video id="v1" preload="none" x-autoplay controls style="max-width:100%;max-height:100%;">
+                    <source src="<?= ROOTURL ?>system/application/getting_started.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="javascript:;" class="btn btn-danger" data-dismiss="modal" id="new-user-video-modal-close"><i class="fa fa-close"></i> Close</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="col-lg-12">
     <div class="hpanel">
         <div class="panel-heading" align="center">
-            <h3 align="center"><strong>My Cases</strong></h3>  
+            <h3 align="center"><strong>My Cases</strong></h3>
         </div>
         <div class="panel-body">
         	<div class="panel panel-primary">
@@ -151,14 +177,52 @@ if($res_attr_uid != "")
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+
+
+<script src="<?php echo VENDOR_URL ?>sweetalert.min.js"></script>
+<script src="<?= ROOTURL ?>system/assets/sections/cases.js"></script>
+
+<a id="intro-video-replay" href="javascript:;" style="display:none;text-align:center;">No cases open yet. Click here to watch again the intro video.</a>
+<script language="javascript">
+  function userIntroVideoSeen(success, error) {
+    $.post('<?= ROOTURL ?>system/application/post-intro-video-seen.php', {}, success )
+      .fail(error);
+  }
+  function showIntroVideo() {
+    $('#new-user-video-modal').modal('show');
+    $('video#v1')[0].play();
+  }
+  $('#new-user-video-modal').on('hidden.bs.modal', _ => {
+    $('video#v1')[0].pause();
+    userIntroVideoSeen();
+    //$('#new-user-video-modal').modal('hide');
+  });
+  $().ready( _ => {
+
+<?php
+    global $currentUser;
+    $autoplayIntroVideo  = ( !empty($currentUser) && $currentUser->user['intro_seen'] != 1 );
+    $linktoIntroVideo    = ( count($cases) == 0 );
+    if( $autoplayIntroVideo || $linktoIntroVideo ) {
+        if( $autoplayIntroVideo ) { echo "
+          showIntroVideo();
+        "; }
+        if( $linktoIntroVideo ) { echo "
+          \$('#intro-video-replay')
+            .css('display','block')
+            .on('click', _ => showIntroVideo() )
+        "; }
+    }
+?>
+
+  })
+</script>
+
                 </div>
             </div>
             </div>
             </div>
-        	
         </div>
     </div>
 </div>
 </div>
-<script src="<?php echo VENDOR_URL; ?>sweetalert.min.js"></script>
-<script src="<?= ROOTURL ?>system/assets/sections/cases.js"></script>
