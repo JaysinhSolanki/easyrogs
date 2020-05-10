@@ -23,15 +23,15 @@
 
 	if(!empty($_SESSION['addressbookid']))
 	{
-		$validusers	=	$AdminDAO->getrows("system_addressbook","pkaddressbookid","email	=	:email AND pkaddressbookid != :addressbookid ", array(":email"=>$email, ":addressbookid"=>$_SESSION['addressbookid']));
+		$validusers	=	$AdminDAO->getrows("system_addressbook","pkaddressbookid,emailverified","email	=	:email AND pkaddressbookid != :addressbookid ", array(":email"=>$email, ":addressbookid"=>$_SESSION['addressbookid']));
 	}
 	else
 	{
-		$validusers =	$AdminDAO->getrows("system_addressbook","pkaddressbookid","email	=	:email  ", array(":email"=>$email));
+		$validusers =	$AdminDAO->getrows("system_addressbook","pkaddressbookid,emailverified","email	=	:email  ", array(":email"=>$email));
 	}
 
 	$isuserid =	$validusers[0]['pkaddressbookid'];
-	if($isuserid > 0) { msg(284,2); }
+	if($isuserid > 0 && $validusers[0]['emailverified'] == 1) { msg(284,2); }
 
 /**
 * Update profile Case
@@ -91,7 +91,7 @@ else
 	$fields			=	array('firstname','middlename','lastname','email','password','companyname','address','street','cityname','fkstateid','zip','phone','fkadmittedstateid','barnumber','fkcountryid','signupdate','signupip','fkgroupid','uid','emailverified','username');
 	$values			=	array($firstname,$middlename,$lastname,$email,$password,$companyname,$address,$street,$city,$fkstateid,$zipcode,$phone,$fkadmittedstateid ?? 0,$barnumber,254,$todaydatetime,$ipaddress,$fkgroupid,$uid,1,$email);
 	
-	$id				=	$AdminDAO->insertrow("system_addressbook",$fields,$values);
+	$id				=	$AdminDAO->insertrow("system_addressbook",$fields,$values,true/*orUpdate*/);
 	
 	/**
 	* If User comes from invited link 
