@@ -1,5 +1,5 @@
 <?php
-@session_start();
+require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
 $case_id	=	$_GET['pid'];
@@ -40,6 +40,13 @@ $discoveries	=	$AdminDAO->getrows(
 											cases.id 				=  	:case_id ORDER BY discoveries.discovery_name ASC
 										",
 										array(":case_id"		=>	$case_id ));
+
+$currentSide = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
+
+$logger->debug($discoveries);
+Side::legacyTranslateCaseData($case_id, $discoveries);
+$logger->debug('---------------');
+$logger->debug($discoveries);
 
 function getclientname($id)
 {
@@ -91,7 +98,7 @@ $iscaseteammember	=	$AdminDAO->getrows("attorney a,case_team ct",
 <div class="col-lg-12">
     <div class="hpanel">
         <div class="panel-heading" align="center">
-            <h3 align="center"><small>Discovery for</small><br /><strong><?php echo getcasename($case_id);?></strong></h3>  
+            <h3 align="center"><small>Discovery for</small><br /><strong><?= $currentSide['case_title'] ?></strong></h3>  
         </div>
         <div class="panel-body">
             <div class="panel panel-primary">
@@ -785,7 +792,10 @@ $iscaseteammember	=	$AdminDAO->getrows("attorney a,case_team ct",
 													array(
 														":case_id"		=>	$case_id 
 														/*,":attorney_id"	=>	$_SESSION['addressbookid']*/)
-												  );
+													);
+									
+									Side::legacyTranslateCaseData($case_id, $supp_discoveries);
+									
 									//$AdminDAO->displayquery=0;
 									//dump($supp_discoveries);
 									$totalChilds	=	$totalChilds+sizeof($supp_discoveries);

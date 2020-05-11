@@ -29,12 +29,7 @@
   }
 
   $sidesModel->activateUser($side['id'], $userId);
-  
-  // add user to service list if user is an attorney
   $attorney = $usersModel->findAttorney($userId);
-  if ( $attorney ) {
-    $sidesModel->updateServiceListForAttorney($side, $attorney);
-  }  
   
   // send notification
   CaseMailer::grantedRequest($attorney, $caseId, $actionUser);

@@ -1,5 +1,6 @@
 <?php
-@session_start();
+	require_once __DIR__ . '/../bootstrap.php';
+
 require_once("adminsecurity.php");
 $uid				=	$_GET['id']; 
 $view				=	$_GET['view'];
@@ -45,7 +46,6 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 											 END)
 											 as instructions 
 											',
-											/*(d.responding_uid 			= :uid OR d.propounding_uid = :uid) AND */
 											"d.uid 			= :uid AND  
 											
 											d.case_id 		= c.id AND  
@@ -57,6 +57,9 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 
 
 $discovery_data					=	$discoveryDetails[0];
+
+Side::legacyTranslateCaseData($discovery_data['case_id'], $discovery_data);
+
 $case_title						=	$discovery_data['case_title'];//$discovery_data['plaintiff']." V ".$discovery_data['defendant'];
 $discovery_id					=	$discovery_data['discovery_id'];
 $case_number					=	$discovery_data['case_number'];

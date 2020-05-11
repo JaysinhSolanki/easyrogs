@@ -1,13 +1,17 @@
 <?php
-session_start();
-require_once("adminsecurity.php");
-$case_id	=	$_REQUEST['case_id'];
-$attr_id	=	$_REQUEST['attr_id'];
-if($attr_id > 0)
-{
-	$attrDetails	=	$AdminDAO->getrows("attorney","*", "id = :id ", array(":id"=>$attr_id));
-	$attrDetail		=	$attrDetails[0];
-}
+	require_once __DIR__ . '/../bootstrap.php';
+	require_once("adminsecurity.php");
+	$caseId				=	$_REQUEST['case_id'];
+	$userId				=	$_REQUEST['user_id'];
+	$slAttorneyId	=	$_REQUEST['sl_attorney_id'];
+	$userId				=	$_REQUEST['user_id'];
+
+	if($slAttorneyId) {
+		$slAttorney	=	$usersModel->getSlAttorney($slAttorneyId);
+	}
+	if($slAttorneyId) {
+		$slAttorney	=	$usersModel->getSlAttorney($slAttorneyId);
+	}
 
 ?>
 <div class="modal-header" style="padding: 15px;">
@@ -18,13 +22,14 @@ if($attr_id > 0)
 </div>
 <div class="modal-body"> 
 <div class="form-group">  
-<input type="hidden"  id="editattorney_id" value="<?php echo $attr_id ?>"/>
+<input type="hidden"  id="sl_attorney_id" value="<?= $slAttorneyId ?>"/>
+<input type="hidden"  id="user_id" value="<?= $userId ?>"/>
 <label for="caseteam_attr_name">Name</label>
-<input type="text" placeholder="Attorney Name" class="form-control m-b attr_names" name="attorney_name" id="attorney_name" value="<?php echo $attrDetail['attorney_name']; ?>">
+<input type="text" placeholder="Attorney Name" class="form-control m-b attr_names" name="attorney_name" id="attorney_name" value="<?= $slAttorney['attorney_name'] ?>">
 </div>
 <div class="form-group">
 <label for="caseteam_attr_email">Email</label>
-<input type="text" placeholder="Attorney Email" class="form-control m-b attr_emails"  name="attorney_email" id="attorney_email" value="<?php echo $attrDetail['attorney_email']; ?>">
+<input type="text" placeholder="Attorney Email" class="form-control m-b attr_emails"  name="attorney_email" id="attorney_email" value="<?= $slAttorney['attorney_email'] ?>">
 </div>
 <div id="clientsList">
 
@@ -32,14 +37,14 @@ if($attr_id > 0)
 </div>
 <div class="modal-footer">
 <i id="msgAttr" style="color:red"></i>
-<a class="btn btn-success" href="javascript:;" onclick="addAttorney('<?php echo $case_id; ?>',2)"><i class="fa fa-save"></i> Save</a>
+<a class="btn btn-success" href="javascript:;" onclick="addAttorney('<?= $caseId; ?>',2)"><i class="fa fa-save"></i> Save</a>
 <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
 </div>
 
 <script>
 $( document ).ready(function() 
 {
-	attDropdownFunction('<?php echo $case_id ?>','<?php echo $attr_id ?>');
+	attDropdownFunction('<?= $caseId ?>','<?= $userId ?>');
 });
 function attDropdownFunction(case_id,attr_id="")
 {  

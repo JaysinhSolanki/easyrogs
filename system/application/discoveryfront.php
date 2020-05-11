@@ -67,6 +67,12 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
  
 //$AdminDAO->displayquery=0;
 $discovery_data		=	$discoveryDetails[0];
+Side::legacyTranslateCaseData(
+	$discovery_data['case_id'], 
+	$discovery_data, 
+	$discovery_data['attorney_id'] // !! will use this attorney's side data
+);
+
 $case_title			=	$discovery_data['case_title'];
 $discovery_id		=	$discovery_data['discovery_id'];
 $discovery_uid		=	$discovery_data['uid'];

@@ -1,7 +1,6 @@
 <?php
-@session_start();
-require_once("adminsecurity.php");
-include_once($_SESSION['library_path']."helper.php");
+	require_once __DIR__ . '/../bootstrap.php';
+	require_once("adminsecurity.php");
 
 $discovery_uid		=	$_POST['discovery_id'];
 $response_id		=	$_POST['response_id'];
@@ -64,6 +63,12 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 //exit;
 
 $discovery_data		=	$discoveryDetails[0];
+Side::legacyTranslateCaseData(
+	$discovery_data['case_id'], 
+	$discovery_data, 
+	$discovery_data['attorney_id'] // !! will use this attorney's side data
+);
+
 $uid				=	$discovery_data['uid'];
 $case_uid			=	$discovery_data['case_uid'];
 $discovery_name		=	$discovery_data['discovery_name'];

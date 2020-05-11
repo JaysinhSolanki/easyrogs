@@ -57,13 +57,6 @@
                      GROUP BY cases.id
                      ORDER BY cases.id DESC
                      LIMIT 10',
-
-        'getServiceList' => 'SELECT * 
-                             FROM system_addressbook AS u
-                               INNER JOIN attorney AS a ON (a.attorney_email = u.email) 
-                             WHERE a.case_id = :case_id
-                             GROUP BY u.pkaddressbookid'
-
       ]);
       $this->sides = new Side();
       $this->users = new User();
@@ -98,36 +91,26 @@
         'primary_attorney_id' => $attorneyId,
         'masterhead'          => $attorney['masterhead']
       ]);
-
-      // add attorney to service list
-      $this->sides->updateServiceListForPrimaryAttorney($side['id']);
     }
 
     // TODO: refactor this v
-    function updateCase($caseId, $fieldsMap, $updateTeam = false) {
-      global $currentUser;
+    function updateCase($caseId, $fieldsMap) {
+      $fieldsMap['normalized_number'] = self::normalizeNumber($fieldsMap['case_number']);
+      $this->update('cases', $fieldsMap, ['id' => $caseId]);
+    }
 
-      $case = $this->find($caseId);
-      $userSide = $this->sides->getByUserAndCase($currentUser->id, $caseId);
-      $userSide = $userSide ? $userSide : $this->sides->create('', $caseId, null);
-      if ($userSide) {
-        $attorneyChanged = $fieldsMap['case_attorney']
-                           && $userSide['primary_attorney_id'] != $fieldsMap['case_attorney'];
-        $masterHeadChanged = $fieldsMap['masterhead']
-                             && $userSide['masterhead'] != $fieldsMap['masterhead'];
-        $caseNumberChanged = !$case['normalized_number'] || 
-                             ($fieldsMap['case_number'] && 
-                              $case['case_number'] != $fieldsMap['case_number']);
-        if ($caseNumberChanged) {
-          $fieldsMap['normalized_number'] = self::normalizeNumber($fieldsMap['case_number']);
-        }
-        $this->update('cases', $fieldsMap, ['id' => $caseId]);
-        if ($attorneyChanged) {
-          $this->setSideAttorney($userSide, $fieldsMap['case_attorney'], $updateTeam);
-        }
-        else if ($masterHeadChanged) {
-          $this->setSideMasterHead($userSide, $fieldsMap['masterhead']);
-        }
+    // TODO: this and all called functions should probably be moved to Side->updateCaseData
+    function updateSide($side, $caseData, $updateTeam) {
+      $attorneyChanged   = $caseData['case_attorney']
+                           && $side['primary_attorney_id'] != $caseData['case_attorney'];
+      $masterHeadChanged = $caseData['masterhead']
+                           && $side['masterhead'] != $caseData['masterhead'];
+      
+      if ($attorneyChanged) {
+        $this->setSideAttorney($side, $caseData['case_attorney'], $updateTeam);
+      }
+      else if ($masterHeadChanged) {
+        $this->setSideMasterHead($side, $caseData['masterhead']);
       }
     }
 
@@ -165,6 +148,17 @@
 
       return $users;
     }
+    
+    // TODO: solve with query
+    function usersCount($case) {
+      $caseId = is_array($case) ? $case['id'] : $case;
+      $sides = $this->sides->byCaseId($caseId);
+      $count = 0;
+      foreach($sides as $side) {
+        $count += $this->sides->usersCount($side);
+      }
+      return $count;
+    }
 
     function getByUser($userId) {
       $query = $this->queryTemplates['getByUser'];
@@ -189,14 +183,22 @@
 
     function getByNumber($number, $requireClients = true) {
       $number = self::normalizeNumber($number);
-      $cases = $this->getBy('cases', ['normalized_number' => $number]);
+      $sides = $this->getBy('sides', ['normalized_number' => $number]);
+
+      $case = null;
       if ( $requireClients ) {
-        foreach($cases as $case) {
-          $clients = $this->getAllClients($case['id']);
-          if ($clients) { return $case; }
+        foreach($sides as $side) {
+          if ($this->getAllClients($side['case_id'])) {
+            $case = Side::caseData($side);
+            break;
+          };
         }
       }
-      else return $cases[0];
+      elseif ($sides) {
+        $case = $this->find($sides[0]['case_id']);
+      }
+
+      return $case;
     }
 
     function userInCase($caseId, $userId) {
@@ -216,13 +218,37 @@
       ]);
     }
 
-    function getServiceList($case) {
-      $query = $this->queryTemplates['getServiceList'];
-
+    // WARNING!! with force = true this will delete all sides and associated data from a case,
+    // by default it only does the cleanup if the case is a draft.
+    function cleanupSides($case, $force = false) {
       $case = is_array($case) ? $case : $this->find($case);
-      if (!$case) { return null; }
+      if ($case['is_draft'] || $force) {
+        $this->deleteBy('sides', ['case_id' => $case['id']]);
+      }
+    }
 
-      return $this->readQuery($query, ['case_id' => $case['id']]);
+    function getSides($caseId) {
+      return $this->getBy('sides', ['case_id' => $caseId]);
+    }
+
+    function getDraft() {
+      global $currentUser;
+
+      $case = $this->getBy('cases', [
+        'attorney_id' => $currentUser->id,
+        'is_draft'    => 1
+      ], 1);
+      
+      if (!$case) {
+        $caseId = $this->insert('cases', [
+          'attorney_id'     => $currentUser->id,
+          'is_draft'        => 1,
+          'allow_reminders' => 1,
+          'uid'             => $this->generateUID('cases')
+        ]);
+        $case = $this->find($caseId);
+      }
+      return $case;
     }
 
     static function normalizeNumber($number) {

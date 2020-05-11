@@ -19,13 +19,15 @@
     $side['users']    = $sidesModel->getUsers($side['id']);
     $side['clients']  = $sidesModel->getClients($side['id']);
     $side['attorney'] = User::publishable($sidesModel->getPrimaryAttorney($side['id']));
-    if ( $side['attorney'] ) {
-      $side['users'][] = $side['attorney'];
+
+    if ( $side['users']) {
+      foreach($side['users'] as &$user) {
+        $user['group_name'] = User::GROUP_NAMES[$user['fkgroupid']];
+        $user['is_primary'] = $user['pkaddressbookid'] == $side['primary_attorney_id'];
+        $user['active']     = User::isActive($user);
+      }
     }
-    foreach($side['users'] as &$user) {
-      $user['group_name'] = User::GROUP_NAMES[$user['fkgroupid']];
-      $user['is_primary'] = $user['pkaddressbookid'] == $side['primary_attorney_id'];
-    }
+    $side['serviceList'] = $sidesModel->getServiceList($side);
   }
 
   // render

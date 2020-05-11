@@ -4,7 +4,7 @@
 
     const PUBLISHABLE_KEYS = [
       'pkaddressbookid', 'firstname', 'middlename', 'lastname', 'email', 
-      'address', 'barnumber', 'masterhead', 'fkgroupid', 'side_active'
+      'address', 'barnumber', 'masterhead', 'fkgroupid', 'side_active', 'emailverified'
     ];
 
     const SEARCH_FIELDS = [
@@ -39,16 +39,17 @@
       ]);
     }
 
-    static function publishable($users) {
+    static function publishable($users, $allowKeys = []) {
       $singleUser = isset($users['pkaddressbookid']);
       $users = $singleUser ? [$users] : $users;
       
       if ( !$users ) { return false; }
       
+      $allowedKeys = array_merge(self::PUBLISHABLE_KEYS, $allowKeys);
       foreach($users as &$user) {
         if (is_array($user)) {
           foreach($user as $key => $value) {
-            if ( !in_array($key, self::PUBLISHABLE_KEYS) ) {
+            if ( !in_array($key, $allowedKeys ) ) {
               unset($user[$key]);
             }
           }
@@ -141,7 +142,7 @@
       $attorneys = User::publishable($this->readQuery($query, ['user_id' => $userId]));
 
       if ($user['fkgroupid'] == self::ATTORNEY_GROUP_ID) {
-        $exists = in_array($userId, BaseModel::pluckIds($attorneys));
+        $exists = $attorneys && in_array($userId, BaseModel::pluckIds($attorneys));
         if (!$exists) {
           $attorneys[] = User::publishable($user);
         }
@@ -150,14 +151,12 @@
     }
 
     function expressFindOrCreate($name, $email, $groupId = null) {
-      global $jobsQueue;
-
       $user = $this->getByEmail($email);
       if (!$user) {
         $nameParts = explode(' ', $name);
         $user = $this->create([
           'firstname' => $nameParts[0], 
-          'lastname'  => implode( ' ', array_slice($nameParts,  1) ), 
+          'lastname'  => implode( ' ', array_slice($nameParts,  1) ),
           'email'     => $email,
           'fkgroupid' => $groupId
         ]);
@@ -228,6 +227,10 @@
       return $user;
     }
 
+    function getSlAttorney($slAttorneyId) {
+      return $this->getBy('attorney', ['id' => $slAttorneyId], 1);
+    }
+
     static function inCollection($user, $users, $key = 'pkaddressbookid' ) {
       return parent::inCollection($user, $users, $key);
     }
@@ -237,6 +240,8 @@
     }
 
     static function isActive($user) {
+      global $logger;
+      $logger->debug( "USER: " . json_encode([$user['pkaddressbookid'], $user['email'], $user['emailverified']]) );
       return $user['emailverified'] == 1;
     }
 

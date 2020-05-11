@@ -1,6 +1,6 @@
 <?php
-@session_start();
-require_once("adminsecurity.php");
+	require_once __DIR__ . '/../bootstrap.php';
+	require_once("adminsecurity.php");
 
 $uid				=	$_GET['id']; 
 $view				=	$_GET['view'];
@@ -46,9 +46,7 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 											 END)
 											 as instructions 
 											',
-											/*(d.responding_uid 			= :uid OR d.propounding_uid = :uid) AND */
 											"d.uid 			= :uid AND  
-											
 											d.case_id 		= c.id AND  
 											d.form_id		= f.id AND
 											d.attorney_id 	= a.pkaddressbookid",
@@ -58,7 +56,14 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 
 
 $discovery_data					=	$discoveryDetails[0];
-$case_title						=	$discovery_data['case_title'];//$discovery_data['plaintiff']." V ".$discovery_data['defendant'];
+
+Side::legacyTranslateCaseData(
+	$discovery_data['case_id'], 
+	$discovery_data, 
+	$discovery_data['attorney_id'] // !! Will use this attorney's side data
+);
+
+$case_title						=	$discovery_data['case_title'];
 $discovery_id					=	$discovery_data['discovery_id'];
 $case_number					=	$discovery_data['case_number'];
 $jurisdiction					=	$discovery_data['jurisdiction'];
@@ -81,38 +86,8 @@ $introduction					=	$discovery_data['introduction'];
 $propounding					=	$discovery_data['propounding'];
 $responding						=	$discovery_data['responding'];
 $discovery_name					=	$discovery_data['discovery_name']." [Set ".$set_number."]";
-/*
-//Responding Party
-$respondingdetails		=	$AdminDAO->getrows("clients","*","id = :id",array(":id"=>$responding));
-$responding_name		=	$respondingdetails[0]['client_name'];
-$responding_email		=	$respondingdetails[0]['client_email'];
-$responding_type		=	$respondingdetails[0]['client_type'];
-$responding_role		=	$respondingdetails[0]['client_role'];
-
-//Propondoing Party
-$propondingdetails		=	$AdminDAO->getrows("clients","*","id = :id",array(":id"=>$propounding));
-$proponding_name		=	$propondingdetails[0]['client_name'];
-$proponding_email		=	$propondingdetails[0]['client_email'];
-$proponding_type		=	$propondingdetails[0]['client_type'];
-$proponding_role		=	$propondingdetails[0]['client_role'];
-
-
-if($response_id > 0)
-{
-	$discovery_name		=	"RESPONSE TO ".$discovery_name;
-} 
-$PDFname	=	strtoupper($discovery_name).".pdf";
-//if($type == 2)
-{
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL,DOMAIN."makepdf.php?id=".$uid."&downloadORwrite=1&view={$view}&active_attr_email={$active_attr_email}&response_id={$response_id}");
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$server_output = curl_exec($ch);
-	curl_close ($ch);	
-	
-}
-$urlPDF	=	UPLOAD_URL."documents/".$uid."/".$PDFname;*/
 ?>
+
 <div id="screenfrmdiv" style="display: block;">
     <div class="col-lg-12">
         <div class="hpanel">
@@ -153,7 +128,6 @@ $urlPDF	=	UPLOAD_URL."documents/".$uid."/".$PDFname;*/
 <script>
 $(document).ready(function() 
 {
-	<?php /*?>loadinstructions('<?php echo $form_id ?>','<?php echo $discovery_id ?>');	<?php */?>
 	$.LoadingOverlay("show");
 	$.get( "generatePDF_IFrame.php?id=<?=$uid?>&downloadORwrite=1&view=<?=$view?>&active_attr_email=<?=$active_attr_email?>&response_id=<?=$response_id?>", function( data ) 
 	{
@@ -161,11 +135,9 @@ $(document).ready(function()
 		setTimeout(function()
 		{
 			$.LoadingOverlay("hide");
-			//alert(data);
 		}, 2000);
 		
 	});
 });
-</script>
-    					
+</script>		
                    

@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../bootstrap.php';
-require_once("adminsecurity.php");
+	require_once __DIR__ . '/../bootstrap.php';
+	require_once("adminsecurity.php");
 
 $discovery_id		=	$_POST['discovery_id'];
 $pos_text			=	$_POST['pos_text'];
@@ -115,8 +115,10 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 											array(":id"=>$discovery_id)
 										); 
 
-
 $discovery_data	=	$discoveryDetails[0];
+
+Side::legacyTranslateCaseData($discovery_data['case_id'], $discovery_data);
+
 $uid						=	$discovery_data['uid'];
 $case_uid				=	$discovery_data['case_uid'];
 $case_id				=	$discovery_data['case_id'];

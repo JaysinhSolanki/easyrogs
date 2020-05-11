@@ -12,6 +12,7 @@
     </div>    
   </div>  
   <div class="panel-body">
+  
     <h5>Clients</h5>
     <br/>
     <table class="table table-striped table-hover">
@@ -36,20 +37,30 @@
       {/foreach}
     </table>
     <hr/>
+
     <h5>Staff</h5>
     <br/>
     <table class="table table-striped  table-hover">
       <tr>
+        <th>User ID</th>
         <th>Name</th>
+        <th>Email</th>
         <th>Role</th>
-        <th>Active</th>
+        <th>Side Active</th>
         <th>Lead Counsel?</th>
         <!--<th></th> -->
-      </tr>  
+      </tr>
       {foreach item=user from=$side.users}
       <tr>
+        <td>
+          <b>{$user.pkaddressbookid}</b>
+          {if !User::isActive($user)}
+            <i>(inactive)</i>
+          {/if}
+        </td>
         <td><strong>{$user.firstname} {$user.middlename} {$user.lastname}</strong></td>
-        <td>{if {$user.group_name}}{$user.group_name}{else}Unknown{/if}</td>
+        <td><strong>{$user.email}</strong></td>
+        <td>{if $user.group_name}{$user.group_name}{else}Unknown{/if}</td>
         <td>
           {if $user.is_primary || $user.side_active}
             Yes
@@ -72,7 +83,39 @@
       </tr>
       {/foreach}
     </table>
-    
+    <hr/>
+
+    <h5>Service List</h5>
+    <br/>
+    <table class="table table-striped  table-hover">
+      <tr>
+        <th>User ID</th>
+        <th>User Name</th>
+        <th>SL Name</th>
+        <th>SL Email</th>
+        <th>Parties</th>
+      </tr>  
+      {foreach item=user from=$side.serviceList}
+      <tr>
+        <td>
+          <strong>{$user.pkaddressbookid}</strong>
+          {if !User::isActive($user)}
+            <i>(inactive)</i>
+          {/if}
+        </td>
+        <td><strong>{User::getFullName($user)}</strong></td>
+        <td><strong>{$user.attorney_name}</strong></td>
+        <td>{$user.attorney_email}</td>
+        <td>
+          {foreach item=client from=$user.clients}
+            {$client.client_name}
+            <br/>
+          {/foreach}
+        </td>
+      </tr>
+      {/foreach}
+    </table>
+
   </div>
 </div>
 {/foreach}

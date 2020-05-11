@@ -1,8 +1,7 @@
 <?php
-@session_start();
-require_once("adminsecurity.php");
-include_once($_SESSION['library_path']."helper.php");
-//dump($_POST);
+	require_once __DIR__ . '/../bootstrap.php';
+	require_once("adminsecurity.php");
+
 $discovery_id					=	$_POST['id']; 
 $respond						=	$_POST['respond']; 
 $response_id					=	$_POST['response_id'];  
@@ -61,11 +60,10 @@ if($discovery_id != "")
 												array(":id"=>$id)
 											);
 	
-	//$AdminDAO->displayquery=0;
-	
-	//dump($discoveryDetails);
-	//exit;
 	$discovery_data		=	$discoveryDetails[0];
+	
+	Side::legacyTranslateCaseData($discovery_data['case_id'], $discovery_data);
+
 	$uid				=	$discovery_data['uid'];
 	$case_uid			=	$discovery_data['case_uid'];
 	$discovery_name		=	$discovery_data['discovery_name'];
@@ -83,42 +81,6 @@ if($discovery_id != "")
 	$attr_id			=	$discovery_data['attr_id'];
 	
 }
-/*else
-{
-	$form_id						=	$_POST['form_id'];
-	$discovery_name					=	$_POST['discovery_name'];
-	$set_number						=	$_POST['set_number'];
-	$propounding					=	$_POST['propounding'];
-	$responding						=	$_POST['responding'];
-	$question_number_start_from		=	$_POST['question_number_start_from'];
-	$incidenttext					=	$_POST['incidenttext'];
-	$case_id						=	$_POST['case_id'];
-	
-		
-	$discoveryDetails				=	$AdminDAO->getrows('cases c',
-													'c.case_title 	as case_title,
-													c.plaintiff,
-													c.defendant,
-													c.case_number 	as case_number,
-													c.jurisdiction 	as jurisdiction,
-													c.judge_name 	as judge_name,
-													c.county_name 	as county_name,
-													c.court_address as court_address,
-													c.department 	as department, 
-													c.uid 	as case_uid
-													',
-													"c.id 			= :id",
-													array(":id"=>$case_id)
-												);
-		
-	
-	$discovery_data		=	$discoveryDetails[0];
-	$case_title			=	$discovery_data['case_title'];
-	$case_number		=	$discovery_data['case_number'];
-	$county_name		=	$discovery_data['county_name'];
-	$case_uid			=	$discovery_data['case_uid'];
-	$attr_id			=	$_SESSION['addressbookid'];
-}*/
 
 //Responding Party
 $respondingdetails		=	$AdminDAO->getrows("clients","*","id = :id",array(":id"=>$responding));
@@ -131,35 +93,20 @@ $responding_role		=	$respondingdetails[0]['client_role'];
 $attr_id 			= 	$_SESSION['addressbookid'];
 $senderDetails		=	$AdminDAO->getrows("system_addressbook","*","pkaddressbookid = :id",array(":id"=>$attr_id));
 
-$senderDetail		=	$senderDetails[0];
-$senderEmail		=	$senderDetail['email'];
-$senderPhone		=	$senderDetail['phone'];
-$senderName			=	$senderDetail['firstname']." ".$senderDetail['lastname'];
-$system_address            =   $AdminDAO->getrows("system_addressbook,system_state", "*", "pkaddressbookid = :id AND fkstateid = pkstateid", array(":id"=>$attr_id));
-$result_address      =   $system_address[0];
+$senderDetail		 =	$senderDetails[0];
+$senderEmail		 =	$senderDetail['email'];
+$senderPhone		 =	$senderDetail['phone'];
+$senderName			 =	$senderDetail['firstname']." ".$senderDetail['lastname'];
+$system_address  =   $AdminDAO->getrows("system_addressbook,system_state", "*", "pkaddressbookid = :id AND fkstateid = pkstateid", array(":id"=>$attr_id));
+$result_address  =   $system_address[0];
 
-// $address            =   $result_address['statename'].", ".$result_address['street'] .$result_address['cityname']. $result_address['statecode']. $result_address['zip'];
-$senderAddress		=	makeaddress($attr_id);//;$senderDetail['address'].", ".$senderDetail['cityname'].", ".$senderDetail['statecode']." ".$senderDetail['zip'];
-$getstate		=	$result_address['statename'];
+$senderAddress =	makeaddress($attr_id);
+$getstate			 =	$result_address['statename'];
 
-//$servicelists	=	$AdminDAO->getrows("attorney","*", "case_id = :case_id  AND attorney_type = :attorney_type", array(":case_id"=>$case_id,":attorney_type"=>2));
 $loggedin_email		=	$_SESSION['loggedin_email'];
-$servicelists		=	$AdminDAO->getrows(
-											"
-											attorney 
-												LEFT JOIN client_attorney 
-												ON 		
-												attorney.case_id			=	client_attorney.case_id AND
-												client_attorney.attorney_id	=	attorney.id
-												LEFT JOIN clients 
-												ON 		
-												clients.id		=	client_attorney.client_id
-													
-											","attorney.*,clients.client_name", "attorney.case_id = :case_id AND attorney.attorney_type = :attorney_type", array(":case_id"=>$case_id,":attorney_type"=>2), "attorney.attorney_name", "ASC");
-//$AdminDAO->displayquery=0;
-//dump($servicelists);
-//dump($attorneys);
-//exit;
+
+$currentSide = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
+$serviceList = $sidesModel->getServiceList($currentSide);
 
 ?>
 <!DOCTYPE html>
@@ -222,12 +169,6 @@ td, th {
 						<input style="margin:5px;width:inherit;" type="text" name="pos_address" id="pos_address" placeholder="Enter your address" value="<?php echo $result_address['address'] .", ". $result_address['street']	." ".  $result_address['cityname'] .", ". $result_address['statecode'] ." ". $result_address['zip']; ?>" size="180"/><span style="align-self: center;margin-left: -4px;">.</span>
 					</div>
 					<p id="_2">My electronic service address is <?php echo $senderEmail ?>.</p>
-					<?php /*
-					<input type="text" name="pos_street" id="pos_street" placeholder="Enter your street" value="<?php echo $result_address['street']; ?>" size="20"/> 
-					<input type="text" name="pos_cityname" id="pos_cityname" placeholder="Enter your city" value="<?php echo $result_address['cityname']; ?>" /> 
-					<input type="text" name="pos_statecode" id="pos_statecode" placeholder="Enter your state" value="<?php echo $result_address['statecode']; ?>" /> 
-					<input type="text" name="pos_zip" id="pos_zip" placeholder="Enter your zip" value="<?php echo $result_address['zip']; ?>" size="20"/><br/>
-					*/ ?>
 					<br/>
 					On <?php echo date('F j, Y'); ?>, I electronically served <?php echo Discovery::getTitle( $discovery_name, $set_number, Discovery::STYLE_AS_IS ) ?> upon the following:
                 </td>
@@ -241,34 +182,18 @@ td, th {
                 <th align="center">Person Served</th>
                 <th align="center">Party Served</th>
                 <th align="center">E-service Address</th>
-<!--                 <th align="center">EasyRogs</th> -->
             </tr>
-            <?php
-			foreach($servicelists as $list)
-			{
-/*
-				$isEasyRogsMember	=	$AdminDAO->getrows("system_addressbook","*","email = :email", array(":email"=>$list['attorney_email']));
-				//dump($isEasyRogsMember);
-				if(sizeof($isEasyRogsMember) > 0)
-				{
-					$ismember	=	'<img src="'.ASSETS_URL.'images/greensquare.png">';
-				}
-				else
-				{
-					$ismember	=	"";
-				}
-*/
-				
-			?>
-             <tr>
-                <td align="left"><?php echo $list['attorney_name']; ?></td>
-                <td align="left"><?php echo $list['client_name']; ?></td>
-                <td align="left"><?php echo $list['attorney_email']; ?></td>
-                <!--<td align="center"><?php echo $ismember; ?></td>-->
-            </tr>
-            <?php
-			}
-			?>
+						<?php foreach($serviceList as $user): ?>
+							<?php if ($user['clients']): ?>
+								<?php foreach($user['clients'] as $client): ?>
+									<tr>
+										<td align="left"><?= User::getFullName($user) ?></td>
+										<td align="left"><?= $client['client_name']; ?></td>
+										<td align="left"><?= $user['email'] ?></td>
+									</tr>
+								<?php endforeach; ?>
+							<?php endif; ?>
+						<?php endforeach; ?>
           </tbody>
 		</table>
         <table class="tabela1" style="border:none !important">
@@ -305,16 +230,8 @@ td, th {
 <input type="hidden" name="posaddress" id="posaddress" value="" />
 <input type="hidden" name="posstate" id="posstate" value="" />
 <input type="hidden" name="poscity" id="poscity" value="" />
-<!-- <input type="hidden" name="posstreet" id="posstreet" value="" />
-<input type="hidden" name="poscityname" id="poscityname" value="" />
-<input type="hidden" name="posstatecode" id="posstatecode" value="" />
-<input type="hidden" name="poszip" id="poszip" value="" /> -->
 
 <input type="hidden" name="respond" value="<?php echo $respond ?>" />
-<?php /*?><div class="form-group">
-    <label for="recipient-name" class="col-form-label"></label>  
-    <textarea class="form-control" rows="100" name="pos_text" id="pos_text"><?php //echo $postext; ?> </textarea> 
-</div><?php */?> 
 <div class="row">
 <div class="col-md-12" style="text-align:right">
 	<i id="POS_msgdiv" class="POS_msgdiv" style="color:red"></i>
@@ -323,12 +240,3 @@ td, th {
 </div>
 </div>
 </form>
-
-
-<script>
-$(document).ready(function()
-{
-	//CKEDITOR.replace('pos_text', { height: 500});
-});
-
-</script>

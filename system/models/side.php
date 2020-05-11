@@ -1,13 +1,13 @@
 <?php
   class Side extends BaseModel {
-    const ROLE_PLAINTIFF = 'Plaintiff';
-    const ROLE_DEFENDANT = 'Defendant';
-    const ROLE_PLAINTIFF_X_DEFENDANT = 'Plaintiff and Cross-defendant';
-    const ROLE_DEFENDANT_X_PLAINTIFF = 'Defendant and Cross-plaintiff';
+    const CASE_DATA_FIELDS = [
+      'case_number', 'case_title', 'plaintiff', 'defendant', 'trial', 
+      'discovery_cutoff', 'county_name', 'masterhead', 'normalized_number'
+    ];
 
     const ROLE_AGGREGATIONS = [
-      [self::ROLE_PLAINTIFF, self::ROLE_PLAINTIFF_X_DEFENDANT],
-      [self::ROLE_DEFENDANT, self::ROLE_DEFENDANT_X_PLAINTIFF],
+      [Client::ROLE_PLAINTIFF, Client::ROLE_PLAINTIFF_X_DEFENDANT],
+      [Client::ROLE_DEFENDANT, Client::ROLE_DEFENDANT_X_PLAINTIFF],
     ];
 
     function __construct( $dbConfig = null )
@@ -75,7 +75,27 @@
                                        INNER JOIN sides_clients AS sc
                                          ON ( sc.side_id = s.id )
                                      WHERE s.case_id = :case_id 
-                                           AND sc.client_id IN (%1$s)'
+                                           AND sc.client_id IN (%1$s)',
+        
+        'getServiceList' => 'SELECT u.*,
+                                    a.id AS attorney_id, 
+                                    a.attorney_name, 
+                                    a.attorney_email
+                             FROM system_addressbook AS u
+                               INNER JOIN attorney AS a 
+                                 ON (a.fkaddressbookid = u.pkaddressbookid) 
+                             WHERE a.side_id = :side_id
+                             GROUP BY u.pkaddressbookid',
+        
+        'getUserServiceListClients' => 'SELECT c.*
+                                        FROM clients AS c
+                                          INNER JOIN client_attorney AS ca
+                                            ON ca.client_id = c.id
+                                          INNER JOIN attorney AS a
+                                            ON a.id = ca.attorney_id
+                                        WHERE a.side_id = :side_id AND
+                                              a.fkaddressbookid = :user_id'
+
       ]);
     }
 
@@ -116,11 +136,26 @@
         'client_id' => $clientId
       ])[0];
     }
-    
+
+    function createServiceList($newSide) {
+      global $casesModel, $usersModel;
+      $sides = $casesModel->getSides($newSide['case_id']);
+      foreach($sides as $side) {
+        if ($side['id'] == $newSide['id']) { continue; }
+        
+        $primaryAttorney = $usersModel->find($side['primary_attorney_id']);
+        if ($primaryAttorney) {
+          $clients = $this->getClients($side['id']);
+          $this->updateServiceListForAttorney($newSide, $primaryAttorney, $clients);
+        }
+      }
+    }    
     
     // $attorney - an attorney id OR a hash with system_addressbook data
     // $attorney can be NULL 
     function create($clientRole, $caseId, $attorney) {
+      global $casesModel;
+
       // set master head from $attorney if specified
       if ( $attorney ) {
         $users = new User();
@@ -128,13 +163,22 @@
         $attorneyId = $attorney ? $attorney['pkaddressbookid'] : null;
       }
 
-      $id = $this->insert('sides', [
+      $sideId = $this->insert('sides', [
         'case_id'             => $caseId,
         'masterhead'          => $attorney ? $attorney['masterhead'] : '',
         'role'                => $clientRole,
         'primary_attorney_id' => $attorneyId
-      ], true);
-      return $this->getBy('sides', ['id' => $id], 1);
+      ]);
+      
+      $side = $this->find($sideId);
+
+      // update created side with initial case data
+      $case = $casesModel->find($caseId);
+      $this->updateCaseData($sideId, $case);
+
+      $this->createServiceList($side);
+      
+      return $side;
     }
     
     function find($id) {
@@ -160,12 +204,25 @@
 
     // $user - user id OR a hash with user data
     function addUser($sideId, $user, $active = true) {
-      $userId = is_array($user) ? $user['pkaddressbookid'] : $user;
-      return $this->insert('sides_users', [
+      global $usersModel, $casesModel;
+
+      $user = is_array($user) ? $user : $usersModel->find($user);
+      $side = $this->find($sideId);
+
+      $this->insert('sides_users', [
         'side_id'               => $sideId,
-        'system_addressbook_id' => $userId,
+        'system_addressbook_id' => $user['pkaddressbookid'],
         'active'                => $active
       ], true);
+
+      if ($active && User::isAttorney($user)) {
+        $this->updateServiceLists($side, $user);
+        if ( !Side::hasPrimaryAttorney($side) ) {
+          $casesModel->setSideAttorney($side, $user['pkaddressbookid'], false);
+        }        
+      }
+
+      return true;
     }
 
     function byCaseId($caseId) {
@@ -228,11 +285,18 @@
       $this->updateServiceListForPrimaryAttorney($sideId);
     }
 
-    function removeUser($sideId, $userId) {
-      return $this->deleteBy('sides_users', [
+    function removeUser($sideId, $userId, $alsoRemovePrimaryAttorney = true) {
+      $this->deleteBy('sides_users', [
         'side_id' => $sideId,
         'system_addressbook_id' => $userId
       ]);
+
+      if ($alsoRemovePrimaryAttorney) {
+        $side = $this->find($sideId);
+        if ($side['primary_attorney_id'] === $userId) {
+          $this->updateSide($sideId, ['primary_attorney_id' => null]);
+        }
+      }
     }
 
     function updateSide($sideId, $fields) {
@@ -364,7 +428,9 @@
     }
 
     function activateUser($sideId, $userId) {
-      return $this->update('sides_users', 
+      global $usersModel, $casesModel;
+
+      $this->update('sides_users', 
         ['active' => true], 
         [
           'side_id'               => $sideId,
@@ -372,60 +438,228 @@
         ],
         true
       );
+      
+      $user = $usersModel->find($userId);
+      $side = $this->find($sideId);
+      
+      if (User::isAttorney($user)) {
+        if ( !Side::hasPrimaryAttorney($side) ) {
+          $casesModel->setSideAttorney($side, $user['pkaddressbookid'], false);
+        }
+        $this->updateServiceLists($side, $user);
+      }
+      if (User::isAttorney($user)) {
+        
+      }
     }
 
-    // $side:  side hash or id
+    // $side: side hash or id
     function updateServiceListForPrimaryAttorney($side) {
-      global $usersModel;
-      
       $side = is_array($side) ? $side : $this->find($side);
       if ( !$side['primary_attorney_id'] ) {
         return false;
       }
 
-      $this->updateServiceListForAttorney($side, $side['primary_attorney_id']);
+      $this->updateServiceLists($side, $side['primary_attorney_id']);
     }
 
-    // $side:  side hash or id
-    // $attorney: user hash or id 
-    function updateServiceListForAttorney($side, $attorney) {
-      global $AdminDAO, $currentUser, $usersModel;
-      
-      $side     = is_array($side) ? $side : $this->find($side);
-      $attorney = is_array($attorney) ? $attorney : $usersModel->find($attorney);
+    function getServiceList($side) {
+      $query = $this->queryTemplates['getServiceList'];
 
-      $caseId = $side['case_id'];
-      $slAttorney = $this->getBy('attorney', ['case_id' => $caseId, 'attorney_email' => $attorney['email']], 1);
-      if (!$slAttorney) {
+      $side = is_array($side) ? $side : $this->find($side);
+      if (!$side) { return null; }
+
+      $serviceList = $this->readQuery($query, ['side_id' => $side['id']]);
+      foreach($serviceList as &$user) {
+        $attorneyId = $user['attorney_id'];
+        
+        $clientIds = self::pluck(
+          $this->getBy('client_attorney', ['attorney_id' => $attorneyId]),
+          'client_id'
+        );
+        
+        // TODO: maybe solve this with a join query.
+        foreach( $clientIds as $clientId ) {
+          $user['clients'][] = $this->getBy('clients', ['id' => $clientId], 1);
+        }
+      }
+      
+      return $serviceList;
+    }
+
+    protected function getServiceListAttorney($side, $user, $name = null, $email = null, $create = true) {
+      global $currentUser;
+
+      $slAttorney = $this->getBy('attorney', [
+        'side_id'         => $side['id'], 
+        'fkaddressbookid' => $user['pkaddressbookid']
+      ], 1);
+
+      if ( !$slAttorney && $create) {
         $slAttorneyId = $this->insert('attorney', [
-          'uid'             => $AdminDAO->generateuid('attorney'),
-          'case_id'         => $caseId,
-          'attorney_name'   => User::getFullName($attorney),
-          'attorney_email'  => $attorney['email'],
-          'fkaddressbookid' => $attorney['pkaddressbookid'],
+          'uid'             => $this->generateUID('attorney'),
+          'case_id'         => $side['case_id'],
+          'attorney_name'   => $name,
+          'attorney_email'  => $email,
+          'fkaddressbookid' => $user['pkaddressbookid'],
           'attorney_type'   => 2,
           'updated_at'      => date('Y-m-d H:i:s'),
-          'updated_by'      => $currentUser->id
+          'updated_by'      => $currentUser->id,
+          'side_id'         => $side['id']
         ], true);
+        
         if ( (int)$slAttorneyId ) {
           $slAttorney = $this->getBy('attorney', ['id' => $slAttorneyId], 1);
         }        
       }
-      if ($slAttorney) {
-        $this->deleteBy('client_attorney', [ // delete all clients for attorney service list
-          'case_id'     => $caseId,
-          'attorney_id' => $slAttorney['id']
-        ]);
-        $clients = $this->getClients($side['id']);
-        foreach($clients as $client) {
-          $this->insert('client_attorney', [
-            'case_id'     => $caseId,
-            'attorney_id' => $slAttorney['id'],
-            'client_id'   => $client['id'],
-            'updated_at'  => date('Y-m-d H:i:s'),
-            'updated_by'  => $currentUser->id
-          ], true);
+      
+      return $slAttorney;
+    }
+
+    // $side:  side hash or id
+    // $attorney: user hash or id 
+    // $clients: client hash array or ids array
+    // TODO: this function is getting fat
+    function updateServiceListForAttorney($side, $user, $clients, $name = '', $email = '', $overwrite = true) {
+      global $currentUser, $usersModel, $clientsModel;
+      
+      $side = is_array($side) ? $side : $this->find($side);
+      $user = is_array($user) ? $user : $usersModel->find($user);
+
+      $name  = $name  ? $name  : User::getFullName($user);
+      $email = $email ? $email : $user['email'];
+
+      if ($slAttorney = $this->getServiceListAttorney($side, $user, $name, $email) ) {
+        $this->update('attorney',
+          ['attorney_name' => $name, 'attorney_email' => $email], 
+          ['id' => $slAttorney['id']]
+        );
+
+        if ($overwrite) { // delete all clients for attorney service list
+          $this->deleteBy('client_attorney', ['attorney_id' => $slAttorney['id']]);
         }
+
+        foreach($clients as $client) {
+          $client = is_array($client) ? $client : $clientsModel->find($client);
+          if ( $client ) {
+            $this->insert('client_attorney', [
+              'case_id'     => $side['case_id'],
+              'attorney_id' => $slAttorney['id'],
+              'client_id'   => $client['id'],
+              'updated_at'  => date('Y-m-d H:i:s'),
+              'updated_by'  => $currentUser->id
+            ], true);
+          }
+        }
+      }
+    }
+
+    // adds an SL entry to all other sides with this user and it's side's clients
+    function updateServiceLists($userSide, $user) {
+      global $casesModel;
+
+      $sides   = $casesModel->getSides($userSide['case_id']);
+      $clients = $this->getClients($userSide['id']);
+
+      foreach($sides as $otherSide) { // add the attorney to all other sides service list
+        if ($userSide['id'] === $otherSide['id']) { continue; }
+        $this->updateServiceListForAttorney($otherSide, $user, $clients);
+      }
+    }
+
+    function removeFromServiceList($side, $user) {
+      global $usersModel;
+
+      $side = is_array($side) ? $side : $this->find($side);
+      $user = is_array($user) ? $user : $usersModel->find($user);
+
+      return $this->deleteBy('attorney', [
+        'fkaddressbookid' => $user['pkaddressbookid'], 
+        'side_id'         => $side['id']
+      ]);
+    }
+
+    function getUserServiceListClients($side, $user) {
+      global $usersModel;
+      
+      $query = $this->queryTemplates['getUserServiceListClients'];
+
+      $side = is_array($side) ? $side : $this->find($side);
+      $user = is_array($user) ? $user : $usersModel->find($user);
+
+      return $this->readQuery($query, [
+        'side_id' => $side['id'],
+        'user_id' => $user['pkaddressbookid']
+      ]);
+    }
+
+    function usersCount($side) {
+      $side = is_array($side) ? $side : $this->find($side);
+      $count = $this->countBy('sides_users', ['side_id' => $side['id']]);
+      $count = $side['primary_attorney_id'] ? $count + 1 : $count;
+      return $count;
+    }
+
+    function updateCaseData($sideId, $data) {
+      $caseData = [];
+      foreach(self::CASE_DATA_FIELDS as $field) {
+        $caseData[$field] = $data[$field];
+      }
+      $caseData['masterhead'] = $caseData['masterhead'] ?? "";
+
+      $caseData['normalized_number'] = CaseModel::normalizeNumber($caseData['case_number']);
+      $this->updateSide($sideId, $caseData);
+    }
+
+    static function hasPrimaryAttorney($side) {
+      global $sidesModel;
+
+      $side = is_array($side) ? $side : $sidesModel->find($side);
+     
+      return !!$side['primary_attorney_id'];
+    }
+
+    static function caseData($side, $updateId = true) {
+      $case = [];
+      foreach(self::CASE_DATA_FIELDS as $field) {
+        $case[$field] = $side[$field];
+      }
+      
+      if ($updateId) {
+        $case['id'] = $side['case_id'];
+      }      
+      
+      return $case;
+    }
+    
+    // LEGACY COMPATIBILITY
+    // this function will try to replace all case data fields on any structure
+    // to the side version of provided  or current user. 
+    // DESTRUCTIVE : modifies the data param 
+    static function legacyTranslateCaseData($caseId, &$data, $userId = null) {
+      global $sidesModel, $currentUser;
+
+      $userId = $userId ? $userId : $currentUser->id;
+      if (!$userId) return $data;
+
+      $side = $sidesModel->getByUserAndCase($userId, $caseId);
+      if (!$side) return $data;
+
+      $isCollection = count(
+        array_diff( 
+          self::CASE_DATA_FIELDS, 
+          array_keys($data) 
+        )
+      ) == count(self::CASE_DATA_FIELDS);
+
+      $caseData = self::caseData($side, false);
+      if ($isCollection) {
+        foreach($data as &$entry) {
+          $entry = array_merge($entry, $caseData);
+        }
+      }
+      else {
+        $data = array_merge($data, $caseData);
       }
     }
 

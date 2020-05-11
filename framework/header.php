@@ -10,29 +10,6 @@ $addressbookid			=	$_SESSION['addressbookid'];
 $_SESSION['section']	=	@$_GET['sectionid'];
 $section				=	$_SESSION['section'];
 $tabres					=	$AdminDAO->getrows("system_screen s,system_groupscreen gs,system_groups g, system_addressbook a","s.*"," 1 AND s.pkscreenid = gs.fkscreenid AND gs.fkgroupid = g.pkgroupid AND a.fkgroupid = g.pkgroupid AND pkaddressbookid = '$addressbookid' ");
-$cases	=	$AdminDAO->getrows(
-								"cases c,attorneys_cases ac"
-								,
-								"								
-								c.id as id,
-								c.uid,
-								c.plaintiff,
-								c.defendant,
-								case_title,
-								case_number,
-								jurisdiction,
-								county_name,
-								judge_name,
-								date_filed 
-								",
-								"ac.attorney_id  = :attorney_id AND
-								c.id = ac.case_id
-								",
-								array(
-										":attorney_id"=>$_SESSION['addressbookid']
-									 )
-							  );
-//dump($cases);
 ?>
 <style>
 
@@ -63,7 +40,7 @@ navbar.navbar-static-top a, .nav.navbar-nav li a {
             <a class="mylogo f32" href="index.php">
                 <?php echo $systemmaintitle;?> 
                 <?php if ($_ENV['APP_ENV'] !== 'prod'): ?>
-                  <div style="font-family: Arial; color: white; font-size: 12px; display: inline-block; background-color: red; padding: 3px; text-transform: uppercase"><?= $_ENV['APP_ENV'] ?></div>
+                  <div style="font-family: Arial; color: white; font-size: 12px; display: inline-block; background-color: red; padding: 3px; text-transform: uppercase"><?= exec('git rev-parse --abbrev-ref HEAD') ?></div>
                 <?php endif; ?>
             </a>
         </h4> </div>

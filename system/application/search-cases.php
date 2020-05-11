@@ -4,6 +4,14 @@
 
   $term = $_GET['term'];
   
+  // TODO: OvO
+  HttpResponse::send(
+    501, 
+    HttpResponse::TYPE_ERROR, 
+    'Not Implemented with sides case data.', 
+    []
+  );
+
   $cases = [];
   if (trim($term)) { // only search if query provided
     // query

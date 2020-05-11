@@ -37,8 +37,6 @@ showExistingCaseModal = (aCase, isTeamMember) => {
   return true;
 }
 
-// This hook handles all save buttons
-// TODO: decouple this logic v
 $('.save-case-btn').on('click', function() {
   const caseNumber = $('input[name=case_number]').val();
   const force      = !!$(this).data('force');
@@ -108,7 +106,7 @@ $('#join-case-btn').on('click', function() {
         }        
       });      
     },
-    (e) => showResponseMessage(e)
+    (e) => {console.log(e);showResponseMessage(e)}
   )
   
 });
@@ -133,4 +131,33 @@ $(document).on('click', ".deny-join-request", function(e) {
     (e)        => showResponseMessage(e),
   );
   loadCasePeople(caseId);
+});
+
+// service list
+$(document).on('click', '.delete-service-list-user-btn', async function(e) {
+  const element = $(e.target).parent();
+  const userId  = element.data('userId');
+  const caseId  = element.data('caseId');
+  
+  confirm = await confirmAction();
+  if ( confirm.value ) {
+    deleteServiceListUser(userId, caseId, 
+      (response) => {
+        showResponseMessage(response);
+        loadCasePeople(caseId);
+      },
+      (error)    => showResponseMessage(error)
+    );
+  }
+
+});
+
+$(document).off('click', '.edit-service-list-user-btn');
+$(document).on('click', '.edit-service-list-user-btn', (e) => {
+  const element      = $(e.target).parent();
+  const userId       = element.data('userId');
+  const caseId       = element.data('caseId');
+  const slAttorneyId = element.data('slAttorneyId');
+
+  loadServiceListModal(caseId, userId, slAttorneyId);
 });

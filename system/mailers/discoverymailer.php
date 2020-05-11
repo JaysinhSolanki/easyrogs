@@ -7,7 +7,7 @@
     const PROPOUND_SUBJECT            = '%s';
 
     static function clientVerification($discovery) {
-      global $smarty, $discoveriesModel, $usersModel, $clientsModel, $logger, $casesModel;
+      global $smarty, $discoveriesModel, $usersModel, $clientsModel, $logger, $sidesModel;
 
       $logContext = 'DISCOVERY_MAILER_CLIENT_VERIFICATION';
       $logParams  = json_encode(['discovery' => $discovery]);
@@ -22,8 +22,8 @@
       if( !$client = $clientsModel->find($discovery['responding']) ) {
         return $logger->error("$logContext Client (id: $discovery[responding]) not found. Params: $logParams");
       }
-      if( !$case = $casesModel->find($discovery['case_id']) ) {
-        return $logger->error("$logContext Case (id: $discovery[case_id]) not found. Params: $logParams");
+      if( !$side = $sidesModel->getByClientAndCase($client['id'], $discovery['case_id']) ) {
+        return $logger->error("$logContext Side Not Found (client: $client[id], case: $discovery[case_id]) not found. Params: $logParams");
       }
       
       $smarty->assign([
@@ -32,14 +32,14 @@
         'actionText' => 'Verify'
       ]);
       $body = $smarty->fetch('emails/discovery-client-verification.tpl');
-      $subject = sprintf(self::CLIENT_VERIFICATION_SUBJECT, $case['case_title']);
+      $subject = sprintf(self::CLIENT_VERIFICATION_SUBJECT, $side['case_title']);
       $to = $client['client_email'];
 
       self::sendEmail($to, $subject, $body, User::getFullName($attorney), $attorney['email']);
     }
 
     static function clientResponse($discovery, $actionUser) {
-      global $smarty, $discoveriesModel, $usersModel, $clientsModel, $logger, $casesModel;
+      global $smarty, $discoveriesModel, $usersModel, $clientsModel, $logger, $sidesModel;
 
       $logContext = 'DISCOVERY_MAILER_CLIENT_RESPONSE';
       $logParams  = json_encode(['discovery' => $discovery, 'actionUser' => $actionUser]);
@@ -55,10 +55,10 @@
       if( !$client = $clientsModel->find($discovery['responding']) ) {
         return $logger->error("$logContext Client (id: $discovery[responding]) not found. Params: $logParams");
       }
-      if( !$case = $casesModel->find($discovery['case_id']) ) {
-        return $logger->error("$logContext Case (id: $discovery[case_id]) not found. Params: $logParams");
+      if( !$side = $sidesModel->getByUserAndCase($actionUser['pkaddressbookid'], $discovery['case_id']) ) {
+        return $logger->error("$logContext Side Not Found (client: $client[id], case: $discovery[case_id]) not found. Params: $logParams");
       }
-      
+
       $smarty->assign([
         'name'        => $client['client_name'],
         'senderEmail' => $actionUser['email'],
@@ -68,14 +68,14 @@
         'actionText'  => 'Respond Now'
       ]);
       $body = $smarty->fetch('emails/discovery-client-response.tpl');
-      $subject = sprintf(self::CLIENT_RESPONSE_SUBJECT, $case['case_title']);
+      $subject = sprintf(self::CLIENT_RESPONSE_SUBJECT, $side['case_title']);
       $to = $client['client_email'];
 
       self::sendEmail($to, $subject, $body, User::getFullName($actionUser), $actionUser['email']);
     }
 
     static function clientResponded($discovery) {
-      global $smarty, $discoveriesModel, $clientsModel, $sidesModel, $casesModel, $logger;
+      global $smarty, $discoveriesModel, $clientsModel, $sidesModel, $logger;
 
       $logContext = 'DISCOVERY_MAILER_CLIENT_RESPONDED';
       $logParams  = json_encode(['discovery' => $discovery]);
@@ -87,9 +87,6 @@
       if( !$client = $clientsModel->find($discovery['responding']) ) {
         return $logger->error("$logContext Client (id: $discovery[responding]) not found. Params: $logParams");
       }
-      if( !$case = $casesModel->find($discovery['case_id']) ) {
-        return $logger->error("$logContext Case (id: $discovery[case_id]) not found. Params: $logParams");
-      }
       if( !$side = $sidesModel->getByClientAndCase($client['id'], $discovery['case_id']) ) {
         return $logger->error("$logContext Side Not Found (client: $client[id], case: $discovery[case_id]) not found. Params: $logParams");
       }
@@ -99,7 +96,7 @@
         'discoveryName' => $discovery['discovery_name'],
         'setNumber'     => $discovery['set_number']
       ]);
-      $subject = sprintf(self::CLIENT_RESPONDED_SUBJECT, $case['case_title']);
+      $subject = sprintf(self::CLIENT_RESPONDED_SUBJECT, $side['case_title']);
       $body    = $smarty->fetch('emails/discovery-client-responded.tpl');
 
       $users = $sidesModel->getUsers($side['id']);
@@ -112,7 +109,7 @@
 
     static function propound($discovery, $actionUser, $isResponse, $attachments) {
       global $smarty, $discoveriesModel, $clientsModel, $usersModel, 
-             $casesModel, $logger, $invitationsModel;
+             $logger, $invitationsModel, $sidesModel;
 
       $logContext = 'DISCOVERY_MAILER_PROPOUND';
       $logParams  = json_encode([
@@ -128,17 +125,17 @@
       if ( !$actionUser ) {
         return $logger->error("$logContext Action User not found. Params: $logParams");
       }
-      if( !$case = $casesModel->find($discovery['case_id']) ) {
-        return $logger->error("$logContext Case (id: $discovery[case_id]) not found. Params: $logParams");
-      }
       if( !$propounding = $clientsModel->find($discovery['propounding']) ) {
         return $logger->error("$logContext Propounding Client (id: $discovery[propounding]) not found. Params: $logParams");
       }
-      if ( !$serviceList = $casesModel->getServiceList($discovery['case_id']) ) {
+      if ( !$side = $sidesModel->getByUserAndCase($actionUser['pkaddressbookid'], $discovery['case_id']) ) {
+        return $logger->error("$logContext Side (user_id: $actionUser[pkaddressbookid], case_id: $discovery[case_id]) not found. Params: $logParams");
+      }
+      if ( !$serviceList = $sidesModel->getServiceList($side) ) {
         return $logger->warn("$logContext No service list found for Case (id: $discovery[case_id]). Params: $logParams");
       }
 
-      $subject = sprintf(self::PROPOUND_SUBJECT, $case['case_title']);
+      $subject = sprintf(self::PROPOUND_SUBJECT, $side['case_title']);
       $discoveryName = $isResponse 
                         ? "RESPONSE TO $discovery[discovery_name]" 
                         : $discovery['discovery_name'];

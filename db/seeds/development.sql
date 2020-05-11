@@ -74,3 +74,43 @@ LOCK TABLES `sides_users` WRITE;
     (16,157),
     (16,158);
 UNLOCK TABLES;
+
+-- Translation to sides service list
+LOCK TABLES `attorney` WRITE;
+  UPDATE attorney SET fkaddressbookid = 0, side_id = NULL;
+
+  UPDATE attorney AS a
+    INNER JOIN system_addressbook AS u ON u.email = a.attorney_email
+  SET a.fkaddressbookid = u.pkaddressbookid;
+
+  UPDATE attorney AS a
+    INNER JOIN system_addressbook AS u ON u.pkaddressbookid = a.fkaddressbookid
+    INNER JOIN cases AS c ON c.id = a.case_id
+    INNER JOIN sides AS s ON s.case_id = c.id AND s.primary_attorney_id = u.pkaddressbookid
+  SET a.side_id = s.id;
+
+  UPDATE attorney AS a
+    INNER JOIN system_addressbook AS u ON u.pkaddressbookid = a.fkaddressbookid
+    INNER JOIN cases AS c ON c.id = a.case_id
+    INNER JOIN sides AS s ON s.case_id = c.id
+    INNER JOIN sides_users AS su 
+      ON su.side_id = s.id AND su.system_addressbook_id = u.pkaddressbookid
+  SET a.side_id = s.id
+  WHERE a.side_id IS NULL;
+UNLOCK TABLES;
+
+LOCK TABLES client_attorney WRITE;
+  DELETE FROM client_attorney WHERE attorney_id NOT IN (SELECT id from attorney);
+UNLOCK TABLES;
+
+LOCK TABLES sides WRITE;
+  UPDATE sides AS s
+    INNER JOIN cases AS c ON c.id = s.case_id
+  SET s.case_number = c.case_number,
+      s.case_title = c.case_title,
+      s.plaintiff = c.plaintiff,
+      s.defendant = c.defendant,
+      s.trial = c.trial,
+      s.discovery_cutoff = c.discovery_cutoff, 
+      s.normalized_number = c.normalized_number;
+UNLOCK TABLES;

@@ -181,13 +181,6 @@ function emaillog($discovery_id, $loggedin_id, $email_subject, $send_from, $to_v
 /**
 * FUNCTION FOR ADDRESS MAKE
 **/
-function getcasename($case_id)
-{
-	global $AdminDAO;
-    $results            =   $AdminDAO->getrows("cases", "case_title", "id = :id", array(":id"=>$case_id));
-    $data               =   $results[0];
-    return $data['case_title'];
-}
 function getstate($pkaddressbookid)
 {
 	global $AdminDAO;

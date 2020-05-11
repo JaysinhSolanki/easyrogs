@@ -17,6 +17,10 @@
   if ( !$side = $sidesModel->getByClientAndCase($clientId, $caseId) ) {
     HttpResponse::notFound('Client side not found on case.');
   }
+  
+  if ($sidesModel->getByUserAndCase($currentUser->id, $caseId) ) {
+    HttpResponse::conflict('You are already part of this case.');
+  }
 
   $case = $casesModel->find($side['case_id']);
 
@@ -34,12 +38,9 @@
   }
   else {
     $sidesModel->addUser($side['id'], $currentUser->user); // add user directly
-    // add user to service list if user is an attorney
-    if ($currentUser->isAttorney()) {
-      $sidesModel->updateServiceListForAttorney($side, $currentUser->user);
-    }
+
     HttpResponse::success(
-      "Your request to join $case[case_title] has been granted.",
+      "Your request to join $side[case_title] has been granted.",
       ['awaiting_request' => false]
     );
   }

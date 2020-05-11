@@ -57,6 +57,8 @@ $cases      =   $AdminDAO->getrows(
 									",
     array('case_id'=>$case_id,'attorney_id'=>$_SESSION['addressbookid'])
 );
+Side::legacyTranslateCaseData($case_id, $cases);
+
 $case               =   $cases[0];
 $case_title             =   $case['case_title'];
 $case_number        =   $case['case_number'];

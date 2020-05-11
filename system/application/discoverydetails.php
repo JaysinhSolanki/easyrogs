@@ -1,5 +1,5 @@
 <?php
-@session_start();
+require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
 $uid            =   $_GET['id'];
@@ -67,8 +67,12 @@ $discoveryDetails   =   $AdminDAO->getrows(
     array(":uid"=>$uid)
 );
 
-
 $discovery_data                     =   $discoveryDetails[0];
+Side::legacyTranslateCaseData(
+  $discovery_data['case_id'],
+  $discovery_data
+);
+
 $case_title                         =   $discovery_data['case_title'];//$discovery_data['plaintiff']." V ".$discovery_data['defendant'];
 $discovery_id                   =   $discovery_data['discovery_id'];
 $case_number                    =   $discovery_data['case_number'];

@@ -1,7 +1,8 @@
 <?php
-@session_start();
+  require_once __DIR__ . '/../bootstrap.php';
+
 require_once("adminsecurity.php");
-include_once($_SESSION['library_path']."helper.php");
+
 $responding	=	$_POST['responding'];
 $case_id	=	$_POST['case_id'];
 //Sender Details
@@ -36,6 +37,9 @@ if($email_solicitation == "")
 }
 //Case Details
 $casedetails		=	$AdminDAO->getrows("cases","*","id = :id",array(":id"=>$case_id));
+
+Side::legacyTranslateCaseData($case_id, $casedetails);
+
 $case_title			=	$casedetails[0]['case_title'];
 	
 $emailURL				=	"~LINK_HERE~";

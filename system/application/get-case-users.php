@@ -10,8 +10,10 @@
   $sides = new Side();
   
   $users = $cases->getUsers($caseId);
-  foreach($users as &$user) {
-    $user['is_current_user'] = $user['pkaddressbookid'] == $currentUser->id;
+  if ($users) {
+    foreach($users as &$user) {
+      $user['is_current_user'] = $user['pkaddressbookid'] == $currentUser->id;
+    }
   }
   
   if ( $format == 'html') {

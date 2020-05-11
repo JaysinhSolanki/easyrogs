@@ -6,16 +6,17 @@
     const ACTION_TEXT         = 'Join';
 
     static function caseInvite($invitee, $sender, $case) {
-      global $usersModel, $casesModel, $logger, $smarty, $invitationsModel;
+      global $usersModel, $logger, $smarty, $invitationsModel, $sidesModel;
 
       if (!$invitee = (is_array($invitee) ? $invitee : $usersModel->findActive($invitee)) ) {
-        return $logger->error('INVITATION_MAILER_INVITE Invitee User not found - ' . print_r($invitee, true));
+        return $logger->error('INVITATION_MAILER_INVITE Invitee User not found - ' . json_encode($invitee));
       }
       if ( !$sender = (is_array($sender) ? $sender : $usersModel->findInactive($sender)) ) {
-        return $logger->error('INVITATION_MAILER_INVITE Sender User not found - ' . print_r($sender, true));
+        return $logger->error('INVITATION_MAILER_INVITE Sender User not found - ' . json_encode($sender));
       }
-      if ( !$case = (is_array($case) ? $case : $casesModel->find($case)) ) {
-        return $logger->error('INVITATION_MAILER_INVITE Case Not Found -' . print_r($case, true));
+      $caseId = is_array($case) ? $case['id'] : $case;
+      if ( !$side = $sidesModel->getByUserAndCase($sender['pkaddressbookid'], $caseId) ) {
+        return $logger->error("INVITATION_MAILER_INVITE Side Not Found (user: $sender[pkaddressbookid], case: $caseId)");
       }
 
       $invitation = $invitationsModel->create($invitee['pkaddressbookid']);
@@ -24,13 +25,13 @@
         'senderName'  => User::getFullName($sender),
         'senderEmail' => $sender['email'],
         'senderFirm'  => $sender['companyname'],
-        'caseName'    => $case['case_title'],
+        'caseName'    => $side['case_title'],
         'actionUrl'   => $invitation['link'],
         'actionText'  => self::ACTION_TEXT
       ]);
       $body    = $smarty->fetch('emails/case-invite.tpl');
       $to      = $invitee['email'];
-      $subject = sprintf(self::CASE_INVITE_SUBJECT, $case['case_title']);
+      $subject = sprintf(self::CASE_INVITE_SUBJECT, $side['case_title']);
 
       parent::sendEmail($to, $subject, $body);
     }

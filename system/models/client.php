@@ -1,6 +1,11 @@
 <?php
 
   class Client extends BaseModel {
+    const ROLE_PLAINTIFF = 'Plaintiff';
+    const ROLE_DEFENDANT = 'Defendant';
+    const ROLE_PLAINTIFF_X_DEFENDANT = 'Plaintiff and Cross-defendant';
+    const ROLE_DEFENDANT_X_PLAINTIFF = 'Defendant and Cross-plaintiff';
+
     const CLIENT_TYPE_US = 'Us';
     const CLIENT_TYPE_OTHER = 'Others';
     const CLIENT_TYPE_PRO_PER = 'Pro per';
@@ -63,6 +68,14 @@
     
     function updateClient($clientId, $fields) {
       return $this->update('clients', $fields, ['id' => $clientId]);
+    }
+
+    static function roleGeneric($client) {
+      return (
+  			$client['client_role'] == Client::ROLE_PLAINTIFF || 
+	  		$client['client_role'] == Client::ROLE_PLAINTIFF_X_DEFENDANT 
+          ? self::ROLE_PLAINTIFF : self::ROLE_DEFENDANT
+      );
     }
 
   }

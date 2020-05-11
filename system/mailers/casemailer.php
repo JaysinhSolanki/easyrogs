@@ -29,10 +29,10 @@
         'requestorName'  => User::getFullName($requestor),
         'requestorEmail' => $requestor['email'],
         'requestorFirm'  => $requestor['companyname'],
-        'caseName'       => $case['case_title'],
+        'caseName'       => $side['case_title'],
       ]);
 
-      $subject = sprintf(self::JOIN_REQUEST_SUBJECT, $case['case_title']);
+      $subject = sprintf(self::JOIN_REQUEST_SUBJECT, $side['case_title']);
 
       if ($sideUsers = $sidesModel->getAllUsers($side['id'])) {
         foreach($sideUsers as $recipient) {
@@ -54,7 +54,7 @@
     }
 
     static function grantedRequest($requestor, $case, $actionUser) {
-      global $smarty, $usersModel, $casesModel, $logger;
+      global $smarty, $usersModel, $sidesModel, $logger;
 
       $logContext = 'CASE_MAILER_GRANTED_REQUEST';
       $logParams  = json_encode([
@@ -73,25 +73,25 @@
         return $logger->error("$logContext Requestor User not found. Params: $logParams");
       }
 
-      $case = is_array($case) ? $case : $casesModel->find($case);
-      if ( !$case ) {
-        return $logger->error("$logContext Case not found. Params: $logParams");
+      $caseId = is_array($case) ? $case['id'] : $case;
+      if ( !$side = $sidesModel->getByUserAndCase($requestor['pkaddressbookid'], $caseId) ) {
+        return $logger->error("$logContext Side not found. Params: $logParams");
       }
 
       $smarty->assign([
         'requestorName'  => User::getFullName($requestor),
         'actionUserName' => $actionUser ? User::getFullName($actionUser) : 'a team member',
-        'caseName'       => $case['case_title']
+        'caseName'       => $side['case_title']
       ]);
       $body    = $smarty->fetch('emails/case-join-request-granted.tpl');
-      $subject = sprintf(self::GRANTED_REQUEST_SUBJECT, $case['case_title']);
+      $subject = sprintf(self::GRANTED_REQUEST_SUBJECT, $side['case_title']);
       $to      = $requestor['email'];
       
       parent::sendEmail($to, $subject, $body);
     }
 
     static function deniedRequest($requestor, $case, $actionUser) {
-      global $smarty, $usersModel, $casesModel, $logger;
+      global $smarty, $usersModel, $sidesModel, $logger;
 
       $logContext = 'CASE_MAILER_DENIED_REQUEST';
       $logParams  = json_encode([
@@ -110,18 +110,18 @@
         return $logger->error("$logContext Requestor User not found. Params: $logParams");
       }
 
-      $case = is_array($case) ? $case : $casesModel->find($case);
-      if ( !$case ) {
-        return $logger->error("$logContext Case not found. Params: $logParams");
+      $caseId = is_array($case) ? $case['id'] : $case;
+      if ( !$side = $sidesModel->getByUserAndCase($requestor['pkaddressbookid'], $caseId) ) {
+        return $logger->error("$logContext Side not found. Params: $logParams");
       }
 
       $smarty->assign([
         'requestorName'  => User::getFullName($requestor),
         'actionUserName' => $actionUser ? User::getFullName($actionUser) : 'a team member',
-        'caseName'       => $case['case_title']
+        'caseName'       => $side['case_title']
       ]);
       $body    = $smarty->fetch('emails/case-join-request-denied.tpl');
-      $subject = sprintf(self::DENIED_REQUEST_SUBJECT, $case['case_title']);
+      $subject = sprintf(self::DENIED_REQUEST_SUBJECT, $side['case_title']);
       $to      = $requestor['email'];
       
       parent::sendEmail($to, $subject, $body);

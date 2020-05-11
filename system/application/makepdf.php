@@ -1,17 +1,10 @@
 <?php
-require_once __DIR__ . '/../bootstrap.php';
+	require_once __DIR__ . '/../bootstrap.php';
 
-@session_start();
-include_once("../library/classes/AdminDAO.php");
-$AdminDAO		=	new AdminDAO();
 include_once("../library/classes/functions.php");
-include_once("../library/helper.php");
 
 $logger->info("MakePDF: starting");
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-//error_reporting(0);
 $respond			=	0;
 $uid				=	@$_GET['id'];
 $view				=	$_GET['view'];
@@ -21,15 +14,16 @@ if($downloadORwrite == "")
 { 
 	$downloadORwrite = 0;
 } 
+
 /**************************************
 		SETTING DATA
 ***************************************/ 
 $setting_details	=	$AdminDAO->getrows('system_setting','*','pksettingid = 1');
 $setting_email		=	$setting_details[0]['email'];
+
 /***************************************
 		Query For Header Data
 ****************************************/	
-//$AdminDAO->displayquery=1;
 $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,forms f',
 											'c.case_title 	as case_title,
 											c.plaintiff,
@@ -81,11 +75,40 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,forms f',
 											array(":uid"=>$uid)
 										);
 
-//$AdminDAO->displayquery=0;
-//echo "<pre>";
-//print_r($discoveryDetails);
-//exit;
 $discovery_data		=	$discoveryDetails[0];
+
+$propounding					=	$discovery_data['propounding'];
+$responding						=	$discovery_data['responding'];
+$proponding_attorney	=	$discovery_data['proponding_attorney'];
+$case_id							=	$discovery_data['case_id'];
+
+// Sides ---------------
+$masterhead = '';
+
+$users = new User();
+$sides = new Side();
+
+$attorneyId = $response_id ? null : $proponding_attorney;
+$clientId 	= $response_id ? $responding : $propounding;
+$user = $attorneyId ? $users->getByAttorneyId($attorneyId) : null;
+$signingClient 	 = $clientsModel->find($clientId);  
+$signingSide     = $user ? 
+	                  $sides->getByUserAndCase($user['pkaddressbookid'], $case_id)
+                    : $sides->getByClientAndCase($clientId, $case_id);
+$signingAttorney = $user ? $user : $sides->getPrimaryAttorney($signingSide['id']);
+
+Side::legacyTranslateCaseData(
+	$case_id, 
+	$discovery_data, 
+	$signingAttorney['pkaddressbookid'] // !! will use this attorney's side data
+);
+
+if ($signingSide){
+	$masterhead = $sides->getMasterHead($signingSide);
+}
+$masterhead = $masterhead ? $masterhead : $users->getMasterHead($signingAttorney); // if the side doesnt have a masthead yet...
+// --------------------
+
 $plaintiff			=	$discovery_data['plaintiff'];
 $defendant			=	$discovery_data['defendant'];
 $case_title			=	$discovery_data['case_title'];
@@ -96,11 +119,11 @@ $judge_name			=	$discovery_data['judge_name'];
 $county_name		=	$discovery_data['county_name'];
 $court_address		=	$discovery_data['court_address'];
 $department			=	$discovery_data['department'];
-$case_id			=	$discovery_data['case_id'];
+
 $form_id			=	$discovery_data['form_id'];
 $set_number			=	$discovery_data['set_number'];
 $case_attorney		=	$discovery_data['case_attorney'];
-$masterhead			=	$discovery_data['masterhead'];
+
 $discovery_attorney_id = $discovery_data['discovery_attorney_id'];
 
 $form_name				=	$discovery_data['form_name']." [SET ".$set_number."]";
@@ -127,27 +150,6 @@ $declaration_updated_by	=	$discovery_data['declaration_updated_by'];
 $declaration_updated_at	=	$discovery_data['declaration_updated_at'];
 $proponding_attorney	=	$discovery_data['proponding_attorney'];
 
-
-// Sides Masterhead ----------
-$masterhead = '';
-
-$users = new User();
-$sides = new Side();
-
-$attorneyId = $response_id ? null : $proponding_attorney;
-$clientId 	= $response_id ? $responding : $propounding;
-$user = $attorneyId ? $users->getByAttorneyId($attorneyId) : null;
-$signingClient 	 = $clientsModel->find($clientId);  
-$signingSide     = $user ? 
-	                  $sides->getByUserAndCase($user['pkaddressbookid'], $case_id)
-                    : $sides->getByClientAndCase($clientId, $case_id);
-$signingAttorney = $user ? $user : $sides->getPrimaryAttorney($signingSide['id']);
-
-if ($signingSide){
-	$masterhead = $sides->getMasterHead($signingSide);
-}
-$masterhead = $masterhead ? $masterhead : $users->getMasterHead($signingAttorney); // if the side doesnt have a masthead yet...
-// ----------------
 
 if($response_id > 0)
 {
@@ -236,17 +238,6 @@ if($type == 1) //External
 		$discovery_created_by	=	$case_attorney;//$discovery_data['attorney_id'];
 		$whereAt				=	"pkaddressbookid = '$discovery_created_by'";
 	}
-	/*{
-		if(@$_GET['active_attr_email'] != "")
-		{
-			$active_attr_email	=	$_GET['active_attr_email']; // CURL request
-		}
-		else
-		{
-			$active_attr_email	=	$_SESSION['loggedin_email'];// Simple request
-		}
-		$whereAt	=	"email = '$active_attr_email'";
-	}*/
 	
 	$getAttorneyDetails	=	$AdminDAO->getrows('system_addressbook',"*",$whereAt,array());
 	$getAttorneyDetail	=	$getAttorneyDetails[0];
@@ -286,19 +277,6 @@ $getState			=	$AdminDAO->getrows("system_state","*","pkstateid = :id",array(":id
 $atorny_state		=	$getState[0]['statename'];
 $atorny_state_short	=	$getState[0]['statecode'];
 
-/*if($_SESSION['groupid'] == 3)
-{
-	$active_attr_email	=	$_SESSION['loggedin_email'];
-	$getAttorneyDetails	=	$AdminDAO->getrows('system_addressbook',"*","email = :email",array('email'=>$active_attr_email));
-	$getAttorneyDetail	=	$getAttorneyDetails[0];	
-	$atorny_name		=	$getAttorneyDetail['firstname']." ".$getAttorneyDetail['middlename']." ".$getAttorneyDetail['lastname'];
-}
-else
-{
-	$getAttorneyDetails	=	$AdminDAO->getrows('attorney a',"a.attorney_name","a.id = :id",array('id'=>$case_attorney));
-	$getAttorneyDetail	=	$getAttorneyDetails[0];
-	$atorny_name		=	$getAttorneyDetail['attorney_name'];
-}*/
 /**
 * Check to see login attorney is responding party attorney or not
 **/
@@ -367,10 +345,11 @@ $mainQuestions	=	$AdminDAO->getrows('discovery_questions dq,questions q',
 										"
 									  );
 $generalQuestions	=	$AdminDAO->getrows('question_admits',"*");
+
 /************************************************
 	Discovery Conjuction with some RFA or not
 ************************************************/
-//$AdminDAO->displayquery=1;
+
 $isconwithdiscoveryid	=	0;
 if(in_array($form_id,array(1,2)))
 {
@@ -404,12 +383,6 @@ if(in_array($form_id,array(4)))
 	{
 		$con_Details	=	array("con_discovery_name" => $con_discovery, "con_setnumber" => $conjunction_setnumber);
 	}
-	/*$con_Details		=	$AdminDAO->getrows('discoveries',"*",
-														"propounding			= 	'$propounding' AND
-														responding 				=	'$responding' AND
-														case_id					=	'$case_id' AND
-														set_number			 	= 	'$set_number' AND
-														form_id IN (1,2)");*/
 }
 
 ob_start(); 
@@ -466,8 +439,10 @@ ob_start();
 <!-- =================================================== -->
 <!-- 			HEADER PAGE 						 -->
 <!-- =================================================== -->
+
 <?php include_once('pdf-header.php');?>
 <br/>
+
 <!-- =================================================== -->
 <!-- 			QUESTIONS PAGE 						 -->
 <!-- =================================================== -->
@@ -586,8 +561,6 @@ ob_start();
 							}
 						}
 						?>
-						<?php //echo "Total Sub Questions:".sizeof($subQuestions)."<br/>Question Type Id: ".$question_type_id."<br/>Question Type Id: ".$question_type_id; 
-						?>
                         <?php
 						if($view == 1)
 						{
@@ -630,7 +603,7 @@ ob_start();
 										if(strtolower($answer) == 'yes'){$answer= "Yes";} 
 										elseif(strtolower($answer) == 'no'){$answer =  "No";}
 										else{$answer = "";}
-										//echo finalResponseGenerate($objection,$answer);
+										
 										if($final_response == "")
 										{
 										?>
@@ -701,13 +674,6 @@ ob_start();
 													}
 													echo "<br/>";
 												}
-												/*foreach($con_SubQuestions as $con_SubQuestion)
-												{
-												?>
-                                                    <p class='q-subquestion'>(<?php echo $con_SubQuestion['question_no'].") ".$con_SubQuestion['sub_answer']; ?></p>
-                                                
-                                                <?php
-												}*/
 												?>
 											<?php
 											$count++;
@@ -764,12 +730,12 @@ ob_start();
 												$final_response			=	"";
 											}
 											?>
-											<?php /*if($type == 2) { ?><b><u>Interrogatory</u></b><?php } */?>
+											
 											<p class='q-question'><?php echo "(".$sub_part.") ".$question_title ?></p>
-											<!-- changes by Hassan -->
+											
                                             <b><u>Response</u></b>
 											<br/>
-											<?php /*?><p class='q-response'><?php echo finalResponseGenerate($objection,$answer); ?></p><?php */?>
+											
                                             <?php
 	                                            $attached_response = finalResponseGenerate($objection,$answer);
 											if($final_response == "" && $attached_response != null)
@@ -831,7 +797,6 @@ ob_start();
 				?>
                     <div class='q-row'>
                     	<h3>REQUEST NO. <?php echo $question_number ?>:</h3>
-                        <!--<b><u>Request</u></b>-->
                         <p class='q-question'><?php echo $question_title; ?></p>
                         <?php
 						if($view != 1)
@@ -839,7 +804,6 @@ ob_start();
 						?>
                         	<br/>
 							<b><u>Response</u></b>
-							<?php /*?><p class='q-response'><?php echo finalResponseGenerate($objection,$answer);?></p> <?php */?>
                             <?php
 							if($final_response == "")
 							{
@@ -862,43 +826,6 @@ ob_start();
 						?>
                         <br/><br/>
                 </div>
-                 <!--
-                 Comment Sub Answers of RFA's on PDF part because
-                 RFAS – The subparts and their answers don't go into the final Response to Requests for Admission. 
-                 We let the Responding Party put her answers there because it's easier to put the subparts and answers right after the question. 
-                 But, the final output is just Admits, Denys, and Objections. 
-                 For the final output, the RFAS subparts and answers appear in response to either FROGS No. 17.1 or FROGSE No. 217.1, or both. 
-                 -->
-                 <?php /*?>
-				 	
-                 	<div class='q-section'>
-					<?php
-					if(strtolower($answer) == 'deny')
-					{
-						?>
-						<div class="wikitable tabela">
-							<?php
-							foreach($generalQuestions as $generalQuestion)
-							{
-								$question_admit_id	=	$generalQuestion['id'];
-								$subQuestionAnswers	=	$AdminDAO->getrows('question_admit_results',"*",":discovery_question_id = discovery_question_id AND :question_admit_id = question_admit_id",array("discovery_question_id" => $discovery_question_id, "question_admit_id" => $question_admit_id));
-								$subQuestionAnswer	=	@$subQuestionAnswers[0]; 
-								?>
-								<div class='q-row'>
-                                    <b><?php echo $generalQuestion['question_no'] ?>) </b><?php echo $generalQuestion['question'] ?>
-                                </div>
-                                <div class='q-row'>
-									<?php echo "<b>ANS:</b>";  echo $subQuestionAnswer['sub_answer'] ?>
-								</div>
-								<?php
-							}
-							?>
-						</div>
-						<?php
-					}
-					?> 
-				</div>
-				 <?php */?> 
 				<?php	
 			} 
 		}
@@ -949,18 +876,6 @@ ob_start();
 						 <h3>INTERROGATORY NO. <?php echo $question_number ?>:</h3>
 						<?php
 						}
-						/*if($form_id == 5)
-						{
-						?>
-                          <b><u>Request</u></b>
-                    	<?php
-						}
-						else
-						{
-							?>
-							<b><u>Interrogatory</u></b> 
-                            <?php
-						}*/
 						?>
                         <p class='q-question'><?php echo $question_title; ?></p>
                         <?php
@@ -996,12 +911,8 @@ ob_start();
                                     $answer	=	 $str1." Respondent believes that such documents were lost, misplace, stolen, or respondent lacks access to them. ".$str2;
                                 }
                             }
-                            /*else if($form_id == 3)
-                            {
-                                 echo "<p class='q-response'>".$answer."</p>";
-                            }*/
 							?>
-                           <?php /*?> <p class='q-response'><?php echo finalResponseGenerate($objection,$answer); ?></p><?php */?>
+                           
                             <?php
 							if($final_response == "")
 							{
@@ -1028,10 +939,6 @@ ob_start();
             }												
         }
         ?>
-        <?php /*?><div class='q-row'>
-            	<br/>
-	            Dated: <?php echo $served_date."  |  ".strtoupper($atorny_firm); ?>
-        </div><?php */?>
 
 <table>
 	<tbody>
@@ -1055,6 +962,7 @@ ob_start();
 	</tbody>
 </table>
 </div>
+
 <!-- =================================================== -->
 <!-- 			VERIFICATION PAGE 						 -->
 <!-- =================================================== -->
@@ -1077,14 +985,6 @@ if($is_verified > 0)
             </p>
         </td>
     </tr>
-    <?php /*?><tr>
-        <td colspan="2" align="right">
-        	<br/><br/>
-            <?php echo strtoupper($responding_name); ?><br/>
-			Signed electronically,<br/>
-			Cal. Rules of Court, rule 2.257
-        </td>
-    </tr><?php */?>
   </tbody>
 </table>
 <table style="border:none !important" width="100%">
@@ -1135,8 +1035,7 @@ if($is_served == 1 && $pos_text != "")
 $html = ob_get_contents();
 
 ob_clean();
-// echo $html; exit;
-// exit;
+
 $footertext			=	'<table width="100%" style="margin-top:30px;">
 						<tr>
 							<td width="5%" style="line-height:3px"></td>
@@ -1164,9 +1063,7 @@ $headerFooterConfiguration = [
   'odd' => $oddEvenConfiguration,
   'even' => $oddEvenConfiguration
 ];
-//$mpdf->SetHeader($headerFooterConfiguration);
-//$mpdf->SetFooter($headerFooterConfiguration);
-//$fileName	=	"{$case_title}-{$atorny_name}.pdf";
+
 $fileName	=	"{$form_name}.pdf";
 if ($downloadORwrite == 1) {
 	$folderPath	=	$_SESSION['system_path']."uploads/documents/{$uid}";

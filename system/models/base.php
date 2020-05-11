@@ -19,6 +19,8 @@
      */
     function __construct( $dbConfig  = null )
     {
+      global $logger;
+
       $this->queryTemplates = [
         'insert'           => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
         'insertIgnore'     => 'INSERT IGNORE INTO %1$s (%2$s) VALUES (%3$s)',
@@ -43,6 +45,8 @@
         'username' => DBUSER,
         'password' => DBPASS
       ]);
+
+      $this->logger = $logger;
     }
 
     private function connect( $dbConfig )
@@ -59,7 +63,7 @@
       $lastError = '';
       while ( $retries > 0 ) {
         try {
-          $this->db = new PDO( $dsn, $username, $password );
+          $this->db = new PDO( $dsn, $username, $password, [PDO::ATTR_PERSISTENT => true] );
           $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
           $this->db->exec("SET NAMES 'utf8'");
           $retries = 0;

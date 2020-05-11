@@ -9,10 +9,13 @@
 
     private $files = [];
     private $logsDir;
+    
+    public $stdOut = false;
 
-    function __construct( $logsDir = LOGS_DIR )
+    function __construct( $logsDir = LOGS_DIR, $stdOut = false )
     {
       $this->logsDir = $logsDir;
+      $this->stdOut = $stdOut;
       $this->files['ALL'] = fopen( $logsDir . '/all.log', 'a+' );
     }
 
@@ -23,7 +26,7 @@
       }
     }
 
-    protected function log($message, $level)
+    protected function log($message, $level, $printBacktrace = false)
     {
       $time = date('Y-m-d H:i:s');
 
@@ -35,15 +38,24 @@
       }
 
       if ( is_array( $message ) || is_object( $message ) ) {
-        $message = print_r( $message, true );
+        $message = json_encode($message);
+      }
+      
+      if ($printBacktrace) {
+        $e = new Exception();
+        $message .= "\n ---------------- \n" . 
+                    $e->getTraceAsString()   . 
+                    "\n ----------------";
       }
 
       if ($fp) { fwrite($fp, "$time $message \n"); }
       fwrite( $this->files['ALL'], "$time [$level] $message \n" );
+
+      if ($this->stdOut) { echo "$time [$level] $message \n"; }
     }
 
-    public function debug($message) { $this->log($message, self::DEBUG); }
-    public function info($message)  { $this->log($message, self::INFO); }
-    public function warn($message)  { $this->log($message, self::WARN); }
-    public function error($message) { $this->log($message, self::ERROR); }    
+    public function debug($message, $printBacktrace = false) { $this->log($message, self::DEBUG, $printBacktrace); }
+    public function info($message,  $printBacktrace = false) { $this->log($message, self::INFO,  $printBacktrace); }
+    public function warn($message,  $printBacktrace = false) { $this->log($message, self::WARN,  $printBacktrace); }
+    public function error($message, $printBacktrace = false) { $this->log($message, self::ERROR, $printBacktrace); }    
   }

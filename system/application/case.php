@@ -1,242 +1,111 @@
 <?php
-@session_start(); 
-require_once("adminsecurity.php");
-/*error_reporting(E_ALL);
-ini_set('display_errors', 1);*/
-$id				=	(int)@$_GET['id']; 
-$addressbookid	=	$_SESSION['addressbookid'];
-if($id<1)
-{
-	$saveUid	=	$AdminDAO->generateuid('cases');
-	$id			=	getDraft('cases','id',array('attorney_id' => $addressbookid,'uid'=>$saveUid,'allow_reminders'=>1),"attorney_id = '$addressbookid'");
-	$pagetitle	=	"Add Case";
-}
-else
-{
-	$pagetitle	=	"Edit Case";
-}
-if($id > 0) 
-{
-	$cases			=	$AdminDAO->getrows('cases c,system_addressbook sa',"c.*,sa.email,sa.firstname,sa.lastname,sa.middlename","c.id = :id AND c.attorney_id = sa.pkaddressbookid",array(":id"=>$id));
-	
-	$case			=	$cases[0];
-	$casename		=	$case['case_title'];
-	$case_attorney  =	$case['case_attorney'];
-	$ownernameemail	=	$case['firstname'];
-	$case_attorney	=	$case['case_attorney'];
-	if($case['middlename'] != "")
-	{
-		$ownernameemail	.=	" ".$case['middlename'];
-	}
-	if($case['lastname'] != "")
-	{
-		$ownernameemail	.=	" ".$case['lastname'];
-	}
-	if($case['email'] != "")
-	{
-		$ownernameemail	.=	" (".$case['email'].")";
-	}
-	$is_draft	=	$case['is_draft'];
-	$uid		=	$case['uid'];
-	$attorney_id	=	$case['attorney_id'];
-	$pagetitle	=	$casename;
-	$loggedin_email		=	$_SESSION['loggedin_email'];
-	
-	/*
-	* Check Owner is logged in or not
-	*/
-	
-	if($case_attorney == $_SESSION['loggedin_email'])
-	{
-		$caseteamattorney	=	1;
-	}
-	else
-	{
-		$caseteamattorney		=	0;
-	}
-	if($caseowner == 1 || $caseteammember == 1 || $caseteamattorney == 1)
-	{
-		$owner			=	1;
-		$disabledClass	=	"";
-	}
-	else
-	{
-		$owner			=	0;
-		$disabledClass	=	"readonly";
+	require_once __DIR__ . '/../bootstrap.php';
+	require_once("adminsecurity.php");
+
+	$caseId	  =	$_GET['id'];
+	$newCase  = !$caseId;
+	$case 	  = $newCase ? $casesModel->getDraft() : $casesModel->find($caseId);
+	$caseId		= $case['id'];
+	$isDraft  = $case['is_draft'];
+	$uid		  = $case['uid'];
+	$states 	= $statesModel->getByCountry(Country::UNITED_STATES);
+	$counties = $countiesModel->getAll();
+	$parties  = $casesModel->getClients($caseId);
+
+	if($isDraft) { $casesModel->cleanupSides($caseId); }
+
+	$side = $newCase ? null : $sides->getByUserAndCase($currentUser->id, $caseId);
+	if(!$newCase && !$side) {
+	  HttpResponse::unauthorized();
 	}
 	
-}
-
-//If is draft is 1 then delete those parties and clients that added during draft phase
-//Next time when someone create new case these clients and parties should not created already
-if($is_draft == 1)
-{
-	$AdminDAO->deleterows('client_attorney'," case_id = :id", array("id"=>$id));
-	$AdminDAO->deleterows('clients'," case_id = :id", array("id"=>$id));
-	$AdminDAO->deleterows('attorney'," case_id = :id AND attorney_type != 1", array("id"=>$id));
-}
-
-if($pagetitle == "")
-{
-	$pagetitle	=	"Add Case";
-}
-$states		=	$AdminDAO->getrows('system_state','*',"fkcountryid = :fkcountryid AND statecode = 'CA' ",array(":fkcountryid"=>254), 'statename', 'ASC');
-$counties	=	$AdminDAO->getrows('system_county','*',"",array(), 'countyname', 'ASC');
-
-$cases = new CaseModel();
-$parties = $cases->getClients($id);
-
-$parties =	array_merge($parties, $AdminDAO->getrows("clients","*", "case_id = :case_id ", array(":case_id"=>$id), "client_name", "ASC"));
-//$brokercompanies	=	$AdminDAO->getrows('broker_companies','*');
-
-
-/*
-* Getting data from Cookies for STATE and CITY
-*/
-$cookie_attorney_county	=	"";
-//$verification_city	=	"";
-if(!empty($_COOKIE['ER_ATTORNEY_COUNTY']))
-{
-	$cookie_attorney_county	=	$_COOKIE['ER_ATTORNEY_COUNTY'];
-}
-
-
+	$canDeleteCase = $side && $casesModel->usersCount($caseId) === 1; // current user is the only one left... allow delete case.
 ?>
-<style>
-body.modal-open 
-{
-    position: static !important;
-}
-.modal-header .close {
-    margin-top: -45px !important;
-}
-.modal-title {
-    font-size: 24px !important;
-}
-.close {
-    font-size: 25px !important;
-}
-.modal-header
-{
-	padding:10px !important
-}
-.swal2-popup {
-  font-size: 15px !important;
-}
+
+<style type="text/css">
+	body.modal-open 
+	{
+			position: static !important;
+	}
+	.modal-header .close {
+			margin-top: -45px !important;
+	}
+	.modal-title {
+			font-size: 24px !important;
+	}
+	.close {
+			font-size: 25px !important;
+	}
+	.modal-header
+	{
+		padding:10px !important
+	}
+	.swal2-popup {
+		font-size: 15px !important;
+	}
 </style>
 
 <div id="screenfrmdiv" style="display: block;">
 
 <div class="col-lg-12">
-    <div class="hpanel">
-        <div class="panel-heading text-center">
-            <?php 
-			/*if($id>0)
-			{echo "<h3><strong>$casename</strong></h3>";}
-			else
-			{echo "<h3><strong>Add Case</strong></h3>";}*/
-			
-			?>	
-            <h3><strong>
-			<?php 
-			echo $pagetitle; 
-			?>
-            
-            </strong></h3>
-        </div>
-        <div class="panel-body">
-            <form  name="clientform" id="clientform" class="form form-horizontal">
-            <div class="form-group row">
-            	<div class="col-md-3"></div>
-                <div class="col-md-3" align="left"> 
-								<button type="button" class="btn btn-success buttonid save-case-btn" data-style="zoom-in">
-								<i class="fa fa-save"></i>
-								<span class="ladda-label">Save</span><span class="ladda-spinner"></span></button>
-					<?php
-						buttoncancel(44,'get-cases.php');
-					?> 
-                </div>
-                <div class="col-md-5" align="right"> 
-				<?php
-					if($owner == 1) 
-					{
-					?>
-					<a href="javascript:;" class="btn btn-black" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?php echo $id;?>',1);"><i class="fa fa-trash"></i> Delete </a>
-					<?php	
-					}
-					else
-					{
-					?>
-					<a href="javascript:;" class="btn btn-black" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?php echo $id;?>',2);"><i class="fa fa-sign-out"></i> Remove me from this case</a>
-					<?php
-					}
-					?> 
-                </div>
+	<div class="hpanel">
+		<div class="panel-heading text-center">
+			<h3><strong><?= $newCase ? 'Add Case' : $side['case_title'] ?></strong></h3>
+		</div>
+		<div class="panel-body">
+			<form  name="clientform" id="clientform" class="form form-horizontal">
+				<div class="form-group row">
+					<div class="col-md-3"></div>
+						<div class="col-md-3" align="left"> 
+							<button type="button" class="btn btn-success buttonid save-case-btn" data-style="zoom-in">
+							<i class="fa fa-save"></i>
+							<span class="ladda-label">Save</span><span class="ladda-spinner"></span></button>
+							<?php buttoncancel(44,'get-cases.php'); ?>
+						</div>
+						<div class="col-md-5" align="right"> 
+							<?php if (!$isDraft): ?>
+								<?php if($canDeleteCase): ?>
+									<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
+								<?php else: ?>
+									<a href="javascript:;" class="btn btn-black" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-sign-out"></i> Leave Case</a>
+								<?php endif; ?>	
+							<?php endif; ?>	
+						</div>
             </div>
             <input type="hidden" name="jurisdiction" class="form-control" id="jurisdiction" value='CA'>
             
             <div class="row">
-            	<div class="col-md-1"></div>
-                <div class="col-md-2">
-                    <label>Number<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
-                </div>
-                <div class="col-md-3">
-                    <input type="text" placeholder="Number" class="form-control m-b"  name="case_number" id="case_number" value="<?php echo htmlentities($case['case_number']); ?>" <?php echo $disabledClass; ?>>
-                </div>
-                <div class="col-md-6">
-                </div>
-                <!--<div class="col-md-2">
-                    <label>Filed<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
-                </div>
-                <div class="col-md-3">
-                    <input type="text"  name="filed" id="filed" placeholder="Filed Date" class="form-control m-b datepicker" value="<?php echo $case['date_filed']=='0000-00-00'?'':dateformat($case['date_filed']);?>" <?php echo $disabledClass; ?>>
-                </div>
-                <div class="col-md-1"></div>-->
-							</div>
+          		<div class="col-md-1"></div>
+              <div class="col-md-2">
+                <label>Number<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
+              </div>
+              <div class="col-md-3">
+                <input type="text" placeholder="Number" class="form-control m-b"  name="case_number" id="case_number" value="<?php echo htmlentities($side['case_number']); ?>" />
+              </div>
+              <div class="col-md-6"></div>
+						</div>
             
             <div class="row">
             	<div class="col-md-1"></div>
                 <div class="col-md-2">
-                    <label>Name<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
+                  <label>Name<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" placeholder="Case Name" class="form-control m-b"  name="case_title" id="case_title" value="<?php echo htmlentities($case['case_title']); ?>" <?php echo $disabledClass; ?>>
+                  <input type="text" placeholder="Case Name" class="form-control m-b"  name="case_title" id="case_title" value="<?php echo htmlentities($side['case_title']); ?>" />
                 </div>
                 <div class="col-md-2">
-                    <label>County</label>
+                  <label>County</label>
                 </div>
                 <div class="col-md-3">
-                    <select name="county_name" class="form-control  m-b" id="county_name" <?php echo $disabledClass; ?>>
-						<?php
-                        foreach($counties as $county)
-                        {
-                        ?>
-                            <option value="<?php echo $county['countyname'];?>" <?php if($county['countyname']== $case['county_name'] || $county['countyname'] == $cookie_attorney_county) {echo " SELECTED ";}?>><?php echo $county['countyname'];?></option>
-                        <?php
-                        }
-                        ?>
-					</select>
+									<?php $currentCounty = $side['county_name'] ? $side['county_name'] : $currentUser->getCounty(); ?>
+                  <select name="county_name" class="form-control  m-b" id="county_name" >
+										<?php foreach($counties as $county): ?>
+											<option value="<?= $county['countyname'];?>" <?= $county['countyname'] == $currentCounty ? "selected" : "" ?>><?php echo $county['countyname'];?></option>
+										<?php endforeach; ?>
+									</select>
                 </div>
                 <div class="col-md-1"></div>
             </div>
-            
-            <!--<div class="row">
-            	<div class="col-md-1"></div>
-                <div class="col-md-2">
-                    <label>Judge</label>
-                </div>
-                <div class="col-md-3">
-                    <input type="text" placeholder="Judge's Name" class="form-control m-b"  name="judge_name" id="judge_name" value="<?php echo htmlentities($case['judge_name']);?>" <?php echo $disabledClass; ?>>
-                </div>
-                <div class="col-md-2">
-                    <label>Department</label>
-                </div>
-                <div class="col-md-3">
-                    <input type="text" placeholder="Department" class="form-control m-b"  name="department" id="department" value="<?php echo htmlentities($case['department']); ?>" <?php echo $disabledClass; ?>>
-                </div>
-                <div class="col-md-1"></div>
-            </div>-->
-            
             
             <div class="row">
             	<div class="col-md-1"></div>
@@ -244,96 +113,74 @@ body.modal-open
                    <label class="control-label">Plaintiff<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                 </div>
                 <div class="col-md-3">
-                    <textarea placeholder="Plaintiff(s)" class="form-control m-b"  name="plaintiff" id="plaintiff" <?php echo $disabledClass; ?>><?php echo htmlentities($case['plaintiff']); ?></textarea>
+                    <textarea placeholder="Plaintiff(s)" class="form-control m-b"  name="plaintiff" id="plaintiff"><?php echo htmlentities($side['plaintiff']); ?></textarea>
                 </div>
                 <div class="col-md-2">
                    <label class="control-label">Defendant<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                 </div>
                 <div class="col-md-3">
-                    <textarea placeholder="Defendant(s)" class="form-control m-b"  name="defendant" id="defendant" <?php echo $disabledClass; ?>><?php echo htmlentities($case['defendant']); ?></textarea>
+                    <textarea placeholder="Defendant(s)" class="form-control m-b"  name="defendant" id="defendant" ><?php echo htmlentities($side['defendant']); ?></textarea>
                 </div>
                 <div class="col-md-1"></div>
             </div>
 						
-						<?php if ($caseowner): ?>
-							<div class="row" style="margin-bottom:10px">
-								<div class="col-md-1"></div>
-									<div class="col-md-2">
-											<label>Trial<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
-									</div>
-									<div class="col-md-3">
-											<input type="text"  onchange="calculated_discovery_cutoff_date(this.value)" name="trial" id="trial" placeholder="Trial Date" class="form-control m-b datepicker" value="<?php echo $case['trial']=='0000-00-00'?'':dateformat($case['trial']);?>" <?php echo $disabledClass; ?> data-date-start-date="0d" data-date-end-date="+5y">
-									</div>
-									<div class="col-md-2">
-										<label>Discovery Cutoff<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
-									</div>
-									<div class="col-md-3">
-											<input type="text"  name="discovery_cutoff" id="discovery_cutoff" placeholder="Discovery Cutoff" class="form-control datepicker" value="<?php echo $case['discovery_cutoff']=='0000-00-00'?'':dateformat($case['discovery_cutoff']);?>" <?php echo $disabledClass; ?> data-date-start-date="0d" data-date-end-date="+5y">
-										<i class="fa fa-university" aria-hidden="true"></i> Code Civ.Proc., &sect;&sect; 2016.060 <?php  echo instruction(12) ?>, 2024.020 <?php  echo instruction(13) ?>.
-									</div>
-									<div class="col-md-1"></div>
-								</div>
-						<?php endif; ?>		
+						<div class="row" style="margin-bottom:10px">
+							<div class="col-md-1"></div>
+							<div class="col-md-2">
+								<label>Trial<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+							</div>
+							<div class="col-md-3">
+								<input type="text"  onchange="calculated_discovery_cutoff_date(this.value)" name="trial" id="trial" placeholder="Trial Date" class="form-control m-b datepicker" value="<?php echo $side['trial'] == '0000-00-00'?'':dateformat($side['trial']);?>" data-date-start-date="0d" data-date-end-date="+5y">
+							</div>
+							<div class="col-md-2">
+								<label>Discovery Cutoff<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+							</div>
+							<div class="col-md-3">
+									<input type="text"  name="discovery_cutoff" id="discovery_cutoff" placeholder="Discovery Cutoff" class="form-control datepicker" value="<?php echo $side['discovery_cutoff']=='0000-00-00'?'':dateformat($side['discovery_cutoff']);?>" data-date-start-date="0d" data-date-end-date="+5y">
+								<i class="fa fa-university" aria-hidden="true"></i> Code Civ.Proc., &sect;&sect; 2016.060 <?php  echo instruction(12) ?>, 2024.020 <?php  echo instruction(13) ?>.
+							</div>
+							<div class="col-md-1"></div>
+						</div>
+					
 						
 						<div class="row">
 							<div class="col-md-1"></div>
 							<div class="col-md-2">
-                    <label>Lead Counsel<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
-                </div>
-                <div class="col-md-3">
-									<select class="er-team-attorney-select form-control" name="case_attorney" id="case_attorney" data-value="<?= $currentPrimaryAttorneyId ?>" <?php echo $disabledClass; ?>></select>
-								</div>
-                <div class="col-md-2">
-                    <label>Masthead<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
-                </div>
-                <div class="col-md-3">
-                  <textarea name="masterhead" class="form-control" wrap="off" cols="50" rows="10" style="height: 12em; overflow: hidden"><?= $currentSide ? $currentSide['masterhead'] : '' ?></textarea>
-                </div>
-                <div class="col-md-1"></div>
-            	</div>
-            
-            <?php /*?><div class="row">
-            	<div class="col-md-1"></div>
-                <div class="col-md-2">
-                    <label>Send Reminders? <?php  echo instruction(3) ?></label>
-                </div>
-                <div class="col-md-3">
-                	<label><input name="allow_reminders" <?php if($case['allow_reminders'] == 1){echo "checked";} ?> onClick="showreminders()" id="allow_reminders" type="checkbox" value="1" <?php echo $disabledClass; ?>> Enable</label>
-                </div>
-                <div class="col-md-2 showreminders">
-                    <label>View Reminders Schedule</label>
-                </div>
-                <div class="col-md-3 showreminders">
-                    <a href="javascript:;" class="btn btn-info" data-toggle="modal" data-target="#viewreminders" <?php echo $disabledClass; ?>><i class="fa fa-bell"></i> View </a>
-                </div>
-                <div class="col-md-1"></div>
-            </div><?php */?>
-             <hr />
+                <label>Lead Counsel<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
+              </div>
+              <div class="col-md-3">
+							  <select class="er-team-attorney-select form-control" name="case_attorney" id="case_attorney" data-value="<?= $currentPrimaryAttorneyId ?>"></select>
+							</div>
+							<div class="col-md-2">
+								<label>Masthead<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+							</div>
+							<div class="col-md-3">
+								<textarea name="masterhead" class="form-control" wrap="off" cols="50" rows="10" style="height: 12em; overflow: hidden"><?= $side['masterhead'] ?></textarea>
+							</div>
+							<div class="col-md-1"></div>
+						</div>
+						
+						<hr />
 						 
-           	<?php
-			if($owner == 1)
-			{
-			?>
             <div class="row">
-            <div class="col-md-11" style="text-align:right">
-                <a href="javascript:;"  class="pull-right btn btn-success btn-small" onclick="addparty('', <?= $id ?>)" style="margin-bottom:10px !important"><i class="fa fa-plus"></i> Add New</a>
+              <div class="col-md-11" style="text-align:right">
+                <a href="javascript:;"  class="pull-right btn btn-success btn-small" onclick="addparty('', <?= $caseId ?>)" style="margin-bottom:10px !important"><i class="fa fa-plus"></i> Add New</a>
+            	</div>
+            	<div class="col-md-1"></div>
             </div>
-            <div class="col-md-1"></div>
+
+						<div class="row">  
+							<div class="col-md-1"></div>
+							<div class="col-md-2">
+								<label>Parties</label>
+							</div>
+							<div class="col-md-8" id="loadclients"></div>							
+							<div class="col-md-1"></div>
             </div>
-            <?php
-			}
-			?>
-            <div class="row">  
-                <div class="col-md-1"></div>
-                <div class="col-md-2">
-                    <label>Parties</label>
-                </div>
-                <div class="col-md-8" id="loadclients"></div>
-								
-                <div class="col-md-1"></div>
-            </div>
-            <br />
-            <div class="row">
+						
+						<br />
+						
+						<div class="row">
             	<div class="col-md-11" style="text-align:right">
                 <a href="javascript:;"  class="pull-right btn btn-success btn-small" id="add-user-btn" style="margin-bottom:10px !important"><i class="fa fa-plus"></i> Add New</a>
             	</div>
@@ -341,154 +188,60 @@ body.modal-open
             </div>
 
             <div class="row">  
-                <div class="col-md-1"></div>
-                <div class="col-md-2">
-                    <label>Team</label>
-                </div>
-                <div class="col-md-8" id="loadusers"></div>
-                <div class="col-md-1"></div>
+							<div class="col-md-1"></div>
+							<div class="col-md-2">
+								<label>Team</label>
+							</div>
+							<div class="col-md-8" id="loadusers"></div>
+							<div class="col-md-1"></div>
             </div>
+						
+						<br />
+						
+						<div id="service-list"></div>
+						
             <br />
-            <div id="loadservicelistsDiv">
-            	<?php
-				if(sizeof($parties) > 0 && $owner == 1)
-				{
-				?>
-                <div class="row">
-                <div class="col-md-11" style="text-align:right"> 
-                <a href="javascript:;"  class="pull-right btn btn-success btn-small" onclick="loadServiceListModal('<?php echo $id; ?>')" style="margin-bottom:10px !important"><i class="fa fa-plus"></i> Add New</a>
-                </div>
-                <div class="col-md-1"></div>
-                </div>
-                <?php
-				}
-				?>
-                
-                <div class="row">  
-                    <div class="col-md-1"></div>
-                    <div class="col-md-2">
-                    	<label>Service List</label>
-                    </div>
-                    <?php
-                    if(sizeof($parties) > 0)
-                    {
-                    ?>
-                    <div class="col-md-8" id="loadattoneys2">
-                    
-                    </div>
-                    <?php
-                    }
-                    else
-                    {
-                    ?>
-                    <div class="col-md-8" style="margin-top: 7px;">
-                        <i>(Parties must be added before Service List is created.)</i>
-                    </div>
-                    <?php
-                    }
-                    ?>
-                    <div class="col-md-1"></div>
-                </div>
-                
-            </div>
-            <br />
-            <?php
-			/*
-			<div class="row">  
-                <div class="col-md-1"></div>
-                <div class="col-md-2">
-                    <label>Case Team <?php echo instruction(2) ?></label>
-                </div>
-                <div class="col-md-8" id="loadattoneys3">
-                    
-                </div>
-                <div class="col-md-1"></div>
-            </div>
-            if($caseowner == 1)
-			{
-			?>
-                <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-2">
-                    <label>Case Attorney<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
-                </div>
-                <div class="col-md-3">
-                    <select name="case_attorney" class="form-control  m-b" id="case_attorney" onchange="loadmasterhead()">
-                        
-                    </select>
-                </div>
-                </div>
-                <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-2">
-                    <label>Masthead<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
-                </div>
-                <div class="col-md-8" id="masterheadDiv">
-                    <textarea rows="10" style="width: 383px; height: 12em; resize: none;" placeholder="Masthead " class="form-control m-b"  name="masterhead" id="masterhead"><?php echo htmlentities($case['masterhead']); ?></textarea>
-                </div>
-                </div>
-            <?php
-			}*/
-			?>
-						 <div class="container" >
-							 <div id="sides-container">
-						 </div>
-
+						
+						<div class="container"><div id="sides-container"></div>
             
-            <input type="hidden" name="id" value ="<?php echo $id;?>" />
+            <input type="hidden" name="id" value ="<?php echo $caseId;?>" />
             <input type="hidden" name="uid" value ="<?php echo $uid;?>" />
-            <input type="hidden" name="owner" value ="<?php echo $owner;?>" />
-            <input type="hidden" name="caseteammember" value ="<?php echo $caseteammember;?>" />
-            <input type="hidden" name="caseteamattorney" value ="<?php echo $caseteamattorney;?>" />
-            <input type="hidden" name="caseowner" value ="<?php echo $caseowner?>" />
             
             <div class="form-group">
             	<div class="col-sm-offset-3 col-sm-3" align="left">
 								<button type="button" class="btn btn-success buttonid save-case-btn" data-style="zoom-in" >
-								<i class="fa fa-save"></i>
-								<span class="ladda-label">Save</span><span class="ladda-spinner"></span></button>
-					<?php
-					buttoncancel(44,'get-cases.php');
-					?> 
-                
-                </div>
-                <div class="col-md-5"  align="right">
-                	<?php
-					if($owner == 1)
-					{
-					?>
-					<a href="javascript:;" class="btn btn-black" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?php echo $id;?>',1);"><i class="fa fa-trash"></i> Delete </a>
-					<?php	
-					}
-					else
-					{
-					?>
-					<a href="javascript:;" class="btn btn-black" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?php echo $id;?>',2);"><i class="fa fa-sign-out"></i> Remove me from this case</a>
-					<?php
-					}
-					?>
-                </div>
+									<i class="fa fa-save"></i>
+									<span class="ladda-label">Save</span><span class="ladda-spinner"></span>
+								</button>
+								<?php buttoncancel(44,'get-cases.php'); ?> 
+							</div>
+              <div class="col-md-5"  align="right">
+								<?php if (!$isDraft): ?>
+									<?php if($canDeleteCase): ?>
+										<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
+									<?php else: ?>
+										<a href="javascript:;" class="btn btn-black" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-sign-out"></i> Leave Case</a>
+									<?php endif; ?>	
+								<?php endif; ?>	
+							</div>
             </div>         
-            </form>
-        </div>
+					</form>
+			  </div>
     </div>
+  </div>
 </div>
-</div>
+
 <!-- Modal -->
 <div class="modal fade" id="modalcaseteam" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content" id="modalcaseteam_content">
-      
-    </div>
+    <div class="modal-content" id="modalcaseteam_content"></div>
   </div>
 </div>
 
 <div id="serviceListModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
-    <div class="modal-content" id="serviceListModalContent">
-        
-    </div>
+    <div class="modal-content" id="serviceListModalContent"></div>
   </div>
 </div>
 
@@ -569,7 +322,7 @@ body.modal-open
       </div>
 
       <div class="modal-footer">
-        <a class="btn btn-success" href="javascript:;" onclick="addCaseClient(<?php echo $id; ?>)"><i class="fa fa-save"></i> Save</a>
+        <a class="btn btn-success" href="javascript:;" onclick="addCaseClient(<?= $caseId; ?>)"><i class="fa fa-save"></i> Save</a>
         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
         
         <i id="msgClient" style="color:red"></i>
@@ -600,7 +353,7 @@ body.modal-open
 							<label for="user_email">Email</label>
 							<input type="text" placeholder="Email" class="form-control m-b" name="email" id="user_email" required />
 					</div>
-					<input type="hidden" name="case_id" value="<?= $id ?>" />
+					<input type="hidden" name="case_id" value="<?= $caseId ?>" />
 				</div>
 
 				<div class="modal-footer">
@@ -650,10 +403,6 @@ body.modal-open
       <div class="modal-body" id="load_general_modal_content">
        <div class="text-center"> Loading...</div>
       </div>
-      <!--<div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>-->
     </div>
   </div>
 </div>
@@ -666,9 +415,9 @@ body.modal-open
     </div>
   </div>
 </div>
-<?php /*?><script src="<?php echo VENDOR_URL; ?>sweetalert.min.js"></script><?php */?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 <script src="<?= ROOTURL ?>system/application/custom.js"></script>
+
 <script type="text/javascript">
 // TODO: move all this to case.js
 // this whole JS code needs to get rid of PHP dependency...
@@ -682,12 +431,12 @@ const setMastHead = (attorneyId = null) => {
 $(document).on( 'change', '#case_attorney', () => { setMastHead() });
 
 
-function loadServiceListModal(case_id,attr_id = '')
+function loadServiceListModal(caseId, userId = null, slAttorneyId = null)
 {
-	$.post( "loadservicelistmodal.php",{case_id: case_id,attr_id:attr_id}).done(function(resp)
+	$.post( "loadservicelistmodal.php",{case_id: caseId, user_id: userId, sl_attorney_id: slAttorneyId}).done(function(resp)
 	{
 		$("#serviceListModalContent").html(resp);
-		$("#serviceListModal").modal("toggle");
+		$("#serviceListModal").modal("show");
 		$("#msgAttr").html("");
 	});
 }
@@ -747,31 +496,11 @@ $( document ).ready(function()
 		}
 	});
 
-	<?php
-	if($case_attorney == 0 || $case_attorney == "")
-	{
-	?>
-	setTimeout(function(){ loadmasterhead(); }, 2000);
-	
-	<?php
-	}
-	?>
 	showreminders(<?php echo $case['allow_reminders']; ?>);
 	$('.datepicker').datepicker({format: 'm-d-yyyy',autoclose:true});
 
-	loadAttoneysFunction(<?php echo $id; ?>,2,"loadattoneys2");
-	loadCasePeople(<?php echo $id; ?>);
-	loadSides(<?php echo $id; ?>);
-	addMyAttorneyToCase(<?php echo $id; ?>);
+	loadCasePeople(<?php echo $caseId; ?>);
 });
-
-function loadCaseAttorneys(case_id)
-{
-	$.post( "loadcaseattorney.php",{case_id:case_id}).done(function( data ) 
-	{
-		$("#case_attorney").html(data);
-	});
-}
 
 function deleteLeaveCases(case_id,delete_or_leave)
 {
@@ -790,7 +519,7 @@ function deleteLeaveCases(case_id,delete_or_leave)
 	showCancelButton: true,
 	confirmButtonColor: '#187204',
 	cancelButtonColor: '#C2391B',
-	confirmButtonText: "Yes, delete it!"
+	confirmButtonText: delete_or_leave == 1 ? "Yes, delete it!" : 'Yes, leave!'
 	}).then((result) => {
 	if (result.value) {
 	$.post( "deleteleavecase.php", { case_id: case_id, delete_or_leave: delete_or_leave }).done(function( data ) 
@@ -803,9 +532,10 @@ function deleteLeaveCases(case_id,delete_or_leave)
 }
 
 function loadCasePeople(case_id) {
+	$("#loadclients").load(`get-case-clients.php?format=html&case_id=${case_id}`)
+	$("#loadusers").load(`get-case-users.php?format=html&case_id=${case_id}`)
+	$("#service-list").load(`get-service-list.php?format=html&case_id=${case_id}`);
 	loadSides(case_id);
-	$("#loadclients").load("get-case-clients.php?format=html&case_id="+case_id)
-	$("#loadusers").load("get-case-users.php?format=html&case_id="+case_id)
 }
 
 function loadSides(caseId)
@@ -850,34 +580,17 @@ function addCaseClient(case_id)
 			$("#client_name").val('');
 			$("#clientroles").val('');
 			$("#clienttypes").val('');
-			//$("#other_attorney_id").val([]);
 			$('#other_attorney_id').val(null).trigger('change');
 			$("#client_email").val('');
 			loadCasePeople(obj.case_id);
-			loadSides(obj.case_id);
-			//attDropdownFunction();
-			checkPartiesFoundShowServiceList(obj.case_id);
-			//loadAttoneysFunction(obj.case_id,2,"loadattoneys2");
-			
 		}
-		else
-		{			
-			showResponseMessage(obj);
-		}
+		showResponseMessage(obj)
 	}).fail( (e) => {
 		const obj = JSON.parse(e.responseText);
 		showResponseMessage(obj);
 		if (obj.field == 'primary_attorney_id') {
 				$("#div_attr").show();
 			}
-	});
-}
-function checkPartiesFoundShowServiceList(case_id)
-{
-	$.post("checkpartiesfoundshowservicelist.php", { case_id: case_id})
-	.done(function( data ) 
-	{
-		$("#loadservicelistsDiv").html(data);
 	});
 }
 
@@ -895,7 +608,6 @@ function deleteCaseClient(id, case_id)
 	if (result.value) {
 		$("#client_"+id).remove();
 		$.post( "delete-case-client.php", { id: id, case_id: case_id}, () => { loadCasePeople(case_id)} );
-		checkPartiesFoundShowServiceList(<?php echo $id ?>);
 	}
 	});
 	$( ".swal-button-container:first" ).css( "float", "right" );
@@ -925,31 +637,7 @@ function addAttryFunction(type)
 		$("#div_attr_email").show();
 	}
 }
-function loadmodaldelete(id,attorney_type,case_team_id,case_id,is_userteammember)
-{
-	$.post( "loaddeletemodal.php", { id: id,attorney_type: attorney_type,case_team_id: case_team_id,case_id: case_id,is_userteammember:is_userteammember})
-	.done(function( data ) {
-	$("#deletemodalcotent").html(data);
-	$("#delete_modal").modal("toggle");
-	});
-}
-function modaldeleteaction()
-{
-	$.post( "caseattorneydelete.php",$( "#deleteform" ).serialize()).done(function( data ) 
-	{
-    	loadAttoneysFunction(data,3,"loadattoneys3");
-		//loadCaseAttorneys(data);
-		$("#delete_modal").modal("toggle");
-  	});
-}
-/*function calculateduedatepopup(served)
-{
-	$.post( "loadpopupcontent.php",{ served: served,popuptype: 2}).done(function( data ) 
-	{
-		$("#load_general_modal_content").html(data);
-	});
-	$('#general_modal').modal('toggle');
-}*/
+
 function calculated_discovery_cutoff_date(trail_date)
 {
 	$.post( "calculatecutoffdateaction.php",{ trail_date: trail_date}).done(function( data ) 
@@ -980,12 +668,12 @@ function loadmasterhead()
 
   erInviteControl();
   <?php if ($currentPrimaryAttorneyId): ?>
-    erTeamAttorneySelectControl(<?= $id ?>);
+    erTeamAttorneySelectControl(<?= $caseId ?>);
 		setMastHead(<?= $currentPrimaryAttorneyId ?>);
   <?php else: ?>  
-    erTeamAttorneySelectControl(<?= $id ?>, setMastHead);
+    erTeamAttorneySelectControl(<?= $caseId ?>, setMastHead);
 	<?php endif; ?>  	
 	
-	isDraft = <?= $is_draft ? 'true' : 'false' ?>;
+	isDraft = <?= $isDraft ? 'true' : 'false' ?>;
 </script>
 <script src="<?= ROOTURL ?>system/assets/sections/case.js"></script>

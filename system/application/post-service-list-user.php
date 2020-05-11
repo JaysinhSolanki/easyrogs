@@ -2,45 +2,38 @@
   require_once(__DIR__ . '/../bootstrap.php');
   require_once("adminsecurity.php");
   
-	$name  		  = $_POST['attorney_name'];
-	$email 		  = $_POST['attorney_email'];
-	$clientIds  = $_POST['client_id'];
-	$caseId		  = $_POST['case_id'];
-	$attorneyId	=	$_POST['editattorney_id'];
-
-	$users = new User();
-	$sides = new Side();
-	$cases = new CaseModel();
+	$name  		 = $_POST['attorney_name'];
+	$email 		 = $_POST['attorney_email'];
+	$clientIds = $_POST['client_id'];
+	$caseId		 = $_POST['case_id'];
+	$userId		 = $_POST['user_id'];
 
 	$valid = $clientIds && $email && $name && $caseId;
 	if (!$valid) {
 		HttpResponse::malformed('Please fill the required fields.');
 	}
 	
-	if ($attorneyId) { 
-		$user = $users->getByAttorneyId($attorneyId, true);
-		if ($user) {
-			$cases->removeUser($caseId, $user['id'], true);
-		}
-		else {
-			HttpResponse::notFound('Attorney not Found.');
-		}
+	$currentSide = $sidesModel->getByUserAndCase($currentUser->id, $caseId);
+
+	$emailUser = $usersModel->expressFindOrCreate($name, $email);
+	if ( $userId && $user = $usersModel->find($userId) ) {
+		$sidesModel->removeFromServiceList($currentSide, $user);
 	}
-	else {
-		$user = $users->expressFindOrCreate($name, $email);
-	}
+	$sidesModel->updateServiceListForAttorney($currentSide, $emailUser, $clientIds, $name, $email);
 	
-	$userSide = $sides->getByUserAndCase($user['pkaddressbookid'], $caseId);
-	$side = $sides->mergeClientSides($caseId, $clientIds, $userSide);
-	if ( !$side ) {
-		HttpResponse::unprocessable('Attorney is already in a conflicting side of the case.');
-	}
-	elseif (!$userSide) {
-		$sides->addUser($side['id'], $user);
-		if (!User::isActive($user)) {
-			InvitationMailer::caseInvite($user, $currentUser->user, $caseId);
-		}		
+	// Add to side
+	$userSide = $sidesModel->getByUserAndCase($emailUser['pkaddressbookid'], $caseId);
+	// only modify side if primary attorney is not set yet and user is not in another side
+	if (!$userSide) {
+		$side = $sidesModel->mergeClientSides($caseId, $clientIds, $userSide);
+		
+		if ( ! Side::hasPrimaryAttorney($side)) {
+			$sidesModel->addUser($side['id'], $emailUser);
+			
+			if ( ! User::isActive($emailUser) ) {
+				InvitationMailer::caseInvite($emailUser, $currentUser->user, $caseId);
+			}
+		}
 	}
 
-	// LEGACY ----------------------------------------------------------------------
-	require_once __DIR__ . '/addattorney.php';
+	HttpResponse::success('Added successfully.');
