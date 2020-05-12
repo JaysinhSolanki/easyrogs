@@ -217,12 +217,12 @@ $instructions = "This responding party has not completed its investigation or di
              <tr>
                 <th>County</th>
               <td><?php echo $county_name; ?></td>
-              <th>Judge</th>
-              <td><?php echo $judge_name; ?></td>
+              <th><!--Judge--></th>
+              <td><!--?= $judge_name ?--></td>
             </tr>
               <tr>
-                <th>Department</th>
-              <td><?php echo $department; ?></td>
+                <th><!--Department--></th>
+              <td><!--?= $department; ?--></td>
               <th>Discovery</th>
               <td><?php echo $discovery_name; ?></td>
             </tr>                   
