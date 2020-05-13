@@ -59,7 +59,7 @@ navbar.navbar-static-top a, .nav.navbar-nav li a {
                 </li>
             	<li class="dropdown"  id="profile-right">
                 	<h4 style="color:#34495e !important; font-size:12px !important; font-weight:500 !important; padding-top:10px; margin-right:20px;">  
-                        <a onclick="javascript:PopupfaqModal();" href="javascript:;"><b>FAQ</b></a>
+                        <a onclick="javascript:showFAQ();" href="javascript:;"><b>FAQ</b></a>
                     </h4>
                 </li>
                 <li class="dropdown"  id="profile-right">

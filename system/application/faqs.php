@@ -1,5 +1,6 @@
 <?php
-require_once("adminsecurity.php");
+require_once __DIR__ . '/../bootstrap.php';
+//require_once("adminsecurity.php");
 $faq_areaDetails		=	$AdminDAO->getrows("faq_area","*", "", array());
 ?>
 <style>
@@ -14,6 +15,9 @@ p {
 .faq-question
 {
 	font-size:16px !important;
+}
+#faq_modal {
+	z-index: 9999; position: absolute;
 }
 #load_faq_modal_content{
 	overflow: hidden;

@@ -69,11 +69,6 @@ video{
     cursor: pointer; cursor: hand;
 }
 a#video_introduction {
-    clear: both;
-    float: left;
-    width: 100%;
-    font-size: 18px;
-    padding: 25px;
 }
 .btn-intro {
     background-color: #f10202 !important;

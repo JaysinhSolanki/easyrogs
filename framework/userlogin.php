@@ -1,10 +1,7 @@
 <?php
-session_start();
 require_once(__DIR__ . "/../system/bootstrap.php");
 include_once(__DIR__ . "/../system/library/classes/functions.php");
-//include_once(__DIR__ . "/../system/library/classes/filter.php");
 include_once(__DIR__ . "/../system/library/classes/login.class.php");
-//include_once(__DIR__ . "/../system/library/classes/error.php");
 if($_GET['outside'] == 1) 
 {
 ?>
@@ -104,6 +101,7 @@ require_once("head.php");
 <?php
 	//require_once("splashscreen.php");
 ?>
+<div style="width: 100vw;">
 <div class="login-container">
     <div class="row">
         <div class="col-md-12">
@@ -138,12 +136,37 @@ require_once("head.php");
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
-            <div class="hpanel btn-success" style="text-align: center;">
-                <div class="panel-bodys">
-                    <a href="javascript:void(0)" id="video_introduction" class="ladda-button btn btn-success btn-block">
-					<div style="font-size: 1.1em;">New to EasyRogs?</div>
-					<div style="font-size: 0.8em;">Please watch this short introduction</div>
+		<style>
+		#info-panel {
+			padding: 12px 0 0 ; clear: both;
+			text-align: center; font-size: 1.2em;
+			color: white; background-color: #3498db !important;
+		}
+		#info-panel:hover, #info-panel > .btn-info:hover {
+			background-color: #3498db !important;
+		}
+		#info-panel .actions {
+			display: flex; justify-content: space-around; align-items: stretch;
+			padding: 0.5em; 
+		}
+		#info-panel .actions>span {
+			flex-grow: 0; align-self: baseline; margin: auto 0.5em; font-
+		}
+		#info-panel a {
+			display: table-cell; width: 45%; padding: auto 1em; 
+			flex-grow: 1; align-self: baseline; 
+		}
+		</style>
+        <div class="">
+            <div id="info-panel" class="hpanel" style="">
+				<div style="/*margin-bottom:-0.4em;*/">New to EasyRogs?</div>
+                <div class="actions" style="width: 100%;">
+                    <a id="video_introduction" href="javascript:;" class="ladda-button btn btn-info col-md-6" style="">
+					  Watch our Intro
+					</a>
+					<span> or </span> 
+                    <a id="faq" href="javascript:;" class="ladda-button btn btn-info" style="" onclick="showFAQ(); ">
+					  Peruse our FAQs
 					</a>
                 </div>
                 <div id="vidBox" style="display: none;">
@@ -158,16 +181,21 @@ require_once("head.php");
                         </video>
                     </div>
                 </div>
-				or
+            </div>
+
+			<p style="clear: both; margin: -1em 0 0.5em; text-align: center; font-size:1.4em;"> or </p>
+
+            <div class="hpanel btn-success" style="text-align: center;">
 				<button class="ladda-button btn btn-success btn-block" style="padding-bottom: 25px;">
 					<a  href="<?php echo DOMAIN;?>signup.php" style="color: white;">
 						<div style="font-size: 2.2em;">Join</div>
-						<div>Membership is complementary</div>
+						<div style="margin-top:0.5em">Membership is complementary</div>
 					</a>
 				</button>
             </div>
         </div>
     </div>
+</div>
 </div>
 <?php
 	require_once(__DIR__ . "/../system/jsinclude.php");
@@ -181,8 +209,6 @@ require_once("head.php");
     <?php
 	}
 ?>
-</body>
-</html>
 <script type="text/javascript">
 	jQuery(function ($) {
 		$('#loginForm .i-checks').iCheck({
@@ -192,5 +218,8 @@ require_once("head.php");
 	});
 </script>
 <?php
-//ob_end_flush();
+require_once($_SESSION['framework_path']."faq_modal.php");
+ob_end_flush();
 ?>
+</body>
+</html>
