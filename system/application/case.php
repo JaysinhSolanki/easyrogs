@@ -152,7 +152,7 @@
 							  <select class="er-team-attorney-select form-control" name="case_attorney" id="case_attorney" data-value="<?= $currentPrimaryAttorneyId ?>"></select>
 							</div>
 							<div class="col-md-2">
-								<label>Masthead<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+								<label>Letterhead<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
 							</div>
 							<div class="col-md-3">
 								<textarea name="masterhead" class="form-control" wrap="off" cols="50" rows="10" style="height: 12em; overflow: hidden"><?= $side['masterhead'] ?></textarea>
