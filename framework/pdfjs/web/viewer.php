@@ -35,8 +35,12 @@ See https://github.com/adobe-type-tools/cmap-resources
 <!-- This snippet is used in production (included from viewer.html) -->
 <link rel="resource" type="application/l10n" href="locale/locale.properties">
 <script src="../build/pdf.js"></script>
-<script>
-var gumptionPDF = '<?php echo $_GET['url'];?>';
+<?php 
+  $query   = $_SERVER['QUERY_STRING'];
+  $pdf_src = substr( $query, strpos($query, "=") + 1 ); // everything after "url="
+?>  
+<script> debugger;
+var pdf_url = '<?= $pdf_src  ?>';
 </script>
 <script src="viewer.js"></script>
   </head>

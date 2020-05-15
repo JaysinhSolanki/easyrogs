@@ -38,7 +38,7 @@
       }
 
       if ( is_array( $message ) || is_object( $message ) ) {
-        $message = json_encode($message);
+        $message = json_encode($message,JSON_PRETTY_PRINT+JSON_UNESCAPED_LINE_TERMINATORS+JSON_UNESCAPED_SLASHES);
       }
       
       if ($printBacktrace) {
@@ -54,8 +54,13 @@
       if ($this->stdOut) { echo "$time [$level] $message \n"; }
     }
 
-    public function debug($message, $printBacktrace = false) { $this->log($message, self::DEBUG, $printBacktrace); }
     public function info($message,  $printBacktrace = false) { $this->log($message, self::INFO,  $printBacktrace); }
     public function warn($message,  $printBacktrace = false) { $this->log($message, self::WARN,  $printBacktrace); }
     public function error($message, $printBacktrace = false) { $this->log($message, self::ERROR, $printBacktrace); }    
+    public function debug($message, $printBacktrace = false) { 	
+      if ($_ENV['APP_ENV'] != 'prod') {
+        $this->log($message, self::DEBUG, $printBacktrace); 
+      }
+    }
+
   }

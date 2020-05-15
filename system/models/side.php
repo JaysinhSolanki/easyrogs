@@ -77,10 +77,10 @@
                                      WHERE s.case_id = :case_id 
                                            AND sc.client_id IN (%1$s)',
         
-        'getServiceList' => 'SELECT u.*,
-                                    a.id AS attorney_id, 
+        'getServiceList' => 'SELECT a.id AS attorney_id, 
                                     a.attorney_name, 
-                                    a.attorney_email
+                                    a.attorney_email,
+                                    u.*
                              FROM system_addressbook AS u
                                INNER JOIN attorney AS a 
                                  ON (a.fkaddressbookid = u.pkaddressbookid) 

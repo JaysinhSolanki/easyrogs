@@ -1,8 +1,8 @@
 <?php
-	require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 require_once("adminsecurity.php");
-$uid				=	$_GET['id']; 
+$uid				=	$_GET['id'];
 $view				=	$_GET['view'];
 $respond			=	$_GET['respond'];
 $response_id		=	$_GET['response_id'];
@@ -15,7 +15,7 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 											c.judge_name 	as judge_name,
 											c.county_name 	as county_name,
 											c.court_address as court_address,
-											c.department 	as department, 
+											c.department 	as department,
 											d.case_id 		as case_id,
 											d.id 			as discovery_id,
 											d.uid,
@@ -38,17 +38,17 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 											d.conjunction_setnumber,
 											d.interogatory_type,
 											a.email,
-											(CASE WHEN (form_id = 1 OR form_id = 2) 
+											(CASE WHEN (form_id = 1 OR form_id = 2)
 											 THEN
-												  f.form_instructions 
+												  f.form_instructions
 											 ELSE
-												  d.discovery_instrunctions 
+												  d.discovery_instrunctions
 											 END)
-											 as instructions 
+											 as instructions
 											',
-											"d.uid 			= :uid AND  
-											
-											d.case_id 		= c.id AND  
+											"d.uid 			= :uid AND
+
+											d.case_id 		= c.id AND
 											d.form_id		= f.id AND
 											d.attorney_id 	= a.pkaddressbookid",
 											array(":uid"=>$uid)
@@ -99,27 +99,25 @@ $proponding_email		=	$propondingdetails[0]['client_email'];
 $proponding_type		=	$propondingdetails[0]['client_type'];
 $proponding_role		=	$propondingdetails[0]['client_role'];
 
-if($response_id > 0)
-{
-	$discovery_name		=	"RESPONSE TO ".$discovery_name;
-} 
+if($response_id > 0) {
+	$discovery_name = "RESPONSE TO ".$discovery_name;
+}
 // $PDFname	=	strtoupper($discovery_name).".pdf";
 // //if($type == 2)
 // $fileName	=	SYSTEMPATH."uploads/documents/".$uid."/".$PDFname;
 // $useCache = !in_array($_ENV['APP_ENV'], ['dev', 'local', 'development']);
-// if ( !$useCache || !file_exists($fileName)) 
+// if ( !$useCache || !file_exists($fileName))
 // {
 // 	$ch = curl_init();
 // 	curl_setopt($ch, CURLOPT_URL,DOMAIN."makepdf.php?id=".$uid."&downloadORwrite=0&view={$view}&active_attr_email={$active_attr_email}&response_id={$response_id}");
 // 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 // 	$server_output = curl_exec($ch);
-// 	curl_close ($ch);	 
-	
+// 	curl_close ($ch);
+
 // }
 // $urlPDF	=	UPLOAD_URL."documents/".$uid."/".$PDFname;
 
 //FROM PDFjs
-echo $_SESSION['framework_url']."pdfjs/web/viewer.php?url=" .DOMAIN. "/makepdf.php?id=" .$uid. "&view=$view";
+echo $_SESSION['framework_url']."pdfjs/web/viewer.php?url=".DOMAIN."makepdf.php?id=$uid&view=$view&active_attr_email=$active_attr_email&response_id=$response_id";
 //FROM GOOGLE
 //echo "https://docs.google.com/viewerng/viewer?url={$urlPDF}&embedded=true";
-?>

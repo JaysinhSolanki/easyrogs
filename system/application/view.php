@@ -126,18 +126,14 @@ $discovery_name					=	$discovery_data['discovery_name']." [Set ".$set_number."]"
     </div>
 </div>
 <script>
-$(document).ready(function() 
-{
+$(document).ready( _ => { debugger;
 	$.LoadingOverlay("show");
-	$.get( "generatePDF_IFrame.php?id=<?=$uid?>&downloadORwrite=1&view=<?=$view?>&active_attr_email=<?=$active_attr_email?>&response_id=<?=$response_id?>", function( data ) 
-	{
-		$("#loadIFrame").attr("src",data);
-		setTimeout(function()
-		{
-			$.LoadingOverlay("hide");
-		}, 2000);
-		
-	});
-});
+	$.get( "generatePDF_IFrame.php?id=<?= $uid ?>&downloadORwrite=1&view=<?= $view ?>&active_attr_email=<?= $active_attr_email ?>&response_id=<?= $response_id ?>", 
+		   data => {
+				$("#loadIFrame").attr("src",data);
+				setTimeout( _ => {
+					$.LoadingOverlay("hide");
+				}, 2000);
+	} );
+} );
 </script>		
-                   

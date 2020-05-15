@@ -355,9 +355,7 @@ else
 ?>
 
 <script>
-$(document).ready(function()
-{
-	setTimeout(CKEDITOR.replace( 'instruction' ), 8000);
-	
+$(document).ready( _ => {
+	setTimeout( _ => CKEDITOR.replace( 'instruction' ), 8000);
 });
 </script>

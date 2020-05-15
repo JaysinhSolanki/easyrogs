@@ -58,7 +58,7 @@ $holidays		=	$AdminDAO->getrows('forms',"*");
     </div>
 </div>
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 
 <script>
 $(document).ready(function()

@@ -39,5 +39,5 @@
     </div>
   </div>
 </div>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> 
+<script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 <script src="{ROOTURL}system/assets/sections/myteam.js"></script>

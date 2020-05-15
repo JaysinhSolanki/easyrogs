@@ -167,7 +167,7 @@ class AdminDAO
 		$value[]	=	date("Y-m-d H:i:s");
 
 		$field[]	=	'updated_by';
-		$value[]	=	$_SESSION['addressbookid'] ?? 0;
+		$value[]	=	$_SESSION['addressbookid'] ?: 0;
 		$this->connect();
 		$fieldstr	=	"";
 		$valuestr	=	"";
@@ -226,7 +226,7 @@ class AdminDAO
 		$value[]	=	date("Y-m-d H:i:s");
 
 		$field[]	=	'updated_by';
-		$value[]	=	$_SESSION['addressbookid'] ?? 0;
+		$value[]	=	$_SESSION['addressbookid'] ?: 0;
 		$this->connect();
 		$fieldstr	=	"";
 		$valuestr	=	"";

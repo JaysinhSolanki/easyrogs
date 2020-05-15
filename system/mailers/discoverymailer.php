@@ -27,6 +27,7 @@
       }
       
       $smarty->assign([
+        'ASSETS_URL' => ASSETS_URL,
         'name'       => $client['client_name'],
         'actionUrl'  => DOMAIN . "discoveryfront.php?uid=$discovery[uid]",        
         'actionText' => 'Verify'
@@ -60,6 +61,7 @@
       }
 
       $smarty->assign([
+        'ASSETS_URL'  => ASSETS_URL,
         'name'        => $client['client_name'],
         'senderEmail' => $actionUser['email'],
         'senderPhone' => $actionUser['phone'],
@@ -92,6 +94,7 @@
       }
       
       $smarty->assign([
+        'ASSETS_URL'    => ASSETS_URL,
         'clientName'    => $client['client_name'],
         'discoveryName' => $discovery['discovery_name'],
         'setNumber'     => $discovery['set_number']
@@ -141,6 +144,7 @@
                         : $discovery['discovery_name'];
       
       $smarty->assign([
+        'ASSETS_URL'      => ASSETS_URL,
         'masterhead'      => $usersModel->getMasterHead($actionUser),
         'propoundingName' => $propounding['client_name'],
         'discoveryName'   => Discovery::getTitle($discoveryName,$discovery['set_number'],Discovery::STYLE_AS_IS),
@@ -155,6 +159,7 @@
         }
         
         $smarty->assign([
+          'ASSETS_URL'  => ASSETS_URL,
           'name'        => User::getFullName($user),
           'actionUrl'   => $isActive ? DOMAIN : DOMAIN . "signup.php?uid=$invitation[uid]",
           'actionText'  => $isActive ? 'Go to EasyRogs.com' : 'Sign Up at EasyRogs.com'

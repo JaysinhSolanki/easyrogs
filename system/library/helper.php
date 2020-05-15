@@ -58,7 +58,6 @@ function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $frome
     }
 }
 
-
 function convertYoutube($string) {
     return preg_replace(
         "/\s*[a-zA-Z\/\/:\.]*youtu(be.com\/watch\?v=|.be\/)([a-zA-Z0-9\-_]+)([a-zA-Z0-9\/\*\-\_\?\&\;\%\=\.]*)/i",
@@ -83,6 +82,19 @@ function replaceUrls($string) {
 	return $url;
 }
 
+function enforceYesNo( &$value = null ) {
+    $value = trim( strtolower($value) );
+    if( $value == 'yes' ) { 
+        $value= "Yes"; } // TODO
+    elseif( $value == 'no' ) { 
+        $value =  "No"; 
+    }
+    else {
+        $value = "";
+    }
+    return $value;
+}
+
 /**
 * FUNCTION FOR GENERATE PDF
 **/
@@ -98,7 +110,8 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
 
     //echo $html; exit;
     if (phpversion()>= '7') {
-        require_once($_SESSION['library_path'].'pdf/mpdf/7/vendor/autoload.php');
+        $path = $_SESSION['library_path'].'pdf/mpdf/7';
+        require_once($path . '/vendor/autoload.php');
         $mpdfConfig = array(
                 'mode' => 'utf-8',
                 'format' => 'A4',    // format - A4, for example, default ''
@@ -114,11 +127,12 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
             );
         $mpdf = new \Mpdf\Mpdf($mpdfConfig);
     } else {
-        require_once($_SESSION['library_path'].'pdf/mpdf/610/mpdf.php');
+        $path = $_SESSION['library_path'].'pdf/mpdf/610';
+        require_once( $path .'/mpdf.php');
         $mpdf=new mPDF();
         //$mode='', $format='', $font_size='', $font='', $margin_left=3, $margin_right=3, $margin_top=3, $margin_bottom=3, $margin_header='', $margin_footer=6, $orientation=''
     }
-    
+    define( '_MPDF_PATH', $path );
 
     $mpdf->setAutoTopMargin = 'stretch';
     $mpdf->setAutoBottomMargin = 'stretch';
@@ -194,41 +208,40 @@ function getstate($pkaddressbookid)
 function makeaddress($pkaddressbookid, $issplit = 0)
 {
     global $AdminDAO;
-    $results            =   $AdminDAO->getrows("system_addressbook,system_state", "*", "pkaddressbookid = :id AND fkstateid = pkstateid", array(":id"=>$pkaddressbookid));
-    $data               =   $results[0];
-    if ($issplit == 1) {
-        $addbreak   =   "<br>";
+    $results = $AdminDAO->getrows("system_addressbook,system_state", "*", "pkaddressbookid = :id AND fkstateid = pkstateid", array(":id"=>$pkaddressbookid));
+    $data    = $results[0];
+    if( $issplit ) {
+        $addbreak = "<br/>";
     } else {
-        $addbreak   =   ", ";
+        $addbreak = ", ";
     }
-    $address            =   $data['address'].", ".$data['street'].$addbreak.$data['cityname'].", ".$data['statecode']." ".$data['zip'];
+    $address = $data['address'].", ".$data['street'].$addbreak.$data['cityname'].", ".$data['statecode']." ".$data['zip'];
     return $address;
 }
 /**
 * FUNCTION FOR GENERATE FINAL RESPONSE
 **/
-function finalResponseGenerate($objection, $answer)
-{
-    $transitiontext     =   "However, in the spirit of cooperation and without waiving any objection, respondent responds: ";
+function finalResponseGenerate( $objection, $answer ) {
+    $transitiontext = "However, in the spirit of cooperation and without waiving any objection, respondent responds: ";
 
-    if ($objection == "" && $answer == "") {
+    if( !$objection && !$answer ) {
         $finalResponse = "";
     } else {
-        if ($answer == "") {
+        if( !$answer ) {
             $finalResponse = $objection;
-        } elseif ($objection == "") {
+        } elseif( !$objection ) {
             $finalResponse = $answer;
         } else {
-            if (!in_array(substr($objection, -1), array('!','.','?'))) {
-                $objection  =   $objection.".";
+            if( !in_array(substr($objection, -1), array('!','.','?')) ) {
+                $objection = $objection.".";
             }
-            $finalResponse = $objection." ".$transitiontext." ".$answer;
+            $finalResponse = "$objection $transitiontext $answer";
         }
-        if (substr($finalResponse, -1) != ".") {
+        if( substr($finalResponse, -1) != "." ) {
             $finalResponse = $finalResponse.".";
         }
     }
-    echo htmlspecialchars($finalResponse);
+    return htmlspecialchars( $finalResponse, ENT_DISALLOWED, "UTF-8", false );
 }
 /**
 * FUNCTION FOR INSTRUCTION

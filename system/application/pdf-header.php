@@ -32,8 +32,8 @@
     <tr> 
     	<td>
         	<br />
-            <?php echo "Attorney for ".$att_for_client_role; ?><br />
-            <?php echo $att_for_client_name; ?><br />
+            <?= "Attorney for $att_for_client_role" ?><br />
+            <?= $att_for_client_name ?><br />
         </td>
     </tr>
     <tr>

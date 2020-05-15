@@ -353,7 +353,8 @@
 							<label for="user_email">Email</label>
 							<input type="text" placeholder="Email" class="form-control m-b" name="email" id="user_email" required />
 					</div>
-					<input type="hidden" name="case_id" value="<?= $caseId ?>" />
+					<input type="hidden" id="user_id" name="id" value="" />
+					<input type="hidden" id="case_id" name="case_id" value="<?= $caseId ?>" />
 				</div>
 
 				<div class="modal-footer">
@@ -415,7 +416,7 @@
     </div>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 <script src="<?= ROOTURL ?>system/application/custom.js"></script>
 
 <script type="text/javascript">
@@ -467,6 +468,36 @@ function addparty(id='', caseId)
 			}
 		});
 	}
+}
+function showCaseUser(ev) { debugger;
+	$("#user_name").val("");
+	$("#user_email").val("");
+	$("#user_id").val("");
+	$('#userModal').modal('show');
+
+	if( ev ) {
+		const data = $(ev.target).parents('td').data();
+		if( data && Object.keys(data).length ) {
+			$("#user_id").val(data.userId);
+			data.caseId 	&& $("#case_id").val(data.caseId); 
+			data.userName 	&& $("#user_name").val(data.userName);
+			data.userEmail 	&& $("#user_email").val(data.userEmail);
+		}
+	}
+}
+function submitCaseUser(ev) {
+	ev.preventDefault();
+	const formData = new FormData(ev.target);
+	const params = Array.from(formData.keys()).reduce(
+		(acc, key) => {acc[key] = formData.get(key); return acc; }, {}
+	);
+	$.post('post-case-user.php', params, response => {
+		$('#userModal').modal('hide');
+		loadCasePeople(params.case_id);
+	}).fail( response => {
+		$('#userModal').modal('hide');
+		showResponseMessage( JSON.parse(response.responseText) );
+	});
 }
 $( document ).ready(function() 
 {

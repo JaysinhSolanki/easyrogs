@@ -1,6 +1,5 @@
 <?php
-  require_once __DIR__ . '/../bootstrap.php';
-
+require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
 $responding	=	$_POST['responding'];
@@ -19,7 +18,6 @@ $atorny_state_short		=	$getState[0]['statecode'];
 
 $senderAddress			=	makeaddress($_SESSION['addressbookid'], 1);//$senderDetail['address']."<br>Street#".$senderDetail['street'].", ".$senderDetail['cityname'].", ".$atorny_state_short.", ".$senderDetail['zip'];
 
-
 //Responding Details
 $respondingdetails		=	$AdminDAO->getrows("clients","*","id = :id",array(":id"=>$responding));
 $responding_name		=	$respondingdetails[0]['client_name'];
@@ -31,22 +29,21 @@ $responding_role		=	$respondingdetails[0]['client_role'];
 $emaildata				=	$AdminDAO->getrows("email_log","email_salutation","sender_type = 1 AND receiver_type = 2 ORDER BY id DESC LIMIT 1",array());
 $email_solicitation		=	$emaildata[0]['email_salutation'];
 
-if($email_solicitation == "")
-{
+if($email_solicitation == "") {
 	$email_solicitation = "{$responding_name} ,";
 }
 //Case Details
-$casedetails		=	$AdminDAO->getrows("cases","*","id = :id",array(":id"=>$case_id));
+$casedetails = $AdminDAO->getrows("cases","*","id = :id",array(":id"=>$case_id));
 
 Side::legacyTranslateCaseData($case_id, $casedetails);
 
-$case_title			=	$casedetails[0]['case_title'];
+$case_title = $casedetails[0]['case_title'];
 	
-$emailURL				=	"~LINK_HERE~";
+$emailURL = "~LINK_HERE~"; // TODO I don't see this used anywhere? 🤔
 ob_start();
 ?>
-<h4>Please click on the following link to respond to discovery in your case: <a href='<?php echo $emailURL; ?>'><?php echo $emailURL; ?></a>.</h4> 
-<p>Feel free to email me at <a href="mailto:<?php echo $senderEmail;?>"><?php echo $senderEmail;?></a><?php if($senderPhone != ""){ echo " or call ".$senderPhone;  }?> if you have any questions.</p>
+<h4>Please click on the following link to respond to discovery in your case: <a href='<?= $emailURL ?>'><?= $emailURL ?></a>.</h4> 
+<p>Feel free to email me at <a href="mailto:<?= $senderEmail ?>"><?= $senderEmail ?></a><?= $senderPhone ? " or call $senderPhone" : '' ?> if you have any questions.</p>
 <p>
 <b>___________________</b><br /> 
 <?php echo $senderName; ?><br /> 
@@ -58,13 +55,12 @@ ob_start();
 <?php echo "&copy; ".date('Y')." EasyRogs.com"; ?>
 </p>
 <?php
-$html = ob_get_contents(); 
-ob_clean();
+    $html = ob_get_contents(); 
+    ob_clean();
 ?>
 
 <script>
-$(document).ready(function()
-{
+$(document).ready( _ => {
 	 CKEDITOR.replace( 'email_body_popup' );
 });
 </script>
@@ -83,9 +79,8 @@ $(document).ready(function()
 </div>
 </form>
 <script>
-// A $( document ).ready() block.
-$( document ).ready(function() 
-{
-   $("#client_modal_title").html("Here's the email notification <?php echo $responding_name; ?> will receive. Add any last-minute instructions and click Send.");
+$(document).ready( _ => {
+   $("#client_modal_title")
+        .html("Here's the email notification <?= $responding_name; ?> will receive. Add any last-minute instructions and click Send." );
 });
 </script>

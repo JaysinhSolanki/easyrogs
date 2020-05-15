@@ -184,5 +184,5 @@ body.modal-open {
     </div>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 <script src="<?= ROOTURL ?>system/assets/sections/profile.js"></script>

@@ -128,37 +128,37 @@ else
 ?>
 
         <form name="formdeclaration" id="formdeclaration">
-<input type="hidden" name="discovery_id" value="<?php echo $discovery_id ?>" />
+<input type="hidden" name="discovery_id" value="<?= $discovery_id ?>" />
 <div class="form-group">
     <label for="recipient-name" class="col-form-label"></label>  
-    <textarea class="form-control" rows="60" name="declaration_text" id="declaration_text"><?php echo $decelarationtext; ?> </textarea> 
+	<textarea class="form-control" rows="60" name="declaration_text" id="declaration_text"><?=
+		$decelarationtext; 
+	?></textarea> 
 	<br />
     <p>I declare under penalty of perjury under the laws of the State of California that the foregoing is true and correct.<br>Executed on <?php echo date('F j, Y'); ?> at <span id="citystate"><input type="text" name="dec_city" id="dec_city" placeholder="Enter your city..." />, <input type="text" name="dec_state" id="dec_state" value="California" /></span>.</br>
     </div>
 
 <div class="row">
 	<div class="col-md-6" style="text-align:left">
-    <img src="<?php echo ASSETS_URL; ?>images/court.png" style="width: 18px;padding-right: 3px;">
+    <img src="<?= ASSETS_URL ?>images/court.png" style="width: 18px;padding-right: 3px;">
 
-<?php
-// added by JS 3/3/20
+<?php // added by JS 3/3/20
 if ($form_id == 3){
     echo "Code Civ.Proc., &sect; 2030.210 ";
     echo instruction(11);
 }
-else if ($form_id == 4){
+else if( $form_id == 4 ) {
     echo "Code Civ.Proc., &sect;&sect; 2033.040 ";
     echo instruction(9);
     echo ", 2033.050 ";
     echo instruction(10);
 }
 ?>
-
         </p></div>
     <div class="col-md-6" style="text-align:right">
-	By: <?php echo $_SESSION['name']; ?>
+	By: <?= $_SESSION['name'] ?>
     <br />
-    Signed electronically,<br><img src="<?php echo ASSETS_URL; ?>images/court.png" style="width: 18px;padding-right: 3px;">Cal. Rules of Court, rule 2.257
+    Signed electronically,<br><img src="<?= ASSETS_URL ?>images/court.png" style="width: 18px;padding-right: 3px;">Cal. Rules of Court, rule 2.257
     </div>
 </div>
 <br />
@@ -167,7 +167,6 @@ else if ($form_id == 4){
 <div class="col-md-8"  style="text-align:right">
 
 <i id="DEC_msgdiv" style="color:red"></i>
-
 
 </div>
 <div class="col-md-4" style="text-align:right">
@@ -184,8 +183,7 @@ else if ($form_id == 4){
 ?>
 
 <script>
-$(document).ready(function()
-{
-	CKEDITOR.replace('declaration_text', { height: 350});
-});
+$(document).ready( _ => {
+	CKEDITOR.replace( 'declaration_text', { height: 350} );
+} );
 </script>

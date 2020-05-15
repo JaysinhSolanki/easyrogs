@@ -4234,7 +4234,7 @@ var defaultOptions = {
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE
   },
   defaultUrl: {
-    value: gumptionPDF,
+    value: pdf_url,
     kind: OptionKind.VIEWER
   },
   defaultZoomValue: {

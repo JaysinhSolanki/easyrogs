@@ -20,7 +20,7 @@ if(sizeof($discoverydetails) > 0)
 		}
 	}
 	$fields				=	array('pos_state','pos_city','pos_text','pos_updated_at','pos_updated_by','is_served','served','due');
-	$values				=	array("","", "","0000-00-00","",0,"","");
+	$values				=	array("","", "",date('Y-m-d H:i:s'),$currentUser->id,0,"","");
 	$AdminDAO->updaterow("discoveries",$fields,$values,"id ='$discovery_id'");
 	echo $case_id;
 }

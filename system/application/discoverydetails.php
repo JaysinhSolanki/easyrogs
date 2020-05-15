@@ -11,9 +11,9 @@ if ($supp == "") {
     $supp = 0;
 }
 if ($view == 1) {
-    $css    =   "";
+    $css = "";
 } else {
-    $css    =   "";
+    $css ="";
 }
 
 
@@ -504,19 +504,20 @@ body.modal-open
                                                         </ul>
                                                         <?php
                                                     } else {
-                                                    ?>
+?>
                                                         <p>
-                                                            <b>Q No. <?php echo $question_number ?>: </b>
-                                                            <?php echo $question_title.$subquestuions_string; ?>
+                                                            <b>Q No. <?= $question_number ?>: </b>
+                                                            <?= $question_title.$subquestuions_string; ?>
                                                         </p>
-                                                        <textarea style="background-color: antiquewhite;"  id="objection_<?php echo $discovery_question_id; ?>" class="form-control" name="objection[<?php echo $discovery_question_id ?>]" placeholder="Objection" required><?php echo html_entity_decode($objection) ?></textarea>
+                                                        <textarea style="background-color: antiquewhite;"  id="objection_<?php echo $discovery_question_id; ?>" class="form-control" name="objection[<?php echo $discovery_question_id ?>]" placeholder="Objection" required><?= 
+                                                            html_entity_decode($objection) 
+                                                        ?></textarea>
                                                     <?php
                                                     }
                                             }
-                                            //$AdminDAO->displayquery=1;
                                         } else {
                                             //Hassan Editings
-                                            ?>
+?>
                                             <p> 
                                                 <b>Q No. <?php echo $question_number;?><?php echo $have_main_question==0?"&nbsp;($sub_part)":""?>: </b>
                                                 <?php echo $question_title;
@@ -524,24 +525,30 @@ body.modal-open
                                                     echo "<p><b>$extra_text_field_label: </b>$extra_text</p>";
                                                 }
                                                 if (in_array($question_type_id, array(1,2)) && $respond == 1) {
-	                                                if( $objection == "" && $question_number == '12.2'){
+	                                                if( $objection == "" && $question_number == '12.2') {
 		                                               $objection = "Objection, this interrogatory seeks information protected by the attorney work product privilege because it reflects counsel's evaluation of the case by revealing which witnesses counsel deemed important enough to interview. Nacht & Lewis Architects, Inc. v. Superior Court (1996) 47 Cal.App.4th 214, 217.";
 	                                                }
-                                                    ?>
-                                                    <?php /*?>&nbsp;&nbsp;<a href="javascript:;" class="btn-info btn-sm" onclick="addObjectionFunction('<?php echo $discovery_question_id; ?>')">Add Objection</a><?php */?>
-                                                    <textarea style="background-color: antiquewhite;"  id="objection_<?php echo $discovery_question_id; ?>" class="form-control" name="objection[<?php echo $discovery_question_id ?>]" placeholder="Objection" required><?php echo html_entity_decode($objection) ?></textarea>
-                                                    <?php
+?>
+                                                    <textarea   style="background-color: antiquewhite;"  
+                                                                id="objection_<?= $discovery_question_id; ?>" 
+                                                                class="form-control" 
+                                                                name="objection[<?= $discovery_question_id ?>]" 
+                                                                placeholder="Objection" 
+                                                                required><?= 
+                                                        html_entity_decode($objection) 
+                                                    ?></textarea>
+<?php
                                                 }
-                                                ?>
+?>
                                                 </p>
-                                                <?php
+<?php
                                                 if ($question_type_id == 1) {
-                                                ?>
+?>
                                                     <input type="hidden" name="have_main_question[<?php echo $discovery_question_id; ?>]" value="<?php echo $have_main_question?>"/>
                                                     <textarea id="answer<?php echo $discovery_question_id ?>" class="form-control" name="answer[<?php echo $discovery_question_id; ?>]" placeholder="Your Answer" required <?php echo $css ?>><?php echo html_entity_decode($answer) ?></textarea>
-                                                <?php
+<?php
                                                 } elseif ($question_type_id == 2) {
-                                                    ?>
+?>
                                                         <div class="form-check form-check-inline">
                                                             <label class="radio-inline"><input type="radio" name="answer[<?php echo $discovery_question_id ?>]" value="Yes" onClick="checkFunction('<?php echo $question_no_makeid ?>','1')<?php if ($is_depended_parent ==1) {
 ?>,showhidequestions('<?php echo $question_id;?>',1)<?php
@@ -606,9 +613,14 @@ body.modal-open
                                                                     }
                                                                     ?>
                                                                 </p>
-                                                                <input type="hidden" class="subanswer_<?php echo $question_no_makeid?>" name="have_main_question[<?php echo $discovery_question_id; ?>]" value="<?php echo $have_main_question?>" <?php if ($answer == "No" || ($answer == "" && $p_q_type_id == 1) || ($answer == "" && $p_q_type_id == 2)) {
-?> disabled <?php
-} ?>/>
+                                                                <input type="hidden" class="subanswer_<?php echo $question_no_makeid?>" name="have_main_question[<?php echo $discovery_question_id; ?>]" value="<?php echo $have_main_question?>" 
+<?php 
+    if ($answer == "No" || ($answer == "" && $p_q_type_id == 1) || ($answer == "" && $p_q_type_id == 2)) {
+?>  
+        disabled 
+<?php
+    } 
+?>/>
                                                                 <textarea  
                                                                 id="answer<?php echo $discovery_question_id ?>" 
                                                                 class="form-control subanswer_<?php echo $question_no_makeid?>" 
@@ -617,7 +629,7 @@ body.modal-open
                                                                 <?php echo $css ?> 
                                                                 <?php if (($answer == "No" || $answer == "") && $p_q_type_id != 3) {
 ?> disabled <?php
-} ?>><?php echo html_entity_decode($answer1) ?></textarea>
+} ?>><?= html_entity_decode($answer1) ?></textarea>
                                                             </div>  
                                                         </li>   
                                                         <?php
@@ -986,15 +998,14 @@ if ($question_admit_id == 1) {
       <div class="modal-body">
         <div class="form-group">
         <label for="caseteam_attr_name">Write an email text for client and click on send button. You'll be automatically notified when it's done.:</label>
-        <textarea type="text" rows="10" name="message_to_client" class="form-control" id="message_to_client">
-<?php
-echo "Hi,
+        <textarea type="text" rows="10" name="message_to_client" class="form-control" id="message_to_client"><?=
+"Hi,
 
 You have not verify the discovery SPECIAL INTERROGATORIES. Please click on the link below and verify your discovery. 
 
-~LINK_HERE~.";
-        ?>
-        </textarea>
+~LINK_HERE~."
+
+        ?></textarea>
         </div>
       </div>
       <div class="modal-footer">
@@ -1261,8 +1272,7 @@ function serveaction(actiontype,discover_id) //actiontype:1 => Email Client, act
         $("#msgEmailClientModal").html(msg);
     }*/
 }
-function serveFunction2(is_verified,discovery_id,response_id)
-{
+function serveFunction2(is_verified,discovery_id,response_id) {
     if(is_verified == '')
     {
         //alert(1);
@@ -1320,51 +1330,45 @@ function PopupForPOS(discovery_id,response_id)
     
 }
 
-function servePOS()
-{
+function servePOS() { debugger;
     var pos_state   =   $("#pos_state").val();
     var pos_city    =   $("#pos_city").val();
     var error       =   0;
     var msg         =   "";
     
-    if(pos_city == "")
-    {
+    if( !pos_city ) {
         error   =   1;
         msg     =   "Please enter city.";
     }
-    if(pos_state == "")
-    {
+    if( pos_state == "" ) {
         error   =   1;
         msg     =   "Please enter state.";
     }
-    if(error == 1)
-    {
+    if( error ) {
         $(".POS_msgdiv").html(msg);
     }
-    else
-    {
+    else {
         $.LoadingOverlay("show");
-        $("#citystate").replaceWith(pos_city+", "+pos_state);
-        var poshtml     =   $("#poshtml").html();
+        $("#citystate").replaceWith( pos_city+", "+pos_state );
+        var poshtml = $("#poshtml").html();
         $("#pos_text").val(poshtml);
         $("#posstate").val(pos_state);
         $("#poscity").val(pos_city);
         
-        //alert($("#pos_city").val());
-        //writeDiscoveryPDF('<?php //echo $uid; ?>');
-        setTimeout(function()
-        {
-            $.post( "propondingserveaction.php",$("#formPOS" ).serialize()).done(function( data ) 
-            {
-                $('#general_modal').modal('toggle');
-                $.LoadingOverlay("hide");
-                response(data);
-            });         
+        setTimeout( _ => {
+            $.post( "propondingserveaction.php", 
+                    $("#formPOS" )
+                        .serialize() )
+                .done( data => {
+                    $('#general_modal').modal('toggle');
+                    $.LoadingOverlay("hide");
+                    response(data);
+                } );         
         }, 2000);
     }
 }
-function writeDiscoveryPDF(uid)
-{
-    $.get( "makepdf.php", { id: uid, downloadORwrite: 1,view:0 }).done(function( data ) {});
+function writeDiscoveryPDF(uid) {
+    $.get( "makepdf.php", { id: uid, downloadORwrite: 1, view:0 })
+        .done( data => {} );
 }
 </script>

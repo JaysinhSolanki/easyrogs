@@ -153,12 +153,13 @@
     function expressFindOrCreate($name, $email, $groupId = null) {
       $user = $this->getByEmail($email);
       if (!$user) {
-        $nameParts = explode(' ', $name);
+        self::parseFullName($name, $nameParts);
         $user = $this->create([
-          'firstname' => $nameParts[0], 
-          'lastname'  => implode( ' ', array_slice($nameParts,  1) ),
-          'email'     => $email,
-          'fkgroupid' => $groupId
+          'firstname'  => $nameParts[1], 
+          'middlename' => $nameParts[2],
+          'lastname'   => $nameParts[3],
+          'email'      => $email,
+          'fkgroupid'  => $groupId
         ]);
       }
       return $user;
@@ -206,6 +207,10 @@
       return str_replace("\n\n", "\n", $masterHead);
     }
 
+    static function parseFullName($fullname, &$nameParts = null) {
+      preg_match( '/(\S+)\s+(?:(\S+)\s+|)(.*)/', preg_replace('/\s+/', ' ', trim($fullname)), $nameParts );
+      return $nameParts;
+    }
     static function getFullName($user) {
       return trim("$user[firstname] $user[middlename] $user[lastname]");
     }

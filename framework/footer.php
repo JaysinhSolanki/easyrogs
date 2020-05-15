@@ -2,7 +2,7 @@
 @session_start();
 ?>
  <!-- Footer-->
-    
+
 </div>
 
 <div class="col-md-12" style="margin-top:20px !important">
@@ -20,22 +20,14 @@ require_once("{$_SESSION['framework_path']}faq_modal.php");
 	}
 </style>
 <script>
-  function checksession()
-   {
-	  $.post( "<?php echo $_SESSION['framework_url'] ?>checksession.php",function( data )
-	  {
-		  //alert(data);
-		   if(data == 'loggedout')
-		   {
+  function checksession() {
+	  $.post( "<?php echo $_SESSION['framework_url'] ?>checksession.php", data => {
+		   if(data == 'loggedout') {
 			 setTimeout(function(){ window.location.href = "<?php echo $_SESSION['framework_url'] ?>signout.php";}, 1000);
 		   }
-	   
-	  });   
+	  } );
   }
-  window.setInterval(function()
-   {
-   checksession(); 
- }, 10000);
+  window.setInterval( _ => checksession(), 10000 );
 </script>
 </body>
 </html>

@@ -11,6 +11,11 @@
       ]);
     }
 
+    const TYPE_EXTERNAL = 1;
+    const TYPE_INTERNAL = 2;
+    const VIEW_RESPONDING  = 0;
+    const VIEW_PROPOUNDING = 1;
+
     function find($id) { return $this->getBy( 'discoveries', ['id' => $id], 1); }
     function findByUID($uid) { return $this->getBy( 'discoveries', ['uid' => $uid], 1); }
 

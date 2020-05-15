@@ -9,7 +9,9 @@
   $cases = new CaseModel();
   $sides = new Side();
   
-  $users = $cases->getUsers($caseId);
+  if ( !$caseId ) { HttpResponse::malformed('Case ID is required'); }
+  
+  $users = @$cases->getUsers($caseId);
   if ($users) {
     foreach($users as &$user) {
       $user['is_current_user'] = $user['pkaddressbookid'] == $currentUser->id;

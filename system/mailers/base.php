@@ -79,7 +79,9 @@
           }
           foreach($attachments as $attachment) { 
             if (is_file($attachment['path'])) {
-              copy( $attachment['path'], $savedir .'/attach/'. $attachment['filename'] );
+              try {
+                @copy( $attachment['path'], $savedir .'/attach/'. $attachment['filename'] );
+              } catch( Exception $e ) { }
             } else {
               $logger->warn("Email attachment not found: " . $attachment['path']);
             }
