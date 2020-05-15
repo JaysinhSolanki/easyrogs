@@ -682,7 +682,7 @@ function setquestionnumber() {
     var responding  = Number( $("#responding").val() );
     if( case_id  && form_id  && propounding  && responding ) {
         var data =  {
-                        id          : '<? $id?>',
+                        id          : '<?= $id ?>',
                         case_id     : case_id,
                         form_id     : form_id,
                         propounding : propounding,

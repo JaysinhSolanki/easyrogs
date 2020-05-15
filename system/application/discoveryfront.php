@@ -693,12 +693,12 @@ textarea#answer {
 require_once("../jsinclude.php");
 ?>
 
-<script src="<?= VENDOR_URL ?> jquery-validation/jquery-1.9.0.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="<?= VENDOR_URL ?> bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="<?= VENDOR_URL ?>jquery-validation/jquery-1.9.0.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="<?= VENDOR_URL ?>bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 
-<link href="<?= VENDOR_URL ?> uploadfile.css" rel="stylesheet">
-<script src="<?= VENDOR_URL ?> jquery.uploadfile.min.js"></script>
+<link href="<?= VENDOR_URL ?>uploadfile.css" rel="stylesheet">
+<script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
 
 <script>
 $.noConflict();

@@ -266,6 +266,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										</div> 
 									</td>
 								</tr>
+<?php
 								$totalChilds += sizeof($responses);
 								if( !empty($responses) ) {
 									foreach($responses as $response_data) {
@@ -753,7 +754,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									//$AdminDAO->displayquery=0;
 									//dump($supp_discoveries);
 									$totalChilds += sizeof($supp_discoveries);
-                  
+									
 									foreach($supp_discoveries as $suppdiscovery)
 									{
 										$supp_d_id			= $suppdiscovery['id'];
@@ -957,10 +958,8 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										<?php  
 										$totalChilds += sizeof($suppresponses);
 										
-										if(!empty($suppresponses))
-										{
-											foreach($suppresponses as $response_data) 
-											{
+										if( !empty($suppresponses) ) {
+											foreach($suppresponses as $response_data) {
 												$response_id				= $response_data['id'];
 												$supp_response_creator_id	= $response_data['created_by'];
 												$supp_isserved				= $response_data['isserved'];
