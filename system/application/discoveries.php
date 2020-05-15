@@ -163,12 +163,10 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								/**
 								* GET RESPONSES OF PARENT INTERNAL DISCOVERY
 								**/
-								$showDueDate	= 1;
-								$responses		= $AdminDAO->getrows('responses',"*","fkdiscoveryid = :fkdiscovery_id ",array('fkdiscovery_id'=>$d_id));
-								foreach($responses as $responsedata)
-								{
-									if($responsedata['isserved'] == 1)
-									{
+								$showDueDate = 1;
+								$responses	 = $AdminDAO->getrows('responses',"*","fkdiscoveryid = :fkdiscovery_id ",array('fkdiscovery_id'=>$d_id));
+								foreach($responses as $responsedata) {
+									if( $responsedata['isserved'] ) {
 										$showDueDate	= 0;
 									}
 								}
@@ -224,16 +222,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									<?= $discovery['creator'] ?>
 									</td> 
                                     <td>
-									<?php
-                                    if($discoveryType == 1)
-                                    {
-                                        echo "EasyRogs";//"External";
-                                    }
-                                    else
-                                    {
-                                        echo "Other";//"Internal";
-                                    }
-                                    ?>
+										<?=  ($discoveryType == Discover::TYPE_EXTERNAL) ? "EasyRogs" : "Other" ?>
                                     </td>
 									<td align="center">
 										<div class="dropdown">
@@ -242,8 +231,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 											</button>
 											<ul class="dropdown-menu dropdown-menu-right" role="menu">
 												<?php
-												if(in_array("view",$discovery_ACL))
-												{
+												if(in_array("view",$discovery_ACL)) {
 												?> 
 													<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','view.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&response_id=0&view=1','49');"><i class="fa fa-eye"></i> View</a></li>
 													<?php /*?><li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&view=1&respond=0','49');"><i class="fa fa-eye"></i> View</a></li><?php */?>
@@ -278,12 +266,9 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										</div> 
 									</td>
 								</tr>
-								<?php
-								$totalChilds = $totalChilds	+ sizeof($responses);
-								if(!empty($responses))
-								{
-									foreach($responses as $response_data)
-									{
+								$totalChilds += sizeof($responses);
+								if( !empty($responses) ) {
+									foreach($responses as $response_data) {
 										$response_id	= $response_data['id'];
 										
 										$response_ACL	= array('response-pdf','view');
@@ -586,12 +571,10 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									</td>
 								</tr>
 								<?php
-								$totalChilds	= $totalChilds+sizeof($responses);
+								$totalChilds += sizeof($responses);
 								
-								if(!empty($responses))
-								{
-									foreach($responses as $response_data)
-									{
+								if( !empty($responses) ) {
+									foreach($responses as $response_data) {
 										$response_creator_id	= $response_data['created_by'];
 										$isserved				= $response_data['isserved'];
 										$response_id			= $response_data['id'];
@@ -769,8 +752,8 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									
 									//$AdminDAO->displayquery=0;
 									//dump($supp_discoveries);
-									$totalChilds	= $totalChilds+sizeof($supp_discoveries);
-									
+									$totalChilds += sizeof($supp_discoveries);
+                  
 									foreach($supp_discoveries as $suppdiscovery)
 									{
 										$supp_d_id			= $suppdiscovery['id'];
@@ -811,11 +794,6 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 												continue;
 											}
 										}
-										/*if($supp_is_served != 1 && $supp_creator_id != $_SESSION['addressbookid'])
-										{
-											$totalChildsNotIncludes++;
-											continue;
-										}*/
 										/**
 										* Check to see login user is responding party attorney or not
 										* If he is the attorney of responding party then we give him option to respond in external discovery.
@@ -977,7 +955,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 											</td>
 										</tr>
 										<?php  
-										$totalChilds	= $totalChilds+sizeof($suppresponses);
+										$totalChilds += sizeof($suppresponses);
 										
 										if(!empty($suppresponses))
 										{
@@ -1104,11 +1082,9 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									}
 								}
 								
-								$totalChilds = $totalChilds - $totalChildsNotIncludes;
-								
-								if($totalChilds <= 0)
-								{
-								?>
+								$totalChilds -= $totalChildsNotIncludes;
+								if( $totalChilds <= 0 ) {
+?>
 								<script>
 								//$( document ).ready(function() 
 								//{
@@ -1116,7 +1092,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									$("#minusBtn<?= $d_id ?>").hide();
 								//});
 								</script>
-								<?php
+<?php
 								}
 							
 							}
@@ -1171,7 +1147,7 @@ $(document).ready(function(){
 	  });
 });
 </script>
-<script src="<?= VENDOR_URL; ?>sweetalert.min.js"></script>
+<script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 <script>
 /*function createResponseSupp(response_id,discovery_id)
 {

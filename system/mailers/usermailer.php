@@ -15,6 +15,7 @@
       // TODO: the action URL security for this is very week. We are just refactoring
       // legacy logic here but this needs to be fixed.
       $smarty->assign([
+        'ASSETS_URL' => ASSETS_URL,
         'name'       => User::getFullName($user),
         'actionUrl'  => FRAMEWORK_URL . "resetpassword.php?verify=2&uid=$user[uid]",
         'actionText' => 'Recover Password'

@@ -26,6 +26,7 @@
       }
 
       $smarty->assign([
+        'ASSETS_URL'     => ASSETS_URL,
         'requestorName'  => User::getFullName($requestor),
         'requestorEmail' => $requestor['email'],
         'requestorFirm'  => $requestor['companyname'],

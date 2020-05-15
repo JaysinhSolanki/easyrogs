@@ -181,7 +181,7 @@ if($res_attr_uid != "")
                     </table>
 
 
-<script src="<?php echo VENDOR_URL ?>sweetalert.min.js"></script>
+<script src="<? VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 <script src="<?= ROOTURL ?>system/assets/sections/cases.js"></script>
 
 <a id="intro-video-replay" href="javascript:;" style="display:none;text-align:center;">No cases open yet. Click here to watch again the intro video.</a>
