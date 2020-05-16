@@ -518,8 +518,8 @@ $( document ).ready(function()
 	$('#add-user-btn').on('click', () => $('#userModal').modal('show') );
 	$(document).on('click', '.delete-user-btn', async (e) => {
 		const params = $(e.target).parent().data();
-		confirm = await confirmAction();
-		if ( confirm.value ) {
+		confirm = await confirmAction(); 
+		if ( confirm ) {
 			$.post('delete-case-user.php', params, (response) => {
 				loadCasePeople(params.case_id);
 				showResponseMessage(response);				
@@ -535,29 +535,20 @@ $( document ).ready(function()
 
 function deleteLeaveCases(case_id,delete_or_leave)
 {
-	if(delete_or_leave == 1)
-	{
-		var title = "Are you sure to delete this case?";
-	}
-	else
-	{
-		var title = "Are you sure to want to leave this case?";
-	}
-	Swal.fire({
-	title:title,
-	text: "You will not be able to undo this action!",
-	icon: 'warning',
-	showCancelButton: true,
-	confirmButtonColor: '#187204',
-	cancelButtonColor: '#C2391B',
-	confirmButtonText: delete_or_leave == 1 ? "Yes, delete it!" : 'Yes, leave!'
-	}).then((result) => {
-	if (result.value) {
-	$.post( "deleteleavecase.php", { case_id: case_id, delete_or_leave: delete_or_leave }).done(function( data ) 
-	{
-		selecttab('44_tab','get-cases.php','44');
-	});
-	}
+	swal( {
+		title: (delete_or_leave == 1) ? "Are you sure to delete this case?" : "Are you sure to want to leave this case?",
+		text: "You will not be able to undo this action!",
+		icon: 'warning',
+		dangerMode: true,
+		buttons: [true, delete_or_leave == 1 ? "Yes, delete it!" : 'Yes, leave!'],
+		// confirmButtonColor: '#187204',
+		// cancelButtonColor: '#C2391B',
+	})
+	.then( result => { 
+		if( result ) {
+			$.post( "deleteleavecase.php", { case_id: case_id, delete_or_leave: delete_or_leave })
+				.done( data => { selecttab('44_tab','get-cases.php','44'); });
+		}
 	});
 	$( ".swal-button-container:first" ).css( "float", "right" );
 }
@@ -625,21 +616,21 @@ function addCaseClient(case_id)
 	});
 }
 
-function deleteCaseClient(id, case_id)
-{
-	Swal.fire({
-	title: "Are you sure you want to delete this Party?",
-	text: "You will not be able to undo this action!",
-	icon: 'warning',
-	showCancelButton: true,
-	confirmButtonColor: '#187204',
-	cancelButtonColor: '#C2391B',
-	confirmButtonText: "Yes, delete it!"
-	}).then((result) => {
-	if (result.value) {
-		$("#client_"+id).remove();
-		$.post( "delete-case-client.php", { id: id, case_id: case_id}, () => { loadCasePeople(case_id)} );
-	}
+function deleteCaseClient(id, case_id) {
+	swal({
+		title: "Are you sure you want to delete this Party?",
+		text: "You will not be able to undo this action!",
+		icon: 'warning',
+		dangerMode: true,
+		buttons: [ true, "Yes, delete it!" ],
+		// confirmButtonColor: '#187204',
+		// cancelButtonColor: '#C2391B',
+	})
+	.then( result => { 
+		if( result ) {
+			$("#client_"+id).remove();
+			$.post( "delete-case-client.php", { id: id, case_id: case_id}, () => { loadCasePeople(case_id)} );
+		}
 	});
 	$( ".swal-button-container:first" ).css( "float", "right" );
 }

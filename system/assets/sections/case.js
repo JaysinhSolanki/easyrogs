@@ -140,7 +140,7 @@ $(document).on('click', '.delete-service-list-user-btn', async function(e) {
   const caseId  = element.data('caseId');
   
   confirm = await confirmAction();
-  if ( confirm.value ) {
+  if ( confirm ) {
     deleteServiceListUser(userId, caseId, 
       (response) => {
         showResponseMessage(response);

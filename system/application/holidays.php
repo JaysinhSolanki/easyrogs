@@ -61,17 +61,11 @@ $holidays		=	$AdminDAO->getrows('forms',"*");
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 
 <script>
-$(document).ready(function()
-{
-
-});
-function loadholidays(year)
-{
+function loadholidays(year) {
 	$("#DivHollidays").load("loadholidays.php?year="+year);
 }
 
-function buttonsave()
-{
+function buttonsave() {
 	$("#instruction_html").val($("#instruction_data").html());
 	var isagree	=	true;
 	setTimeout(function()
@@ -87,18 +81,17 @@ function buttonsave()
 		//alert(isagree);
 		if(isagree == false)
 		{
-			swal({
-					title: "Are you Sure?",
+			swal( { title: "Are you Sure?",
 					text: "Do you really want to save?",
 					icon: "warning",
 					dangerMode: true,
 					buttons: {
-					cancel: "No",
-					catch: {
-					  text: "Yes"
-					}
-				  },
-				})
+						cancel: "No",
+						catch: {
+						text: "Yes"
+						}
+					},
+				} )
 				.then((willDelete) => {
 				if (willDelete) {
 				addform('discoveryaction.php','discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid=<?php echo $case_id?>');

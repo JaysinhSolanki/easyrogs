@@ -571,7 +571,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										</div>
 									</td>
 								</tr>
-								<?php
+<?php
 								$totalChilds += sizeof($responses);
 								
 								if( !empty($responses) ) {
@@ -751,8 +751,6 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									
 									Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 									
-									//$AdminDAO->displayquery=0;
-									//dump($supp_discoveries);
 									$totalChilds += sizeof($supp_discoveries);
 									
 									foreach($supp_discoveries as $suppdiscovery)
@@ -955,7 +953,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 												</div>
 											</td>
 										</tr>
-										<?php  
+<?php  
 										$totalChilds += sizeof($suppresponses);
 										
 										if( !empty($suppresponses) ) {

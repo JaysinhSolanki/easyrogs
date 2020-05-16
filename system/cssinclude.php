@@ -2,7 +2,6 @@
 <link rel="stylesheet" href="<?php echo VENDOR_URL;?>metisMenu/dist/metisMenu.css" />
 <link rel="stylesheet" href="<?php echo VENDOR_URL;?>bootstrap/dist/css/bootstrap.css" />
 <link rel="stylesheet" href="<?php echo VENDOR_URL;?>awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
-<link rel="stylesheet" href="<?php echo VENDOR_URL;?>sweetalert/lib/sweet-alert.css" />
 <link rel="stylesheet" href="<?php echo VENDOR_URL;?>fooTable/css/footable.core.min.css" />
 <link rel="stylesheet" href="<?php echo VENDOR_URL;?>pe-icons/pe-icon-7-stroke/css/pe-icon-7-stroke.css" />
 <link rel="stylesheet" href="<?php echo VENDOR_URL;?>pe-icons/pe-icon-7-stroke/css/helper.css" />
@@ -37,6 +36,9 @@ table.dataTable.no-footer {
 {
 	font-size:24px !important
 }
+.swal-button--confirm { color: white; background-color: #187204 !important; }
+.swal-button--cancel { color: white; background-color: #C2391B !important; }
+
 .btn-success
 {
 	background-color:#187204 !important;

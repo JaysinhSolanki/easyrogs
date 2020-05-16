@@ -65,14 +65,14 @@ denyJoinCaseRequest = (userId, caseId, success, error) => {
 }
 
 confirmAction = (options) => {
-	return Swal.fire({
-    title: "Are you sure?",
-    text:  "You will not be able to undo this action!",
-    icon:  "warning",
-    showCancelButton: true,
-    confirmButtonColor: '#187204',
-    cancelButtonColor: '#C2391B',
-		confirmButtonText: "Yes, delete it!",
+	return swal({
+		title: "Are you sure?",
+		text:  "You will not be able to undo this action!",
+		icon:  "warning",
+		dangerMode: true,
+		buttons: [true, "Yes, delete it!"],
+		// confirmButtonColor: '#187204',
+		// cancelButtonColor: '#C2391B',
 		...options
 	});
 }

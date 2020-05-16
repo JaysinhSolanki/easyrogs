@@ -13,7 +13,7 @@ const onDeleteTeamMember = async (e) => {
   const confirm = await confirmAction({
     title: "Are you sure you want to delete this person from Your Team?",
   });
-  confirm.value && deleteTeamMember(memberId, 
+  confirm && deleteTeamMember(memberId, 
     () => $(`#attr_${memberId}`).remove(),
     (error) => {
       toastr.error('We were unable to delete the team member at this time.');

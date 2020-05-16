@@ -710,68 +710,26 @@ function loadinstructions(form_id,id)
 $(document).ready(function()
 {
 	loadinstructions('<?= $form_id ?>','<?= $discovery_id ?>');
-	//$('#cityname').editable();
-	//$('#statename').editable();
 });
-function submitForm()
-{
-
+function submitForm() {
 	callModal();
-	/*swal({
-		title: "Verification?",
-		text: "Do you want to verify the answers?",
-		icon: "warning",
-		dangerMode: true,
-		buttons:
-		{
-			catch: {text: "Yes"},
-			defeat: {text: "No",className: "btn-danger"}
-
-
-		},
-	}).then((willDelete) =>
-	{
-		switch (willDelete)
-		{
-			case "catch":
-				$("#discovery_verification").val(1);
-				callModal();
-				$("#msgVerification").html("");
-				break;
-
-			case "defeat":
-				addform('discoveryfrontaction.php?q=1','discoverydetailsform',' ','discoveryfront-thanks.php');
-				break;
-			default:
-		}
-	});*/
 }
 
-
-function callModal()
-{
+function callModal() {
 	$('#myModal').modal('toggle');
 
 }
-//addform('discoveryfrontaction.php?q=1','discoverydetailsform',' ','discoveryfront-thanks.php');
-function checkFunction(subdivid, option)
-{
-	//alert(subdivid);
-	if(option == 1)
-	{
+function checkFunction(subdivid, option) {
+	if(option == 1)	{
 		$("#subdiv"+subdivid).show();
 		$(".subanswer_"+subdivid).prop('disabled',false);
-
 	}
-	else  if(option == 2)
-	{
+	else  if(option == 2) {
 		$("#subdiv"+subdivid).hide();
 		$(".subanswer_"+subdivid).prop('disabled',true);
 	}
 }
-function checkFunctionForm5(subdivid, option)
-{
-	//alert(option);
+function checkFunctionForm5(subdivid, option) {
 	if(option == 'I have responsive documents' || trim(option) == 'Select Your Response')
 	{
 		if(option == 'I have responsive documents')

@@ -220,9 +220,11 @@ body.modal-open {
 .w-900 {
     width:900px !important
 }
+
 .swal2-popup {
   font-size: 15px !important;
 }
+
 .question_titlecls {
     height:120px !important;
     font-size:13px !important;
@@ -760,17 +762,17 @@ function loadformquestions( form_id, id ) {
     }
 }
 function deletenewquestion(id) {
-    Swal.fire( {
+    swal( {
             title: "Are you sure to delete?",
             text: "You will not be able to undo this action!",
             icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#187204',
-            cancelButtonColor: '#C2391B',
-            confirmButtonText: "Yes, delete it!",
+            dangerMode: true,
+            buttons: [true, "Yes, delete it!"],
+            // confirmButtonColor: '#187204',
+            // cancelButtonColor: '#C2391B',
         } )
     .then( result => {
-        if (result.value) {
+        if( result ) {
             $("#"+id).remove();
             arrangequestionnumber();
         }
@@ -778,17 +780,17 @@ function deletenewquestion(id) {
     $( ".swal-button-container:first" ).css( "float", "right" );
 }
 function deletequestion( id ) {
-    Swal.fire( {
+    swal( {
         title: "Are you sure to permanently delete?",
         text: "You will not be able to undo this action!",
         icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#187204',
-        cancelButtonColor: '#C2391B',
-        confirmButtonText: "Yes, delete it!",
+		dangerMode: true,
+        buttons: [true, "Yes, delete it!"],
+        // confirmButtonColor: '#187204',
+        // cancelButtonColor: '#C2391B',
     } )
     .then( result => {
-        if (result.value) {
+        if( result ) {
             $.get('discoverydeletenewquestion.php?id='+id)
                 .done( resp => {
                     $("#this_" + id).remove();

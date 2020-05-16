@@ -26,22 +26,21 @@ function verifyEmail()
 	$("#verification_msg").show();
 	setTimeout(function(){ $("#verification_msg").html("")}, 3000);
 }
-function deleteAccountFunction()
-{	
-Swal.fire({
- title: "Are you sure to permanently delete Your Account?",
-  text: "Once deleted, you will not be able to recover account!",
-icon: 'warning',
-showCancelButton: true,
-confirmButtonColor: '#187204',
-cancelButtonColor: '#C2391B',
-confirmButtonText: "Yes, delete it!"
-}).then((result) => {
-if (result.value) {
- window.location.replace("deletemyaccount.php");
-}
-});
-	
+function deleteAccountFunction() {
+	swal({ 
+		title: "Are you sure to permanently delete Your Account?",
+		text: "Once deleted, you will not be able to recover account!",
+		icon: 'warning',
+		dangerMode: true,
+		buttons: [true, "Yes, delete it!"],
+		// confirmButtonColor: '#187204',
+		// cancelButtonColor: '#C2391B',
+	})
+	.then( result => {
+		if (result) {
+			window.location.replace("deletemyaccount.php");
+		}
+	});
 }
 
 function barnoFunction(id)
