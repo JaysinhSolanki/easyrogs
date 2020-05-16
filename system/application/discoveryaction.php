@@ -201,11 +201,11 @@ if( $id ) {
 	}
 	if( $form_id == 4 ) {
 		$fields[]	= "in_conjunction";
-		$values[]	= $in_conjunction;
+		$values[]	= $in_conjunction ?: 0;
 		$fields[]	= "conjunction_setnumber";
-		$values[]	= $conjunction_setnumber;
+		$values[]	= $conjunction_setnumber ?: 0;
 		$fields[]	= "interogatory_type";
-		$values[]	= $interogatory_type;
+		$values[]	= $interogatory_type ?: 0;
 	}
 	if( !in_array($form_id,array(1,2)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
 		$fields[]	= "discovery_instrunctions";
@@ -273,11 +273,11 @@ else {
 	}
 	if( $form_id == 4 ) {
 		$fields[]	= "in_conjunction";
-		$values[]	= $in_conjunction;
+		$values[]	= $in_conjunction ?: 0;
 		$fields[]	= "conjunction_setnumber";
-		$values[]	= $conjunction_setnumber;
+		$values[]	= $conjunction_setnumber ?: 0;
 		$fields[]	= "interogatory_type";
-		$values[]	= $interogatory_type;
+		$values[]	= $interogatory_type ?: 0;
 	}
 	if( !in_array($form_id,array(1,2)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
 		$fields[]	= "discovery_instrunctions";
@@ -325,7 +325,7 @@ if( in_array($form_id,array(4,3)) ) {
 
 if( !empty($new_questions) && @count($new_questions) ) {
 	foreach( $new_questions  as $key=>$thisrow ) {
-		if( $id>0 ) {
+		if( $id ) {
 			if( $question_titles[$key] != '') {
 				if( $new_questions[$key] > 0 && $supp != 1 ) {
 					$fields	= array('question_title','question_number');

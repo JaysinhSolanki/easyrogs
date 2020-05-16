@@ -9,11 +9,7 @@ setcookie("rememberme",'', time()-3600);
 @session_destroy();
 
 require_once("../bootstrap.php");
-require_once("../includes/classes/AdminDAO.php");
-$AdminDAO	=	new AdminDAO();	
-//include_once("../includes/classes/filter.php");	
 include_once("../includes/classes/login.class.php");
-include_once("../includes/classes/error.php");
 require_once("head.php");
 /********************* Load Countries **************************/
 

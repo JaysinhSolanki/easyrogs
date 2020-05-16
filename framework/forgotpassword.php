@@ -2,11 +2,8 @@
 //ob_start();
 @session_start();
 require_once("../system/bootstrap.php"); 
-include_once($_SESSION['library_path']."classes/AdminDAO.php");	 
 include_once($_SESSION['library_path']."classes/functions.php");	 
 include_once($_SESSION['library_path']."classes/login.class.php"); 
-include_once($_SESSION['library_path']."classes/error.php");
-include_once($_SESSION['library_path']."helper.php");
 
 
 if(isset($_SESSION['addressbookid']) && $_SESSION['addressbookid']>0)

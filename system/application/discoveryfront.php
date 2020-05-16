@@ -2,7 +2,6 @@
 @session_start();
 require_once("../bootstrap.php");
 include_once("../library/classes/login.class.php");
-include_once("../library/classes/error.php");
 require_once(FRAMEWORK_PATH."head.php");
 include_once("../library/classes/functions.php");
 header('Content-Type: text/html; charset=UTF-8');

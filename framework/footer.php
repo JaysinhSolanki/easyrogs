@@ -20,14 +20,14 @@ require_once("{$_SESSION['framework_path']}faq_modal.php");
 	}
 </style>
 <script>
-  function checksession() {
+  function checksession() { 
 	  $.post( "<?php echo $_SESSION['framework_url'] ?>checksession.php", data => {
 		   if(data == 'loggedout') {
 			 setTimeout(function(){ window.location.href = "<?php echo $_SESSION['framework_url'] ?>signout.php";}, 1000);
 		   }
 	  } );
   }
-  window.setInterval( _ => checksession(), 10000 );
+  window.setInterval( _ => checksession(), <?= $_ENV['APP_ENV'] == 'local' ? 3600000 : 10000 ?> );
 </script>
 </body>
 </html>
