@@ -54,7 +54,7 @@ function getclientname($id)
 }
 function getNameFromAddressbook($id)
 {
-	global $AdminDAO;
+	global $AdminDAO, $usersModel;
 	$data = $AdminDAO->getrows('system_addressbook',"*","pkaddressbookid= :id",array('id'=>$id));
 	return $usersModel->getFullName($data[0]);
 }
