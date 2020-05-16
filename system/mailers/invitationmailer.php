@@ -49,6 +49,7 @@
 
       $invitation = $invitationsModel->create($invitee['pkaddressbookid']);
       $smarty->assign([
+        'ASSETS_URL'  => ASSETS_URL,
         'name'        => User::getFullName($invitee),
         'senderName'  => User::getFullName($sender),
         'senderEmail' => $sender['email'],

@@ -80,6 +80,7 @@
       }
 
       $smarty->assign([
+        'ASSETS_URL'     => ASSETS_URL,
         'requestorName'  => User::getFullName($requestor),
         'actionUserName' => $actionUser ? User::getFullName($actionUser) : 'a team member',
         'caseName'       => $side['case_title']
@@ -117,6 +118,7 @@
       }
 
       $smarty->assign([
+        'ASSETS_URL'     => ASSETS_URL,
         'requestorName'  => User::getFullName($requestor),
         'actionUserName' => $actionUser ? User::getFullName($actionUser) : 'a team member',
         'caseName'       => $side['case_title']

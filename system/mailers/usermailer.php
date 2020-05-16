@@ -34,7 +34,10 @@
         return $logger->error("USER_MAILER_VERIFICATION_CODE Wrong arguments. Email: $email, code: $code");
       }
 
-      $smarty->assign('code', $code);
+      $smarty->assign( [
+        'ASSETS_URL' => ASSETS_URL,
+        'code'       => $code 
+      ] );
       
       $body    = $smarty->fetch('emails/verification-code.tpl');
       $subject = self::VERIFICATION_CODE_SUBJECT;
