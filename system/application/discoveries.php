@@ -222,7 +222,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									<?= $discovery['creator'] ?>
 									</td> 
                                     <td>
-										<?=  ($discoveryType == Discover::TYPE_EXTERNAL) ? "EasyRogs" : "Other" ?>
+										<?=  ($discoveryType == Discovery::TYPE_EXTERNAL) ? "EasyRogs" : "Other" ?>
                                     </td>
 									<td align="center">
 										<div class="dropdown">
