@@ -962,27 +962,24 @@ if ($question_admit_id == 1) {
   <div class="modal-dialog" role="document" style="width:450px !important">
     <div class="modal-content" style="width: 586px">
         <div class="modal-body" id="loadmodalcontent">
-        <div class="swal-icon swal-icon--warning">
-        <span class="swal-icon--warning__body">
-          <span class="swal-icon--warning__dot"></span> 
-        </span>
+            <div class="swal-icon swal-icon--warning">
+                <span class="swal-icon--warning__body"><span class="swal-icon--warning__dot"></span></span>
+            </div>
+            <div class="swal-title" style="font-size:18px">Responses aren't verified.</div>
+            <form id="deleteform" name="deleteform">
+                <div class="swal-footer">
+                    <div class="swal-button-container">
+                        <button class="swal-button swal-button--confirm swal-button--success btn-success" type="button" onclick="callemailclientmodal()" ><i class="fa fa-user "></i> Ask Client to Verify </button>
+                    </div>
+                    <div class="swal-button-container">
+                        <button class="swal-button swal-button--confirm swal-button--info" type="button" onclick="callFinalDraftModal('<?= $_GET['id'] ?>','<?= $discovery_verification ?>','<?= $response_id ?>')" ><i class="fa fa-share"></i> Serve Anyway </button>
+                    </div>
+                    <div class="swal-button-container">
+                        <button class="swal-button swal-button--danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="swal-title" style="font-size:18px">Responses aren't verified.</div>
-        <form id="deleteform" name="deleteform">
-        <div class="swal-footer">
-        <div class="swal-button-container">
-        <button class="swal-button swal-button--confirm swal-button--success btn-success" type="button" onclick="callemailclientmodal()" ><i class="fa fa-user "></i> Ask Client to Verify</button>
-        </div>
-        <div class="swal-button-container">
-        <button class="swal-button swal-button--confirm swal-button--info" type="button" onclick="callFinalDraftModal('<?php echo $_GET['id']?>','<?php echo $discovery_verification ?>','<?php echo $response_id ?>')" ><i class="fa fa-share"></i> Serve anyway</button>
-        </div>
-        <div class="swal-button-container">
-        <button class="swal-button swal-button--danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
-        </div>
-        </div>
-          
-        </form>
-      </div>
     </div>
   </div>
 </div>

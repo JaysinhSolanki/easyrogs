@@ -36,8 +36,9 @@ table.dataTable.no-footer {
 {
 	font-size:24px !important
 }
-.swal-button--confirm { color: white; background-color: #187204 !important; }
-.swal-button--cancel { color: white; background-color: #C2391B !important; }
+.swal-button--confirm { color: white; background-color: #187204; }
+.swal-button--cancel { color: white; background-color: #C2391B; }
+.swal-button--info { color: white; background-color: #4ea5e0; } /* 💣 this must follow the previous .swal-button--* */
 
 .btn-success
 {
