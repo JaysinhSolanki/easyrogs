@@ -100,10 +100,12 @@
         'setNumber'     => $discovery['set_number']
       ]);
       $subject = sprintf(self::CLIENT_RESPONDED_SUBJECT, $side['case_title']);
-      $body    = $smarty->fetch('emails/discovery-client-responded.tpl');
 
       $users = $sidesModel->getUsers($side['id']);
       foreach($users as $user) {
+        $smarty->assign('name', User::getFullName($user));
+        $body    = $smarty->fetch('emails/discovery-client-responded.tpl');
+        
         $client['client_email']
           ? self::sendEmail($user['email'], $subject, $body, $client['client_name'], $client['client_email'])
           : self::sendEmail($user['email'], $subject, $body);
