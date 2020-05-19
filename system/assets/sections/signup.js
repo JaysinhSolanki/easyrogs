@@ -15,7 +15,17 @@ function verifyEmail()
 		{
 			if(data == "success")
 			{
-				$("#verification_msg").html("Verification code has been sent to you on your email.");
+				toastr.info(
+					`A verification code has been sent to ${email}. Please copy and paste it below.`,
+					'Check your inbox!',
+					{
+						closeButton: true,
+						timeOut: 0,
+						extendedTimeOut: 0
+					}
+				);
+				$('#verification-code-input').css('visibility', 'visible');
+				$('#verification_code').focus();
 			}
 			else
 			{

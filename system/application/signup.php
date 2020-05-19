@@ -186,8 +186,14 @@ $newsignup = 1;
                 
                 <br/>
                 <div class="row">
-                  <div class="col-md-5"></div>
+                <div class="col-md-2">
+                    <label>Password</label>
+                  </div>
                   <div class="col-md-3" style="display:flex">
+                    <input type="password" value="" id="password" class="form-control" name="password" placeholder="Password" />
+                    <span style="color: red;">*</span>
+                  </div>
+                  <div class="col-md-3" style="visibility:hidden;display:flex" id="verification-code-input">
                     <input type="text" value="" id="verification_code" class="form-control" name="verification_code"  placeholder="Enter verification code" />
                     <span style="color: red;">*</span>
                   </div>
@@ -199,13 +205,6 @@ $newsignup = 1;
                 <br/>
                 <div class="row">
                   <div class="col-md-2">
-                    <label>Password</label>
-                  </div>
-                  <div class="col-md-3" style="display:flex">
-                    <input type="password" value="" id="password" class="form-control" name="password" placeholder="Password" />
-                    <span style="color: red;">*</span>
-                  </div>
-                  <div class="col-md-3">
                     <label>Confirm Password</label>
                   </div>
                   <div class="col-md-3" style="display:flex">
