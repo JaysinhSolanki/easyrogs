@@ -1255,7 +1255,7 @@ function serveaction(actiontype,discover_id) //actiontype:1 => Email Client, act
     
     if(error == 0)
     {
-        $.post( "messagetoclientforverification.php", { discover_id: discover_id,actiontype:actiontype/*,message_to_client:message_to_client*/ }).done(function( data ) 
+        $.post( "messagetoclientforverification.php", { discovery_id: discover_id,actiontype:actiontype/*,message_to_client:message_to_client*/ }).done(function( data ) 
         {
             response(data);
             /*if(data == 'success')
