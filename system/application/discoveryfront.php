@@ -6,8 +6,8 @@ require_once(FRAMEWORK_PATH."head.php");
 include_once("../library/classes/functions.php");
 header('Content-Type: text/html; charset=UTF-8');
 
-$uid	= $_GET['uid'];
-$view	= $_GET['view'];
+$uid  = $_GET['uid'];
+$view = $_GET['view'];
 if( $view == 1) {
 	$css = "disabled";
 }
@@ -18,7 +18,7 @@ else {
 /***************************************
 		Query For Header Data
 ****************************************/
-$discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook a,forms f',
+$discoveryDetails	= $AdminDAO->getrows('discoveries d,cases c,system_addressbook a,forms f',
 											'c.case_title 	as case_title,
 											c.case_number 	as case_number,
 											c.jurisdiction 	as jurisdiction,
@@ -45,7 +45,7 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
 											',
 											/*(d.responding_uid 			= :uid OR d.propounding_uid = :uid) AND */
 											"
-											d.uid			=	'$uid' AND
+											d.uid			= '$uid' AND
 											d.case_id 		= c.id AND
 											d.form_id		= f.id AND
 											d.attorney_id 	= a.pkaddressbookid",
@@ -60,47 +60,47 @@ Side::legacyTranslateCaseData(
 	$discovery_data['attorney_id'] // !! will use this attorney's side data
 );
 
-$case_title			=	$discovery_data['case_title'];
-$discovery_id		=	$discovery_data['discovery_id'];
-$discovery_uid		=	$discovery_data['uid'];
-$case_number		=	$discovery_data['case_number'];
-$jurisdiction		=	$discovery_data['jurisdiction'];
-$judge_name			=	$discovery_data['judge_name'];
-$county_name		=	$discovery_data['county_name'];
-$court_address		=	$discovery_data['court_address'];
-$department			=	$discovery_data['department'];
-$case_id			=	$discovery_data['case_id'];
-$form_id			=	$discovery_data['form_id'];
-$set_number			=	$discovery_data['set_number'];
-$attorney_name		=	$discovery_data['atorny_fname']." ".$discovery_data['atorny_lname'];
-$attorney_id		=	$discovery_data['attorney_id'];
-$form_name			=	$discovery_data['form_name'];
-$short_form_name	=	$discovery_data['short_form_name'];
+$case_title			= $discovery_data['case_title'];
+$discovery_id		= $discovery_data['discovery_id'];
+$discovery_uid		= $discovery_data['uid'];
+$case_number		= $discovery_data['case_number'];
+$jurisdiction		= $discovery_data['jurisdiction'];
+$judge_name			= $discovery_data['judge_name'];
+$county_name		= $discovery_data['county_name'];
+$court_address		= $discovery_data['court_address'];
+$department			= $discovery_data['department'];
+$case_id			= $discovery_data['case_id'];
+$form_id			= $discovery_data['form_id'];
+$set_number			= $discovery_data['set_number'];
+$attorney_name		= $discovery_data['atorny_fname']." ".$discovery_data['atorny_lname'];
+$attorney_id		= $discovery_data['attorney_id'];
+$form_name			= $discovery_data['form_name'];
+$short_form_name	= $discovery_data['short_form_name'];
 
-$email				=	$discovery_data['email'];
-$instructions		=	$discovery_data['discovery_instructions'];
-$introduction		=	$discovery_data['introduction'];
-$responding			=	$discovery_data['responding'];
-$type				=	$discovery_data['type'];
-$discovery_name		=	$discovery_data['discovery_name'];
+$email				= $discovery_data['email'];
+$instructions		= $discovery_data['discovery_instructions'];
+$introduction		= $discovery_data['introduction'];
+$responding			= $discovery_data['responding'];
+$type				= $discovery_data['type'];
+$discovery_name		= $discovery_data['discovery_name'];
 
 
-$getResponses	=	$AdminDAO->getrows('responses',"*","fkdiscoveryid = '$discovery_id' AND isserved = 0 ORDER BY id DESC");
+$getResponses	= $AdminDAO->getrows('responses',"*","fkdiscoveryid = '$discovery_id' AND isserved = 0 ORDER BY id DESC");
 if(!empty($getResponses))
 {
-	$responseData					=	$getResponses[0];
-	$response_id					=	$responseData['id'];
-	$is_submitted					=	$responseData['is_submitted'];
-	$discovery_verification_text	=	$responseData['discovery_verification_text'];
-	$discovery_verification			=	$responseData['discovery_verification'];
-	$verification_state				=	$responseData['verification_state'];
-	$verification_signed_by			=	$responseData['verification_signed_by'];
-	$verification_city				=	$responseData['verification_city'];
-	$discovery_verification_by_name	=	$responseData['verification_by_name'];
-	$verification_by_name			=	$responseData['verification_by_name'];
+	$responseData					= $getResponses[0];
+	$response_id					= $responseData['id'];
+	$is_submitted					= $responseData['is_submitted'];
+	$discovery_verification_text	= $responseData['discovery_verification_text'];
+	$discovery_verification			= $responseData['discovery_verification'];
+	$verification_state				= $responseData['verification_state'];
+	$verification_signed_by			= $responseData['verification_signed_by'];
+	$verification_city				= $responseData['verification_city'];
+	$discovery_verification_by_name	= $responseData['verification_by_name'];
+	$verification_by_name			= $responseData['verification_by_name'];
 }
 else {
-	$response_id	=	0;
+	$response_id	= 0;
 }
 if(! $verification_state) {
 	$verification_state = "California";
@@ -109,12 +109,12 @@ if(! $verification_state) {
 Query For Forms 1,2,3,4,5 Questions
 ****************************************/
 if(in_array($form_id,array(3,4,5))) {
-	$orderByMainQuestions	=	"  ORDER BY CAST(question_number as DECIMAL(10,2)), q.question_number ";
+	$orderByMainQuestions	= "  ORDER BY CAST(question_number as DECIMAL(10,2)), q.question_number ";
 }
 else {
-	$orderByMainQuestions	=	"  ORDER BY display_order, q.id ";
+	$orderByMainQuestions	= "  ORDER BY display_order, q.id ";
 }
-$mainQuestions	=	$AdminDAO->getrows('discovery_questions dq,questions q',
+$mainQuestions	= $AdminDAO->getrows('discovery_questions dq,questions q',
 										'
 										dq.id 				as 	discovery_question_id,
 										q.id 				as 	question_id,
@@ -143,39 +143,38 @@ $mainQuestions	=	$AdminDAO->getrows('discovery_questions dq,questions q',
 										$orderByMainQuestions
 										"
 									  );
-//dump($mainQuestions);
 
 /***************************************
 Query For Sub Questions Use in Form 4
 ****************************************/
-$generalQuestions	=	$AdminDAO->getrows('question_admits',"*");
+$generalQuestions	= $AdminDAO->getrows('question_admits',"*");
 
 
 /****************************************
 	Load Documents Array if Form 3,4,5 case
 ****************************************/
 $_SESSION['documents'][$uid]=array();
-$where	=	"";
+$where	= "";
 if( $form_id == 5 ) {
-	$where	=	" AND fkresponse_id = '$response_id' ";
+	$where	= " AND fkresponse_id = '$response_id' ";
 }
 $olddocuments = $AdminDAO->getrows('documents',"*","discovery_id = '$discovery_id' $where");
 if( sizeof($olddocuments) ) {
 	foreach($olddocuments as $data) {
-		$doc_purpose	=	$data['document_notes'];
-		$doc_name		=	$data['document_file_name'];
-		$doc_path		=	SYSTEMPATH."uploads/documents/".$data['document_file_name'];
+		$doc_purpose	= $data['document_notes'];
+		$doc_name		= $data['document_file_name'];
+		$doc_path		= SYSTEMPATH."uploads/documents/".$data['document_file_name'];
 		if( $doc_name ) {
-			$documents[$uid][]	=	array("doc_name"=>$doc_name,"doc_purpose" => $doc_purpose, "doc_path"=>$doc_path,"status"=>1);
+			$documents[$uid][]	= array("doc_name"=>$doc_name,"doc_purpose" => $doc_purpose, "doc_path"=>$doc_path,"status"=>1);
 		}
 	}
-	$_SESSION['documents']	=	$documents;
+	$_SESSION['documents']	= $documents;
 }
-$respondingdetails		=	getRPDetails($responding);
-$responding_name		=	$respondingdetails['client_name'];
-$responding_email		=	$respondingdetails['client_email'];
-$responding_type		=	$respondingdetails['client_type'];
-$responding_role		=	$respondingdetails['client_role'];
+$respondingdetails		= getRPDetails($responding);
+$responding_name		= $respondingdetails['client_name'];
+$responding_email		= $respondingdetails['client_email'];
+$responding_type		= $respondingdetails['client_type'];
+$responding_role		= $respondingdetails['client_role'];
 
 if( !$verification_signed_by ) {
 	$verification_signed_by	= $responding_name;
@@ -225,24 +224,23 @@ textarea#answer {
             </div>
             <div class="hpanel">
                 <div class="panel-body">
-
                 		<table class="table table-bordered table-hover table-striped">
-                              <tbody>
-                              	 <tr>
-                                  <th>Case</th>
-                                  <td><?= $case_title ?></td>
-                                  <th>Number</th>
-                                  <td><?= $case_number ?></td>
-                                </tr>
-                                 <tr>
-                                 <th>County</th>
-                                  <td><?= $county_name ?></td>
-                                  <th>State</th>
-                                  <td><?= $jurisdiction ?></td>
+						<tbody>
+							<tr>
+								<th>Case</th>
+								<td><?= $case_title ?></td>
+								<th>Number</th>
+								<td><?= $case_number ?></td>
+							</tr>
+							<tr>
+								<th>County</th>
+								<td><?= $county_name ?></td>
+								<th>State</th>
+								<td><?= $jurisdiction ?></td>
+							</tr>
+						</tbody>
+						</table>
 
-                                </tr>
-                              </tbody>
-                            </table>
                         <form name="discoverydetailsform" action="#" method="post" id="discoverydetailsform">
                         <input type="hidden" name="case_id" value="<?= $case_id ?>">
                         <input type="hidden" name="form_id" value="<?= $form_id ?>">
@@ -264,88 +262,94 @@ textarea#answer {
                         	<div class="col-md-12">
                             	<ul class="list-group">
 <?php
-										if( in_array($form_id,array(1,2)) ) {
+										if( in_array( $form_id, array(1,2) ) ) {
 											foreach($mainQuestions as $data) {
-												$dependent_answer		=	"";
-												$question_id 			=	$data['question_id'];
-												$question_type_id 		=	$data['question_type_id'];
-												$have_main_question	 	=	$data['have_main_question'];
-												$p_q_type_id 			=	$data['question_type_id'];
-												$question_title 		=	$data['question_title'];
-												$question_number 		=	$data['question_number'];
-												$sub_part 				=	$data['sub_part'];
-												$p_sub_part 			=	$data['sub_part'];
-												$is_pre_defined 		=	$data['is_pre_defined'];
-												$discovery_question_id	=	$data['discovery_question_id'];
-												$is_depended_parent		=	$data['is_depended_parent'];
-												$depends_on_question	=	$data['depends_on_question'];
-												$has_extra_text			=	$data['has_extra_text'];
-												$extra_text				=	$data['extra_text'];
-												$extra_text_field_label	=	$data['extra_text_field_label'];
+												$dependent_answer		= "";
+												$question_id 			= $data['question_id'];
+												$question_type_id 		= $data['question_type_id'];
+												$have_main_question	 	= $data['have_main_question'];
+												$p_q_type_id 			= $data['question_type_id'];
+												$question_title 		= $data['question_title'];
+												$question_number 		= $data['question_number'];
+												$sub_part 				= $data['sub_part'];
+												$p_sub_part 			= $data['sub_part'];
+												$is_pre_defined 		= $data['is_pre_defined'];
+												$discovery_question_id	= $data['discovery_question_id'];
+												$is_depended_parent		= $data['is_depended_parent'];
+												$depends_on_question	= $data['depends_on_question'];
+												$has_extra_text			= $data['has_extra_text'];
+												$extra_text				= $data['extra_text'];
+												$extra_text_field_label	= $data['extra_text_field_label'];
 												if( $response_id ) {
 													$getAnswers = $AdminDAO->getrows("response_questions","*",
-																						"fkresponse_id				=	:fkresponse_id AND
+																						"fkresponse_id				= :fkresponse_id AND
 																						fkdiscovery_question_id 	= 	:discovery_question_id",
 																						array(	"discovery_question_id"	=>	$discovery_question_id,
 																								"fkresponse_id"			=>	$response_id));
-													$answer 				=	$getAnswers[0]['answer'];
-													$answer_time 			=	$getAnswers[0]['answer_time'];
+													$answer 				= $getAnswers[0]['answer'];
+													$answer_time 			= $getAnswers[0]['answer_time'];
 												}
 												else {
-													$answer 				=	"";
-													$answer_time 			=	"";
+													$answer 				= "";
+													$answer_time 			= "";
 												}
 												/**
-												* IF Depaends on some question then we need that question answer
+												* IF depends on some question then we need that question answer
 												**/
-												if($depends_on_question && $response_id) {
-													$dependent_answer	=	getAnswerOfDependentParentQuestion($discovery_id,$depends_on_question,$response_id);
+												if( $depends_on_question && $response_id ) {
+													$dependent_answer = getAnswerOfDependentParentQuestion( $discovery_id, $depends_on_question, $response_id );
 												}
 ?>
-												<li <?php if($depends_on_question != 0) {?>class="list-group-item row_<?= $depends_on_question; ?>" <?php if($dependent_answer == 'No' || $dependent_answer == ''){ ?>style='display:none;' <?php } }else {?> class="list-group-item"  <?php } ?>>
+												<li class='list-group-item <?= 
+														!$depends_on_question 
+															? "'" 
+															: "row_<?= $depends_on_question ?>' " .( ( $dependent_answer == 'No' || $dependent_answer == '' ) ? "style='display:none;'" : '' ) 
+													?>>
 <?php
-													if($question_type_id != 1) {
-														$subQuestions	=	$AdminDAO->getrows('discovery_questions dq,questions q',
+												if( $question_type_id != 1 ) {
+														$subQuestions	= $AdminDAO->getrows( 'discovery_questions dq, questions q',
 
-																							'
-																							dq.id as discovery_question_id,
-																							q.id as question_id,
-																							q.question_type_id as question_type_id,
-																							q.form_id as form_id,
-																							q.question_title as question_title,
-																							q.question_number as question_number,
-																							q.sub_part as sub_part,
-																							q.is_pre_defined as is_pre_defined,
-																							have_main_question',
+																					'dq.id as discovery_question_id,
+																					q.id as question_id,
+																					q.question_type_id as question_type_id,
+																					q.form_id as form_id,
+																					q.question_title as question_title,
+																					q.question_number as question_number,
+																					q.sub_part as sub_part,
+																					q.is_pre_defined as is_pre_defined,
+																					have_main_question',
 
-																				"q.question_number 	= 	'$question_number' AND
-																				q.id 				= 	 dq.question_id  AND
-																				dq.discovery_id 	= 	:discovery_id AND
-																				q.sub_part 			!=   '' GROUP BY question_id ORDER BY display_order ",
-																				array(":discovery_id"=>$discovery_id));
-													}
+																					"q.question_number 	= 	'$question_number' AND
+																					q.id 				= 	 dq.question_id  AND
+																					dq.discovery_id 	= 	:discovery_id AND
+																					q.sub_part 			!=   '' 
+																					GROUP BY question_id 
+																					ORDER BY display_order ",
+
+																					array( ":discovery_id" => $discovery_id ) 
+																			);
+												}
 ?>
-													<div class="form-group">
-														<p>
-															<b>Q No. <?= $question_number ?> <?= !$have_main_question ?"&nbsp;($sub_part)" : "" ?>: </b>
+												<div class="form-group">
+													<p>
+														<b>Q No. <?= $question_number ?> <?= !$have_main_question ? "&nbsp;($sub_part)" : "" ?>: </b>
 <?php
 															echo $question_title;
 															if( $has_extra_text ) {
 																echo "<p><b>$extra_text_field_label: </b>$extra_text</p>";
 															}
 															if( ($question_number == "17.1" || $question_number == "217.1") ) {
-																foreach($subQuestions as $data) {
+																foreach( $subQuestions as $data ) {
 																	echo  ". (".$data['sub_part'].") ". $data['question_title'];
 																}
 															}
 ?>
-														</p>
+													</p>
 <?php
-															if(($question_number == "17.1" || $question_number == "217.1")) {
-
+															if( ($question_number == "17.1" || $question_number == "217.1") ) {
 															}
-															else if($view != 1) {
-																if($question_type_id == 1) {
+															else if( $view != 1 ) {
+																if( $question_type_id == 1 ) {
 ?>
 																	<input type="hidden" name="have_main_question[<?= $discovery_question_id; ?>]" value="<?= $have_main_question?>"/>
 																	<textarea id="answer<?= $discovery_question_id ?>" class="form-control" name="answer[<?= $discovery_question_id; ?>]" placeholder="Your Answer" required <?= $css ?>><?= 
@@ -353,8 +357,8 @@ textarea#answer {
 																	?></textarea>
 <?php
 																}
-																else if($question_type_id == 2) {
-																	$question_no_makeid	=	str_replace('.','_',$question_number);
+																else if( $question_type_id == 2 ) {
+																	$question_no_makeid	= str_replace('.','_',$question_number);
 ?>
 																		<div class="form-check form-check-inline">
 																			<label class="radio-inline"><input type="radio" name="answer[<?= $discovery_question_id ?>]" value="Yes" onClick="checkFunction('<?= $question_no_makeid ?>','1')<?php if($is_depended_parent ==1 ){ ?>,showhidequestions('<?= $question_id ?> ',1)<?php }?>" <?php if($answer == 'Yes'){echo "checked";} ?> <?= $css ?>>Yes</label>
@@ -362,39 +366,36 @@ textarea#answer {
 																		</div>
 <?php
 																}
-																if($question_type_id != 1) {
+																if( $question_type_id != 1 ) {
 ?>
-																	<ul class="list-group" id="subdiv<?= $question_no_makeid ?> " <?php if($question_type_id == 2 && $answer != "Yes"){ ?>style="display:none" 
-<?php } //TODO Fix mess
-?>>
+																	<ul class="list-group" id="subdiv<?= $question_no_makeid ?>" <?= ( $question_type_id == 2 && $answer != "Yes" ) ? 'style="display:none"' : '' ?>
 <?php
-
-																		foreach($subQuestions as $data) {
-																			$question_id 			=	$data['question_id'];
-																			$question_type_id 		=	$data['question_type_id'];
-																			$form_id 				=	$data['form_id'];
-																			$question_title 		=	$data['question_title'];
-																			$question_number 		=	$data['question_number'];
-																			$sub_part 				=	$data['sub_part'];
-																			$is_pre_defined 		=	$data['is_pre_defined'];
-																			$discovery_question_id	=	$data['discovery_question_id'];
-																			$have_main_question		=	$data['have_main_question'];
+																		foreach( $subQuestions as $data ) {
+																			$question_id 			= $data['question_id'];
+																			$question_type_id 		= $data['question_type_id'];
+																			$form_id 				= $data['form_id'];
+																			$question_title 		= $data['question_title'];
+																			$question_number 		= $data['question_number'];
+																			$sub_part 				= $data['sub_part'];
+																			$is_pre_defined 		= $data['is_pre_defined'];
+																			$discovery_question_id	= $data['discovery_question_id'];
+																			$have_main_question		= $data['have_main_question'];
 																			if( $response_id ) {
-																				$getAnswers				=	$AdminDAO->getrows("response_questions","*",
-																												"fkresponse_id				=	:fkresponse_id AND
-																												fkdiscovery_question_id 	= 	:discovery_question_id",
-																												array(	"discovery_question_id"	=>	$discovery_question_id,
-																														"fkresponse_id"			=>	$response_id));
-																				$answer1 				=	$getAnswers[0]['answer'];
-																				$answer_time 			=	$getAnswers[0]['answer_time'];
+																				$getAnswers			= $AdminDAO->getrows( "response_questions", "*",
+																												"fkresponse_id			= :fkresponse_id AND
+																												fkdiscovery_question_id = :discovery_question_id",
+																												array(	"discovery_question_id"	=> $discovery_question_id,
+																														"fkresponse_id"			=> $response_id ) 
+																											);
+																				$answer1 			= $getAnswers[0]['answer'];
+																				$answer_time		= $getAnswers[0]['answer_time'];
 																			}
-																			else
-																			{
-																				$answer1 				=	"";
-																				$answer_time 			=	"";
+																			else {
+																				$answer1 				= "";
+																				$answer_time 			= "";
 																			}
 ?>
-																		 <li class="list-group-item">
+																		<li class="list-group-item">
 																			<div class="form-group">
 																				<p>
 																					<b><?= $sub_part ?>) </b>
@@ -406,7 +407,7 @@ textarea#answer {
 																						name="answer[<?= $discovery_question_id; ?>]"
 																						placeholder="Your Answer" required
 																						<?= $css ?>
-																						<?php if(($answer == "No" || $answer == "") && $p_q_type_id != 3){ ?> disabled <?php } ?>><?= 
+																						<?= (($answer == "No" || $answer == "") && $p_q_type_id != 3) ? "disabled" : "" ?>><?= 
 																					htmlentities($answer1) 
 																				?></textarea>
 																			</div>
@@ -429,28 +430,28 @@ textarea#answer {
 ?>
 												<li class="list-group-item">
 <?php
-													$question_id 			=	$data['question_id'];
-													$question_type_id 		=	$data['question_type_id'];
-													$question_title 		=	$data['question_title'];
-													$question_number 		=	$data['question_number'];
-													$sub_part 				=	$data['sub_part'];
-													$is_pre_defined 		=	$data['is_pre_defined'];
-													$discovery_question_id	=	$data['discovery_question_id'];
+													$question_id 			= $data['question_id'];
+													$question_type_id 		= $data['question_type_id'];
+													$question_title 		= $data['question_title'];
+													$question_number 		= $data['question_number'];
+													$sub_part 				= $data['sub_part'];
+													$is_pre_defined 		= $data['is_pre_defined'];
+													$discovery_question_id	= $data['discovery_question_id'];
 													if($response_id > 0) {
-														$getAnswers				=	$AdminDAO->getrows("response_questions","*",
-																						"fkresponse_id				=	:fkresponse_id AND
+														$getAnswers				= $AdminDAO->getrows("response_questions","*",
+																						"fkresponse_id				= :fkresponse_id AND
 																						fkdiscovery_question_id 	= 	:discovery_question_id",
 																						array(	"discovery_question_id"	=>	$discovery_question_id,
 																								"fkresponse_id"			=>	$response_id));
-														$answer 				=	$getAnswers[0]['answer'];
-														$answer_time 			=	$getAnswers[0]['answer_time'];
-														$answer_detail 			=	$getAnswers[0]['answer_detail'];
+														$answer 				= $getAnswers[0]['answer'];
+														$answer_time 			= $getAnswers[0]['answer_time'];
+														$answer_detail 			= $getAnswers[0]['answer_detail'];
 													}
 													else
 													{
-														$answer 				=	"";
-														$answer_time 			=	"";
-														$answer_detail 			=	"";
+														$answer 				= "";
+														$answer_time 			= "";
+														$answer_detail 			= "";
 													}
 													?>
 													<div class="form-group">
@@ -458,31 +459,27 @@ textarea#answer {
 															<b>Q No. <?= $question_number ?>: </b>
 															<?= $question_title; ?>
 														</p>
-                                                        <?php
-														if($view != 1)
-														{
-														?>
+<?php
+													if( $view != 1 ) {
+?>
                                                         <div class="form-check form-check-inline">
                                                             <label class="radio-inline"><input type="radio" name="answer[<?= $discovery_question_id ?>]" value="Admit" onClick="checkFunction('<?= $discovery_question_id ?>','2')" <?php if($answer == 'Admit'){echo "checked";} ?> <?= $css ?>>Admit</label>
                                                             <label class="radio-inline"><input type="radio" name="answer[<?= $discovery_question_id ?>]" value="Deny" onClick="checkFunction('<?= $discovery_question_id ?>','1')" <?php if($answer == 'Deny'){echo "checked";} ?> <?= $css ?>>Deny</label>
                                                         </div>
-                                                    	<ul class="list-group" id="subdiv<?= $discovery_question_id ?> " <?php if($answer == "Admit" || $answer == ""){ ?>style="display:none" <?php } ?>>
-                                                        <?php
-														foreach($generalQuestions as $generalQuestion)
-														{
-															$question_admit_id	=	$generalQuestion['id'];
-															$subQuestionAnswers	=	$AdminDAO->getrows('question_admit_results',"*",":discovery_question_id = discovery_question_id AND :question_admit_id = question_admit_id AND fkresponse_id = :fkresponse_id",array("discovery_question_id" => $discovery_question_id, "question_admit_id" => $question_admit_id,"fkresponse_id" => $response_id));
-															$subQuestionAnswer	=	$subQuestionAnswers[0];
+                                                    	<ul class="list-group" id="subdiv<?= $discovery_question_id ?>" <?php if($answer == "Admit" || $answer == ""){ ?>style="display:none" <?php } ?>>
+<?php
+														foreach($generalQuestions as $generalQuestion) {
+															$question_admit_id	= $generalQuestion['id'];
+															$subQuestionAnswers	= $AdminDAO->getrows('question_admit_results',"*",":discovery_question_id = discovery_question_id AND :question_admit_id = question_admit_id AND fkresponse_id = :fkresponse_id",array("discovery_question_id" => $discovery_question_id, "question_admit_id" => $question_admit_id,"fkresponse_id" => $response_id));
+															$subQuestionAnswer	= $subQuestionAnswers[0];
 
-															if($question_admit_id == 1)
-															{
-																$sub_answer_show	=	$question_number;
+															if($question_admit_id == 1) {
+																$sub_answer_show	= $question_number;
 															}
-															else
-															{
-																$sub_answer_show	=	htmlentities($subQuestionAnswer['sub_answer']);
+															else {
+																$sub_answer_show	= htmlentities($subQuestionAnswer['sub_answer']);
 															}
-														?>
+?>
                                                         <li class="list-group-item">
                                                         <div class="form-group">
                                                             <p>
@@ -494,82 +491,74 @@ textarea#answer {
 															?></textarea>
                                                         </div>
                                                         </li>
-                                                        <?php
-														}
-														?>
+<?php
+													}
+?>
                                                     </ul>
-                                                    	<?php
-														}
-														?>
+<?php
+												}
+?>
                                                     </div>
 												</li>
-												<?php
+<?php
 											}
 										}
-										else if(in_array($form_id,array(3,5)))
-										{
-											foreach($mainQuestions as $data)
-											{
-												?>
+										else if( in_array( $form_id, array(3,5)) ) {
+											foreach( $mainQuestions as $data ) {
+?>
 												<li class="list-group-item">
-													<?php
-													$question_id 		=	$data['question_id'];
-													$question_type_id 	=	$data['question_type_id'];
-													$question_title 	=	$data['question_title'];
-													$question_number 	=	$data['question_number'];
-													$sub_part 			=	$data['sub_part'];
-													$is_pre_defined 	=	$data['is_pre_defined'];
-													$discovery_question_id	=	$data['discovery_question_id'];
-													if($response_id > 0)
-													{
-														$getAnswers				=	$AdminDAO->getrows("response_questions","*",
-																							"fkresponse_id				=	:fkresponse_id AND
+<?php
+													$question_id 		= $data['question_id'];
+													$question_type_id 	= $data['question_type_id'];
+													$question_title 	= $data['question_title'];
+													$question_number 	= $data['question_number'];
+													$sub_part 			= $data['sub_part'];
+													$is_pre_defined 	= $data['is_pre_defined'];
+													$discovery_question_id	= $data['discovery_question_id'];
+													if( $response_id > 0 ) {
+														$getAnswers				= $AdminDAO->getrows("response_questions","*",
+																							"fkresponse_id				= :fkresponse_id AND
 																							fkdiscovery_question_id 	= 	:discovery_question_id",
 																							array(	"discovery_question_id"	=>	$discovery_question_id,
 																									"fkresponse_id"			=>	$response_id));
-														$answer 				=	$getAnswers[0]['answer'];
-														$answer_time 			=	$getAnswers[0]['answer_time'];
-														$answer_detail 			=	$getAnswers[0]['answer_detail'];
+														$answer 				= $getAnswers[0]['answer'];
+														$answer_time 			= $getAnswers[0]['answer_time'];
+														$answer_detail 			= $getAnswers[0]['answer_detail'];
 													}
-													else
-													{
-														$answer 				=	"";
-														$answer_time 			=	"";
-														$answer_detail 			=	"";
+													else {
+														$answer 				= "";
+														$answer_time 			= "";
+														$answer_detail 			= "";
 													}
-													?>
+?>
 													<div class="form-group">
 														<p>
 															<b>Q No. <?= $question_number ?>: </b>
 															<?= $question_title; ?>
 														</p>
-                                                        <?php
-														if($view != 1)
-														{
-															if($form_id == 5)
-															{
-															?>
-                                                                <select class="form-control" id="answer<?= $discovery_question_id; ?>"  name="answer[<?= $discovery_question_id; ?>]" onChange="checkFunctionForm5('<?= $discovery_question_id; ?>',this.value)" <?= $css ?>>
+<?php
+														if( $view != 1 ) {
+															if( $form_id == 5 ) {
+?>
+                                                                <select class="form-control" id="answer<?= $discovery_question_id; ?>"  name="answer[<?= $discovery_question_id; ?>]" onChange="checkFunctionForm5('<?= $discovery_question_id ?>',this.value)" <?= $css ?>>
                                                                 <option <?php if($answer == "Select Your Response") echo "selected"; ?>>Select Your Response</option>
                                                                 <option <?php if($answer == "I have responsive documents") echo "selected"; ?>>I have responsive documents</option>
                                                                 <option <?php if($answer == "Responsive documents have never existed") echo "selected"; ?>>Responsive documents have never existed</option>
                                                                 <option <?php if($answer == "Responsive documents were destroyed") echo "selected"; ?>>Responsive documents were destroyed</option>
                                                                 <option <?php if($answer == "Responsive documents were lost, misplaced, stolen, or I lack access to them") echo "selected"; ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
                                                                 </select>
-															<?php
+<?php
 															}
-															else if($form_id == 3)
-															{
-															?>
+															else if( $form_id == 3 ) {
+?>
 																<textarea id="answer<?= $discovery_question_id ?>" class="form-control " name="answer[<?= $discovery_question_id; ?>]" placeholder="Your Answer" required <?= $css ?>><?= 
 																	htmlentities($answer) 
 																?></textarea>
-															<?php
+<?php
 															}
-															if($form_id == 5)
-															{
-															?>
-																<ul class="list-group" id="note<?= $discovery_question_id ?> " <?php if($answer != "I have responsive documents"){ ?>style="display:none" <?php } ?>>
+															if( $form_id == 5 ) {
+?>
+																<ul class="list-group" id="note<?= $discovery_question_id ?>" <?php if($answer != "I have responsive documents"){ ?>style="display:none" <?php } ?>>
 																	<li class="list-group-item">
 																	<div class="form-group">
 																		<p>
@@ -579,7 +568,7 @@ textarea#answer {
 																	</div>
 																	</li>
 																</ul>
-																<ul class="list-group" id="subdiv<?= $discovery_question_id ?> " <?php if($answer == 'Select Your Response' || $answer == "I have responsive documents"){ ?>style="display:none" <?php } ?>>
+																<ul class="list-group" id="subdiv<?= $discovery_question_id ?>" <?php if($answer == 'Select Your Response' || $answer == "I have responsive documents"){ ?>style="display:none" <?php } ?>>
 																	<li class="list-group-item">
 																	<div class="form-group">
 																		<p>
@@ -597,22 +586,21 @@ textarea#answer {
 																	</div>
 																	</li>
 																</ul>
-															<?php
+<?php
 															}
 														}
-															?>
+?>
                                                     </div>
 												</li>
-												<?php
+<?php
 											}
 										}
-										?>
+?>
                                 </ul>
                             </div>
-                            <?php
-							if(in_array($form_id,array(3,4)) && $view != 1 && !empty($_SESSION['documents'][$uid]))
-							{
-							?>
+<?php
+							if( in_array( $form_id, array(3,4) ) && $view != 1 && !empty($_SESSION['documents'][$uid]) ) {
+?>
                             <div class="col-md-12">
                             <hr>
                             <ul class="list-group">
@@ -628,11 +616,10 @@ textarea#answer {
                                 </li>
                             </ul>
                             </div>
-                            <?php
+<?php
 							}
-							if(in_array($form_id,array(5)) && $view != 1)
-							{
-							?>
+							if( in_array( $form_id, array(5) ) && $view != 1 ) {
+?>
                             <div class="col-md-12">
                             	<hr>
                                 <ul class="list-group">
@@ -651,17 +638,14 @@ textarea#answer {
                                     </li>
                                 </ul>
                             </div>
-                            <?php
+<?php
 							}
-							?>
+?>
                         </div>
 
-						<?php
-						//echo $view;
-						//echo "Hello";
-                      if($view != 1)
-						{
-							?>
+<?php
+                      if( $view != 1 ) {
+?>
                             <div class="text-center">
                             <button type="button" class="btn btn-success" onClick="addform('discoveryfrontaction.php?q=0','discoverydetailsform',' ','discoveryfront-thanks.php');">
                             <i class="icon-ok bigger-110"></i>
@@ -676,9 +660,9 @@ textarea#answer {
                                     <b id="errormsg" style='color:Red; display:none;'>Oppppps...! Email already exist.</b>
                                 </p>
                             </div>
-                            <?php
+<?php
 						}
-						?>
+?>
                         </form>
                 </div>
             </div>
@@ -698,110 +682,94 @@ require_once("../jsinclude.php");
 
 <script>
 $.noConflict();
-function loadinstructions(form_id,id)
-{
+function loadinstructions( form_id, id ) {
 	var type = '<?= $type ?>';
 	$.get("discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=1&type="+type).done(function(resp){$("#loadinstructions").html(trim(resp));});
 }
-$(document).ready(function()
-{
-	loadinstructions('<?= $form_id ?>','<?= $discovery_id ?>');
-});
 function submitForm() {
 	callModal();
 }
 
 function callModal() {
 	$('#myModal').modal('toggle');
-
 }
-function checkFunction(subdivid, option) {
+function checkFunction( subdivid, option ) {
+	debugger;
 	if(option == 1)	{
 		$("#subdiv"+subdivid).show();
 		$(".subanswer_"+subdivid).prop('disabled',false);
 	}
-	else  if(option == 2) {
+	else if(option == 2) {
 		$("#subdiv"+subdivid).hide();
 		$(".subanswer_"+subdivid).prop('disabled',true);
 	}
 }
 function checkFunctionForm5(subdivid, option) {
-	if(option == 'I have responsive documents' || trim(option) == 'Select Your Response')
-	{
-		if(option == 'I have responsive documents')
-		{
+	option = trim(option);
+	if( option == 'I have responsive documents' || option == 'Select Your Response') {
+		if(option == 'I have responsive documents') {
 			$("#note"+subdivid).show();
 		}
-		else
-		{
+		else {
 			$("#note"+subdivid).hide();
 		}
 		$("#subdiv"+subdivid).hide();
 		$("#subanswer"+subdivid).prop('disabled',true);
 	}
-	else
-	{
+	else {
 		$("#subdiv"+subdivid).show();
 		$("#subanswer"+subdivid).prop('disabled',false);
 		$("#note"+subdivid).hide();
 	}
 }
-$(document).ready(function()
-{
+$(document).ready( _ => {
 
+	loadinstructions('<?= $form_id ?>','<?= $discovery_id ?>');
 	loaduploadeddocs();
-	<?php
-	if(in_array($form_id,array(3,4)))
-	{
-	?>
+<?php
+	if( in_array($form_id,array(3,4)) ) {
+?>
 		loaduploaddiscoverydocs();
-	<?php
+<?php
 	}
-	?>
-	var extraObj = $("#extraupload").uploadFile({
-	url:"frontdocumentuploads.php",
-	fileName:"myfile",
-	extraHTML:function()
-	{
-			var html = "<div><input type='hidden' name='rp_uid' value='<?= $uid ?>' /> <br/>";
-			html += "</div>";
-			return html;
-	},
-	autoSubmit:false,
-	afterUploadAll:function(obj)
-	{
-		$(".ajax-file-upload-container").html("");
-		loaduploadeddocs();
-	}
-	});
-	$("#extrabutton").click(function()
-	{
+?>
+	var extraObj = $("#extraupload")
+						.uploadFile( {
+								url:"frontdocumentuploads.php",
+								fileName: "myfile",
+								extraHTML: _ => {
+										var html = "<div><input type='hidden' name='rp_uid' value='<?= $uid ?>' /> <br/>";
+										html += "</div>";
+										return html;
+								},
+								autoSubmit: false,
+								afterUploadAll: obj => {
+									$(".ajax-file-upload-container").html("");
+									loaduploadeddocs();
+								}
+						} );
+	$("#extrabutton").click( _ => {
 		extraObj.startUpload();
 	});
 });
-function loaduploadeddocs()
-{
-	var rp_uid	=	'<?= $uid; ?>';
+function loaduploadeddocs() {
+	var rp_uid	= '<?= $uid; ?>';
 	$("#uploadeddocs").load("loaduploadeddocs.php?rp_uid="+rp_uid+"&doctype=1");
 }
-function loaduploaddiscoverydocs()
-{
-	var rp_uid	=	'<?= $uid; ?>';
+function loaduploaddiscoverydocs() {
+	var rp_uid	= '<?= $uid; ?>';
 	$("#uploaddiscoverydocs").load("loaduploadeddocs.php?rp_uid="+rp_uid+"&doctype=0");
 }
 
-function deleteDoc(id,rp_uid)
-{
-	$.post( "deletefrontdocs.php", { id: id,rp_uid:rp_uid }).done(function( data )
-	{
-		loaduploadeddocs();
-	});
+function deleteDoc(id,rp_uid) {
+	$.post( "deletefrontdocs.php", { id: id,rp_uid:rp_uid })
+		.done( data => {
+			loaduploadeddocs();
+		} );
 }
-function SaveVerificationText(flag)
-{
-	var checkerror	=	0;
-	if(flag == 1)
-	{
+function SaveVerificationText(flag) {
+	var checkerror	= 0;
+	if( flag == 1 ) {
 		$("#discovery_verification").val(1);
 		$("#msgVerification").html("");
 		$("#discovery_verification_by_name").val($("#verification_by_name").val());
@@ -812,79 +780,69 @@ function SaveVerificationText(flag)
 		$("#email_solicitation").val($("#email_solicitation_popup").val());
 		$("#email_body").val($("#email_body_popup").val());
 
-		if($("#verification_city").val() == "")
-		{
+		if( $("#verification_city").val() == "" ) {
 			$("#msgVerification").html("Please enter your city.");
-			var checkerror	=	1;
+			var checkerror	= 1;
 			//callModal();
 			//addform('discoveryfrontaction.php?q=1','discoverydetailsform',' ','discoveryfront-thanks.php');
 		}
-		else if($("#verification_by_name").val() == "")
-		{
+		else if( $("#verification_by_name").val() == "" ) {
 			$("#msgVerification").html("Please enter your type.");
-			var checkerror	=	1;
+			var checkerror	= 1;
 			//callModal();
 			//addform('discoveryfrontaction.php?q=1','discoverydetailsform',' ','discoveryfront-thanks.php');
 		}
-		else if($("#verification_signed_by").val() == "")
-		{
+		else if( $("#verification_signed_by").val() == "" ) {
 			$("#msgVerification").html("Please enter your name.");
-			var checkerror	=	1;
+			var checkerror	= 1;
 			//callModal();
 			//addform('discoveryfrontaction.php?q=1','discoverydetailsform',' ','discoveryfront-thanks.php');
 		}
-		else
-		{
+		else {
 			callModal();
 			addform('discoveryfrontaction.php?q=1&redirect=1','discoverydetailsform','','discoveryfront-thanks.php');
 		}
 	}
-	else
-	{
+	else {
 		callModal();
 		addform('discoveryfrontaction.php?q=1&redirect=1','discoverydetailsform','','discoveryfront-thanks.php');
 	}
 }
-function showhidequestions(parentid,yesorno)
-{
-	if(yesorno == 1)
-	{
+function showhidequestions( parentid,yesorno ) {
+	if( yesorno == 1 ) {
 		$(".row_"+parentid).show();
 	}
-	else
-	{
+	else {
 		$(".row_"+parentid).hide();
 	}
-
 }
 </script>
 
 <?php
 //Email body and solutation setup
 //Email Salutation
-$emaildata				=	$AdminDAO->getrows("email_log","email_salutation","sender_type = 2 AND receiver_type = 1 ORDER BY id DESC LIMIT 1",array());
-$email_solicitation		=	$emaildata[0]['email_salutation'];
-if($email_solicitation == "")
-{
-	$email_solicitation	=	"Hi,";
+$emaildata				= $AdminDAO->getrows("email_log","email_salutation","sender_type = 2 AND receiver_type = 1 ORDER BY id DESC LIMIT 1",array());
+$email_solicitation		= $emaildata[0]['email_salutation'];
+if( !$email_solicitation ) {
+	$email_solicitation	= "Hi,";
 }
-
 
 ob_start();
 ?>
-<h4><?= $discovery_name ?> is submitted successfully from the client.</h4>
-<ul style="padding-left:5px">
-	<li><b>Case Title:</b> <?= $case_title ?></li>
-    <li><b>Case#:</b> <?= $case_number ?></li>
-    <li><b>State:</b> <?= $jurisdiction ?></li>
-    <li><b>County/District:</b> <?= $county_name ?></li>
-    <li><b>Court Address:</b> <?= $court_address ?></li>
-    <li><b>Attorney:</b> <?= $attorney_name ?></li>
-</ul>
-	<?php
+	<h4><?= $discovery_name ?> is submitted successfully from the client.</h4>
+	<ul style="padding-left:5px">
+		<li><b>Case Title:</b> <?= $case_title ?></li>
+		<li><b>Case#:</b> <?= $case_number ?></li>
+		<li><b>State:</b> <?= $jurisdiction ?></li>
+		<li><b>County/District:</b> <?= $county_name ?></li>
+		<li><b>Court Address:</b> <?= $court_address ?></li>
+		<li><b>Attorney:</b> <?= $attorney_name ?></li>
+	</ul>
+<?php
     $email_body = ob_get_contents();
     ob_clean();
 ?>
+
 <!-- Verification Modal Start -->
 <div class="modal fade" id="myModal" role="dialog"  data-backdrop="static" data-keyboard="false">
 <div class="modal-dialog" style="width:880px">
@@ -896,7 +854,7 @@ ob_start();
     </div>
     <div class="modal-body">
 <?php
-		$statesArray	=	$AdminDAO->getrows("system_state","*","fkcountryid = '254'");
+		$statesArray	= $AdminDAO->getrows("system_state","*","fkcountryid = '254'");
 		if( !$verification_by_name ) {
 			$verification_by_name = $responding_role;
 		}
@@ -910,13 +868,13 @@ ob_start();
             </p>
             <p>
                 <img src="<?= ASSETS_URL; ?>images/court.png" style="width: 18px;padding-right: 3px;">
-                <?php
+<?php
                     // added by JS 3/7/20
-                    if($form_id == 3){
+                    if( $form_id == 3 ){
                         echo "Code Civ.Proc., &sect; 2030.250  ";
                         echo instruction(16);
                     }
-                    else if($form_id == 4){
+                    else if( $form_id == 4 ){
                         echo "Code Civ.Proc., &sect; 2033.240 ";
                         echo instruction(19);
                     }
@@ -926,15 +884,16 @@ ob_start();
         <br>
         <br>
         <p class="text-right">
-        By: <input placeholder="Signed By" type='text' name='verification_signed_by' id='verification_signed_by' value='<?= $verification_signed_by ?>'>
+        	By: <input placeholder="Signed By" type='text' name='verification_signed_by' id='verification_signed_by' value='<?= $verification_signed_by ?>'><br>
 
-        <br>Signed electronically,
-        <br> <img src="<?= ASSETS_URL ?>images/court.png" style="width: 18px;padding-right: 3px;">Cal. Rules of Court, rule 2.257</p>
-        <br>
-        <br>
-        <div class="form-group" style="display:none">
-			<p> <h3>Email Template</h3>
-			</p>
+			Signed electronically,<br>
+
+			<img src="<?= ASSETS_URL ?>images/court.png" style="width: 18px;padding-right: 3px;">Cal. Rules of Court, rule 2.257
+		</p><br>
+		<br>
+
+		<div class="form-group" style="display:none">
+			<p> <h3>Email Template</h3></p>
 			<div class="form-group">
 				<label for="email_solicitation" class="col-form-label">Email Salutation:</label>
 				<input type="text" name="email_solicitation_popup" id="email_solicitation_popup" placeholder="Add Salutation"  class="form-control m-b" value="<?= $email_solicitation; ?>">
@@ -945,7 +904,7 @@ ob_start();
 					$email_body
 				?></textarea>
 			</div>
-        </div>
+		</div>
 
     </div>
     <div class="modal-footer">
@@ -956,7 +915,6 @@ ob_start();
         <div class="col-md-5 text-right">
         	<button type="button" class="btn btn-primary" onClick="SaveVerificationText(1)">Click to Verify</button>
             <button type="button" class="btn btn-danger" onClick="SaveVerificationText(2)">Skip</button>
-
         </div>
       </div>
     </div>
@@ -965,10 +923,12 @@ ob_start();
 </div>
 </div>
 <!-- Verification Modal End -->
+
+</body>
+</html>
+
 <script>
 $(document).ready( _ => { 
 	 CKEDITOR.replace( 'email_body_popup' );
 } );
 </script>
-</body>
-</html>
