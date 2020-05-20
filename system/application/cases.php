@@ -107,24 +107,22 @@ if($res_attr_uid != "")
 <div id="new-user-video-modal" class="modal fade" role="dialog" style="min-width: 95vw; min-height: 95vh;">
   <div class="modal-dialog" style="width: 75%; margin:2rem auto; padding:0;">
     <!-- Modal content-->
-    <div class="modal-content" id="new-user-video-modal-content">
+    <div class="modal-content">
       <div class="modal-header" style="padding: 15px;">
-        <h5 class="modal-title" id="existing-case-modal-header" style="text-align:center; font-size: 22px;">Get Started Using EasyRogs</h5>
+        <h5 class="modal-title" style="text-align:center; font-size: 22px;">Get Started Using EasyRogs</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px !important;font-size: 25px !important;">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <div>
-            <div id="videCont">
-                <video id="v1" preload="none" x-autoplay controls style="max-width:100%;max-height:100%;">
-                    <source src="<?= ROOTURL ?>system/application/getting_started.mp4" type="video/mp4">
-                </video>
-            </div>
+            <video id="intro-video" preload="none" x-autoplay controls style="max-width:100%;max-height:100%;">
+                <source src="<?= ROOTURL ?>system/application/getting_started.mp4" type="video/mp4">
+            </video>
         </div>
       </div>
       <div class="modal-footer">
-        <a href="javascript:;" class="btn btn-danger" data-dismiss="modal" id="new-user-video-modal-close"><i class="fa fa-close"></i> Close</a>
+        <a href="javascript:;" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Close</a>
       </div>
     </div>
   </div>
@@ -192,10 +190,10 @@ if($res_attr_uid != "")
   }
   function showIntroVideo() {
     $('#new-user-video-modal').modal('show');
-    $('video#v1')[0].play();
+    $('video#intro-video')[0].play();
   }
   $('#new-user-video-modal').on('hidden.bs.modal', _ => {
-    $('video#v1')[0].pause();
+    $('video#intro-video')[0].pause();
     userIntroVideoSeen();
     //$('#new-user-video-modal').modal('hide');
   });

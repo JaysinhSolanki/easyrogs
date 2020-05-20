@@ -28,7 +28,7 @@
 			position: static !important;
 	}
 	.modal-header .close {
-			margin-top: -45px !important;
+			/*margin-top: -45px !important;*/
 	}
 	.modal-title {
 			font-size: 24px !important;

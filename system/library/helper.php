@@ -76,7 +76,7 @@ function replaceUrls($string) {
 		}
 		$video_allowed = array('mp4');
 		if (in_array($ext, $video_allowed)) {
-		    return '<br /><video style=" width: 100%; " id="v1" preload="none" x-autoplay controls><source src="'. $url .'" type="video/mp4"></video>';
+		    return '<br /><video style="width: 100%;" preload="none" x-autoplay controls><source src="'. $url .'" type="video/mp4"></video>';
 		}
 	}
 	return $url;

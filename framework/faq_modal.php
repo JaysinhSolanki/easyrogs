@@ -2,7 +2,7 @@
 @session_start();
 require_once("{$_SESSION['system_path']}jsinclude.php");
 ?>
-<div class="modal fade" id="faq-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="faq-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header" style="padding:10px">
@@ -22,23 +22,13 @@ require_once("{$_SESSION['system_path']}jsinclude.php");
   </div>
 </div>
 <script type="text/javascript">
-	function autoPlayOrPauseVideos() {
-		$('video').each( function() {
-			const $this = $(this);
-			if( $this.is(":in-viewport") ) {
-				if( $this.is(":not(.autoplayed") ) $this.removeClass('autopaused').addClass('autoplayed')[0].play();
-			} else {
-				if( $this.is(":not(.autopaused)") ) $this.removeClass('autoplayed').addClass('autopaused')[0].pause();
-			}
-		} );
-	}
-
     function showFAQ() {
-	    $.post( "<?= ROOTURL ?>system/application/faqs.php",{} ).done( data => {
-            setInterval( autoPlayOrPauseVideos, 500 );
-            debugger;
-	        $("#load_faq_modal_content").html(data);
-	        $('#faq-modal').modal('toggle');
-	    }); 
+      $.post( "<?= ROOTURL ?>system/application/faqs.php",{} )
+          .done( data => {
+              autoPlayOrPauseVideos( {watchdog:"yes"});
+
+              $("#load_faq_modal_content").html(data);
+              $('#faq-modal').modal('toggle');
+          }); 
 	}
 </script>

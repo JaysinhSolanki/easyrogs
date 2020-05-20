@@ -1,7 +1,7 @@
 // not const, need these in the global scope (window object)
-API_BASE = '/system/application';
-FORMAT_JSON = 'json';
-FORMAT_HTML = 'html';
+globalThis.API_BASE = '/system/application';
+globalThis.FORMAT_JSON = 'json';
+globalThis.FORMAT_HTML = 'html';
 
 getPermissions = (success, error) => {
 	$.get(API_BASE + '/get-permissions.php', success, 'json').fail(error);
@@ -216,7 +216,7 @@ function toggleAll(selector, self) {
 	} else console.warn( `${selector} didn't match anything` );
 }
 
-$(document).ready(function(){
+$(document).ready( _ => {
   $('.tooltipshow').tooltip({
 	   container: 'body'
 	  });

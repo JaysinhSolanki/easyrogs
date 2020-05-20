@@ -12,6 +12,7 @@
 
 <?php
 require_once("{$_SESSION['system_path']}jsinclude.php");
+require_once("{$_SESSION['system_path']}application/ctxhelp_modal.php");
 require_once("{$_SESSION['framework_path']}faq_modal.php");
 ?>
 <style>

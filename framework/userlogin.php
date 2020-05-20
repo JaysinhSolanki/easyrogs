@@ -91,7 +91,7 @@ require_once("head.php");
             	backgroundColor: "#17212a",
             	opener: "video_introduction",
                 maxweight: "340",
-                idvideo: "v1",
+                idvideo: "video-demo",
                 pausevideo : true
             });
         });
@@ -171,7 +171,7 @@ require_once("head.php");
                 </div>
                 <div id="vidBox" style="display: none;">
                     <div id="videCont">
-                		<video id="v1" preload="none" x-autoplay controls style="
+                		<video id="video-demo" preload="none" x-autoplay controls style="
 																				position: fixed;
 																				top: 0; left: 0;
 																				max-width: 100vw; max-height: 100vh; 
