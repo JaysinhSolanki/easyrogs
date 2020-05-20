@@ -1323,44 +1323,6 @@ function PopupForPOS(discovery_id,response_id)
     setTimeout(function(){ $('#general_modal').modal('toggle');  }, 2000);
     
 }
-
-function servePOS() { debugger;
-    var pos_state   =   $("#pos_state").val();
-    var pos_city    =   $("#pos_city").val();
-    var error       =   0;
-    var msg         =   "";
-    
-    if( !pos_city ) {
-        error   =   1;
-        msg     =   "Please enter city.";
-    }
-    if( pos_state == "" ) {
-        error   =   1;
-        msg     =   "Please enter state.";
-    }
-    if( error ) {
-        $(".POS_msgdiv").html(msg);
-    }
-    else {
-        $.LoadingOverlay("show");
-        $("#citystate").replaceWith( pos_city+", "+pos_state );
-        var poshtml = $("#poshtml").html();
-        $("#pos_text").val(poshtml);
-        $("#posstate").val(pos_state);
-        $("#poscity").val(pos_city);
-        
-        setTimeout( _ => {
-            $.post( "propondingserveaction.php", 
-                    $("#formPOS" )
-                        .serialize() )
-                .done( data => {
-                    $('#general_modal').modal('toggle');
-                    $.LoadingOverlay("hide");
-                    response(data);
-                } );         
-        }, 2000);
-    }
-}
 function writeDiscoveryPDF(uid) {
     $.get( "makepdf.php", { id: uid, downloadORwrite: 1, view:0 })
         .done( data => {} );

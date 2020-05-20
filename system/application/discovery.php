@@ -1010,65 +1010,6 @@ function PopupForPOS( discovery_id, signDAD = 1 ) {
         }
     }, 2000 );
 }
-function servePOS() { debugger;
-    var pos_state   = $("#pos_state").val();
-    var pos_city    = $("#pos_city").val();
-    var pos_address = $("#pos_address").val();
-    var error = 0;
-    var msg = "";
-    if( !pos_address ) {
-        error   = 1;
-        msg     = "Please enter address.";
-    }
-
-    if( !pos_city ) {
-        error   = 1;
-        msg     = "Please enter city.";
-    }
-    if( !pos_state ) {
-        error   = 1;
-        msg     = "Please enter state.";
-    }
-    if( error == 1 ) {
-        $(".POS_msgdiv").html(msg);
-    }
-    else {
-        $.LoadingOverlay("show");
-
-        // we must do this (setAttribute[value]), to properly get their html
-        $("#pos_address").attr('value', pos_address);
-        $("#pos_state").attr('value', pos_state);
-        $("#pos_city").attr('value', pos_city);
-
-        var poshtml = $("#poshtml").clone(),
-            _text = $("#pos_18info > #_1").text() +
-                    $("#pos_18info > input").val() + '. ' +
-                    $("#pos_18info + #_2").text();
-
-        poshtml.find('#pos_18info').replaceWith( '<p id="pos_18info">' + _text + '</p>' );
-        poshtml.find('#pos_18info + #_2').replaceWith( '' );
-        poshtml.find("#citystate").replaceWith( pos_city + ", " + pos_state );
-
-        $("#pos_text").val(poshtml.html());
-        $("#posaddress").val(pos_address);
-        // $("#posstreet").val(pos_street);
-        // $("#posstatecode").val(pos_statecode);
-        // $("#poszip").val(pos_zip);
-        // $("#poscityname").val(pos_cityname);
-        $("#posstate").val(pos_state);
-        $("#poscity").val(pos_city);
-        setTimeout( _ => {
-            $.post( "propondingserveaction.php",
-                    $("#formPOS" )
-                        .serialize() )
-                .done( data => {
-                    $('#general_modal').modal('toggle');
-                    $.LoadingOverlay("hide");
-                    response(data);
-                });
-        }, 2000 );
-    }
-}
 function addrow( rowid ) {
     $.get( "<?= DOMAIN ?>discoveryaddformquestion.php?totalrows=1", data => {
         $('#'+rowid).before(data);
