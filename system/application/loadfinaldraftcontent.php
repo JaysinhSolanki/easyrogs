@@ -495,7 +495,7 @@ $instructions = "This responding party has not completed its investigation or di
                                         }
                                         if(trim($answer) == "I have responsive documents") 
                                         {
-                                            $answer	= "Responsive documents are provided in Exhibit A.";
+                                            $answer	= "Responsive documents have been provided.";
                                         }
                                         $str1	=	"A diligent search and a reasonable inquiry have been made in an effort to comply with this demand, however, responding party is unable to comply because they do not have any responsive documents in their possession, custody, or control.";
                                         $str2	=	" However, respondent believes that ".$answer_detail." may have responsive documents.";

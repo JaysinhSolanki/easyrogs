@@ -574,7 +574,7 @@ textarea#answer {
 																	<div class="form-group">
 																		<p>
 																			<b>Note: </b>
-																			Upload the documents in Exhibit A section at bottom.
+																			Upload your documents below.
 																		</p>
 																	</div>
 																	</li>
@@ -638,10 +638,7 @@ textarea#answer {
                                 <ul class="list-group">
                                     <li class="list-group-item">
                                         <div class="">
-                                        	<p>
-                                            	<h3>Exhibit A:</h3>
-                                        		<b>Upload your documents here.</b>
-                                        	</p>
+                                        	<p><b>Upload your documents here.</b></p>
                                         </div>
                                 		<div id="extraupload"></div>
                                         <button type="button" class="btn btn-info" id="extrabutton">

@@ -742,7 +742,7 @@ ob_start();
                                 //echo "";
                             }
                             if( $answer == "I have responsive documents" ) {
-                                $answer	= "Responsive documents are provided in Exhibit A.";
+                                $answer	= "Responsive documents have been provided.";
                             }
                             
                             $str1	= "A diligent search and a reasonable inquiry have been made in an effort to comply with this demand, however, responding party is unable to comply because they do not have any responsive documents in their possession, custody, or control.";
