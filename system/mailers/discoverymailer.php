@@ -113,8 +113,7 @@
     }
 
     static function propound($discovery, $actionUser, $isResponse, $attachments) {
-      global $smarty, $discoveriesModel, $clientsModel, $usersModel, 
-             $logger, $invitationsModel, $sidesModel;
+      global $smarty, $discoveriesModel, $clientsModel, $usersModel, $logger, $sidesModel;
 
       $logContext = 'DISCOVERY_MAILER_PROPOUND';
       $logParams  = json_encode([
@@ -145,31 +144,21 @@
                         ? "RESPONSE TO $discovery[discovery_name]" 
                         : $discovery['discovery_name'];
       
-      $smarty->assign([
+      $body = $smarty->assign([
         'ASSETS_URL'      => ASSETS_URL,
         'masterhead'      => $usersModel->getMasterHead($actionUser),
         'propoundingName' => $propounding['client_name'],
-        'discoveryName'   => Discovery::getTitle($discoveryName,$discovery['set_number'],Discovery::STYLE_AS_IS),
-      ]);
+        'discoveryName'   => Discovery::getTitle($discoveryName, $discovery['set_number'], Discovery::STYLE_AS_IS),
+        'actionUrl'       => DOMAIN,
+        'actionText'      => 'Go to EasyRogs.com'
+      ])->fetch('emails/discovery-propound.tpl');
 
+      $to = [];
       foreach($serviceList as $user) {
         if ($user['pkaddressbookid'] == $actionUser['pkaddressbookid']) { continue; }
-        
-        $isActive = User::isActive($user);
-        if ( !$isActive ) {
-          $invitation = $invitationsModel->create($user['pkaddressbookid']);
-        }
-        
-        $smarty->assign([
-          'ASSETS_URL'  => ASSETS_URL,
-          'name'        => User::getFullName($user),
-          'actionUrl'   => $isActive ? DOMAIN : DOMAIN . "signup.php?uid=$invitation[uid]",
-          'actionText'  => $isActive ? 'Go to EasyRogs.com' : 'Sign Up at EasyRogs.com'
-        ]);
-        $body = $smarty->fetch('emails/discovery-propound.tpl');
-        $to   = $user['email'];
-
-        self::sendEmail($to, $subject, $body, User::getFullName($actionUser), $actionUser['email'], $attachments);
+        $to[] = $user['email'];
       }
+      
+      self::sendEmail($to, $subject, $body, User::getFullName($actionUser), $actionUser['email'], $attachments);
     }
   }

@@ -2,7 +2,7 @@
 {extends file="emails/layout.tpl"}
 
 {block name=body}
-  Dear {$name},
+  Counsel,
   <br/>
   <br/>
   <p> You are hereby served with {$propoundingName}'s {$discoveryName} (attached).</p>
