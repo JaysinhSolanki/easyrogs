@@ -162,20 +162,20 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
 /**
 * FUNCTION FOR DATE FORMAT
 **/
-function dateformat($date, $type = 1)
-{
-    if ($date == "0000-00-00" || $date == "") {
+function dateformat( $date, $type = 1 ) {
+    if ($date == "0000-00-00" || $date == "0000-00-00 00:00:00" || !$date ) { 
         $date = "";
     } else {
-        if ($type == 1) {
-            $date   =   date("n/j/Y", strtotime($date));
-            $date   =   str_replace("/", "-", $date);
+        // type = 1: n/j/Y to n-j-Y
+        //        2: n-j-Y to n/j/Y
+        if( $type == 1 ) {
+            $date   = date("n/j/Y", strtotime($date));
+            $date   = str_replace("/", "-", $date);
         } else {
-            $date   =   str_replace("-", "/", $date);
-            $date   =   date("n/j/Y", strtotime($date));
+            $date   = str_replace("-", "/", $date);
+            $date   = date("n/j/Y", strtotime($date));
         }
     }
-
     return $date;
 }
 /**

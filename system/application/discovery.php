@@ -651,9 +651,9 @@ function buttonsave() {
     }
     //$("#instruction_html").val($("#instruction_data").html());
     var isagree = true;
-    setTimeout( _ => {
+    setTimeout( _ => { 
         $.LoadingOverlay("hide");
-        addform( 'discoveryaction.php','discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid=<?= $case_id ?>' );
+        addform( 'discoveryaction.php?save=yes','discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid=<?= $case_id ?>' );
     }, 200);
 }
 function buttonsaveandsendpopup() {
@@ -831,7 +831,7 @@ function calculatedduedateaction() {
     }, 2000);
 }
 
-function serveFunction() { debugger;
+function serveFunction() { //debugger;
     var type = '<?= $type ?>';
     //START LOADER
     $.LoadingOverlay("show");
@@ -870,17 +870,16 @@ function serveFunctionMain( signDAD = 1 ) {
                 .serialize() )
         .done( data => {
             setTimeout( _ => {
-            var obj = JSON.parse(data);
-            if( obj.messagetype == 4 )             {
-                $.LoadingOverlay("hide");
-                msg(data);
-            }
-            else {
-                //writeDiscoveryPDF(obj.uid);
-                PopupForPOS(obj.id,signDAD);
-            }
-        }, 1000);
-
+                var obj = JSON.parse(data);
+                if( obj.messagetype == 4 ) {
+                    $.LoadingOverlay("hide");
+                    msg(data);
+                }
+                else {
+                    //writeDiscoveryPDF(obj.uid);
+                    PopupForPOS(obj.id,signDAD);
+                }
+            }, 1000);
     });
 }
 function writeDiscoveryPDF( uid ) {

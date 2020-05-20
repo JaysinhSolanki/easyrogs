@@ -65,7 +65,7 @@ function loadholidays(year) {
 	$("#DivHollidays").load("loadholidays.php?year="+year);
 }
 
-function buttonsave() {
+function buttonsave() { debugger; // check if this is being used
 	$("#instruction_html").val($("#instruction_data").html());
 	var isagree	=	true;
 	setTimeout(function()

@@ -3,14 +3,14 @@ require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
 $case_id	= $_GET['pid'];
-$iscancel	= @$_GET['iscancel'];
-if($iscancel != 1) {
-	$iscancel == 0;
-}
+// $iscancel	= @$_GET['iscancel'];
+// if($iscancel != 1) {
+// 	$iscancel == 0;
+// }
 $discoveries = $AdminDAO->getrows(	"discoveries,cases,forms,system_addressbook",
 
 									"discoveries.propounding_uid,
-									discoveries.responding_uid,							
+									discoveries.responding_uid,
 									discoveries.id,
 									discoveries.uid as d_uid,
 									discoveries.propounding,
@@ -31,11 +31,12 @@ $discoveries = $AdminDAO->getrows(	"discoveries,cases,forms,system_addressbook",
 									set_number,
 									IF(send_date='0000-00-00 00:00:00', '-', send_date) send_date",
 
-									"cases.id 				= 	discoveries.case_id 	AND
-									forms.id 				= 	discoveries.form_id 	AND
-									pkaddressbookid 		= 	discoveries.attorney_id AND
-									discoveries.parentid	= 0						AND
-									cases.id 				=  	:case_id ORDER BY discoveries.discovery_name ASC",
+									"cases.id 				= discoveries.case_id 		AND
+									forms.id 				= discoveries.form_id 		AND
+									pkaddressbookid 		= discoveries.attorney_id 	AND
+									discoveries.parentid	= 0							AND
+									discoveries.is_work_in_progress	= 0					AND
+									cases.id 				= :case_id ORDER BY discoveries.discovery_name ASC",
 
 									array(":case_id" => $case_id ));
 
@@ -61,10 +62,10 @@ function getNameFromAddressbook($id)
 $loggedin_email		= $_SESSION['loggedin_email'];
 $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 											"ct.id",
-											"a.id 				= 	ct.attorney_id 	AND 
-											ct.is_deleted 		= 	0 				AND 
-											ct.fkcaseid 		= 	:fkcaseid 		AND 
-											a.attorney_email 	= 	:email",
+											"a.id 				= ct.attorney_id 	AND
+											ct.is_deleted 		= 0 				AND
+											ct.fkcaseid 		= :fkcaseid 		AND
+											a.attorney_email 	= :email",
 											array("email"=>$loggedin_email,"fkcaseid"=>$case_id));
 ?>
 <style>
@@ -77,7 +78,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 <div class="col-lg-12">
     <div class="hpanel">
         <div class="panel-heading" align="center">
-            <h3 align="center"><small>Discovery for</small><br /><strong><?= $currentSide['case_title'] ?></strong></h3>  
+            <h3 align="center"><small>Discovery for</small><br /><strong><?= $currentSide['case_title'] ?></strong></h3>
         </div>
         <div class="panel-body">
             <div class="panel panel-primary">
@@ -112,43 +113,38 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
                     </tr>
                 </thead>
                 <tbody>
-                	<?php
-					if(sizeof($discoveries) > 0)
-					{
-						foreach($discoveries as $discovery)
-						{
+<?php
+					if( sizeof($discoveries) ) {
+						foreach( $discoveries as $discovery ) {
 							$discoveryName	= $discovery['discovery_name'];
 							$discoverySet	= $discovery['set_number'];
-							$discoveryUID	= $discovery['d_uid'];  
+							$discoveryUID	= $discovery['d_uid'];
 							$PDF_FileName	= strtoupper($discoveryName." [Set ".$discoverySet."]").".pdf";
 							$RequestPDF_FileName	= UPLOAD_URL."documents/".$discoveryUID."/".$PDF_FileName;
-							$ResponsePDF_FileName	= UPLOAD_URL."documents/".$discoveryUID."/"."RESPONSE TO ".$PDF_FileName;		
+							$ResponsePDF_FileName	= UPLOAD_URL."documents/".$discoveryUID."/"."RESPONSE TO ".$PDF_FileName;
 							//$RequestPDF_FileName	= "makepdf.php?id=".$discovery['d_uid']."&view=1";
 							//$ResponsePDF_FileName	= "makepdf.php?id=".$discovery['d_uid']."&view=0";
 							$totalChilds			= 0;
 							$totalChildsNotIncludes	= 0;
-							$d_id			= $discovery['id']; 
+							$d_id			= $discovery['id'];
 							$creator_id		= $discovery['creator_id'];
-							$is_submitted	= $discovery['is_submitted']; 
+							$is_submitted	= $discovery['is_submitted'];
 							$is_served		= $discovery['is_served'];
-							$discoveryType	= $discovery['type']; //I External 2: Internal
+							$discoveryType	= $discovery['type'];
 							$discovery_ACL	= array();
-							
-							if($discoveryType == 2)
-							{
+
+							if( $discoveryType == Discovery::TYPE_INTERNAL ) {
 								/*
-								 * Internal Discovery should be shown to creator only 
+								 * Internal Discovery should be shown to creator only
 								 */
-								 
-								if($creator_id == $_SESSION['addressbookid'] || !empty($iscaseteammember))
-								{
-									
+
+								if( $creator_id == $_SESSION['addressbookid'] || !empty($iscaseteammember) ) {
+
 								}
-								else
-								{
+								else {
 									continue;
 								}
-								
+
 								/**
 								* Check to see login user is responding party attorney or not
 								* If he is the attorney of responding party then we give him option to respond in external discovery.
@@ -156,8 +152,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								$client_responding			= $discovery['responding'];
 								$isResPartyAttorney			= $AdminDAO->getrows('attorney a,client_attorney ca',"*","ca.client_id = :client_id AND a.id = ca.attorney_id AND ca.case_id = :case_id ",array('client_id'=>$client_responding,'case_id'=>$case_id));
 								$respondingPartyAttr		= array();
-								foreach($isResPartyAttorney as $data_attr)
-								{
+								foreach($isResPartyAttorney as $data_attr) {
 									$respondingPartyAttr[]	= $data_attr['attorney_email'];
 								}
 								/**
@@ -170,7 +165,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										$showDueDate	= 0;
 									}
 								}
-								
+
 								/**
 								* SET UP ACL FOR DISCOVERIES
 								**/
@@ -195,21 +190,21 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									</a>
 									</td>
 									<td>
-<?php 
+<?php
 									if( !$discovery['discovery_name'] ) {
 										echo $discovery['form_name']." [Set ".$discovery['set_number']."]";//." (".$discovery['short_form_name'].")"
 									}
 									else {
 										echo $discovery['discovery_name']." [Set ".$discovery['set_number']."]"; // TODO DiscSet
 									}
-									
-									?>
+
+?>
 									</td>
 									<td><?= getclientname($discovery['propounding']) ?></td>
 									<td><?= getclientname($discovery['responding']) ?></td>
 									<td><?= dateformat($discovery['served']) ?></td>
 									<td>
-									<?php 
+<?php
 									if( $showDueDate == 1 ) {
 										echo dateformat($discovery['due']);
                                     }
@@ -218,52 +213,44 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
                                     }
 ?>
                                     </td>
-									<td>
-									<?= $discovery['creator'] ?>
-									</td> 
-                                    <td>
-										<?=  ($discoveryType == Discovery::TYPE_EXTERNAL) ? "EasyRogs" : "Other" ?>
-                                    </td>
+									<td> <?= $discovery['creator'] ?> </td>
+                                    <td> <?=  ($discoveryType == Discovery::TYPE_EXTERNAL) ? "EasyRogs" : "Other" ?> </td>
 									<td align="center">
 										<div class="dropdown">
 											<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Action
 												<span class="caret"></span>
 											</button>
 											<ul class="dropdown-menu dropdown-menu-right" role="menu">
-												<?php
-												if(in_array("view",$discovery_ACL)) {
-												?> 
+<?php
+												if( in_array("view",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','view.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&response_id=0&view=1','49');"><i class="fa fa-eye"></i> View</a></li>
 													<?php /*?><li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&view=1&respond=0','49');"><i class="fa fa-eye"></i> View</a></li><?php */?>
-												<?php
+<?php
 												}
-												if(in_array("respond",$discovery_ACL))
-												{
-												?>
+												if( in_array("respond",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&view=0&respond=1&response_id=0','49');"><i class="fa fa-edit"></i> Respond</a></li>
-												<?php
+<?php
 												}
-												if(in_array("edit",$discovery_ACL))
-												{
-												?>
+												if( in_array("edit",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="javascript:;"  onclick="javascript: selecttab('47_tab','discovery.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['id'] ?>&supp=0','47');"><i class="fa fa-edit"></i> Edit</a></li>
-												<?php
+<?php
 												}
-												if(in_array("request-pdf",$discovery_ACL))
-												{
-												?>
+												if( in_array("request-pdf",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="makepdf.php?id=<?= $discovery['d_uid'] ?>&view=1" target="_blank"   ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
-												<?php
+<?php
 												}
-												if(in_array("delete",$discovery_ACL))
-												{
-												?>
+												if( in_array("delete",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttondeletediscovery('<?= $discovery['d_uid'] ?>');"><i class="fa fa-trash"></i> Delete</a></li>
-												<?php
+<?php
 												}
-												?>
+?>
 											</ul>
-										</div> 
+										</div>
 									</td>
 								</tr>
 <?php
@@ -271,136 +258,102 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								if( !empty($responses) ) {
 									foreach($responses as $response_data) {
 										$response_id	= $response_data['id'];
-										
+
 										$response_ACL	= array('response-pdf','view');
-										
-										if( $response_data['isserved'] )
-										{
+
+										if( $response_data['isserved'] ) {
 											$response_ACL[]	= "supp-amend";
-											if($loggedin_email == 'jeff@jeffschwartzlaw.com')
-											{
+											if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) { // ??
 												$response_ACL[]	= "unserve";
 											}
-											
 										}
-										else
-										{
+										else {
 											$response_ACL[]	= "edit";
 											$response_ACL[]	= "delete";
 										}
-										
-										?>
+
+?>
 										<tr class="group_<?= $d_id ?>" style="display:none">
-										<td></td>
-										<td><?= $response_data['responsename'] ?></td>
-										<td><?= getclientname($discovery['propounding']) ?></td>
-										<td><?= getclientname($discovery['responding']) ?></td>
-										<td><?php if($response_data['isserved'] == 1) {echo dateformat($response_data['servedate']);} else{echo "";} ?></td>
-										<td><?php if($response_data['isserved'] != 1) {echo dateformat($discovery['due']);} else{echo "-";} ?></td>
-										<td>
-										<?= $discovery['creator']; ?>
-										</td>
-										<td>
-										<?php
-                                        if($discoveryType == 1)
-										{
-											echo "EasyRogs";//"External";
-										}
-										else
-										{
-											echo "Other";//"Internal";
-										}
-                                        ?>
-                                        </td>
+											<td></td>
+											<td><?= $response_data['responsename'] ?></td>
+											<td><?= getclientname($discovery['propounding']) ?></td>
+											<td><?= getclientname($discovery['responding']) ?></td>
+											<td><?php if($response_data['isserved'] == 1) {echo dateformat($response_data['servedate']);} else{echo "";} ?></td>
+											<td><?php if($response_data['isserved'] != 1) {echo dateformat($discovery['due']);} else{echo "-";} ?></td>
+											<td><?= $discovery['creator']; ?></td>
+											<td><?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other" ?></td>
 										<td align="center">
 											<div class="dropdown">
 												<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Action
 													<span class="caret"></span>
 												</button>
 												<ul class="dropdown-menu dropdown-menu-right" role="menu">
-													<?php
-													
-													if(in_array("view",$response_ACL))
-													{
-													?>
+<?php
+
+													if( in_array("view",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','view.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&view=0&response_id=<?= $response_id ?>','49');"><i class="fa fa-eye"></i> View</a></li>
-													<?php
+<?php
 													}
-													if(in_array("edit",$response_ACL))
-													{
-													?>
+													if( in_array("edit",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-edit"></i> Edit</a></li>
-													<?php
+<?php
 													}
-													if(in_array("supp-amend",$response_ACL))
-													{
-													?>
+													if( in_array("supp-amend",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&supp=1&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-refresh"></i> Supp/Amend</a></li>
-													<?php
+<?php
 													}
-													
-													if(in_array("response-pdf",$response_ACL))
-													{
-													?>
+
+													if( in_array("response-pdf",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="makepdf.php?id=<?= $discovery['d_uid'] ?>&view=0&response_id=<?= $response_id ?>" target="_blank" ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
-													<?php
+<?php
 													}
-													if(in_array("unserve",$response_ACL))
-													{
-													?>
+													if( in_array("unserve",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttonunserveresponse('<?= $response_id ?>');"><i class="fa fa-undo"></i> Unserve</a></li>
-													<?php
+<?php
 													}
-													if(in_array("delete",$response_ACL))
-													{
-													?>
+													if( in_array("delete",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttondeleteresponse('<?= $response_id ?>');"><i class="fa fa-trash"></i> Delete</a></li>
-													<?php
+<?php
 													}
-													?>
+?>
 												</ul>
 											</div>
 										</td>
 										</tr>
-										<?php
+<?php
 									}
 								}
 								if($totalChilds == 0)
 								{
-								?>
+?>
 								<script>
-								//$( document ).ready(function() 
-								//{
 									$("#plusBtn<?= $d_id ?>").hide();
 									$("#minusBtn<?= $d_id ?>").hide();
-								//});
 								</script>
 								<?php
 								}
 							}
-							else if($discoveryType == 1)
-							{
+							else if( $discoveryType == Discovery::TYPE_EXTERNAL ) {
 								//if($creator_id == $_SESSION['addressbookid'])
 								{
 									$RequestPDF_FileName	= "makepdf.php?id=".$discovery['d_uid']."&view=1";
 									//$ResponsePDF_FileName	= "makepdf.php?id=".$discovery['d_uid']."&view=0";
 								}
-								if($creator_id == $_SESSION['addressbookid'] || !empty($iscaseteammember))
-								{
+								if( $creator_id == $_SESSION['addressbookid'] || !empty($iscaseteammember) ) {
 									//OWNER HERE
 								}
-								else
-								{
-									if(!$is_served)
-									{
+								else {
+									if( !$is_served ) {
 										$totalChildsNotIncludes++;
 										continue;
 									}
 								}
-								/*if($is_served != 1 && $creator_id != $_SESSION['addressbookid'])
-								{
-									continue;
-								}*/
 								/**
 								* Check to see login user is responding party attorney or not
 								* If he is the attorney of responding party then we give him option to respond in external discovery.
@@ -408,8 +361,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								$client_responding	= $discovery['responding'];
 								$isResPartyAttorney	= $AdminDAO->getrows('attorney a,client_attorney ca',"*","ca.client_id = :client_id AND a.id = ca.attorney_id AND ca.case_id = :case_id ",array('client_id'=>$client_responding,'case_id'=>$case_id));
 								$respondingPartyAttr= array();
-								foreach($isResPartyAttorney as $data_attr)
-								{
+								foreach( $isResPartyAttorney as $data_attr ) {
 									$respondingPartyAttr[]	= $data_attr['attorney_email'];
 								}
 								/**
@@ -417,45 +369,34 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								**/
 								$responses		= $AdminDAO->getrows('responses',"*","fkdiscoveryid = :fkdiscovery_id ",array('fkdiscovery_id'=>$d_id));
 								$showDueDate	= 1;
-								foreach($responses as $responsedata)
-								{
-									if($responsedata['isserved'] == 1)
-									{
+								foreach( $responses as $responsedata ) {
+									if( $responsedata['isserved'] == 1 ) {
 										$showDueDate	= 0;
 									}
 								}
-								
+
 								/**
 								* SET UP ACL FOR DISCOVERIES
-								**/  
-								if($is_served == 1)
-								{
+								**/
+								if( $is_served == 1 ) {
 									$discovery_ACL[]	= "view";
 									$discovery_ACL[]	= "request-pdf";
-									if($creator_id == $_SESSION['addressbookid'])
-									{
-										$discovery_ACL[]	= "supp-amend";	
-										
+									if( $creator_id == $_SESSION['addressbookid'] ) {
+										$discovery_ACL[]	= "supp-amend";
 									}
-									if($loggedin_email == 'jeff@jeffschwartzlaw.com')
-									{
+									if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) { // ??
 										$discovery_ACL[]	= "unserve";
 									}
-									if(in_array($_SESSION['loggedin_email'],$respondingPartyAttr) && sizeof($responses) == 0)
-									{
+									if( in_array( $_SESSION['loggedin_email'], $respondingPartyAttr ) && !sizeof($responses) ) {
 										$discovery_ACL[]	= "respond";
-										//$discovery_ACL[]	= "response-pdf";
 									}
 								}
-								else
-								{
+								else {
 									$discovery_ACL[]	= "edit";
 									$discovery_ACL[]	= "delete";
 									$discovery_ACL[]	= "request-pdf";
 								}
-								
-								
-								?> 
+?>
 								<tr style="background-color:#18fd4736">
 									<td style="text-align:center; vertical-align:middle">
 									 <a href="javascript:;" id="plusBtn<?= $d_id ?>" onclick="showHide(1,'<?= $d_id ?>')">
@@ -466,114 +407,88 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									</a>
 									</td>
 									<td>
-									<?php 
-									if($discovery['discovery_name'] == '')
-									{
+<?php
+									if( !$discovery['discovery_name'] ) {
 										echo $discovery['form_name']." [Set ".$discovery['set_number']."]";//." (".$discovery['short_form_name'].")"
 									}
-									else
-									{
+									else {
 										echo $discovery['discovery_name']." [Set ".$discovery['set_number']."]";
 									}
-									
-									?>
+
+?>
 									</td>
 									<td><?= getclientname($discovery['propounding']) ?></td>
 									<td><?= getclientname($discovery['responding']) ?></td>
 									<td><?= dateformat($discovery['served']) ?></td>
 									<td>
-                                    <?php 
-									if(/*sizeof($responses) == 0*/ $showDueDate == 1)
-									{
+<?php
+									if( $showDueDate == 1) {
 										echo dateformat($discovery['due']);
                                     }
-                                    else
-                                    {
+                                    else {
                                     	echo "-";
                                     }
-									?>
+?>
                                     </td>
-									<td>
-									<?= $discovery['creator']; ?>
-									</td>
-                                    <td>
-                                    <?php
-									if($discoveryType == 1)
-                                    {
-                                        echo "EasyRogs";//"External";
-                                    }
-                                    else
-                                    {
-                                        echo "Other";//"Internal";
-                                    }
-									?>
-                                    </td>
-									
+									<td> <?= $discovery['creator']; ?> </td>
+                                    <td><?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other" ?></td>
+
 									<td align="center">
 										<div class="dropdown">
 											<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Action
 												<span class="caret"></span>
 											</button>
 											<ul class="dropdown-menu dropdown-menu-right" role="menu">
-												<?php
-												if(in_array("view",$discovery_ACL))
-												{
-												?>
+<?php
+												if( in_array("view",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','view.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&response_id=0&view=1','49');"><i class="fa fa-eye"></i> View</a></li>
-													<?php /*?><li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&view=1&respond=0','49');"><i class="fa fa-eye"></i> View</a></li><?php */?>
-												<?php
+<?php
 												}
-												if(in_array("edit",$discovery_ACL))
-												{
-												?>
+												if( in_array("edit",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="javascript:;"  onclick="javascript: selecttab('47_tab','discovery.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['id'] ?>&supp=0','47');"><i class="fa fa-edit"></i> Edit</a></li>
-												<?php
+<?php
 												}
-												if(in_array("respond",$discovery_ACL))
-												{
-												?>
+												if( in_array("respond",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&view=0&respond=1&response_id=0','49');"><i class="fa fa-edit"></i> Respond</a></li>
-												<?php
+<?php
 												}
-												if(in_array("supp-amend",$discovery_ACL))
-												{
-												?>
+												if( in_array("supp-amend",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="javascript:;"  onclick="javascript: selecttab('47_tab','discovery.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['id'] ?>&supp=1','47');"><i class="fa fa-refresh"></i> Supp/Amend</a></li>
-												<?php
+<?php
 												}
-												
-												if(in_array("response-pdf",$discovery_ACL))
-												{
-												?>
+
+												if( in_array("response-pdf",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="<?= $ResponsePDF_FileName ?>" target="_blank" ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
-												<?php
+<?php
 												}
-												if(in_array("request-pdf",$discovery_ACL))
-												{
-												?>
+												if( in_array("request-pdf",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="<?= $RequestPDF_FileName ?>" target="_blank"   ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
-												<?php
+<?php
 												}
-												if(in_array("unserve",$discovery_ACL))
-												{
-												?>
+												if( in_array("unserve",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttonunservediscovery('<?= $discovery['d_uid'] ?>');"><i class="fa fa-undo"></i> Unserve</a></li>
-												<?php
+<?php
 												}
-												if(in_array("delete",$discovery_ACL))
-												{
-												?>
+												if( in_array("delete",$discovery_ACL) ) {
+?>
 													<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttondeletediscovery('<?= $discovery['d_uid'] ?>');"><i class="fa fa-trash"></i> Delete</a></li>
-												<?php
+<?php
 												}
-												?>
+?>
 											</ul>
 										</div>
 									</td>
 								</tr>
 <?php
 								$totalChilds += sizeof($responses);
-								
+
 								if( !empty($responses) ) {
 									foreach($responses as $response_data) {
 										$response_creator_id	= $response_data['created_by'];
@@ -585,137 +500,96 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 											//$RequestPDF_FileName	= "makepdf.php?id=".$discovery['d_uid']."&view=1";
 											$ResponsePDF_FileName	= "makepdf.php?id=".$discovery['d_uid']."&view=0&response_id=".$response_id;
 										}
-										if($isserved != 1 && $response_creator_id != $_SESSION['addressbookid'])
-										{
-											$totalChildsNotIncludes++;
-											continue;
+										if( !$isserved && $response_creator_id != $_SESSION['addressbookid'] ) {
+											$totalChildsNotIncludes++; continue;
 										}
-										
-										/*if(in_array($_SESSION['loggedin_email'],$respondingPartyAttr))
-										{
-											$response_ACL[]		= "edit";
-										}*/
-										if($isserved == 1)
-										{
-											if( $response_creator_id == $_SESSION['addressbookid'])
-											{
+
+										if( $isserved ) {
+											if( $response_creator_id == $_SESSION['addressbookid'] ) {
 												$response_ACL[]		= "supp-amend";
-												
 											}
-											if($loggedin_email == 'jeff@jeffschwartzlaw.com')
-											{
+											if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
 												$response_ACL[]		= "unserve";
 											}
 											$response_ACL[]		= "view";
 											$response_ACL[]		= "response-pdf";
 										}
-										else
-										{
-											if( $response_creator_id == $_SESSION['addressbookid'])
-											{
+										else {
+											if( $response_creator_id == $_SESSION['addressbookid'] ) {
 												$response_ACL[]	= "edit";
 												$response_ACL[]	= "delete";
 												$response_ACL[]	= "response-pdf";
 											}
 										}
-										?> 
+?>
 										<tr class="group_<?= $d_id ?>" style="display:none">
-										<td><?php 
-										
-										/*echo "isserved:$isserved<br>";
-										echo "response_creator_id:$response_creator_id<br>";
-										echo "loggedin:".$_SESSION['addressbookid']."<br>";
-										dump($responses); */
-										
-										
-										?></td>
-										<td><?= $response_data['responsename'] ?></td>
-										<td><?= getclientname($discovery['propounding']) ?></td>
-										<td><?= getclientname($discovery['responding']) ?></td>
-										<td><?php if($isserved == 1){echo dateformat($response_data['servedate']);} ?></td>
-                                        <td><?php if($isserved != 1) {echo dateformat($discovery['due']);} else{echo "-";} ?></td>
-										<td>
-										<?=  getNameFromAddressbook($response_data['created_by']) ?>
-										</td>
-                                        <td>
-										<?php
-                                        if( $discoveryType == Discovery::TYPE_EXTERNAL ) {
-											echo "EasyRogs";//"External";
-										}
-										else {
-											echo "Other";//"Internal";
-										}
-                                        ?>
-                                        </td>
+											<td></td>
+											<td><?= $response_data['responsename'] ?></td>
+											<td><?= getclientname($discovery['propounding']) ?></td>
+											<td><?= getclientname($discovery['responding']) ?></td>
+											<td><?php if($isserved == 1){echo dateformat($response_data['servedate']);} ?></td>
+											<td><?php if($isserved != 1) {echo dateformat($discovery['due']);} else{echo "-";} ?></td>
+											<td><?=  getNameFromAddressbook($response_data['created_by']) ?></td>
+                                        	<td><?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other" ?></td>
 										<td align="center">
 											<div class="dropdown">
 												<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Action
 													<span class="caret"></span>
 												</button>
 												<ul class="dropdown-menu dropdown-menu-right" role="menu">
-													<?php
-													if(in_array("view",$response_ACL))
-													{
-													?>
+<?php
+													if( in_array("view",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','view.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&view=0&response_id=<?= $response_id ?>','49');"><i class="fa fa-eye"></i> View</a></li>
-													<?php
+<?php
 													}
-													if(in_array("edit",$response_ACL))
-													{
-													?>
+													if( in_array("edit",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-edit"></i> Edit</a></li>
-													<?php
+<?php
 													}
-													if(in_array("supp-amend",$response_ACL))
-													{
-													?>
+													if( in_array("supp-amend",$response_ACL) ) {
+?>
                                                     	<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $discovery['d_uid'] ?>&supp=1&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-refresh"></i> Supp/Amend</a></li>
-                                                    	<?php /*?><li class="list-menu"><a href="javascript:;"  onclick="createResponseSupp('<?= $response_id?>','<?= $d_id?>');"><i class="fa fa-refresh"></i> Supp/Amend</a></li><?php */?>
-													<?php
+<?php
 													}
-													
-													if(in_array("request-pdf",$response_ACL))
-													{
-													?>
+
+													if( in_array("request-pdf",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="<?= $RequestPDF_FileName ?>"   ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
-													<?php
+<?php
 													}
-													if(in_array("response-pdf",$response_ACL))
-													{
-													?>
+													if( in_array("response-pdf",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="<?= $ResponsePDF_FileName ?>" target="_blank" ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
-													<?php
+<?php
 													}
-													if(in_array("unserve",$response_ACL))
-													{
-													?>
+													if( in_array("unserve",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttonunserveresponse('<?= $response_id ?>');"><i class="fa fa-undo"></i> Unserve</a></li>
-													<?php
+<?php
 													}
-													if(in_array("delete",$response_ACL))
-													{
-													?>
+													if( in_array("delete",$response_ACL) ) {
+?>
 														<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttondeleteresponse('<?= $response_id ?>');"><i class="fa fa-trash"></i> Delete</a></li>
-													<?php
+<?php
 													}
-													?>
+?>
 												</ul>
 											</div>
 										</td>
 										</tr>
-										<?php
+<?php
 									}
 								}
-								if($d_id > 0)
-								{
-								/*******************************************
-								* 		Supplement Amending Discoveries
-								*******************************************/
-								//$AdminDAO->displayquery=1;
+								if( $d_id ) {
+									/*******************************************
+									* 		Supplement Amending Discoveries
+									*******************************************/
 								$supp_discoveries	= $AdminDAO->getrows(
 													"discoveries,cases,forms,system_addressbook",
 													"	discoveries.propounding_uid,
-														discoveries.responding_uid,							
+														discoveries.responding_uid,
 														discoveries.id,
 														discoveries.uid as d_uid,
 														discoveries.propounding,
@@ -737,26 +611,25 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 														IF(send_date='0000-00-00 00:00:00', '-', send_date) send_date
 													",
 													"
-														cases.id 				= 	discoveries.case_id 	AND
-														forms.id 				= 	discoveries.form_id 	AND
-														pkaddressbookid 		= 	discoveries.attorney_id AND
+														cases.id 				= discoveries.case_id 	AND
+														forms.id 				= discoveries.form_id 	AND
+														pkaddressbookid 		= discoveries.attorney_id AND
 														discoveries.grand_parent_id	= '$d_id'					AND
-														cases.id 				=  	:case_id 	
+														cases.id 				= :case_id
 													",
-													/*discoveries.attorney_id = 	:attorney_id 			AND*/
+													/*discoveries.attorney_id = :attorney_id 			AND*/
 													array(
-														":case_id"		=>	$case_id 
+														":case_id"		=>	$case_id
 														/*,":attorney_id"	=>	$_SESSION['addressbookid']*/)
 													);
-									
-									Side::legacyTranslateCaseData($case_id, $supp_discoveries);
-									
+
+Side::legacyTranslateCaseData($case_id, $supp_discoveries);
+
 									$totalChilds += sizeof($supp_discoveries);
-									
-									foreach($supp_discoveries as $suppdiscovery)
-									{
+
+									foreach( $supp_discoveries as $suppdiscovery ) {
 										$supp_d_id			= $suppdiscovery['id'];
-										$supp_creator_id	 = $suppdiscovery['creator_id'];
+										$supp_creator_id	= $suppdiscovery['creator_id'];
 										$supp_is_submitted	= $suppdiscovery['is_submitted'];
 										$supp_is_served		= $suppdiscovery['is_served'];
 										$supp_discoveryType	= $suppdiscovery['type']; //I External 2: Internal
@@ -766,7 +639,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 											$RequestPDF_FileName	= "makepdf.php?id=".$suppdiscovery['d_uid']."&view=1";
 											//$ResponsePDF_FileName	= "makepdf.php?id=".$suppdiscovery['d_uid']."&view=0";
 										//}
-										//else 
+										//else
 										//{
 											//$suppdiscoveryName		= $suppdiscovery['discovery_name'];
 											//$suppdiscoverySet		= $suppdiscovery['set_number'];
@@ -775,22 +648,16 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 											//$RequestPDF_FileName	= UPLOAD_URL."documents/".$suppdiscoveryUID."/".$PDF_FileName;
 											//$RequestPDF_FileName	= "makepdf.php?id=".$suppdiscovery['d_uid']."&view=0&response_id=".$response_id;
 										//}
-										if($supp_discoveryType == 2)
-										{
-											$totalChildsNotIncludes++;
-											continue;
+										if( $supp_discoveryType == 2) {
+											$totalChildsNotIncludes++; continue;
 										}
-										
-										if($supp_creator_id == $_SESSION['addressbookid'] || !empty($iscaseteammember))
-										{
+
+										if( $supp_creator_id == $_SESSION['addressbookid'] || !empty($iscaseteammember) ) {
 											//OWNER HERE
 										}
-										else
-										{
-											if(!$supp_is_served)
-											{
-												$totalChildsNotIncludes++;
-												continue;
+										else {
+											if( !$supp_is_served ) {
+												$totalChildsNotIncludes++; continue;
 											}
 										}
 										/**
@@ -800,97 +667,78 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										$supp_client_responding	= $suppdiscovery['responding'];
 										$supp_isResPartyAttorney	= $AdminDAO->getrows('attorney a,client_attorney ca',"*","ca.client_id = :client_id AND a.id = ca.attorney_id AND ca.case_id = :case_id ",array('client_id'=>$supp_client_responding,'case_id'=>$case_id));
 										$supp_respondingPartyAttr= array();
-										foreach($supp_isResPartyAttorney as $supp_data_attr)
-										{
+										foreach( $supp_isResPartyAttorney as $supp_data_attr ) {
 											$supp_respondingPartyAttr[]	= $supp_data_attr['attorney_email'];
 										}
-										
+
 										/**
 										* GET RESPONSES OF SUPP/EMEND EXTERNAL DISCOVERY
 										**/
 										$showDueDateSupp	= 1;
 										$suppresponses	= $AdminDAO->getrows('responses',"*","fkdiscoveryid = :fkdiscovery_id ",array('fkdiscovery_id'=>$supp_d_id));
-										foreach($suppresponses as $suppresponsesdata)
-										{
-											if($suppresponsesdata['isserved'] == 1)
-											{
+										foreach($suppresponses as $suppresponsesdata) {
+											if( $suppresponsesdata['isserved'] ) {
 												$showDueDateSupp	= 0;
 											}
 										}
-										
+
 										/**
 										* SET UP ACL FOR DISCOVERIES
 										**/
-										if($supp_is_served == 1)
-										{
+										if( $supp_is_served ) {
 											$supp_discovery_ACL[]	= "view";
 											$supp_discovery_ACL[]	= "request-pdf";
-											if($supp_creator_id == $_SESSION['addressbookid'])
-											{
+											if( $supp_creator_id == $_SESSION['addressbookid'] ) {
 												$supp_discovery_ACL[]	= "supp-amend";
-												
 											}
-											if($loggedin_email == 'jeff@jeffschwartzlaw.com')
-											{
+											if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
 												$supp_discovery_ACL[]	= "unserve";
 											}
-											if(in_array($_SESSION['loggedin_email'],$supp_respondingPartyAttr) && sizeof($suppresponses) == 0)
-											{
+											if( in_array($_SESSION['loggedin_email'],$supp_respondingPartyAttr) && !sizeof($suppresponses) ) {
 												$supp_discovery_ACL[]	= "respond";
 											}
 										}
-										else
-										{
+										else {
 											$supp_discovery_ACL[]	= "request-pdf";
 											$supp_discovery_ACL[]	= "edit";
 											$supp_discovery_ACL[]	= "delete";
 										}
-										
-										//dump($discovery_ACL);
-										?>
+?>
 										<tr class="group_<?=  $d_id ?>" style="display:none">
 											<td><?php //dump($supp_respondingPartyAttr); ?></td>
 											<td>
-											<?php 
-											if($suppdiscovery['discovery_name'] == '')
-											{
+<?php
+											if( !$suppdiscovery['discovery_name'] ) {
 												echo $suppdiscovery['form_name']." [Set ".$suppdiscovery['set_number']."]";
 											}
-											else
-											{
+											else {
 												echo $suppdiscovery['discovery_name']." [Set ".$suppdiscovery['set_number']."]";
 											}
-											?>
+?>
 											</td>
 											<td><?= getclientname($suppdiscovery['propounding']) ?></td>
 											<td><?= getclientname($suppdiscovery['responding']) ?></td>
 											<td><?= dateformat($suppdiscovery['served']) ?></td>
 											<td>
-                                            <?php 
-											if(/*sizeof($suppresponses) == 0*/ $showDueDateSupp == 1)
-											{
+<?php
+											if( $showDueDateSupp == 1) {
 												echo dateformat($suppdiscovery['due']);
 											}
-											else
-											{
+											else {
 												echo "-";
 											}
-											?>
+?>
                                             </td>
+                                            <td><?= $suppdiscovery['creator']; ?></td>
                                             <td>
-											<?= $suppdiscovery['creator']; ?>
-											</td>
-                                            <td>
-											<?php
-                                            if($discoveryType == 1)
-											{
+<?php
+                                            if( $discoveryType == 1 ) {
 												echo "EasyRogs";//"External";
 											}
-											else
-											{
+											else {
 												echo "Other";//"Internal";
 											}
-                                            ?>
+?>
                                             </td>
 											<td align="center">
 												<div class="dropdown">
@@ -898,64 +746,56 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 														<span class="caret"></span>
 													</button>
 													<ul class="dropdown-menu dropdown-menu-right" role="menu">
-														<?php
-														if(in_array("view",$supp_discovery_ACL))
-														{
-														?>
+<?php
+														if( in_array("view",$supp_discovery_ACL) ) {
+?>
 															<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','view.php?pid=<?= $_GET['pid'] ?>&id=<?= $suppdiscovery['d_uid'] ?>&response_id=0&view=1','49');"><i class="fa fa-eye"></i> View</a></li>
 															<?php /*?><li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $suppdiscovery['d_uid'] ?>&view=1&respond=0','49');"><i class="fa fa-eye"></i> View</a></li><?php */?>
-														<?php
+<?php
 														}
-														if(in_array("edit",$supp_discovery_ACL))
-														{
-														?>
+														if( in_array("edit",$supp_discovery_ACL) ) {
+?>
 															<li class="list-menu"><a href="javascript:;"  onclick="javascript: selecttab('47_tab','discovery.php?pid=<?= $_GET['pid'] ?>&id=<?= $suppdiscovery['id'] ?>&supp=0','47');"><i class="fa fa-edit"></i> Edit</a></li>
-														<?php
+<?php
 														}
-														if(in_array("respond",$supp_discovery_ACL))
+														if( in_array("respond",$supp_discovery_ACL) )
 														{
-														?>
+?>
 															<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $suppdiscovery['d_uid'] ?>&view=0&respond=1&response_id=0','49');"><i class="fa fa-edit"></i> Respond</a></li>
-														<?php
+<?php
 														}
-														if(in_array("supp-amend",$supp_discovery_ACL))
-														{
-														?>
+														if( in_array("supp-amend",$supp_discovery_ACL) ) {
+?>
 															<li class="list-menu"><a href="javascript:;"  onclick="javascript: selecttab('47_tab','discovery.php?pid=<?= $_GET['pid'] ?>&id=<?= $suppdiscovery['id'] ?>&supp=1','47');"><i class="fa fa-refresh"></i> Supp/Amend</a></li>
-														<?php
+<?php
 														}
-														if(in_array("response-pdf",$supp_discovery_ACL))
-														{
-														?>
+														if( in_array("response-pdf",$supp_discovery_ACL) ) {
+?>
 															<li class="list-menu"><a href="<?= $ResponsePDF_FileName; ?>" target="_blank" ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
-														<?php
+<?php
 														}
-														if(in_array("request-pdf",$supp_discovery_ACL))
-														{
-														?>
+														if( in_array("request-pdf",$supp_discovery_ACL) ) {
+?>
 															<li class="list-menu"><a href="<?= $RequestPDF_FileName ?>" target="_blank"   ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
-														<?php
+<?php
 														}
-														if(in_array("unserve",$supp_discovery_ACL))
-														{
-														?>
+														if( in_array("unserve",$supp_discovery_ACL) ) {
+?>
 															<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttonunservediscovery('<?= $suppdiscovery['d_uid'] ?>');"><i class="fa fa-undo"></i> Unserve</a></li>
-														<?php
+<?php
 														}
-														if(in_array("delete",$supp_discovery_ACL))
-														{
-														?>
+														if( in_array("delete",$supp_discovery_ACL) ) {
+?>
 															<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttondeletediscovery('<?= $suppdiscovery['d_uid'] ?>');"><i class="fa fa-trash"></i> Delete</a></li>
-														<?php
+<?php
 														}
-														?>
+?>
 													</ul>
 												</div>
 											</td>
 										</tr>
-<?php  
+<?php
 										$totalChilds += sizeof($suppresponses);
-										
 										if( !empty($suppresponses) ) {
 											foreach($suppresponses as $response_data) {
 												$response_id				= $response_data['id'];
@@ -966,40 +806,28 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 												{
 													$ResponsePDF_FileName	= "makepdf.php?id=".$suppdiscovery['d_uid']."&view=0&response_id=".$response_id;
 												}
-												if($supp_isserved != 1 && $supp_response_creator_id != $_SESSION['addressbookid'])
-												{
-													$totalChildsNotIncludes++;
-													continue;
+												if($supp_isserved != 1 && $supp_response_creator_id != $_SESSION['addressbookid']) {
+													$totalChildsNotIncludes++; continue;
 												}
-												/*if(in_array($_SESSION['loggedin_email'],$respondingPartyAttr))
-												{
-													$supp_response_ACL[]		= "edit";
-												}*/
-												
-												if($supp_isserved == 1)
-												{
-													if( $supp_response_creator_id == $_SESSION['addressbookid'])
-													{
+
+												if( $supp_isserved ) {
+													if( $supp_response_creator_id == $_SESSION['addressbookid']) {
 														$supp_response_ACL[]		= "supp-amend";
-														
 													}
-													if($loggedin_email == 'jeff@jeffschwartzlaw.com')
-													{
+													if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
 														$supp_response_ACL[]		= "unserve";
 													}
 													$supp_response_ACL[]		= "view";
 													$supp_response_ACL[]		= "response-pdf";
 												}
-												else
-												{
-													if( $supp_response_creator_id == $_SESSION['addressbookid'])
-													{
+												else {
+													if( $supp_response_creator_id == $_SESSION['addressbookid'] ) {
 														$supp_response_ACL[]	= "edit";
 														$supp_response_ACL[]	= "delete";
 														$supp_response_ACL[]	= "response-pdf";
-													} 
-												} 
-												?>
+													}
+												}
+?>
 												<tr class="group_<?= $d_id ?>" style="display:none">
 												<td></td>
 												<td><?= $response_data['responsename'] ?></td>
@@ -1007,99 +835,75 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 												<td><?= getclientname($suppdiscovery['responding']) ?></td>
 												<td><?php if($supp_isserved == 1){echo dateformat($response_data['servedate']);} ?></td>
                                                 <td><?php if($supp_isserved != 1) {echo dateformat($suppdiscovery['due']);} else{echo "-";} ?></td>
-										
-												<td>
-												<?=  getNameFromAddressbook($response_data['created_by']) ?>
-												</td>
-                                                <td>
-												<?php
-												if($discoveryType == 1)
-												{
-													echo "EasyRogs";//"External";
-												}
-												else
-												{
-													echo "Other";//"Internal";
-												}
-												?>
-												</td>
+
+												<td><?=  getNameFromAddressbook($response_data['created_by']) ?></td>
+												<td><?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other" ?></td>
 												<td align="center">
 													<div class="dropdown">
 														<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Action
 															<span class="caret"></span>
 														</button>
 														<ul class="dropdown-menu dropdown-menu-right" role="menu">
-															<?php
-															
-															if(in_array("view",$supp_response_ACL))
-															{
-															?>
+<?php
+
+															if( in_array("view",$supp_response_ACL) ) {
+?>
 																<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','view.php?pid=<?= $_GET['pid'] ?>&id=<?= $suppdiscovery['d_uid'] ?>&view=0&response_id=<?= $response_id ?>','49');"><i class="fa fa-eye"></i> View</a></li>
-															<?php
+<?php
 															}
-															if(in_array("edit",$supp_response_ACL))
-															{
-															?>
+															if( in_array("edit",$supp_response_ACL) ) {
+?>
 																<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $suppdiscovery['d_uid'] ?>&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-edit"></i> Edit</a></li>
-															<?php
+<?php
 															}
-															if(in_array("supp-amend",$supp_response_ACL))
-															{
-															?>
+															if( in_array("supp-amend",$supp_response_ACL) ) {
+?>
                                                             	<li class="list-menu"><a href="javascript:;"   onclick="javascript: selecttab('49_tab','discoverydetails.php?pid=<?= $_GET['pid'] ?>&id=<?= $suppdiscovery['d_uid'] ?>&supp=1&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-refresh"></i> Supp/Amend</a></li>
 																<?php /* ?><li class="list-menu"><a href="javascript:;"  onclick="createResponseSupp('<?= $response_id ?>','<?= $supp_d_id ?>');"><i class="fa fa-refresh"></i> Supp/Amend</a></li><?php */ ?>
-															<?php
+<?php
 															}
-															
+
 															if(in_array("response-pdf",$supp_response_ACL)) {
-															?>
+?>
 																<li class="list-menu"><a href="<?= $ResponsePDF_FileName; ?>" target="_blank" ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
-															<?php
+<?php
 															}
-															
+
 															if(in_array("unserve",$supp_response_ACL)) {
-															?>
+?>
 																<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttonunserveresponse('<?= $response_id ?>');"><i class="fa fa-undo"></i> Unserve</a></li>
-															<?php
+<?php
 															}
-															if(in_array("delete",$supp_response_ACL))
-															{
-															?>
+															if( in_array("delete",$supp_response_ACL) ) {
+?>
 																<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttondeleteresponse('<?= $response_id ?>');"><i class="fa fa-trash"></i> Delete</a></li>
-															<?php
+<?php
 															}
-															?>
+?>
 														</ul>
 													</div>
 												</td>
 												</tr>
-												<?php
+<?php
 											}
 										}
 									}
 								}
-								
+
 								$totalChilds -= $totalChildsNotIncludes;
 								if( $totalChilds <= 0 ) {
 ?>
 								<script>
-								//$( document ).ready(function() 
-								//{
 									$("#plusBtn<?= $d_id ?>").hide();
 									$("#minusBtn<?= $d_id ?>").hide();
-								//});
 								</script>
 <?php
 								}
-							
 							}
-						
-							
 						}
 					}
-                    else
-					{
-						?>
+                    else {
+?>
                         <tr>
                         	<td align="center" colspan="9">
                                 <!--<div class="alert alert-danger text-center" role="alert">
@@ -1107,57 +911,54 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
                                 </div>-->
                             </td>
                         </tr>
-                        <?php
+<?php
 					}
-					?>
+?>
                 </tbody>
             </table>
                 </div>
             </div>
-            
+
             </div>
             </div>
-            
+
         </div>
     </div>
 </div>
 </div>
 <script>
 <?php
-if(sizeof($discoveries) > 0)
-{
+	if( sizeof($discoveries) ) {
 ?>
 $(function () {
         $('#datatable').dataTable({
 		  "searching": false,
-		   "ordering": false, 
+		   "ordering": false,
 		});
-
     });
-	
+
 <?php
-} 
+	}
 ?>
-$(document).ready(function(){
-  $('.tooltipshow').tooltip({
+$(document).ready( _ => {
+  $('.tooltipshow').tooltip( {
 	   container: 'body'
-	  });
+	  } );
 });
 </script>
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 <script>
 /*function createResponseSupp(response_id,discovery_id)
 {
-	$.post( "responsesuppaction.php", { discovery_id: discovery_id,response_id: response_id}).done(function( data ) 
+	$.post( "responsesuppaction.php", { discovery_id: discovery_id,response_id: response_id}).done(function( data )
 	{
-		var obj = JSON.parse(data); 
+		var obj = JSON.parse(data);
 		selecttab('49_tab','discoverydetails.php?pid='+obj.case_id+'&id='+obj.uid+'&view=0&respond=1&response_id='+obj.response_id,'49');
 	});
 }*/
 
 
-function buttondeleteresponse(response_id)
-{
+function buttondeleteresponse(response_id) {
 	var title = "Are you sure to delete this response?";
 	swal({
 		title: title,
@@ -1167,18 +968,17 @@ function buttondeleteresponse(response_id)
 		dangerMode: true,
 	})
 	.then((willDelete) => {
-		if (willDelete) 
+		if (willDelete)
 		{
-			$.post( "deleteresponse.php", { response_id: response_id}).done(function( case_id ) 
+			$.post( "deleteresponse.php", { response_id: response_id}).done(function( case_id )
 			{
 				javascript: selecttab('45_tab','discoveries.php?pid=<?= $case_id ?>','45');
 			});
-		}	 
+		}
 	});
 	$( ".swal-button-container:first" ).css( "float", "right" );
 }
-function buttondeletediscovery(discovery_uid)
-{
+function buttondeletediscovery(discovery_uid) {
 	var title = "Are you sure to delete this discovery?";
 	swal({
 		title: title,
@@ -1188,18 +988,17 @@ function buttondeletediscovery(discovery_uid)
 		dangerMode: true,
 	})
 	.then((willDelete) => {
-		if (willDelete) 
+		if (willDelete)
 		{
-			$.post( "deletediscovery.php", { discovery_uid: discovery_uid}).done(function( case_id ) 
+			$.post( "deletediscovery.php", { discovery_uid: discovery_uid}).done(function( case_id )
 			{
 				javascript: selecttab('45_tab','discoveries.php?pid='+case_id,'45');
 			});
-		}	 
+		}
 	});
 	$( ".swal-button-container:first" ).css( "float", "right" );
 }
-function buttonunservediscovery(discovery_uid)
-{
+function buttonunservediscovery(discovery_uid) {
 	var title = "Are you sure to Unserve this discovery?";
 	swal({
 		title: title,
@@ -1209,18 +1008,17 @@ function buttonunservediscovery(discovery_uid)
 		dangerMode: true,
 	})
 	.then((willDelete) => {
-		if (willDelete) 
+		if (willDelete)
 		{
-			$.post( "unservediscovery.php", { discovery_uid: discovery_uid}).done(function( case_id ) 
+			$.post( "unservediscovery.php", { discovery_uid: discovery_uid}).done(function( case_id )
 			{
 				javascript: selecttab('45_tab','discoveries.php?pid='+case_id,'45');
 			});
-		}	 
+		}
 	});
 	$( ".swal-button-container:first" ).css( "float", "right" );
 }
-function buttonunserveresponse(response_id)
-{
+function buttonunserveresponse(response_id) {
 	var title = "Are you sure to Unserve this response?";
 	swal({
 		title: title,
@@ -1230,26 +1028,23 @@ function buttonunserveresponse(response_id)
 		dangerMode: true,
 	})
 	.then((willDelete) => {
-		if (willDelete) 
+		if (willDelete)
 		{
-			$.post( "unserveresponse.php", { response_id: response_id}).done(function( case_id ) 
+			$.post( "unserveresponse.php", { response_id: response_id}).done(function( case_id )
 			{
 				javascript: selecttab('45_tab','discoveries.php?pid=<?= $case_id ?>','45');
 			});
-		}	 
+		}
 	});
 	$( ".swal-button-container:first" ).css( "float", "right" );
 }
-function showHide(action,discovery_id)
-{
-	if(action == 2)
-	{
+function showHide(action,discovery_id) {
+	if(action == 2) {
 		$(".group_"+discovery_id).hide();
 		$("#plusBtn"+discovery_id).show();
 		$("#minusBtn"+discovery_id).hide();
 	}
-	else
-	{
+	else {
 		$(".group_"+discovery_id).show();
 		$("#plusBtn"+discovery_id).hide();
 		$("#minusBtn"+discovery_id).show();

@@ -189,12 +189,14 @@ if( $served ) {
 }
 
 if( $id ) {
-	$fields		= array('case_id','discovery_name','set_number','propounding','responding','question_number_start_from','discovery_introduction','incidenttext','incidentoption','personnames2','personnames1');
-	$values		= array($case_id,$discovery_name,(int)$set_number,$propounding,$responding,$question_number_start_from,$discovery_introduction,$incidenttext,$incidentoption,$personnames2,$personnames1);
-	$fields[]	= "served";
-	$values[]	= $served;
-	$fields[]	= "due";
-	$values[]	= $due;
+	$fields	  = array('case_id','discovery_name','set_number','propounding','responding','question_number_start_from','discovery_introduction','incidenttext','incidentoption','personnames2','personnames1');
+	$values	  = array($case_id,$discovery_name,(int)$set_number,$propounding,$responding,$question_number_start_from,$discovery_introduction,$incidenttext,$incidentoption,$personnames2,$personnames1);
+	$fields[] = "served";
+	$values[] = $served;
+	$fields[] = "due";
+	$values[] = $due;
+	$fields[] = "is_work_in_progress";
+	$values[] = 0;
 	if( $type == Discovery::TYPE_INTERNAL ) {
 		$fields[]	= "proponding_attorney";
 		$values[]	= $proponding_attorney;
@@ -283,6 +285,9 @@ else {
 		$fields[]	= "discovery_instrunctions";
 		$values[]	= $instruction;
 	}
+	$fields[] = "is_work_in_progress";
+	$values[] = !(@$_GET['serve'] || @$_GET['save']) ?: 0;
+
 	$id	= $AdminDAO->insertrow("discoveries",$fields,$values);
 
 	if( !empty($questions) ) {
@@ -358,6 +363,8 @@ if( $isemail ) {
 	if( !$is_send )	{
 		$fields	= array("is_send",'send_date');
 		$values	= array(1,date("Y-m-d H:i:s"));
+		$fields[] = "is_work_in_progress";
+		$values[] = 0;
 		$AdminDAO->updaterow('discoveries',$fields,$values,"id='$id'");
 	}
 
