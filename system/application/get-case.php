@@ -18,7 +18,7 @@
     }
     $ownerSide = $sidesModel->getByUserAndCase($attorney_id, $caseId);
     $caseowner = $userSide['id'] === $ownerSide['id'];
-    $caseteammember	=	true;    
+    $caseteammember	=	true;
   }
 
   $sides = new Side();
@@ -26,6 +26,7 @@
   $currentSide = $sides->getByUserAndCase($currentUser->id, $caseId);
   $currentPrimaryAttorney = $sides->getPrimaryAttorney($currentSide['id']);
   $currentPrimaryAttorneyId = $currentPrimaryAttorney['pkaddressbookid'];
+  $logger->debug("GET_CASE: currentPrimaryAttorneyId: $currentPrimaryAttorneyId");
   if ( !$currentPrimaryAttorneyId && $currentUser->isAttorney() ) {
     $currentPrimaryAttorneyId = $currentUser->id;
   }

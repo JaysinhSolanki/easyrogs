@@ -109,7 +109,7 @@
       if ($attorneyChanged) {
         $this->setSideAttorney($side, $caseData['case_attorney'], $updateTeam);
       }
-      else if ($masterHeadChanged) {
+      if ($masterHeadChanged) {
         $this->setSideMasterHead($side, $caseData['masterhead']);
       }
     }

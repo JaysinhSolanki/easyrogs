@@ -691,8 +691,7 @@ function loadmasterhead()
   erInviteControl();
   <?php if ($currentPrimaryAttorneyId): ?>
     erTeamAttorneySelectControl(<?= $caseId ?>);
-		setMastHead(<?= $currentPrimaryAttorneyId ?>);
-  <?php else: ?>  
+  <?php else: ?>
     erTeamAttorneySelectControl(<?= $caseId ?>, setMastHead);
 	<?php endif; ?>  	
 	

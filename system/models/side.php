@@ -406,25 +406,27 @@
     }
 
     function getMasterHead($side, $update = true) {
-      global $usersModel;
+      global $usersModel, $logger;
       
       if (!is_array($side)) { // assume ID
         $side = $this->find($side);
       }
 
+      $logger->debug('SIDE_GET_MASTERHEAD Side: ' . json_encode($side));
       $masterhead = $side['masterhead'];
       if ( !$masterhead && $side['primary_attorney_id'] ) {
+        $logger->debug('SIDE_GET_MASTERHEAD Updating Side: ' . json_encode($side));
         $masterhead = $usersModel->getMasterHead($side['primary_attorney_id']);
       }
       
       if (!$side['masterhead'] && $update && $masterhead) {
-        $this->update('sides', 
+        $this->update('sides',
           ['masterhead' => $masterhead],
           ['id' => $side['id']]
         );
       }
 
-      return $masterhead;      
+      return $masterhead;
     }
 
     function activateUser($sideId, $userId) {
