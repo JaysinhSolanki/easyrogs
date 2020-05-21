@@ -95,7 +95,7 @@ if( $propounding == $responding ) {
 	msg(320,2);	
 }
 
-if( !empty($in_conjunction) && $in_conjunction == 1 ) {
+if( $in_conjunction ) {
 	$alreadyConjunctionWhere = "";
 	if( $id ) 	{
 		$alreadyConjunctionWhere = " AND id != $id";
@@ -104,6 +104,7 @@ if( !empty($in_conjunction) && $in_conjunction == 1 ) {
 												"propounding			= :propounding AND
 												responding 				= :responding AND
 												case_id					= :case_id AND
+												is_work_in_progress		<> 1 AND
 												interogatory_type		= :interogatory_type AND
 												conjunction_setnumber 	= :conjunction_setnumber $alreadyConjunctionWhere",
 												array(
