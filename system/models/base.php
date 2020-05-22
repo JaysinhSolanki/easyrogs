@@ -63,7 +63,7 @@
       $lastError = '';
       while ( $retries > 0 ) {
         try {
-          $this->db = new PDO( $dsn, $username, $password, [PDO::ATTR_PERSISTENT => true] );
+          $this->db = new PDO( $dsn, $username, $password/*, [PDO::ATTR_PERSISTENT => true]*/ );
           $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
           $this->db->exec("SET NAMES 'utf8'");
           $retries = 0;
