@@ -64,6 +64,16 @@ denyJoinCaseRequest = (userId, caseId, success, error) => {
 	 .fail(error);
 }
 
+getDiscovery = (id, success, error) => {
+	$.get(API_BASE + '/get-discovery.php', {id: id}, success, FORMAT_JSON)
+	 .fail(error);
+}
+
+updateDiscovery = (id, data, success, error) => {
+	$.post(API_BASE + '/post-update-discovery.php', {id: id, discovery: data}, success, FORMAT_JSON)
+	 .fail(error);
+}
+
 confirmAction = (options) => {
 	return swal({
 		title: "Are you sure?",

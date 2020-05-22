@@ -23,6 +23,10 @@
     const STYLE_WORDCAPS  = 'WordCaps';
     const STYLE_ALLCAPS   = 'ALLCAPS';
     const STYLE_LOWERCASE = 'lowercase';
+
+    public function updateById($id, $fields, $ignore = false ) {
+      return parent::update('discoveries', $fields, ['id' => $id], $ignore);
+    }
     
     static function getTitle($name, $set_number = null, $style = self::STYLE_WORDCAPS ) {
       global $logger;

@@ -381,6 +381,8 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								if( $is_served == 1 ) {
 									$discovery_ACL[]	= "view";
 									$discovery_ACL[]	= "request-pdf";
+									$discovery_ACL[]	= "change-due-date";
+
 									if( $creator_id == $_SESSION['addressbookid'] ) {
 										$discovery_ACL[]	= "supp-amend";
 									}
@@ -470,6 +472,12 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 ?>
 													<li class="list-menu"><a href="<?= $RequestPDF_FileName ?>" target="_blank"   ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
 <?php
+												}
+												if(in_array("change-due-date",$discovery_ACL))
+												{
+												?>
+													<li class="list-menu"><a href="#" class="discovery-change-due-date" data-discovery-id="<?= $discovery['id'] ?>" ><i class="fa fa-calendar-o"></i> Change Due Date</a></li>
+												<?php
 												}
 												if( in_array("unserve",$discovery_ACL) ) {
 ?>
@@ -687,6 +695,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 										**/
 										if( $supp_is_served ) {
 											$supp_discovery_ACL[]	= "view";
+											$supp_discovery_ACL[]	= "change-due-date";
 											$supp_discovery_ACL[]	= "request-pdf";
 											if( $supp_creator_id == $_SESSION['addressbookid'] ) {
 												$supp_discovery_ACL[]	= "supp-amend";
@@ -778,6 +787,12 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 ?>
 															<li class="list-menu"><a href="<?= $RequestPDF_FileName ?>" target="_blank"   ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
 <?php
+														}
+														if(in_array("change-due-date",$supp_discovery_ACL))
+														{
+														?>
+															<li class="list-menu"><a href="#" class="discovery-change-due-date" data-discovery-id="<?= $suppdiscovery['id'] ?>" ><i class="fa fa-calendar-o"></i>Change Due Date</a></li>
+														<?php
 														}
 														if( in_array("unserve",$supp_discovery_ACL) ) {
 ?>
@@ -926,6 +941,32 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
     </div>
 </div>
 </div>
+
+<div id="discovery-due-date-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+    	<div class="modal-header" style="padding: 15px;">
+        <h5 class="modal-title" style="font-size: 22px;">Change Due Date</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px !important;font-size: 25px !important;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="text" id="discovery-due-date-modal-input" class="form-control datepicker" required/>
+					<input type="hidden" id="discovery-due-date-modal-id-input" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" id="discovery-due-date-modal-btn">Save</button>
+				<button class="btn btn-danger"  type="button"  data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 <?php
 	if( sizeof($discoveries) ) {
@@ -947,6 +988,7 @@ $(document).ready( _ => {
 });
 </script>
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
+<script src="<?= ROOTURL ?>system/application/custom.js"></script>
 <script>
 /*function createResponseSupp(response_id,discovery_id)
 {
@@ -1050,4 +1092,41 @@ function showHide(action,discovery_id) {
 		$("#minusBtn"+discovery_id).show();
 	}
 }
+
+// Change Due Date Action
+$('.datepicker').datepicker({
+	format: 	 'yyyy-mm-dd',
+	autoclose: true, 
+	startDate: "-5y"
+});
+$('.discovery-change-due-date').on('click', function() {
+	const discoveryId = $(this).data('discoveryId');
+	getDiscovery(discoveryId, 
+		(response) => {
+			$('#discovery-due-date-modal-input').val(response.due)
+			$('#discovery-due-date-modal-id-input').val(discoveryId)
+			$('#discovery-due-date-modal').modal('show');
+		},
+		(error) => showResponseMessage(error)
+	)
+});
+
+$('#discovery-due-date-modal-btn').on('click', _ => {
+	const dueDate =	$('#discovery-due-date-modal-input').val()
+	const discoveryId = $('#discovery-due-date-modal-id-input').val();
+	
+	updateDiscovery(discoveryId, {due: dueDate}, 
+		(response) => {
+			$('#discovery-due-date-modal')
+				.off('hidden.bs.modal')
+				.on('hidden.bs.modal', () => {
+					toastr.success('Due date updated successfully!');
+					selecttab('45_tab','discoveries.php?pid=<?= $case_id ?>','45');
+				});
+			$('#discovery-due-date-modal').modal('hide');
+		},
+		(error)	=> showResponseMessage(error)
+	)
+});
+
 </script>
