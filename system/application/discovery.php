@@ -10,12 +10,12 @@ $type       = $_GET['type'] ?: Discovery::TYPE_EXTERNAL;
 /**
 * Check that logged in user is the owner of case
 **/
-$checkOwnerCase = $AdminDAO->getrows( "cases", "*", 
-                                      "attorney_id = :fkaddressbookid AND id = :case_id", 
-                                      array( "fkaddressbookid" => $_SESSION['addressbookid'], "case_id" => $case_id ) );
+// $checkOwnerCase = $AdminDAO->getrows( "cases", "*", 
+//                                       "attorney_id = :fkaddressbookid AND id = :case_id", 
+//                                       array( "fkaddressbookid" => $_SESSION['addressbookid'], "case_id" => $case_id ) );
 
 /**
-* Check logged in user is case service llist or not
+* Check logged in user is case service list or not
 **/
 $isServiceListMember = $AdminDAO->getrows(
     'attorney a, client_attorney ca',
@@ -42,12 +42,11 @@ $cases = $AdminDAO->getrows(
                             a.firstname 	as atorny_fname,
                             a.lastname 		as atorny_lname",
 
-                            "id 				= :case_id AND
-                            attorney_id 	= :attorney_id AND
-                            pkaddressbookid = attorney_id",
+                            "id 			= :case_id AND
+                            c.attorney_id 	= a.pkaddressbookid",
 
-                            array( 'case_id'=>$case_id, 'attorney_id'=>$_SESSION['addressbookid'] )
-);
+                            array( 'case_id'=>$case_id )
+); 
 Side::legacyTranslateCaseData($case_id, $cases);
 
 $case               = $cases[0];
@@ -250,7 +249,7 @@ body.modal-open {
                             echo "<strong>Edit Discovery for</strong>";
                         }
                     } else {
-                        echo "<strong>Add Discovery for</strong>";
+                        echo "<strong>Create Discovery for</strong>";
                     }
 ?>
                     </small>
@@ -994,8 +993,8 @@ function deleteDoc( id, rp_uid ) {
         });
 }
 function PopupForPOS( discovery_id, signDAD = 1 ) {
-    $.post( "loadpospopupcontent.php",
-            { id:discovery_id, respond:0 } )
+    $("#load_general_modal_content").html('');
+    $.post( "loadpospopupcontent.php", { id:discovery_id, respond:0 } )
         .done( data => {
             $("#load_general_modal_content").html(data);
         });

@@ -1311,16 +1311,15 @@ function FunctionFinalDraftAction()
         }
     });
 }
-function PopupForPOS(discovery_id,response_id)
-{
-    $.post( "loadpospopupcontent.php",{id: discovery_id,respond:1,response_id:response_id}).done(function( data ) 
-    {
-        $("#load_general_modal_content").html(data);
-    });
+function PopupForPOS(discovery_id,response_id) {
+    $("#load_general_modal_content").html('');
+    $.post( "loadpospopupcontent.php", {id: discovery_id,respond:1,response_id})
+        .done( data => {
+            $("#load_general_modal_content").html(data);
+        } );
     $('#general_modal_title').html("PROOF OF ELECTRONIC SERVICE");
     $('#general-width').addClass('w-900');  
-    //alert(123);
-    setTimeout(function(){ $('#general_modal').modal('toggle');  }, 2000);
+    setTimeout( _ => $('#general_modal').modal('show'), 2000);
     
 }
 function writeDiscoveryPDF(uid) {

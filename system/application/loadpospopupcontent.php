@@ -56,10 +56,9 @@ if( $discovery_id ) {
 												d.case_id 		= c.id AND  
 												d.form_id		= f.id AND
 												d.attorney_id 	= a.pkaddressbookid",
-												array(":id"=>$id) // TO-ASK: shouldn't this be $discovery_id?
+												array(":id" => $discovery_id) 
 											);
-	$discovery_data = $discoveryDetails[0];
-	
+	$discovery_data = $discoveryDetails[0]; 
 	Side::legacyTranslateCaseData($discovery_data['case_id'], $discovery_data);
 
 	$uid				= $discovery_data['uid'];
