@@ -26,6 +26,12 @@
           {/if}
           {if !$user.is_current_user && !$user.is_primary && $user.side_active}
             <a class="side-delete-user btn btn-small delete-user-btn" data-user_id="{$user.id}" data-case_id="{$caseId}" title="Delete"><i class="fa fa-trash fa-2x" style="color: red"></i></a>
+          {else}
+            {if $user.is_primary}
+              <a href="#"><i style="" data-placement="top" data-toggle="tooltip" title=
+                  "Lead Counsel cannot be deleted from the Team. To delete this member, you must first replace them as Lead Counsel." 
+                  class="tooltipshow fa fa-2x fa-info-circle" aria-hidden="true"></i></a>
+            {/if}
           {/if}
         </td>
         
