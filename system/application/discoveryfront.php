@@ -1,10 +1,12 @@
 <?php
 @session_start();
-require_once("../bootstrap.php");
+require_once("../bootstrap.php"); 
 include_once("../library/classes/login.class.php");
 require_once(FRAMEWORK_PATH."head.php");
 include_once("../library/classes/functions.php");
 header('Content-Type: text/html; charset=UTF-8');
+
+global $logger; 
 
 $uid  = $_GET['uid'];
 $view = $_GET['view'];
@@ -41,7 +43,8 @@ $discoveryDetails	= $AdminDAO->getrows('discoveries d,cases c,system_addressbook
 											a.firstname 	as atorny_fname,
 											a.lastname 		as atorny_lname,
 											d.attorney_id	as attorney_id,
-											a.email
+											a.email,
+											a.phone
 											',
 											/*(d.responding_uid 			= :uid OR d.propounding_uid = :uid) AND */
 											"
@@ -77,20 +80,63 @@ $attorney_id		= $discovery_data['attorney_id'];
 $form_name			= $discovery_data['form_name'];
 $short_form_name	= $discovery_data['short_form_name'];
 
+$phone				= $discovery_data['phone'];
 $email				= $discovery_data['email'];
 $instructions		= $discovery_data['discovery_instructions'];
 $introduction		= $discovery_data['introduction'];
 $responding			= $discovery_data['responding'];
 $type				= $discovery_data['type'];
-$discovery_name		= $discovery_data['discovery_name'];
+$discovery_name		= Discovery::getTitle( "Response to ". $discovery_data['discovery_name'] ?? $discovery_data['form_name'], $set_number, Discovery::STYLE_AS_IS );
 
+$logger->info([$discovery_data]);
 
-$getResponses	= $AdminDAO->getrows('responses',"*","fkdiscoveryid = '$discovery_id' AND isserved = 0 ORDER BY id DESC");
+$getResponses = $AdminDAO->getrows('responses',"*","fkdiscoveryid = '$discovery_id' ORDER BY id DESC");
+?>
+<body class="blank">
+<style>
+.error p, .error br {
+	padding: 0.2em;
+	line-height: 2;
+}
+.error a {
+	color: initial; background-color: #EEE;
+}
+.register-container {
+	max-width:100% !important;
+}
+.instruction-collapse [data-toggle="collapse"]:after {
+	content: "Hide";
+	float: right;
+	font-size: 14px;
+	line-height: 20px;
+
+}
+.instruction-collapse [data-toggle="collapse"].collapsed:after {
+	content: "Show";
+	color: #fff;
+}
+body.modal-open {
+    position: static !important;
+}
+textarea#answer {
+	white-space: pre-line;
+}
+</style>
+
+<div class="color-line"></div>
+<div class="register-container" style="padding-top:10px !important">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="hpanel">
+                <div class="panel-body">
+<?php
 if(!empty($getResponses))
 {
 	$responseData					= $getResponses[0];
+$logger->info($responseData);
 	$response_id					= $responseData['id'];
 	$is_submitted					= $responseData['is_submitted'];
+	$submit_date					= $responseData['submit_date'];
 	$discovery_verification_text	= $responseData['discovery_verification_text'];
 	$discovery_verification			= $responseData['discovery_verification'];
 	$verification_state				= $responseData['verification_state'];
@@ -98,6 +144,26 @@ if(!empty($getResponses))
 	$verification_city				= $responseData['verification_city'];
 	$discovery_verification_by_name	= $responseData['verification_by_name'];
 	$verification_by_name			= $responseData['verification_by_name'];
+	if( $is_submitted || $is_served ) {
+		$action      = $is_served ? "served" : "submitted";
+		$submit_date = strtotime($submit_date);
+?>
+	<table class="table table-bordered table-hover table-striped error">
+		<tr class="m-b-md">
+			<h3 class="text-center "><?= ucwords("Already $action") ?></h3>
+		</tr>
+		<tr>
+			<td>
+		<p>We're sorry, but the <?= $discovery_name ?> in the case of <?= "<i>$case_title</i>" ?> were already <?= $action ?> on <?= date('F j, Y', $submit_date ) ." at ". date('h:i A', $submit_date ) ?>.</p> 
+		<p>If you believe this to be an error, please contact <?= $attorney_name ?> at <?= "<a href='mailto:$email'>$email</a>" ?> or <?= "<a href='tel:$phone'>$phone</a>" ?>.</p>
+		<br/>
+		<p>Thank you.</p>
+			</td>
+		</tr>
+	</table>
+<?php
+		exit;
+	}
 }
 else {
 	$response_id	= 0;
@@ -187,80 +253,46 @@ function getRPDetails($rp_id) {
 	$clients = $AdminDAO->getrows("clients","*","id = :id",array(":id"=>$rp_id));
 	return $clients[0];
 }
-
-$discovery_name	= Discovery::getTitle( "Response to ". $discovery_data['discovery_name'] ?? $discovery_data['form_name'], $set_number );
 ?>
 
-<body class="blank">
-<style>
-.register-container {
-	max-width:100% !important;
-}
-.instruction-collapse [data-toggle="collapse"]:after {
-	content: "Hide";
-	float: right;
-	font-size: 14px;
-	line-height: 20px;
-
-}
-.instruction-collapse [data-toggle="collapse"].collapsed:after {
-	content: "Show";
-	color: #fff;
-}
-body.modal-open {
-    position: static !important;
-}
-textarea#answer {
-	white-space: pre-line;
-}
-</style>
-
-<div class="color-line"></div>
-<div class="register-container" style="padding-top:10px !important">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
             <div class="text-center m-b-md">
                 <h3><?= $discovery_name ?></h3>
             </div>
-            <div class="hpanel">
-                <div class="panel-body">
-                		<table class="table table-bordered table-hover table-striped">
-						<tbody>
-							<tr>
-								<th>Case</th>
-								<td><?= $case_title ?></td>
-								<th>Number</th>
-								<td><?= $case_number ?></td>
-							</tr>
-							<tr>
-								<th>County</th>
-								<td><?= $county_name ?></td>
-								<th>State</th>
-								<td><?= $jurisdiction ?></td>
-							</tr>
-						</tbody>
-						</table>
+			<table class="table table-bordered table-hover table-striped">
+				<tr>
+					<th>Case</th>
+					<td><?= $case_title ?></td>
+					<th>Number</th>
+					<td><?= $case_number ?></td>
+				</tr>
+				<tr>
+					<th>County</th>
+					<td><?= $county_name ?></td>
+					<th>State</th>
+					<td><?= $jurisdiction ?></td>
+				</tr>
+			</table>
 
-                        <form name="discoverydetailsform" action="#" method="post" id="discoverydetailsform">
-                        <input type="hidden" name="case_id" value="<?= $case_id ?>">
-                        <input type="hidden" name="form_id" value="<?= $form_id ?>">
-                        <input type="hidden" name="response_id" value="<?= $response_id ?>">
-                        <input type="hidden" name="response_name" value="<?= $discovery_name ?>">
-                        <input type="hidden" name="uid" value="<?= $uid ?>">
-                        <input type="hidden" name="discovery_verification_by_name" id="discovery_verification_by_name" value="<?= @$discovery_verification_by_name ?>">
-                        <input type="hidden" name="discovery_verification" id="discovery_verification" value="<?= @$discovery_verification ?>">
-                        <input type="hidden" name="discovery_verification_state" id="discovery_verification_state" value='<?= @$verification_state ?>'>
-                        <input type="hidden" name="discovery_verification_city" id="discovery_verification_city" value='<?= @$verification_city?>'>
-                        <input type="hidden" name="discovery_verification_signed_by" id="discovery_verification_signed_by" value='<?= @$verification_signed_by?>'>
+			<form name="discoverydetailsform" action="#" method="post" id="discoverydetailsform">
+			<input type="hidden" name="case_id" value="<?= $case_id ?>">
+			<input type="hidden" name="form_id" value="<?= $form_id ?>">
+			<input type="hidden" name="response_id" value="<?= $response_id ?>">
+			<input type="hidden" name="response_name" value="<?= $discovery_name ?>">
+			<input type="hidden" name="uid" value="<?= $uid ?>">
+			<input type="hidden" name="discovery_verification_by_name" id="discovery_verification_by_name" value="<?= @$discovery_verification_by_name ?>">
+			<input type="hidden" name="discovery_verification" id="discovery_verification" value="<?= @$discovery_verification ?>">
+			<input type="hidden" name="discovery_verification_state" id="discovery_verification_state" value='<?= @$verification_state ?>'>
+			<input type="hidden" name="discovery_verification_city" id="discovery_verification_city" value='<?= @$verification_city?>'>
+			<input type="hidden" name="discovery_verification_signed_by" id="discovery_verification_signed_by" value='<?= @$verification_signed_by?>'>
 
-                        <input type="hidden" name="discovery_sender_note" id="discovery_sender_note">
-						<input type="hidden" name="email_solicitation" id="email_solicitation">
-                        <input type="hidden" name="email_body" id="email_body">
-						<hr>
-                        <div class="row">
-                        	<div id="loadinstructions"></div>
-                        	<div class="col-md-12">
-                            	<ul class="list-group">
+			<input type="hidden" name="discovery_sender_note" id="discovery_sender_note">
+			<input type="hidden" name="email_solicitation" id="email_solicitation">
+			<input type="hidden" name="email_body" id="email_body">
+			<hr>
+			<div class="row">
+				<div id="loadinstructions"></div>
+				<div class="col-md-12">
+					<ul class="list-group">
 <?php
 										if( in_array( $form_id, array(1,2) ) ) {
 											foreach($mainQuestions as $data) {
