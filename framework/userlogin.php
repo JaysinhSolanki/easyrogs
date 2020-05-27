@@ -162,7 +162,7 @@ require_once("head.php");
 				<div style="/*margin-bottom:-0.4em;*/">New to EasyRogs?</div>
                 <div class="actions" style="width: 100%;">
                     <a id="video_introduction" href="javascript:;" class="ladda-button btn btn-info col-md-6" style="">
-					  Watch our Intro
+					  Watch our Demo
 					</a>
 					<span> or </span> 
                     <a id="faq" href="javascript:;" class="ladda-button btn btn-info" style="" onclick="showFAQ(); ">

@@ -13,7 +13,7 @@
 {block name=action}
   <a href="{$grantUrl}" style="background-color: #187204; color: #ffffff; display: inline-block; font-family: sans-serif; font-size: 16px; line-height: 40px; margin-bottom: 10px; text-align: center; text-decoration: none; width: 200px; mso-hide: all; font-weight: bold;" target="_blank">
     Grant
-  </a>
+  </a> &nbsp; &nbsp;
   <a href="{$denyUrl}" style="background-color: red; color: #ffffff; display: inline-block; font-family: sans-serif; font-size: 16px; line-height: 40px; margin-bottom: 10px; text-align: center; text-decoration: none; width: 200px; mso-hide: all; font-weight: bold;" target="_blank">
     Deny
   </a>
