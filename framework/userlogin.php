@@ -2,8 +2,7 @@
 require_once(__DIR__ . "/../system/bootstrap.php");
 include_once(__DIR__ . "/../system/library/classes/functions.php");
 include_once(__DIR__ . "/../system/library/classes/login.class.php");
-if($_GET['outside'] == 1) 
-{
+if($_GET['outside'] == 1) {
 ?>
     <script type="text/javascript">
 		window.location.href =	"<?php echo FRAMEWORK_URL; ?>signout.php";
@@ -11,8 +10,7 @@ if($_GET['outside'] == 1)
 <?php
 } 
 
-if(!empty($_SESSION['addressbookid']))
-{
+if(!empty($_SESSION['addressbookid'])) {
 ?>
     <script type="text/javascript">
 		window.location.href =	<?= ROOTURL; ?>"system/application/index.php";
@@ -20,7 +18,6 @@ if(!empty($_SESSION['addressbookid']))
 <?php
 } 
 //echo "cookies".$_COOKIE['rememberme'];
-$AdminDAO		=	new AdminDAO();
 $Login			=	new Login($AdminDAO);
 if(!empty($_POST))
 {
@@ -81,12 +78,12 @@ if(sizeof($_POST)>0)
 
 	}
 }
-require_once("head.php");
+require_once(SYSTEMPATH."application/ctxhelp_header.php"); 
 ?>
 <link rel="stylesheet" href="<?= ROOTURL ?>system/assets/videopopup.css" />
 <script type="text/javascript" src="<?= ROOTURL ?>system/assets/videopopup.js"></script>
 <script type="text/javascript">
-        jQuery(function ($) {
+        jQuery( $ => {
            $('#vidBox').VideoPopUp({
             	backgroundColor: "#17212a",
             	opener: "video_introduction",
@@ -97,10 +94,10 @@ require_once("head.php");
         });
 </script>
 
-<body class="blank">
 <?php
-	//require_once("splashscreen.php");
+//require_once("splashscreen.php");
 ?>
+</div><!-- 💣 In case there's some `<div>` without its closing tag somewhere -->
 <div style="width: 100vw;">
 <div class="login-container">
     <div class="row">
@@ -183,9 +180,9 @@ require_once("head.php");
                 </div>
             </div>
 
-			<p style="clear: both; margin: -1em 0 0.5em; text-align: center; font-size:1.4em;"> or </p>
+			<p style="clear: both; margin: -0.5em 0 0.5em; text-align: center; font-size:1.4em;"> or </p>
 
-            <div class="hpanel btn-success" style="text-align: center;">
+            <div class="hpanel btn-success" style="text-align: center; ">
 				<button class="ladda-button btn btn-success btn-block" style="padding-bottom: 25px;">
 					<a  href="<?php echo DOMAIN;?>signup.php" style="color: white;">
 						<div style="font-size: 2.2em;">Join</div>
@@ -197,29 +194,28 @@ require_once("head.php");
     </div>
 </div>
 </div>
+</div>
 <?php
-	require_once(__DIR__ . "/../system/jsinclude.php");
-	
-	if( $errors && sizeof(json_decode($errors)) > 0 )
-	{
-	?>
+	if( $errors && sizeof(json_decode($errors)) > 0 ) {
+?>
 		<script type="text/javascript">
-        msg('<?php echo $errors;?>');
+        msg('<?= $errors ?>');
         </script>
-    <?php
+<?php
 	}
 ?>
+</body>
+</html>
 <script type="text/javascript">
-	jQuery(function ($) {
+	$( _ => {
 		$('#loginForm .i-checks').iCheck({
 			checkboxClass: 'icheckbox_square-blue',
 			radioClass: 'iradio_square-blue'
 		})
+
+		ctxUpdate({ id: -1, pkscreenid: -1, url: 'userlogin.php', } );
 	});
 </script>
 <?php
-require_once($_SESSION['framework_path']."faq_modal.php");
 ob_end_flush();
 ?>
-</body>
-</html>

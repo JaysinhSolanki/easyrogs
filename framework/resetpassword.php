@@ -2,18 +2,15 @@
 //error_reporting(E_ERROR | E_WARNING | E_PARSE);
 @session_start();	
 require_once("../system/bootstrap.php"); 
-include_once($_SESSION['library_path']."classes/AdminDAO.php");		
-if($_SESSION['addressbookid'])
-{
+if( $_SESSION['addressbookid'] ) {
 ?>
     <script type="text/javascript">
 		window.location	=	<?php echo DOMAIN; ?>;
     </script>
 <?php
 }
-$AdminDAO		=	new AdminDAO();
 $passworduid	=	$_GET['uid'];
-require_once("head.php");
+require_once(SYSTEMPATH."application/ctxhelp_header.php"); 
 ?>
 <body class="blank">
 <!--[if lt IE 7]>

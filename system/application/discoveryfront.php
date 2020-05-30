@@ -1,10 +1,9 @@
 <?php
 @session_start();
 require_once("../bootstrap.php"); 
+require_once(SYSTEMPATH."application/ctxhelp_header.php"); 
 include_once("../library/classes/login.class.php");
-require_once(FRAMEWORK_PATH."head.php");
 include_once("../library/classes/functions.php");
-header('Content-Type: text/html; charset=UTF-8');
 
 global $logger; 
 
@@ -91,8 +90,9 @@ $discovery_name		= Discovery::getTitle( "Response to ". $discovery_data['discove
 $logger->info([$discovery_data]);
 
 $getResponses = $AdminDAO->getrows('responses',"*","fkdiscoveryid = '$discovery_id' ORDER BY id DESC");
+
+include_once(SYSTEMPATH.'body.php');
 ?>
-<body class="blank">
 <style>
 .error p, .error br {
 	padding: 0.2em;
@@ -122,18 +122,16 @@ textarea#answer {
 	white-space: pre-line;
 }
 </style>
-
-<div class="color-line"></div>
-<div class="register-container" style="padding-top:10px !important">
+</div>
+<div class="container register-container" style="">
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-10 center-block" style="float: none;">
             <div class="hpanel">
                 <div class="panel-body">
 <?php
 if(!empty($getResponses))
 {
 	$responseData					= $getResponses[0];
-$logger->info($responseData);
 	$response_id					= $responseData['id'];
 	$is_submitted					= $responseData['is_submitted'];
 	$submit_date					= $responseData['submit_date'];
@@ -714,8 +712,14 @@ require_once("../jsinclude.php");
 
 <script>
 $.noConflict();
+<?php 
+	$forms = $AdminDAO->getrows('forms', "*");
+    $formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
+    echo "globalThis['discoveryFormNames'] = ". json_encode($formNames, JSON_PRETTY_PRINT) .";\n\r";
+?>
 function loadinstructions( form_id, id ) {
 	var type = '<?= $type ?>';
+	globalThis['discoveryForm'] = form_id;
 	$.get("discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=1&type="+type).done(function(resp){$("#loadinstructions").html(trim(resp));});
 }
 function submitForm() {
@@ -726,7 +730,6 @@ function callModal() {
 	$('#myModal').modal('toggle');
 }
 function checkFunction( subdivid, option ) {
-	debugger;
 	if(option == 1)	{
 		$("#subdiv"+subdivid).show();
 		$(".subanswer_"+subdivid).prop('disabled',false);
@@ -960,7 +963,10 @@ ob_start();
 </html>
 
 <script>
-$(document).ready( _ => { 
-	 CKEDITOR.replace( 'email_body_popup' );
+jQuery( $ => { 
+	CKEDITOR.replace( 'email_body_popup' );
+
+	const { discoveryFormNames, discoveryForm, } = globalThis; 
+	ctxUpdate({ id: '47_2' + ( discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '' ), pkscreenid: '47', url: 'discoveryfront.php', } );
 } );
 </script>

@@ -539,6 +539,12 @@ $.noConflict();
 ?>
 
 $(document).ready( _ => {
+
+<?php
+    $formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
+    echo "globalThis['discoveryFormNames'] = ". json_encode($formNames, JSON_PRETTY_PRINT) .";\n\r";
+?>
+
     setTimeout( _ => loadToolTipForClientBtn(), 1000 );
     loadpropondingattorneys('<?= $case_id ?>','<?= @$proponding ?>','<?= @$proponding_attorney ?>');
     $('.tooltipshow').tooltip( {
@@ -613,7 +619,7 @@ function loadrespondings(case_id,client_id,responding_id) {
         .load("loadrespondings.php?case_id="+case_id+"&client_id="+client_id+"&selected_id="+responding_id);
 }
 function callFunction() { 
-    form_id = $("#form_id").val()
+    form_id = $("#form_id").val();
 
     const page = globalThis['currentPage']; // :ctxhelp
     page.id = page.id + ( form_id ? '@' + globalThis['discoveryFormNames'][form_id-1] : '' );

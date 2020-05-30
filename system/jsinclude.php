@@ -56,6 +56,53 @@ function loadToolTipForClientBtn( c_id='' ) {
 		});
 }
 
+var previous = '';
+function ctxUpdate( aPage, fn ) { 
+	let page = Object.assign( {}, aPage, {previous} );
+
+	const params = new URLSearchParams(page.url),
+		  type = params.get('type');
+	if( type ) page.id += '_' + type;
+
+	globalThis['currentPage'] = page;
+	previous = page.id;
+//!! this is a temporary copy, to detect untracked pages
+const videos = [ 
+            {id: "-2",               }, 
+            {id: "-1",               }, 
+            {id: "7",                }, 
+            {id: "8",                }, 
+            {id: "44",               }, 
+            {id: "45",               }, 
+            {id: "46",               }, 
+            {id: "47",               }, 
+            {id: "47_1",             }, 
+            {id: "47_1@FROGS",       }, 
+            {id: "47_1@FROGSE",      }, 
+            {id: "47_1@SROGS",       }, 
+            {id: "47_1@RFAs",        }, 
+            {id: "47_1@RPDs",        }, 
+            {id: "47_2",             }, 
+            {id: "47_2@FROGS",       }, 
+            {id: "47_2@FROGSE",      }, 
+            {id: "47_2@SROGS",       }, 
+            {id: "47_2@RFAs",        }, 
+            {id: "47_2@RPDs",        }, 
+            {id: "49",               }, 
+];
+const idx = videos.findIndex(item => item && item.id == currentPage.id);
+if (idx < 0) { console.log("[!] TAB NOT FOUND:", currentPage ); debugger; }
+//!!
+}
+function selecttab(id,url,pkscreenid) { 
+	$('#'+id).className="active";
+	if( id != previous && previous ) {
+		$('#'+previous).className="inactive";
+	}
+	loadsection('wrapper',url,pkscreenid); 
+	ctxUpdate( { id: pkscreenid || 7, previous, pkscreenid, url, } );
+}
+
 function _doAutoplayVideos() {
 	$('video').each( function() {
 		const $this = $(this);
@@ -86,7 +133,7 @@ function autoPlayOrPauseVideos( options = { watchdog: null } ) {
 			console.assert( !watchdog, {options} );
 	}
 }
-$(document).ready( _ => {
+jQuery( $ => {
 	autoPlayOrPauseVideos();
 });
 </script>

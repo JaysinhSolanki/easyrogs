@@ -5,7 +5,6 @@ require_once("../system/bootstrap.php");
 include_once($_SESSION['library_path']."classes/functions.php");	 
 include_once($_SESSION['library_path']."classes/login.class.php"); 
 
-
 if(isset($_SESSION['addressbookid']) && $_SESSION['addressbookid']>0)
 {
 ?>
@@ -14,7 +13,6 @@ if(isset($_SESSION['addressbookid']) && $_SESSION['addressbookid']>0)
     </script>
 <?php
 }
-$AdminDAO		=	new AdminDAO();
 $email			=	@trim(@$_POST['email']);
 $module			=	1;//$_POST['module'];
 if(sizeof($_POST)>0)
@@ -41,10 +39,10 @@ if(sizeof($_POST)>0)
 		$_SESSION['userenteremail'] = "";
 	}
 }
-require_once("head.php");
+require_once(SYSTEMPATH."application/ctxhelp_header.php"); 
+include_once(SYSTEMPATH.'body.php');
 ?>
 
-<body class="blank">
 <div class="login-container">
     <div class="row">
         <div class="col-md-12">
@@ -86,3 +84,8 @@ require_once("head.php");
 ?>
 </body>
 </html>
+<script type="text/javascript">
+	$( _ => {
+		ctxUpdate({ id: -1, pkscreenid: -1, url: 'forgotpassword.php', } );
+	});
+</script>

@@ -6,9 +6,9 @@ setcookie("rememberme",'', time()-3600);
 @session_destroy();
 
 require_once("../bootstrap.php");
+require_once(SYSTEMPATH."application/ctxhelp_header.php"); 
 include_once(SYSTEMPATH."library/classes/login.class.php");
 //include_once(SYSTEMPATH."library/classes/error.php"); // commented out because it doesn't exist 
-require_once(FRAMEWORK_PATH."head.php");
 include_once(SYSTEMPATH."library/classes/functions.php");
 
 $states	= $AdminDAO->getrows('system_state','*',"fkcountryid = :fkcountryid ",array(":fkcountryid"=>254), 'statename', 'ASC');
@@ -45,7 +45,7 @@ if($uid)
         <p class="text-center">Email <a href="mailto:support@EasyRogs.com">support@EasyRogs.com</a> if you need assistance.</p>
         </div>
         </div>
-        <?php
+<?php
 		exit;
 	}
 }
@@ -60,7 +60,9 @@ $newsignup = 1;
     .panel-body h4 { margin-top: 15px; margin-bottom: 15px; }
   </style>
 
-  <body class="blank">
+<?php
+include_once(SYSTEMPATH.'body.php');
+?>
     <!--[if lt IE 7]>
     <p class="alert alert-danger">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -69,9 +71,8 @@ $newsignup = 1;
       <div class="row">
         <div class="col-md-8 col-md-offset-2">
           <div class="text-center m-b-md">
-            <h2 class="mylogo f48"><?= $systemmaintitle; ?></h2>
-            <h3></h3>
-            <small>Create your account</small>
+            <!--h2 class="mylogo f48"><?= $systemmaintitle; ?></h2-->
+            <h3>Create your account</h3>
           </div>
           <div class="hpanel">
             <div class="panel-body">
@@ -236,6 +237,11 @@ $newsignup = 1;
 
     <?php require_once("../jsinclude.php"); ?>
     <script type="text/javascript" src="/system/assets/sections/signup.js"></script>
+<script type="text/javascript">
+$( _ => {
+	ctxUpdate({ id: -2, pkscreenid: -2, url: 'signup.php', } );
+});
+</script>
     
   </body>
 </html>

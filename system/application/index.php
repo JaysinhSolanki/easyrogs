@@ -26,8 +26,8 @@ require_once($_SESSION['framework_path']."header.php");
 //echo "<h1>LEFT MENU</h1>";
 //echo __LINE__;
 //require_once($_SESSION['framework_path']."leftmenu.php");
+include_once(SYSTEMPATH.'body.php');
 ?>
-<body class="fixed-navbar fixed-sidebar hide-sidebar" id="test2" style="background-color:#f7f9fa">
 <div id="overlay" style="display:none"><img src="images/ownageLoader/default5.gif" id="imageloaderid"></div>
 <!-- Main Wrapper -->
 <div id="wrapper" class="loading" style="background-color:#f7f9fa !important;">
@@ -51,17 +51,23 @@ ob_end_flush();
   </div>
 </div>
 <style>
-.w-900
-{
+.w-900 {
 	width:900px !important
 }
 </style>
 <script>
+  jQuery( $ => {
   // handle redirect actions
+
   const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  switch( urlParams.get('notify') ) {
-    case 'granted-join-request': toastr.info('Request Granted successfully!'); break;
-    case 'denied-join-request':  toastr.info('Request Denied successfully.'); break;
-  }
+        const urlParams = new URLSearchParams(queryString);
+        switch( urlParams.get('notify') ) {
+          case 'granted-join-request': toastr.info('Request Granted successfully!'); break;
+          case 'denied-join-request':  toastr.info('Request Denied successfully.'); break;
+        }
+
+        //  loadsection('center-column','managearrivals.php');
+        selecttab('7_tab','dashboard.php');
+        //window.history.forward(1);
+  } );
 </script>
