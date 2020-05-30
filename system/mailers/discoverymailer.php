@@ -76,7 +76,7 @@
       self::sendEmail($to, $subject, $body, User::getFullName($actionUser), $actionUser['email']);
     }
 
-    static function clientResponded($discovery) {
+    static function clientResponded($discovery,$response) {
       global $smarty, $discoveriesModel, $clientsModel, $sidesModel, $logger;
 
       $logContext = 'DISCOVERY_MAILER_CLIENT_RESPONDED';
@@ -92,12 +92,15 @@
       if( !$side = $sidesModel->getByClientAndCase($client['id'], $discovery['case_id']) ) {
         return $logger->error("$logContext Side Not Found (client: $client[id], case: $discovery[case_id]) not found. Params: $logParams");
       }
-      
+      $responseName = ( $response && $response['responsename'] ) 
+                          ? Discovery::getTitle( $response['responsename'], null, Discovery::STYLE_WORDCAPS )
+                          : 'Response to '. $discovery['discovery_name'] .'[Set '. $discovery['set_number'] .']'; // failsafe, shouldn't be needed
+
       $smarty->assign([
         'ASSETS_URL'    => ASSETS_URL,
         'clientName'    => $client['client_name'],
-        'discoveryName' => $discovery['discovery_name'],
-        'setNumber'     => $discovery['set_number']
+        //'discoveryName' => $discovery['discovery_name'],
+        'responseName' => $responseName
       ]);
       $subject = sprintf(self::CLIENT_RESPONDED_SUBJECT, $side['case_title']);
 
@@ -148,7 +151,7 @@
         'ASSETS_URL'      => ASSETS_URL,
         'masterhead'      => $usersModel->getMasterHead($actionUser),
         'propoundingName' => $propounding['client_name'],
-        'discoveryName'   => Discovery::getTitle($discoveryName, $discovery['set_number'], Discovery::STYLE_AS_IS),
+        'discoveryName'   => Discovery::getTitle($discoveryName, $discovery['set_number'], Discovery::STYLE_WORDCAPS),
         'actionUrl'       => DOMAIN,
         'actionText'      => 'Go to EasyRogs.com'
       ])->fetch('emails/discovery-propound.tpl');

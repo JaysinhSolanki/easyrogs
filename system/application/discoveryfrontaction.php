@@ -184,9 +184,10 @@ if($_GET['q']==1)
 	$values =	array(date("Y-m-d H:i:s"),'1',$discovery_verification_signed_by,$discovery_verification_by_name,$discovery_verification,$discovery_verification_state,$discovery_verification_city,$verification_datetime);
 	
 	$AdminDAO->updaterow('responses',$fields,$values,"id='$response_id'");
+	$response = $AdminDAO->getrows('responses','*',"id='$response_id'");
 	
 	$discovery = $discoveriesModel->findByUID($uid);
-	DiscoveryMailer::clientResponded($discovery);
+	DiscoveryMailer::clientResponded($discovery,$response);
 }
 
 echo json_encode([

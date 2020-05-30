@@ -3,5 +3,5 @@
 {block name=body}
   <p>Greetings {$name},</p>
 	<br/>
-  <strong>{$clientName} has returned {$discoveryName} [Set {$setNumber}]</strong>
+  <strong>{$clientName} has returned {$responseName}</strong>
 {/block}
