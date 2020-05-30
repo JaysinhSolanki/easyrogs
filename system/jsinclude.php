@@ -42,9 +42,14 @@ function loadToolTipForClientBtn( c_id='' ) {
 	if( c_id == '' ) {
 		var c_id = $("#responding").val();
 	}
-	$.post( "loadclientnameemail.php", { c_id: c_id})
+	$.post( "loadclientnameemail.php", { c_id } )
 		.done( data => {
-			if(data == "") {
+			if( data ) {
+				data = JSON.parse(data);
+				globalThis['respondent'] = {id: c_id, ...data }; // make globally available 
+				data = `<span style='text-align:center'>${data.name + (data.email ? "<br/>" + data.email : '')}</span>`; 
+			} 
+			else {
 				data = "Send to client.";
 			}
 			$(".client-btn").attr( "data-original-title",data );

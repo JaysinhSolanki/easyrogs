@@ -520,21 +520,9 @@ body.modal-open {
     </div>
   </div>
 </div>
-<div class="modal fade" id="clientemailfound_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog" role="document" id="m-width">
-    <div class="modal-content">
-      <div class="modal-header" style="padding:13px !important">
-        <h5 class="modal-title text-center" id="clientemailfound_modal_title" style="font-size:24px">Please enter <?= $responding_name ?>'s email address below</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px;font-size: 30px;">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id="load_clientemailfound_modal_content">
 
-      </div>
-    </div>
-  </div>
-</div>
+<?php require_once __DIR__ . '/client-email-found_modal.php'; ?>
+
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 <script src="<?= VENDOR_URL ?>ckeditor/ckeditor.js"></script>
 <script src="<?= VENDOR_URL ?>jquery-validation/jquery-1.9.0.min.js"></script>
@@ -544,6 +532,12 @@ body.modal-open {
 
 <script>
 $.noConflict();
+
+<?php
+    $formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
+    echo "globalThis['discoveryFormNames'] = ". json_encode($formNames, JSON_PRETTY_PRINT) .";\n\r";
+?>
+
 $(document).ready( _ => {
     setTimeout( _ => loadToolTipForClientBtn(), 1000 );
     loadpropondingattorneys('<?= $case_id ?>','<?= @$proponding ?>','<?= @$proponding_attorney ?>');
@@ -618,8 +612,12 @@ function loadrespondings(case_id,client_id,responding_id) {
     $("#loadrespondingsDiv")
         .load("loadrespondings.php?case_id="+case_id+"&client_id="+client_id+"&selected_id="+responding_id);
 }
-function callFunction() {
+function callFunction() { 
     form_id = $("#form_id").val()
+
+    const page = globalThis['currentPage']; // :ctxhelp
+    page.id = page.id + ( form_id ? '@' + globalThis['discoveryFormNames'][form_id-1] : '' );
+
     if( form_id == 1 || form_id == 2 || form_id == "" ) {
         $("#start_questionid").hide();
     }
@@ -1028,30 +1026,19 @@ function checkClientEmailFound( discovery_id, actiontype ) {
             }
         });
 }
-function callclientemailmodal( discovery_id, actiontype, client_id ) {
-    $("#load_clientemailfound_modal_content").html("");
-    $.post( "loadclientemailmodal.php", 
-            { discovery_id, actiontype, client_id } )
-        .done( data => {
-            $("#load_clientemailfound_modal_content").html(data);
-            $('#clientemailfound_modal').modal('toggle');
-        });
-}
 function saveclientemail() {
     var client_email= $("#client_email").val();
     $("#msgAddEmailClientModal").html("");
-    if( !client_email )     {
-        $("#msgAddEmailClientModal").html("Please enter client email.");
-    }
-    else {
-        $.post( "saveclientemailaction.php",
-                $("#addClientEmailModal")
-                    .serialize() )
+    if( client_email )     {
+        $.post( "saveclientemailaction.php", $("#addClientEmailModal").serialize() )
             .done( data => {
-                $('#clientemailfound_modal').modal('toggle');
                 var obj = JSON.parse(data);
+                $('#client-email-found_modal').modal('show');
                 buttonsaveandsend();
             });
+    }
+    else {
+        $("#msgAddEmailClientModal").html("Please enter client email.");
     }
 }
 </script>

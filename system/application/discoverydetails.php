@@ -1025,21 +1025,9 @@ You have not verify the discovery SPECIAL INTERROGATORIES. Please click on the l
     </div>
   </div>
 </div>
-<div class="modal fade" id="clientemailfound_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog" role="document" id="m-width">
-    <div class="modal-content">
-      <div class="modal-header" style="padding:13px !important">
-        <h5 class="modal-title text-center" id="clientemailfound_modal_title" style="font-size:24px">Please enter <?php echo $responding_name ?>'s email address below</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px;font-size: 30px;">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id="load_clientemailfound_modal_content">
-        
-      </div>
-    </div>
-  </div>
-</div>
+
+<?php require_once __DIR__ . '/client-email-found_modal.php'; ?>
+
 <link href="../assets/vendors/uploadfile.css" rel="stylesheet">
 <script src="../assets/vendors/jquery-validation/jquery-1.9.0.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="../assets/vendors/jquery.uploadfile.min.js"></script>
@@ -1075,31 +1063,19 @@ function checkClientEmailFound(discovery_id,actiontype)
         }
     });
 }
-function callclientemailmodal(discovery_id,actiontype)
-{
-    $("#load_clientemailfound_modal_content").html("");
-    $.post( "loadclientemailmodal.php", { discovery_id: discovery_id,actiontype:actiontype}).done(function( data ) 
-    {
-        $("#load_clientemailfound_modal_content").html(data);
-        $('#clientemailfound_modal').modal('toggle');
-    });
-}
-function saveclientemail()
-{
-    var client_email    =   $("#client_email").val();
+function saveclientemail() {
+    var client_email = $("#client_email").val();
     $("#msgAddEmailClientModal").html("");
-    if(client_email == "")
-    { 
-        $("#msgAddEmailClientModal").html("Please enter client email.");
-    }
-    else  
-    {
-        $.post("saveclientemailaction.php",$("#addClientEmailModal").serialize()).done(function( data) 
-        {   
-            $('#clientemailfound_modal').modal('toggle');
-            var obj = JSON.parse(data);
-            sendtoclientfunction(obj.discovery_id,obj.actiontype);
+    if( client_email ){ 
+        $.post("saveclientemailaction.php", $("#addClientEmailModal").serialize() )
+            .done( data => {
+                var obj = JSON.parse(data);
+                $('#client-email-found_modal').modal('show');
+                sendtoclientfunction(obj.discovery_id,obj.actiontype);
         }); 
+    }
+    else {
+        $("#msgAddEmailClientModal").html("Please enter client email.");
     }
 }
 function callemailclientmodal()
