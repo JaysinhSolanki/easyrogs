@@ -39,7 +39,7 @@
       self::sendEmail($to, $subject, $body, User::getFullName($attorney), $attorney['email']);
     }
 
-    static function clientResponse($discovery, $actionUser) {
+    static function clientResponse($discovery, $actionUser, $notes='') {
       global $smarty, $discoveriesModel, $usersModel, $clientsModel, $logger, $sidesModel;
 
       $logContext = 'DISCOVERY_MAILER_CLIENT_RESPONSE';
@@ -66,6 +66,7 @@
         'senderEmail' => $actionUser['email'],
         'senderPhone' => $actionUser['phone'],
         'masterhead'  => $usersModel->getMasterHead($actionUser),
+        'notes'       => $notes,
         'actionUrl'   => DOMAIN . "discoveryfront.php?uid=$discovery[uid]",
         'actionText'  => 'Respond Now'
       ]);

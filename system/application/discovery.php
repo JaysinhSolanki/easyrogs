@@ -521,7 +521,10 @@ body.modal-open {
   </div>
 </div>
 
-<?php require_once __DIR__ . '/client-email-found_modal.php'; ?>
+<?php 
+include_once(SYSTEMPATH.'application/client-email-found_modal.php');
+include_once(SYSTEMPATH.'application/client_instructions_modal.php'); 
+?>
 
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 <script src="<?= VENDOR_URL ?>ckeditor/ckeditor.js"></script>
@@ -656,23 +659,23 @@ function buttonsave() {
         addform( 'discoveryaction.php?save=yes','discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid=<?= $case_id ?>' );
     }, 200);
 }
-function buttonsaveandsendpopup() {
-
-    $.post( "loademailcontentpopup.php",
-            $("#discoveriesform" )
-                .serialize() )
-        .done( data => {
-            $("#load_client_modal_content").html(data);
-        } );
-    $('#client_modal').modal('toggle');
-}
-function buttonsaveandsend() {
+// function buttonsaveandsendpopup() { 
+//     $.post( "loademailcontentpopup.php",
+//             $("#discoveriesform" )
+//                 .serialize() )
+//         .done( data => {
+//             $("#load_client_modal_content").html(data);
+//         } );
+//     $('#client_modal').modal('toggle');
+// }
+function buttonsaveandsend( notesElement = '' ) { 
+    const notes_for_client = notesElement && $(notesElement).val().trimEnd() || "";
     for(instance in CKEDITOR.instances ) {
         CKEDITOR.instances[instance].updateElement();
     }
     var isagree = true;
     setTimeout( _ => {
-        addform('discoveryaction.php?isemail=1','discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid=<?= $case_id ?>');
+        addform('discoveryaction.php?isemail=1&notes='+encodeURI(notes_for_client),'discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid=<?= $case_id ?>');
     }, 200);
 
 }
@@ -1016,13 +1019,17 @@ function addrow( rowid ) {
     });
 }
 function checkClientEmailFound( discovery_id, actiontype ) {
-    var client_id   = $("#responding").val();
-    $.post( "checkclientemailfound.php", 
-            { client_id, discovery_id, actiontype } )
+    var client_id = $("#responding").val();
+    $.post( "checkclientemailfound.php", { client_id, discovery_id, actiontype } )
         .done( data => {
             var obj = JSON.parse(data);
-            if( obj.found == 1 ) {
-                buttonsaveandsend();
+            if( obj.found  ) {
+                if( actiontype == 2 ) { 
+                    $('#client-instructions-send').on('click', _ => buttonsaveandsend('#notes_for_client') );
+                    $('#discovery-client-instructions_modal').modal('show');
+                } else {
+                    buttonsaveandsend();
+                }
             }
             else {
                 callclientemailmodal( obj.discovery_id, obj.actiontype, obj.client_id );

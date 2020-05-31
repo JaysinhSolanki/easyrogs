@@ -3,6 +3,7 @@ require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
 $isemail			= $_GET['isemail'];
+$notes				= $_GET['notes'];
 $form_id			= $_POST['form_id'];
 $proponding_attorney= $_POST['proponding_attorney'];
 $incidentoption		= $_POST['type'];
@@ -370,7 +371,7 @@ if( $isemail ) {
 	}
 
 	$discovery = $discoveriesModel->find($id);
-	DiscoveryMailer::clientResponse($discovery, $currentUser->user);
+	DiscoveryMailer::clientResponse($discovery, $currentUser->user, $notes);
 }
 
 //Update Declaration Text in Create case

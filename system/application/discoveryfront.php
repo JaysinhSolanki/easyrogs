@@ -92,6 +92,7 @@ $logger->info([$discovery_data]);
 $getResponses = $AdminDAO->getrows('responses',"*","fkdiscoveryid = '$discovery_id' ORDER BY id DESC");
 
 include_once(SYSTEMPATH.'body.php');
+include_once(SYSTEMPATH.'application/client_instructions_modal.php');
 ?>
 <style>
 .error p, .error br {

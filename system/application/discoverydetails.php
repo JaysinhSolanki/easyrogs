@@ -934,8 +934,8 @@ if ($question_admit_id == 1) {
                 */
                 if ($view != 1) {
                 ?>
-                <a href="javascript:;" class="btn btn-purple" onclick="serveFunction2('<?php echo $discovery_verification ?>','<?php echo $_GET['id']?>','<?php echo $response_id ?>')"  ><i class="fa fa-share"></i> Serve</a>
-                <button type="button" class="btn btn-info buttonid " data-style="zoom-in" onclick="checkClientEmailFound('<?php echo $discovery_id ?>',2);" title="" >
+                <a href="javascript:;" class="btn btn-purple" onclick="serveFunction2('<?= $discovery_verification ?>','<?= $_GET['id'] ?>','<?= $response_id ?>')"  ><i class="fa fa-share"></i> Serve</a>
+                <button type="button" class="btn btn-info buttonid" data-style="zoom-in" onclick="checkClientEmailFound('<?= $discovery_id ?>',2);" title="" >
                         <i class="icon-ok bigger-110"></i>
                             <span class="ladda-label">
                                 Client <i class="fa fa-play" aria-hidden="true"></i>
@@ -1004,13 +1004,14 @@ You have not verify the discovery SPECIAL INTERROGATORIES. Please click on the l
       </div>
       <div class="modal-footer">
          <i id="msgEmailClientModal" style="color:red"></i> 
-         <button type="button" onclick="serveaction(1,<?php echo $discovery_id; ?>)" class="btn btn-success"><i class="fa fa-share"></i> Send</button>
+         <button type="button" onclick="serveaction(1,<?= $discovery_id ?>,'#message_to_client')" class="btn btn-success"><i class="fa fa-share"></i> Send</button>
          <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button> 
       </div>
     </div>
   </div>
 </div>
-<div class="modal fade" id="finaldraft_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+
+<div id="finaldraft_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog" role="document" id="m-width">
     <div class="modal-content">
       <div class="modal-header" style="padding:13px !important">
@@ -1033,35 +1034,39 @@ You have not verify the discovery SPECIAL INTERROGATORIES. Please click on the l
 <script src="../assets/vendors/jquery.uploadfile.min.js"></script>
 <script>
 $.noConflict();
-function sendtoclientfunction(discovery_id,actiontype)
-{
+
+function sendtoclientfunction( discovery_id, actiontype, notesElement='' ) {
+    const notes_for_client = notesElement && $(notesElement).val().trimEnd() || "";
     $.LoadingOverlay("show");
-    setTimeout(function()  
-    {
-        $.post( "discoveryfrontaction.php",  $("#discoverydetailsform").serialize()).done(function( data1) 
-        {        
-            $.post( "messagetoclientforverification.php", { discovery_id: discovery_id,actiontype:actiontype}).done(function( data ) 
-            {
-                $.LoadingOverlay("hide");
-                response(data);
-            });
-        });
+    setTimeout( _ => {
+        $.post( "discoveryfrontaction.php", $("#discoverydetailsform").serialize() )
+            .done( _ => {
+                $.post( "messagetoclientforverification.php", { discovery_id, actiontype, notes_for_client } )
+                    .done( data => {
+                        $("#discovery-client-instructions_modal").modal('hide');
+                        $.LoadingOverlay("hide");
+                        response(data);
+                    } );
+            } );
     }, 2000);   
 }
-function checkClientEmailFound(discovery_id,actiontype)
-{
-    $.post( "checkclientemailfound.php", { discovery_id: discovery_id,actiontype:actiontype}).done(function( data ) 
-    {
-        var obj = JSON.parse(data); 
-        if(obj.found == 1)
-        {
-            sendtoclientfunction(obj.discovery_id,obj.actiontype);
-        }
-        else
-        {
-            callclientemailmodal(obj.discovery_id,obj.actiontype);
-        }
-    });
+
+function checkClientEmailFound( discovery_id, actiontype ) {
+    $.post( "checkclientemailfound.php", { discovery_id, actiontype } )
+        .done( data => {
+            const obj = JSON.parse(data); 
+            if( obj.found ) {
+                if( actiontype == 2 ) {
+                    $('#client-instructions-send').on('click', _ => sendtoclientfunction(discovery_id,2,'#notes_for_client') );
+                    $('#discovery-client-instructions_modal').modal('show');
+                } else {
+                    sendtoclientfunction( $discovery_id, actiontype );
+                }
+            }
+            else {
+                callclientemailmodal(obj.discovery_id,obj.actiontype);
+            }
+        });
 }
 function saveclientemail() {
     var client_email = $("#client_email").val();
@@ -1081,7 +1086,6 @@ function saveclientemail() {
 function callemailclientmodal()
 {
     $("#serve_modal").modal("toggle");
-    //$("#emailclientmodal").modal("toggle");
     serveaction(1,<?php echo $discovery_id; ?>);
 }
 function addObjectionFunction(discovery_question_id)
@@ -1207,52 +1211,24 @@ function showhidequestions(parentid,yesorno)
     }
     
 }
-function serveaction(actiontype,discover_id) //actiontype:1 => Email Client, actiontype:2 => Serve
-{
-    var error   =   0;
-    var msg     =   "";
-    //$("#msgEmailClientModal").html('');
-    /*if(actiontype == 1)
-    {
-        var message_to_client   =   $("#message_to_client").val();
-        if(message_to_client == '')
-        {
-            var msg =   "Please enter email text to client.";
-            error = 1;
-        }
-    }
-    else
-    {
-        var message_to_client   =   "";
-    }*/
-    
-    if(error == 0)
-    {
-        $.post( "messagetoclientforverification.php", { discovery_id: discover_id,actiontype:actiontype/*,message_to_client:message_to_client*/ }).done(function( data ) 
-        {
+function serveaction( actiontype, discovery_id, notesElement='' ) { //actiontype:1 => Email Client, actiontype:2 => Serve
+    const notes_for_client = notesElement && $(notesElement).val().trimEnd() || "";
+    $.post( "messagetoclientforverification.php", { discovery_id, actiontype, notes_for_client } )
+        .done( data => {
+            $("#discovery-client-instructions_modal").modal('hide');
             response(data);
-            /*if(data == 'success')
-            {
-                $("#emailclientmodal").modal("toggle"); 
-            }*/
-        });
-    }
-    /*else
-    {
-        $("#msgEmailClientModal").html(msg);
-    }*/
+        } );
 }
 function serveFunction2(is_verified,discovery_id,response_id) {
-    if(is_verified == '')
+    if(!is_verified)
     {
-        //alert(1);
         setTimeout(function(){ $("#serve_modal").modal("toggle");  }, 1000);    
     }
     else
     {
         //alert("Go to Final Draft (In progress)");
         callFinalDraftModal('<?php echo $_GET['id']?>',is_verified,response_id);
-        //serveaction(2,discover_id);
+        //serveaction(2,discovery_id);
     }
 }
 function callFinalDraftModal(discovery_id,is_verified,response_id)

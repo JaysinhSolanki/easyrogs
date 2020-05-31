@@ -2,14 +2,15 @@
 	require_once __DIR__ . '/../bootstrap.php';
 	require_once("adminsecurity.php");
 
-	$actionType  = $_REQUEST['actiontype'];
-	$discoveryId = $_REQUEST['discovery_id'];
+	$actionType     = $_REQUEST['actiontype'];
+	$discoveryId    = $_REQUEST['discovery_id'];
+	$notesForClient = $_REQUEST['notes_for_client'];
 
 	$discovery = $discoveriesModel->find($discoveryId);
 	
 	switch($actionType) {
 		case 1: DiscoveryMailer::clientVerification($discovery); break;
-		case 2: DiscoveryMailer::clientResponse($discovery, $currentUser->user); break;
+		case 2: DiscoveryMailer::clientResponse($discovery, $currentUser->user, $notesForClient); break;
 	}
 
 	// struct is legacy.
