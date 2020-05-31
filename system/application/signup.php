@@ -15,29 +15,24 @@ $states	= $AdminDAO->getrows('system_state','*',"fkcountryid = :fkcountryid ",ar
 $groups	= $AdminDAO->getrows('system_groups','*',"pkgroupid IN (3,4)");
 $uid	= $_GET['uid'];
 
-if($uid)
-{
+if($uid) {
   $userDetails = $AdminDAO->getrows('system_addressbook u, invitations i','*',"i.uid = :uid AND u.pkaddressbookid = i.attorney_id",array(":uid"=>$uid));
   $error = 0;
-  if(!empty($userDetails))
-	{
+  if(!empty($userDetails)) {
 		$userDetail	    =	$userDetails[0];
 		$status			    =	$userDetail['status'];
 		$attorney_email	=	$userDetail['email'];
-		if($status != 1)
-		{
+		if($status != 1) {
 			$message	=	"You have already signed up with this email {$attorney_email}.";
 			$error		=	1;
 		}
 	}
-	else
-	{
+	else {
 		$message	=	"URL is invalid or expired.";
 		$error		=	1;
 	}
-	if($error == 1 )
-	{
-		?>
+	if( $error == 1 ) {
+?>
         <div class="container">
         <div class="jumbotron text-xs-center" style="margin-top:200px">
         <h1 class="display-3 text-center">Sorry!</h1>
@@ -52,7 +47,6 @@ if($uid)
 
 $newsignup = 1;
 ?>
-
   <style type="text/css">
     .register-container { max-width:100% !important; }
     .required:after { content:"*"; }
@@ -63,10 +57,10 @@ $newsignup = 1;
 <?php
 include_once(SYSTEMPATH.'body.php');
 ?>
+</div>
     <!--[if lt IE 7]>
     <p class="alert alert-danger">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-    <div class="color-line"></div>
     <div class="register-container">
       <div class="row">
         <div class="col-md-8 col-md-offset-2">
