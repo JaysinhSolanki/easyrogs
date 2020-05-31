@@ -2,10 +2,10 @@
 @session_start();
 include_once(__DIR__ . "/../bootstrap.php");
 include_once(__DIR__ . "/../library/classes/functions.php");
-$discovery_id	=	$_GET['id']; 
-$form_id		=	$_GET['form_id']; 
-$viewonly		=	$_GET['viewonly']; 
-$type			=	$_GET['type']; 
+$discovery_id	=	$_GET['id'];
+$form_id		=	$_GET['form_id'];
+$viewonly		=	$_GET['viewonly'];
+$type			=	$_GET['type'];
 if($viewonly == "")
 {
 	$viewonly = 0;
@@ -28,12 +28,11 @@ $attorneyDetail		=	$attorneyDetails[0];
 $attorneyEmail		=	$attorneyDetail['email'];
 $attorneyPhone		=	$attorneyDetail['phone'];
 $attorneyFirm		=	$attorneyDetail['companyname'];
-$attorneyName		=	$attorneyDetail['firstname']." ".$attorneyDetail['lastname'];	
+$attorneyName		=	$attorneyDetail['firstname']." ".$attorneyDetail['lastname'];
 $attorneyAddress	=	makeaddress($_SESSION['addressbookid']);//$attorneyDetail['address'].", ".$attorneyDetail['cityname'].", ".$attorneyDetail['street'];
 
 
-if(in_array($form_id,array(1,2))) //FROGS AND FROGSE IN EXTERNAL CASE
-{
+if( in_array($form_id,array(1,2)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
 ?>
     <div class="">
     <div class="<?php if($viewonly == 0){ echo "col-sm-offset-2 col-sm-8"; }else{ echo "col-md-12"; } ?>">
@@ -41,48 +40,43 @@ if(in_array($form_id,array(1,2))) //FROGS AND FROGSE IN EXTERNAL CASE
         <div class="panel panel-default">
             <div class="panel-heading instruction-collapse">
                 <div class="row">
-                	<div class="col-md-4"></div> 
+                	<div class="col-md-4"></div>
                     <div class="col-md-4 text-center">
                     	<h3>
-                            Instructions										
+                            Instructions
                         </h3>
                     </div>
-                    
+
                     <div class="col-md-4">
                         <a style="float:right" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" class="btn btn-primary"></a>
                     </div>
-                    
+
                 </div>
             </div>
             <div id="collapseOne" class="panel-collapse collapse in">
                 <div class="panel-body">
-                    <?php
-                    if($form_id == 1)
-                    {
-                        if($viewonly == 1)
-                        {
+<?php
+                    if( $form_id == 1 ) {
+                        if( $viewonly == 1 ) {
                             $checkedimg			=	'<img src="../uploads/icons/checkbox_checked_small.png" width="15px">';
                             $uncheckedimg		=	'<img src="../uploads/icons/checkbox_empty_small.png" width="15px">';
                             $incidenttext1		=	"&nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.";
-                            
-                            
-                            if($incidentoption == 1)
-                            {
+
+
+                            if( $incidentoption == 1 ) {
                                 $incidenttext2		=	"&nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled 'Sec. 4(a)(2)'):";
                                 $option1			=	$checkedimg.$incidenttext1;
                                 $option2			=	$uncheckedimg.$incidenttext2;
                             }
-                            else if($incidentoption == 2)
-                            {
+                            else if( $incidentoption == 2 ) {
                                 $incidenttext2		=	"&nbsp;&nbsp;(2) $incidenttext";
                                 $option1			=	$uncheckedimg.$incidenttext1;
                                 $option2			=	$checkedimg.$incidenttext2;
                             }
                         }
-                    ?>
+?>
                     <style>
-                    .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td
-                    {
+                    .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
                         /*border:none !important*/
                     }
                     </style>
@@ -124,42 +118,38 @@ if(in_array($form_id,array(1,2))) //FROGS AND FROGSE IN EXTERNAL CASE
                     </tr>
                     <tr>
                         <td colspan="2" style="border:none;">
-                            <?php 
-                            if($viewonly == 1)
-                            {
+<?php
+                            if( $viewonly == 1 ) {
                                 echo $option1;
                             }
-                            else
-                            {
-                            ?>
+                            else {
+?>
                                 <div class='checkbox_replace1'>
                                 <input type="radio" name="incidentoption" value="1" <?php if($discovery['incidentoption'] == 1) {echo "checked";}  ?> onclick="incidentmeans(1)" />
                                 &nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.
                                 </div>
-                            <?php
+<?php
                             }
-                            ?>
+?>
                         </td>
                     </tr>
                     <tr>
                         <td  colspan="2" style="border:none;">
-                            <?php 
-                            if($viewonly == 1)
-                            {
+<?php
+                            if( $viewonly == 1 ) {
                                 echo $option2;
                             }
-                            else
-                            {
-                            ?>
+                            else {
+?>
                             <div class='checkbox_replace2'><input type="radio" name="incidentoption" value="2" <?php if($discovery['incidentoption'] == 2) {echo "checked";}  ?> onclick="incidentmeans(2)" />&nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled "Sec. 4(a)(2)"):</div>
                             <div class='remove_incidenttext'><div id="incidentDiv" <?php if($discovery['incidentoption'] == 1 || $discovery['incidentoption'] == ""){ ?>style="display:none" <?php } ?>><textarea class="form-control" rows="5" name="incidenttext" id="incidenttext"><?php echo $discovery['incidenttext']; ?></textarea></div></div>
-                            <?php
+<?php
                             }
-                            ?>
+?>
                         </td>
                     </tr>
-                    <tr>    
-                        <td colspan="2" style="border:none;">    
+                    <tr>
+                        <td colspan="2" style="border:none;">
                             <p>(b) YOU OR ANYONE ACTING ON YOUR BEHALF includes you, your agents, your employees, your insurance companies, their agents, their employees, your attorneys, your accountants, your investigators, and anyone else acting on your behalf.</p>
                             <p>(c) PERSON includes a natural person, firm, association, organization, partnership, business, trust, limited liability company, corporation, or public entity.</p>
                             <p>(d) DOCUMENT means a writing, as defined in Evidence Code section 250, and includes the original or a copy of handwriting, typewriting, printing, photostats, photographs, electronically stored information, and every other means of recording upon any tangible thing and form of communicating or representation, including letters, words, pictures, sounds, or symbols, or combinations of them.</p>
@@ -167,16 +157,27 @@ if(in_array($form_id,array(1,2))) //FROGS AND FROGSE IN EXTERNAL CASE
                             <p>(f) ADDRESS means the street address, including the city, state, and zip code.</p>
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan="2" style="border:none;">
+                            <h5 class="text-center">Sec. 5. INVALID OBJECTIONS</h5>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border:none;">
+                            <p>Calls for a legal conclusion: “An interrogatory is not objectionable because an answer to it involves an opinion or contention that relates to fact or the application of law to fact, or would be based on information obtained or legal theories developed in anticipation of litigation or in preparation for trial.” Code Civ.Proc., § 2030.010, subd. (b).</p>
+                            <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery. Rylaarsdam et al., California Practice Guide: Civil Procedure Before Trial (The Rutter Group 2019) ¶ 8:721-8:722.</p>
+                            <p>Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. Cal. Judges Benchbook Civ. Proc. Discovery (September 2018) § 18.36.</p>
+                        </td>
+                    </tr>
                     </table>
                     </div>
-                    <?php
+<?php
                     }
-                    else if($form_id == 2)
-                    {
+                    else if( $form_id == 2 ) {
                         $personnames2	=	$discovery['personnames2'];
                         $personnames1	=	$discovery['personnames1']
-                    ?>
-                    
+?>
+
                     <div  id="instruction_data" >
                     <table class="table" >
                     <tr>
@@ -192,9 +193,9 @@ if(in_array($form_id,array(1,2))) //FROGS AND FROGSE IN EXTERNAL CASE
                             <p>(c) Check the box next to each interrogatory that you want the answering party to answer. Use care in choosing those interrogatories that are applicable to the case.</p>
                             <p>(d) The interrogatories in section 211.0, Loss of Income Interrogatories to Employer, should not be used until the employer has had a reasonable opportunity to conduct an investigation or discovery of the employee's injuries and damages.</p>
                             <p>(e) Additional interrogatories may be attached.</p>
-                    
+
                             <h5 class="text-center">Sec. 3. Instructions to the Answering Party</h5>
-                            <p>(a) You must answer or provide another appropriate response to each interrogatory that has been checked below.</p> 
+                            <p>(a) You must answer or provide another appropriate response to each interrogatory that has been checked below.</p>
                             <p>(b) As a general rule, within 30 days after you are served with these interrogatories, you must serve your responses on the asking party and serve copies of your responses on all other parties to the action who have appeared. See Code of Civil Procedure sections 2030.260-2030.270 for details.</p>
                             <p>(c) Each answer must be as complete and straightforward as the information reasonably available to you permits. If an interrogatory cannot be answered completely, answer it to the extent possible.</p>
                             <p>(d) If you do not have enough personal knowledge to fully answer an interrogatory, say so but make a reasonable and good faith effort to get the information by asking other persons or organizations, unless the information is equally available to the asking party.</p>
@@ -217,45 +218,39 @@ if(in_array($form_id,array(1,2))) //FROGS AND FROGSE IN EXTERNAL CASE
                             <p>(a) PERSON includes a natural person, firm, association, organization, partnership, business, trust, limited liability company, corporation, or public entity.</p>
                             <p>(b) YOU OR ANYONE ACTING ON YOUR BEHALF includes you, your agents, your employees, your insurance companies, their agents, their employees, your attorneys, your accountants, your investigators, and anyone else acting on your behalf.</p>
                             <p>(c) EMPLOYMENT means a relationship in which an EMPLOYEE provides services requested by or on behalf of an EMPLOYER, other than an independent contractor relationship.</p>
-                            <?php 
-                            if($viewonly == 1)
-                            {
-                                if($personnames1 != "")
-                                {
-                                    ?>
+<?php
+                            if( $viewonly == 1 ) {
+                                if( $personnames1 ) {
+?>
                                     <p>(d) EMPLOYEE means a PERSON who provides services in an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes of these interrogatories, EMPLOYEE refers to: <?php echo $personnames1; ?> </p>
-                                    <?php
+<?php
                                 }
-                                else
-                                {
-                                    ?>
+                                else {
+?>
                                     <p>(d) EMPLOYEE means all such PERSONS</p>
-                                    <?php
+<?php
                                 }
-                                if($personnames2 != "")
-                                {
-                                    ?>
-                                    <p>(e) EMPLOYER means a PERSON who employs an EMPLOYEE to provide services in an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes of these interrogatories, EMPLOYER refers to  <?php echo $personnames2; ?>:</p>        
-                                    <?php
+                                if( $personnames2 ) {
+?>
+                                    <p>(e) EMPLOYER means a PERSON who employs an EMPLOYEE to provide services in an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes of these interrogatories, EMPLOYER refers to  <?php echo $personnames2; ?>:</p>
+<?php
                                 }
-                                else
-                                {
-                                    ?>
+                                else {
+?>
                                     <p>(d) EMPLOYEE means all such PERSONS</p>
-                                    <?php
+<?php
                                 }
                             }
-                            else
-                            {
-                            ?>
+                            else {
+?>
                             <p>(d) EMPLOYEE means a PERSON who provides services in an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes of these interrogatories, EMPLOYEE refers to (insert name): </p>
                             <textarea class="form-control" rows="5" name="personnames1" id="personnames1"><?php echo $discovery['personnames1']; ?></textarea>
-                            <p>(e) EMPLOYER means a PERSON who employs an EMPLOYEE to provide services in an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes of these interrogatories, EMPLOYER refers to (insert name):</p>        
+                            <p>(e) EMPLOYER means a PERSON who employs an EMPLOYEE to provide services in an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes of these interrogatories, EMPLOYER refers to (insert name):</p>
                             <textarea class="form-control" rows="5" name="personnames2" id="personnames2"><?php echo $discovery['personnames2']; ?></textarea>
-                            
-                            <?php 
+
+<?php
                             }
-                            ?>
+?>
                             <p>(f) ADVERSE EMPLOYMENT ACTION means any TERMINATION, suspension, demotion, reprimand, loss of pay, failure or refusal to hire, failure or refusal to promote, or other action or failure to act that adversely affects the EMPLOYEE'S rights or interests and which is alleged in the PLEADINGS.</p>
                             <p>(g) TERMINATION means the actual or constructive termination of employment and includes a discharge, firing, layoff, resignation, or completion of the term of the employment agreement.</p>
                             <p>(h) PUBLISH means to communicate orally or in writing to anyone other than the plaintiff. This includes communications by one of the defendant's employees to others. (Kelly v. General Telephone Co. (1982) 136 Cal.App.3d 278, 284.)</p>
@@ -268,9 +263,9 @@ if(in_array($form_id,array(1,2))) //FROGS AND FROGSE IN EXTERNAL CASE
                     </tr>
                     </table>
                     </div>
-                    <?php	
+<?php
                     }
-                    ?>
+?>
                 </div>
             </div>
         </div>
@@ -278,40 +273,40 @@ if(in_array($form_id,array(1,2))) //FROGS AND FROGSE IN EXTERNAL CASE
     </div>
 <?php
 }
-else
-{
-	if($discovery_id == '' && $type == 1)
-	{
-		if($form_id == 3)
-		{
+else {
+	if( $discovery_id == '' && $type == 1 ) {
+		if( $form_id == 3 ) {
 			$instruction_text	=	"<p>Each answer must be as complete and straightforward as the information reasonably available to you, including the information possessed by your attorneys or agents, permits. If an interrogatory cannot be answered completely, answer it to the extent possible. If you do not have enough personal knowledge to fully answer an interrogatory, say so, but make a reasonable and good faith effort to get the information by asking other persons or organizations, unless the information is equally available to the asking party. Whenever an interrogatory may be answered by referring to a document, the document may be attached as an exhibit to the response and referred to in the response. If the document has more than one page, refer to the page and section where the answer to the interrogatory can be found. You may respond by attaching a copy of the document to your answers to these interrogatories. Whenever an address or telephone number for the same person are requested in more than one interrogatory, you are required to furnish them in answering only the first interrogatory asking for that information.</p><p>If you are asserting a privilege or making an objection to an interrogatory, you must specifically assert the privilege or state the objection in your written response. Your answers to these interrogatories must be verified, dated, signed, and the original must be included in your response.</p>";
-		
 		}
-		else if($form_id == 4)
-		{
-			$instruction_text	=	"<p>Pursuant to Code of Civil Procedure section 2030 et seq., propounding party hereby requests that responding party answer the following Requests for Admission, under oath, within thirty (30) days from the date hereof.</p>";
-		
+		else if( $form_id == 4 ) {
+            $instruction_text = "
+            <p>Pursuant to Code of Civil Procedure section 2030 et seq., propounding party hereby requests that responding party answer the following Requests for Admission, under oath, within thirty (30) days from the date hereof.</p>
+            <h5>INVALID OBJECTIONS</h5>
+            <p>Calls for a legal conclusion: “When a party is served with a request for admission concerning a legal question properly raised in the pleadings he cannot object simply by asserting that the request calls for a conclusion of law. He should make the admission if he is able to do so and does not in good faith intend to contest the issue at trial, thereby 'setting at rest a triable issue.' Otherwise he should set forth in detail the reasons why he cannot truthfully admit or deny the request.” Burke v. Superior Court (1969) 71 Cal.2d 276, 282, internal citations omitted. See also, Cembrook v. Superior Court In and For City and County of San Francisco (1961) 56 Cal.2d 423, 429 [“calls for a legal conclusion” is not a valid objection.].</p>
+            <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery. Rylaarsdam et al., California Practice Guide: Civil Procedure Before Trial (The Rutter Group 2019) ¶ 8:721-8:722.</p>
+            ";
+
 		}
-		else if($form_id == 5)
-		{
-			$instruction_text	=	"<p>DEMAND IS HEREBY MADE UPON YOU, pursuant to Code of Civil Procedure section 2031, et seq. to produce the documents and things described herein at ".$attorneyFirm.", ".$attorneyAddress." within thirty (30) days of service hereof. Each respondent shall respond separately, under oath, to each item or category of item by any of the following:</p>
+		else if( $form_id == 5 ) {
+            $instruction_text = "
+            <p>DEMAND IS HEREBY MADE UPON YOU, pursuant to Code of Civil Procedure section 2031, et seq. to produce the documents and things described herein at ".$attorneyFirm.", ".$attorneyAddress." within thirty (30) days of service hereof. Each respondent shall respond separately, under oath, to each item or category of item by any of the following:</p>
 			<ol>
 				<li>A statement that you will comply with the demand;</li>
 				<li>A representation that you lack the ability to comply with the demand; or</li>
 				<li>An objection to the demand setting forth, in detail, the nature and factual basis for </li>
 			</ol>
-			<p>
-				the objection. If objection is made on the basis of a privilege, then you must include a Privilege Log identifying each document being withheld and the basis under which privilege has been asserted.
-			</p>
+			<p> the objection. If objection is made on the basis of a privilege, then you must include a Privilege Log identifying each document being withheld and the basis under which privilege has been asserted.</p>
 			<p><b>THE DOCUMENTS DEMANDED HEREIN ARE LIMITED TO THOSE IN THE POSSESSION, CUSTODY OR CONTROL OF RESPONDING PARTY, OR THAT PARTY'S ATTORNEY, INSURERS OR AGENTS</b>. Said documents are relevant to the subject matter of this action, or reasonably calculated to lead to the discovery of admissible evidence in this action.</p>
-			<p class='break-page'></p> 
-			<h4 class='text-center'><u>DEFINITIONS AND INSTRUCTIONS</u></h4>
-			<p>Words in all CAPITALS are defined as follows: YOU or YOUR mean respondent or any of YOUR agents, representatives, and/or affiliated entities or anyone acting or whom YOU know or believe is purporting to act on YOUR behalf or who has acted or whom YOU know or believe is purporting to act on YOUR behalf. IDENTIFY, IDENTITY, or INDENTIFYING mean to provide the name, address, and telephone number. DOCUMENT means a writing, as defined in Evidence Code &sect; 250, and includes the original or a copy of handwriting, typewriting, printing, photocopies, photostating, photographing, and every other means of recording upon any tangible thing and form of communicating or representation, including letters, words, pictures, sounds, or symbols, or combinations of them. COMMUNICATION means any conveyance of information, oral, written, or via gesture, and regardless of whether the information was received or acknowledged. RELATED TO means referencing or referring to in any way, whether expressly or impliedly. POLICIES mean the way YOU run YOUR business, including but not limited to policies, procedures, handbooks, guidelines, and rules. DISCIPLINARY ACTION means an action including but not limited to, a warning or admonishment, whether oral or written, any reduction in rank, seniority, duties, schedule changes, title, benefits, pay, suspension, or termination.</p>";
+			<br/>
+			<h5 class='text-center'><u>DEFINITIONS AND INSTRUCTIONS</u></h5>
+            <p>Words in all CAPITALS are defined as follows: YOU or YOUR mean respondent or any of YOUR agents, representatives, and/or affiliated entities or anyone acting or whom YOU know or believe is purporting to act on YOUR behalf or who has acted or whom YOU know or believe is purporting to act on YOUR behalf. IDENTIFY, IDENTITY, or INDENTIFYING mean to provide the name, address, and telephone number. DOCUMENT means a writing, as defined in Evidence Code &sect; 250, and includes the original or a copy of handwriting, typewriting, printing, photocopies, photostating, photographing, and every other means of recording upon any tangible thing and form of communicating or representation, including letters, words, pictures, sounds, or symbols, or combinations of them. COMMUNICATION means any conveyance of information, oral, written, or via gesture, and regardless of whether the information was received or acknowledged. RELATED TO means referencing or referring to in any way, whether expressly or impliedly. POLICIES mean the way YOU run YOUR business, including but not limited to policies, procedures, handbooks, guidelines, and rules. DISCIPLINARY ACTION means an action including but not limited to, a warning or admonishment, whether oral or written, any reduction in rank, seniority, duties, schedule changes, title, benefits, pay, suspension, or termination.</p>
+            <h5 class='text-center'><u>INVALID OBJECTIONS</u></h5>
+            <p>Calls for a legal conclusion: Although there is no authority directly on point, such requests in both Requests for Admission and Interrogatories are non-objectionable. Burke v. Superior Court (1969) 71 Cal.2d 276, 282 and Code Civ.Proc., § 2030.010(b).</p>
+            <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery. Rylaarsdam et al., California Practice Guide: Civil Procedure Before Trial (The Rutter Group 2019) ¶ 8:721-8:722.</p>
+            ";
 		}
 	}
-	if($viewonly == 0)
-	{
-		
+	if( $viewonly == 0 ) {
 ?>
     <div class="form-group" id="instruction_id1">
     <label class=" col-sm-2 control-label">Instructions<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
@@ -321,9 +316,8 @@ else
     </div>
 <?php
 	}
-	else
-	{
-	?>
+	else {
+?>
     <div class="">
     	<div class="col-md-12">
         <!-- Instructions Section load -->
@@ -332,9 +326,7 @@ else
                 <div class="row">
                 	<div class="col-md-4"></div>
                     <div class="col-md-4 text-center">
-                        <h3>
-                            Instructions										
-                        </h3> 
+                        <h3> Instructions </h3>
                     </div>
                     <div class="col-md-4" style="margin-top: 8px;">
                         <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" class="btn btn-primary pull-right"></a>
@@ -342,20 +334,18 @@ else
                 </div>
             </div>
             <div id="collapseOne" class="panel-collapse collapse in">
-                <div class="panel-body">
-                <?php echo  $instruction_text; ?>
-                </div>
+                <div class="panel-body"><?= $instruction_text ?></div>
             </div>
         </div>
     </div>
     </div>
-    <?php
+<?php
 	}
 }
 ?>
 
 <script>
-$(document).ready( _ => {
-	setTimeout( _ => CKEDITOR.replace( 'instruction' ), 8000);
-});
+jQuery( $ => {
+	setTimeout( _ => CKEDITOR.replace( 'instruction' ), 8000 );
+} );
 </script>
