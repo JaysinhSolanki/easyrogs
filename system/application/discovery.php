@@ -259,7 +259,7 @@ body.modal-open {
                 <div class="panel panel-primary">
                     <div class="panel-body">
                         <form  name="discoveriesform" id="discoveriesform" class="form form-horizontal" method="post">
-                    <input type="hidden" name="type" value="<?= $type ?>" id="type"  />
+                     <input type="hidden" name="type" value="<?= $type ?>" id="type"  />
                      <input type="hidden" name="uid" value="<?= $uid ?>">
                      <input type="hidden" name="supp" value="<?= $supp ?>">
 
@@ -535,16 +535,13 @@ $.noConflict();
 
 <?php
     $formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
-    echo "globalThis['discoveryFormNames'] = ". json_encode($formNames, JSON_PRETTY_PRINT) .";\n\r";
+    echo "
+        globalThis['discoveryType'] = ". $type .";
+        globalThis['discoveryFormNames'] = ". json_encode($formNames, JSON_PRETTY_PRINT) .";
+    ";
 ?>
 
 $(document).ready( _ => {
-
-<?php
-    $formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
-    echo "globalThis['discoveryFormNames'] = ". json_encode($formNames, JSON_PRETTY_PRINT) .";\n\r";
-?>
-
     setTimeout( _ => loadToolTipForClientBtn(), 1000 );
     loadpropondingattorneys('<?= $case_id ?>','<?= @$proponding ?>','<?= @$proponding_attorney ?>');
     $('.tooltipshow').tooltip( {
@@ -619,10 +616,10 @@ function loadrespondings(case_id,client_id,responding_id) {
         .load("loadrespondings.php?case_id="+case_id+"&client_id="+client_id+"&selected_id="+responding_id);
 }
 function callFunction() { 
-    form_id = $("#form_id").val();
+    form_id = $("#form_id").val(); 
 
-    const page = globalThis['currentPage']; // :ctxhelp
-    page.id = page.id + ( form_id ? '@' + globalThis['discoveryFormNames'][form_id-1] : '' );
+	const { pkscreenid, } = globalThis['currentPage'] || {};
+	ctxUpdate({ id: pkscreenid + '_<?= $type ?>' + (form_id ? '@' + discoveryFormNames[form_id-1] : ''), pkscreenid: '47', url: 'discoveryfront.php', } );
 
     if( form_id == 1 || form_id == 2 || form_id == "" ) {
         $("#start_questionid").hide();

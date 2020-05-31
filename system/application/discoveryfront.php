@@ -712,11 +712,16 @@ require_once("../jsinclude.php");
 
 <script>
 $.noConflict();
+
 <?php 
-	$forms = $AdminDAO->getrows('forms', "*");
-    $formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
-    echo "globalThis['discoveryFormNames'] = ". json_encode($formNames, JSON_PRETTY_PRINT) .";\n\r";
+$forms = $AdminDAO->getrows('forms', "*");
+$formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
+echo "
+	globalThis['discoveryType'] = ". $type .";
+	globalThis['discoveryFormNames'] = ". json_encode($formNames, JSON_PRETTY_PRINT) .";
+";
 ?>
+
 function loadinstructions( form_id, id ) {
 	var type = '<?= $type ?>';
 	globalThis['discoveryForm'] = form_id;
@@ -967,6 +972,6 @@ jQuery( $ => {
 	CKEDITOR.replace( 'email_body_popup' );
 
 	const { discoveryFormNames, discoveryForm, } = globalThis; 
-	ctxUpdate({ id: '47_2' + ( discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '' ), pkscreenid: '47', url: 'discoveryfront.php', } );
+	ctxUpdate({ id: '47_<?= $type ?>' + (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : ''), pkscreenid: '47', url: 'discoveryfront.php', } );
 } );
 </script>

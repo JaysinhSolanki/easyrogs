@@ -58,14 +58,11 @@ function loadToolTipForClientBtn( c_id='' ) {
 
 var previous = '';
 function ctxUpdate( aPage, fn ) { 
-	let page = Object.assign( {}, aPage, {previous} );
-
-	const params = new URLSearchParams(page.url),
-		  type = params.get('type');
-	if( type ) page.id += '_' + type;
+	const { id, pkscreenid, } = globalThis['currentPage'] || {},
+		  page = Object.assign( {}, { id, pkscreenid, }, aPage, {previous} );
 
 	globalThis['currentPage'] = page;
-	previous = page.id;
+	previous = page.pkscreenid;
 //!! this is a temporary copy, to detect untracked pages
 const videos = [ 
             {id: "-2",               }, 
@@ -100,7 +97,12 @@ function selecttab(id,url,pkscreenid) {
 		$('#'+previous).className="inactive";
 	}
 	loadsection('wrapper',url,pkscreenid); 
-	ctxUpdate( { id: pkscreenid || 7, previous, pkscreenid, url, } );
+
+	id = pkscreenid || 7;
+	const params = new URLSearchParams(url),
+		  type = params.get('type');
+	if( type ) id += '_' + type;
+	ctxUpdate( { id, previous, pkscreenid, url, } );
 }
 
 function _doAutoplayVideos() {
