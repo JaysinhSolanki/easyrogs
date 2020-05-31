@@ -21,7 +21,7 @@ class AdminDAO
 	public $dbusername	=	DBUSER;//'root';
 	public $dbpassword =	DBPASS;
 	public $dbname		=	DBNAME;//'gumption_michaelwuest';
-	public $dbconn;
+	protected static $dbConn = null;
 
 	function encrypt($password)
 	{
@@ -32,11 +32,26 @@ class AdminDAO
 		return(password_hash($password, PASSWORD_BCRYPT));
 	}
 
+	function connectionActive() {
+		$errorLevel = error_reporting(0);
+		$active = true;
+		try {
+			self::$dbConn->query("SELECT 1");
+		} catch (PDOException $e) {
+			$active = false;
+		}
+		error_reporting($errorLevel);
+		return $active;
+	}
+
 	function connect()
 	{
-		$this->dbconn	=	new PDO("mysql:host=".$this->dbhost.";dbname=".$this->dbname,$this->dbusername, $this->dbpassword);
-		$this->dbconn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		if (!self::$dbConn || !$this->connectionActive()) {
+			self::$dbConn	=	new PDO("mysql:host=".$this->dbhost.";dbname=".$this->dbname,$this->dbusername, $this->dbpassword);
+			self::$dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		}
 	}
+	
 	function executeQuery($query)
 	{
 		if($this->displayquery == 1)
@@ -47,7 +62,7 @@ class AdminDAO
 		$this->connect();
 
 		//$db = new PDO("...");
-		$statement = $this->dbconn->prepare($query); //"select id from some_table where name = :name"
+		$statement = self::$dbConn->prepare($query); //"select id from some_table where name = :name"
 		$statement->execute();//array(':name' => "Jimbo")
 		return($statement->fetchAll());
 
@@ -59,11 +74,11 @@ class AdminDAO
 		$this->connect();
 
 		 $this->displayquery($query, $parameters);
-		$statement = $this->dbconn->prepare($query);
+		$statement = self::$dbConn->prepare($query);
 		$statement->execute();
 		$allrows_array	=	$statement->fetchAll();
 
-		$statement = $this->dbconn->prepare("SELECT FOUND_ROWS() as totalrows");
+		$statement = self::$dbConn->prepare("SELECT FOUND_ROWS() as totalrows");
 		$statement->execute();
 		$totalrows	=	$statement->fetch(PDO::FETCH_ASSOC);
 
@@ -104,7 +119,7 @@ class AdminDAO
 		$this->connect();
 
 
-		if(!$statement = $this->dbconn->prepare($this->query)) //"select id from some_table where name = :name")
+		if(!$statement = self::$dbConn->prepare($this->query)) //"select id from some_table where name = :name")
 		{
 			$this->displayquery($this->query, $parameters);
 		}
@@ -146,7 +161,7 @@ class AdminDAO
 
 		$this->query =	" DELETE FROM  $tbl WHERE  $where ";
 		$this->displayquery($this->query, $parameters);
-		$statement = $this->dbconn->prepare($this->query);
+		$statement = self::$dbConn->prepare($this->query);
 		if($statement->execute($parameters))
 		{
 			return 1;
@@ -199,9 +214,9 @@ class AdminDAO
 
 		$this->displayquery($this->query, $parameters);
 
-		$statement = $this->dbconn->prepare($this->query);
+		$statement = self::$dbConn->prepare($this->query);
 		$statement->execute($parameters);
-		return $this->dbconn->lastInsertId();
+		return self::$dbConn->lastInsertId();
 	}//end of insertrow
 	/*************************************updaterow()****************************************/
 	//@params: NONE
@@ -261,7 +276,7 @@ class AdminDAO
 
 		$this->query	=	"UPDATE $table SET $fieldstr WHERE $where";
 		$this->displayquery($this->query, $parameters);
-		$statement = $this->dbconn->prepare($this->query);
+		$statement = self::$dbConn->prepare($this->query);
 		if($statement->execute($parameters))
 		{
 			return 1;
