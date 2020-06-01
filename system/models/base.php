@@ -2,7 +2,7 @@
 
   abstract class BaseModel
   {
-    protected $db;
+    protected static $db = null;
     protected $queryTemplates;
 
     /**
@@ -49,23 +49,34 @@
       $this->logger = $logger;
     }
 
+    private function connectionActive() {
+      $errorLevel = error_reporting(0);
+      $active = true;
+      try {
+        self::$db->query("SELECT 1");
+      } catch (PDOException $e) {
+        $active = false;
+      }
+      error_reporting($errorLevel);
+      return $active;
+    }
+  
     private function connect( $dbConfig )
     {
       $this->dbConfig = $dbConfig;
-      $this->db = null;
 
-      $retries = defined( 'DB_CONNECT_RETRIES' ) ? DB_CONNECT_RETRIES : 1;
+      $retries = defined( 'DB_CONNECT_RETRIES' ) ? DB_CONNECT_RETRIES : 3;
 
       $dsn      = $dbConfig['dsn'];
       $username = $dbConfig['username'];
       $password = $dbConfig['password'];
 
       $lastError = '';
-      while ( $retries > 0 ) {
+      while( (!self::$db || !$this->connectionActive()) && $retries > 0) {
         try {
-          $this->db = new PDO( $dsn, $username, $password/*, [PDO::ATTR_PERSISTENT => true]*/ );
-          $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-          $this->db->exec("SET NAMES 'utf8'");
+          self::$db = new PDO( $dsn, $username, $password/*, [PDO::ATTR_PERSISTENT => true]*/ );
+          self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          self::$db->exec("SET NAMES 'utf8'");
           $retries = 0;
         } catch ( PDOException $exception ) {
           // TODO: log exception
@@ -74,17 +85,17 @@
           usleep( 500 ); // Wait 0.5s between retries.
         }
       }
-
-      if ( !$this->db ) {
+  
+      if ( !self::$db ) {
         throw new Exception( "Unable to connect to database: $lastError" );
       }
 
-      return $this->db;
+      return self::$db;
     }
 
     protected function prepareAndExecute( $query, $queryValues = array() )
     {
-      $pdoStatement = $this->db->prepare( $query );
+      $pdoStatement = self::$db->prepare( $query );
       $pdoStatement->execute( $queryValues );
 
       $result = $pdoStatement->fetchAll( PDO::FETCH_ASSOC );
@@ -95,10 +106,10 @@
     // for insert/update queries, returns the result of execute....
     protected function prepareAndExecuteUpdate( $query, $queryValues = array() )
     {
-      $pdoStatement = $this->db->prepare( $query );
+      $pdoStatement = self::$db->prepare( $query );
 
       if ( $pdoStatement->execute( $queryValues ) ) {
-        $lastInsertId = $this->db->lastInsertId();
+        $lastInsertId = self::$db->lastInsertId();
         if ( $lastInsertId ) {
           return $lastInsertId;
         }
