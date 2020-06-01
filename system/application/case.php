@@ -155,7 +155,7 @@
 								<label>Letterhead<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
 							</div>
 							<div class="col-md-3">
-								<textarea name="masterhead" class="form-control" wrap="off" cols="50" rows="10" style="height: 12em; overflow: hidden"><?= $side['masterhead'] ?></textarea>
+								<textarea name="masterhead" class="form-control" wrap="off" cols="50" rows="10" style="height: 12em; overflow: hidden"><?= $side['masterhead'] /* ?: $currentUser->user['masterhead']*/ ?></textarea>
 							</div>
 							<div class="col-md-1"></div>
 						</div>
@@ -691,7 +691,7 @@ function loadmasterhead()
 }
 
   erInviteControl();
-  <?php if ($currentPrimaryAttorneyId): ?>
+  <?php if( $currentPrimaryAttorneyId && !isDraft ): ?>
     erTeamAttorneySelectControl(<?= $caseId ?>);
   <?php else: ?>
     erTeamAttorneySelectControl(<?= $caseId ?>, setMastHead);
