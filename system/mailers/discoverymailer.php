@@ -117,7 +117,7 @@
     }
 
     static function propound($discovery, $actionUser, $isResponse, $attachments) {
-      global $smarty, $discoveriesModel, $clientsModel, $usersModel, $logger, $sidesModel;
+      global $logger, $smarty, $discoveriesModel, $clientsModel, $usersModel, $sidesModel;
 
       $logContext = 'DISCOVERY_MAILER_PROPOUND';
       $logParams  = json_encode([
@@ -150,7 +150,7 @@
       
       $body = $smarty->assign([
         'ASSETS_URL'      => ASSETS_URL,
-        'masterhead'      => $usersModel->getMasterHead($actionUser),
+        'masterhead'      => $sidesModel->getMasterHead($side),
         'propoundingName' => $propounding['client_name'],
         'discoveryName'   => Discovery::getTitle($discoveryName, $discovery['set_number'], Discovery::STYLE_WORDCAPS),
         'actionUrl'       => DOMAIN,
