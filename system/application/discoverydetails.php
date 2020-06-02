@@ -1027,7 +1027,10 @@ You have not verify the discovery SPECIAL INTERROGATORIES. Please click on the l
   </div>
 </div>
 
-<?php require_once __DIR__ . '/client-email-found_modal.php'; ?>
+<?php 
+include_once(SYSTEMPATH.'application/client-email-found_modal.php');
+include_once(SYSTEMPATH.'application/client_instructions_modal.php'); 
+?>
 
 <link href="../assets/vendors/uploadfile.css" rel="stylesheet">
 <script src="../assets/vendors/jquery-validation/jquery-1.9.0.min.js" type="text/javascript" charset="utf-8"></script>
