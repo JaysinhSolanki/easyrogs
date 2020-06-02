@@ -1,6 +1,7 @@
 <?php
   class Country extends BaseModel {
     const UNITED_STATES = 254;
+    const US = 'US';
 
     function __construct( $dbConfig = null )
     {

@@ -11,6 +11,7 @@ settings.php
 /system/_dev/**
 .env
 .env.*
+!.env.sample
 vendor
 /tmp/templates_c/*
 !/tmp/templates_c/.keep

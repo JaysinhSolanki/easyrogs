@@ -232,14 +232,78 @@ td, th {
 	<div class="row">
 		<div class="col-md-12" style="text-align:right">
 			<i id="POS_msgdiv" class="POS_msgdiv" style="color:red"></i>
-			<button type="button" class="btn btn-purple" onclick="servePOS()"><i class="fa fa-share"></i> Serve</button>
+			<button type="button" class="btn btn-purple" onclick="payAndServe()"><i class="fa fa-share"></i> Pay & Serve</button>
 			<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
 		</div>
 	</div>
 </form>
 
-<script language="javascript">
-function servePOS() { 
+<div id="payment-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="padding: 15px;">
+        <h5 class="modal-title" style="font-size: 22px;">How would you like to pay?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px !important;font-size: 25px !important;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+				<div id="payment-methods">
+          <div id="stored-payment-methods"></div>
+					<div class="payment-method">
+						<div class="form-check" style="cursor: pointer">
+              <input type="radio" name="payment_method_id" id="payment_method_id_none" value="" class="form-check-input" checked />
+							<label class="form-check-label" for="payment_method_id_none" style="cursor: pointer">Add a new Payment Method</label>
+						</div>
+					</div>
+				</div>
+				<form id="payment-form" style="display: none;">
+          <br/>
+					<div id="card-element">
+						<!-- Elements will create input elements here -->
+					</div>
+
+					<!-- We'll put the error messages in this element -->
+					<div id="card-errors" role="alert"></div>
+          <br/>
+          <div class="form-check" style="cursor: pointer">
+            <input type="checkbox" name="save_to_profile" id="save_to_profile" value="" class="form-check-input" checked />
+            <label class="form-check-label" for="save_to_profile" style="cursor: pointer">Save for future payments.</label>
+          </div>
+				</form>
+        <br/>
+        <div class="form-check" style="cursor: pointer">
+          <input type="checkbox" name="save_to_side" id="save_to_side" value="" class="form-check-input"/>
+          <label class="form-check-label" for="save_to_side" style="cursor: pointer">Set as Team's Payment Method.</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="submit-payment" class="btn btn-success">Pay $<?= round(SERVE_DISCOVERY_COST / 100, 2) ?></button>
+        <a href="javascript:;" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Close</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  stripe = Stripe('<?= STRIPE_PUBLISHABLE_KEY ?>');
+  caseId = <?= $case_id ?>;
+  discoveryId = <?= $discovery_id ?>;
+</script>
+
+<script src="<?= ROOTURL ?>system/assets/payments.js"></script>
+<script>
+  function payAndServe() {
+    if ( validate() ) {
+      <?php if ($discoveriesModel->isPaid($discovery_id)): ?>
+        servePOS();
+      <?php else: ?>
+        new DiscoveryPayment(discoveryId, caseId, servePOS);
+      <?php endif; ?>
+    }
+  }
+
+  function validate() {
     var pos_state   = $("#pos_state").val();
     var pos_city    = $("#pos_city").val();
     var pos_address = $("#pos_address").val();
@@ -261,41 +325,43 @@ function servePOS() {
     if( error == 1 ) {
         $(".POS_msgdiv").html(msg);
     }
-    else {
-        $.LoadingOverlay("show");
+    return error == 0;
+  }
 
-        // we must do this (setAttribute[value]), to properly get their html
-        $("#pos_address").attr('value', pos_address);
-        $("#pos_state").attr('value', pos_state);
-        $("#pos_city").attr('value', pos_city);
+  function servePOS() { 
+    $.LoadingOverlay("show");
 
-        var poshtml = $("#poshtml").clone(),
-            _text = $("#pos_18info > #_1").text() +
-                    $("#pos_18info > input").val() + '. ' +
-                    $("#pos_18info + #_2").text();
+    // we must do this (setAttribute[value]), to properly get their html
+    $("#pos_address").attr('value', pos_address);
+    $("#pos_state").attr('value', pos_state);
+    $("#pos_city").attr('value', pos_city);
 
-        poshtml.find('#pos_18info').replaceWith( '<p id="pos_18info">' + _text + '</p>' );
-        poshtml.find('#pos_18info + #_2').replaceWith( '' );
-        poshtml.find("#citystate").replaceWith( pos_city + ", " + pos_state );
+    var poshtml = $("#poshtml").clone(),
+        _text = $("#pos_18info > #_1").text() +
+                $("#pos_18info > input").val() + '. ' +
+                $("#pos_18info + #_2").text();
 
-        $("#pos_text").val(poshtml.html());
-        $("#posaddress").val(pos_address);
-        // $("#posstreet").val(pos_street);
-        // $("#posstatecode").val(pos_statecode);
-        // $("#poszip").val(pos_zip);
-        // $("#poscityname").val(pos_cityname);
-        $("#posstate").val(pos_state);
-        $("#poscity").val(pos_city);
-        setTimeout( _ => {
-            $.post( "propondingserveaction.php",
-                    $("#formPOS" )
-                        .serialize() )
-                .done( data => {
-                    $('#general_modal').modal('toggle');
-                    $.LoadingOverlay("hide");
-                    response(data);
-                });
-        }, 2000 );
-    }
-}
+    poshtml.find('#pos_18info').replaceWith( '<p id="pos_18info">' + _text + '</p>' );
+    poshtml.find('#pos_18info + #_2').replaceWith( '' );
+    poshtml.find("#citystate").replaceWith( pos_city + ", " + pos_state );
+
+    $("#pos_text").val(poshtml.html());
+    $("#posaddress").val(pos_address);
+    // $("#posstreet").val(pos_street);
+    // $("#posstatecode").val(pos_statecode);
+    // $("#poszip").val(pos_zip);
+    // $("#poscityname").val(pos_cityname);
+    $("#posstate").val(pos_state);
+    $("#poscity").val(pos_city);
+    setTimeout( _ => {
+        $.post( "propondingserveaction.php",
+                $("#formPOS" )
+                    .serialize() )
+            .done( data => {
+                $('#general_modal').modal('toggle');
+                $.LoadingOverlay("hide");
+                response(data);
+            });
+    }, 2000 );
+  }
 </script>

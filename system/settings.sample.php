@@ -16,3 +16,14 @@ define("FRAMEWORK_URL", ROOTURL."framework/");
 define("FRAMEWORK_PATH",ROOTPATH."framework/");
 define("UPLOAD_URL", 	ROOTURL."system/uploads/");
 define("LOGS_DIR", __DIR__ . '/../logs');
+
+// Payments
+define('STRIPE_API_KEY',                $_ENV['STRIPE_API_KEY']);
+define('STRIPE_PUBLISHABLE_KEY',        $_ENV['STRIPE_PUBLISHABLE_KEY']);
+define('STRIPE_WEBHOOK_SIGNING_SECRET', $_ENV['STRIPE_WEBHOOK_SIGNING_SECRET']);
+
+define('SERVE_DISCOVERY_COST', 1000); // $10
+define('PAYMENTS_CURRENCY',    'usd');
+define('PAYMENT_WHITELIST', [ // add email regular expressions here, for users that do not require payment
+  '/jeff@jeffschwartzlaw\.com/i',
+]);

@@ -1,5 +1,7 @@
 <?php
   
+  use Stripe\PaymentIntent;
+
   class Discovery extends BaseModel {
 
     function __construct( $dbConfig = null )
@@ -27,6 +29,28 @@
     public function updateById($id, $fields, $ignore = false ) {
       return parent::update('discoveries', $fields, ['id' => $id], $ignore);
     }
+
+    public function isPaid($discoveryId) {
+      global $currentUser;
+      
+      foreach(PAYMENT_WHITELIST as $whitelistedEmail) {
+        if (preg_match($whitelistedEmail, $currentUser->user['email'])) {
+          return true;
+        }
+      }
+
+      $discovery = $this->find($discoveryId);
+      if ($discovery['payment_intent_id']) {
+        $intent = PaymentIntent::retrieve($discovery['payment_intent_id']);
+        $this->logger->info($intent);
+        return $intent->status === 'succeeded';
+      }
+      return false;
+    }
+
+    public function setPaymentIntent($discoveryId, $paymentIntentId) {
+      return $this->updateById($discoveryId, ['payment_intent_id' => $paymentIntentId]);
+    }
     
     static function getTitle($name, $set_number = null, $style = self::STYLE_WORDCAPS ) {
       global $logger;
@@ -45,6 +69,10 @@
       }
 
       return preg_replace( ["/\bset\b/u","/\bFor\b/u","/\bOf\b/u"], ["Set","for","of"], $name );
+    }
+
+    static function statementDescriptor($discovery) {
+      return "Served Discovery #$discovery[id]";
     }
 
   }

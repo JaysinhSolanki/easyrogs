@@ -207,12 +207,40 @@
       return str_replace("\n\n", "\n", $masterHead);
     }
 
+    function setPaymentCustomer($userId, $paymentCustomerId) {
+      return $this->update('system_addressbook',
+        ['payment_customer_id' => $paymentCustomerId],
+        ['pkaddressbookid'     => $userId]
+      );
+    }
+
     static function parseFullName($fullname, &$nameParts = null) {
       preg_match( '/(\S+)\s+(?:(\S+)\s+|)(.*)/', preg_replace('/\s+/', ' ', trim($fullname)), $nameParts );
       return $nameParts;
     }
     static function getFullName($user) {
       return trim("$user[firstname] $user[middlename] $user[lastname]");
+    }
+    static function getFullAddress($user) {
+      global $statesModel;
+      
+      $state = $statesModel->find($user['fkstateid']);
+
+      return trim("$user[address], $user[street], $user[cityname], $state[statecode], $user[zip]", ' ,');
+    }
+    static function stripeAddressHash($user) {
+      global $statesModel;
+
+      $state = $statesModel->find($user['fkstateid']);
+
+      return [
+        'line1'       => $user['address'],
+        'line2'       => $user['street'],
+        'city'        => $user['cityname'],
+        'country'     => Country::US,
+        'postal_code' => $user['zip'],
+        'state'       => $state['statecode']
+      ];
     }
 
     function getByAttorneyId($attorneyId, $create = false) {
@@ -248,6 +276,27 @@
       global $logger;
       $logger->debug( "USER: " . json_encode([$user['pkaddressbookid'], $user['email'], $user['emailverified']]) );
       return $user['emailverified'] == 1;
+    }
+
+    static function getPaymentCustomer($user, $update = true) {
+      global $stripe, $usersModel;
+
+      if( !$customerId = $user['payment_customer_id'] ) {
+        $customer = $stripe->customers->create([
+          'name'    => User::getFullName($user),
+          'address' => User::stripeAddressHash($user),
+          'email'   => $user['email'],
+          'phone'   => $user['phone']
+        ]);
+        if ( $update ) {
+          $usersModel->setPaymentCustomer($user['pkaddressbookid'], $customer->id);
+        }
+      }
+      else {
+        $customer = $stripe->customers->retrieve($customerId);
+      }
+
+      return $customer;
     }
 
   }

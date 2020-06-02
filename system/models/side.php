@@ -613,6 +613,13 @@
       $this->updateSide($sideId, $caseData);
     }
 
+    function setPaymentMethod($sideId, $paymentMethodId) {
+      return $this->update('sides',
+        ['payment_method_id' => $paymentMethodId],
+        ['id' => $sideId]
+      );
+    }
+
     static function hasPrimaryAttorney($side) {
       global $sidesModel;
 

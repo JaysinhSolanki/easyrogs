@@ -11,6 +11,10 @@ $respond			= $_POST['respond'];
 $discovery_type		= $_POST['discovery_type'];
 $response_id		= $_POST['response_id'];
 
+if (!$discoveriesModel->isPaid($discovery_id)) {
+	HttpResponse::paymentRequired();
+}
+
 $pos_updated_by			= $_SESSION['addressbookid'];
 $pos_updated_at			= date("Y-m-d H:i:s");
 $replace_text			= '<span style="display:none" id="signtime"></span>';
@@ -37,7 +41,7 @@ if( $discovery_type == Discovery::TYPE_EXTERNAL ) { //If served discovery is ext
 		$duedate			= date('Y-m-d', strtotime($expected_duedate. ' + 1 days'));
 	}
 	
-	$holidays = $AdminDAO->getrows('holidays',"date");		
+	$holidays = $AdminDAO->getrows('holidays',"date");
 	foreach( $holidays as $holiday ) {
 		$holidaysArray[] = date( $dateformate, strtotime($holiday['date']) );
 	}

@@ -7,6 +7,12 @@
   $dotEnv->load();
   require_once(__DIR__ . "/settings.php");
   
+  // payments
+  use Stripe\Stripe;
+  use Stripe\StripeClient;
+  Stripe::setApiKey(STRIPE_API_KEY);
+  $stripe = new StripeClient(STRIPE_API_KEY);
+
   // logging
   error_reporting(E_ALL & ~E_NOTICE);
   ini_set("log_errors", 1);

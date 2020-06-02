@@ -55,5 +55,8 @@
       die();
     }
 
+    static function paymentRequired($message = 'Payment Required.', $extra = []) {
+      self::send(402, self::TYPE_ERROR, $message, $extra);
+    }
     
   }

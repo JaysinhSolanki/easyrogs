@@ -37,6 +37,8 @@
 <!-- isInViewport jQuery plugin @ https://cdnjs.cloudflare.com/ajax/libs/is-in-viewport/3.0.4/isInViewport.js -->
 <script type="text/javascript" src="<?= VENDOR_URL ?>is-in-viewport/3.0.4/isInViewport.min.js"></script> 
 
+<script src="https://js.stripe.com/v3/"></script>
+
 <script type="text/javascript">
 function loadToolTipForClientBtn( c_id='' ) {
 	if( c_id == '' ) {

@@ -65,14 +65,29 @@ denyJoinCaseRequest = (userId, caseId, success, error) => {
 }
 
 getDiscovery = (id, success, error) => {
-	$.get(API_BASE + '/get-discovery.php', {id: id}, success, FORMAT_JSON)
-	 .fail(error);
+  $.get(API_BASE + '/get-discovery.php', {id: id}, success, FORMAT_JSON)
+    .fail(error);
 }
 
 updateDiscovery = (id, data, success, error) => {
-	$.post(API_BASE + '/post-update-discovery.php', {id: id, discovery: data}, success, FORMAT_JSON)
-	 .fail(error);
+  $.post(API_BASE + '/post-update-discovery.php', {id: id, discovery: data}, success, FORMAT_JSON)
+		.fail(error);
 }
+
+// with no case id will return only the user's payment methods, not the side's
+getPaymentMethods = (caseId = null, success, error) => {
+  $.get(API_BASE + '/get-payment-methods.php', {case_id: caseId}, success, FORMAT_JSON)
+   .fail(error);
+}
+
+getDiscoveryPayment = (id, paymentMethodId, saveToSide, saveToProfile) => {
+  return fetch(API_BASE + `/get-discovery-payment.php?id=${id}&payment_method_id=${paymentMethodId}&save_to_side=${saveToSide}&save_to_profile=${saveToProfile}`);
+}
+
+getPaymentSetup = () => {
+  return fetch(API_BASE + '/get-payment-setup.php');
+}
+
 
 confirmAction = (options) => {
 	return swal({

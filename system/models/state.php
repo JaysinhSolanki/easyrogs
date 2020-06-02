@@ -9,6 +9,7 @@
 
       ]);
     }
+    function find($id) { return $this->getBy('system_state', ['pkstateid' => $id], 1); }
 
     function getByCountry($countryId) {
       $states = $this->getBy('system_state', [
