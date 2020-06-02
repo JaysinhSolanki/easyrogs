@@ -71,8 +71,6 @@
                                           {block name=body}{/block}
                                           {if !$overwriteSalutation}
                                           <br/>
-                                          <br/>
-                                          <br/>
                                           Regards,
                                           <br/>
                                           <i>The EasyRogs Team</i>

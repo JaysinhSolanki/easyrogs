@@ -6,7 +6,7 @@
     const ACTION_TEXT         = 'Join';
 
     static function caseInvite($invitee, $sender, $case) {
-      global $usersModel, $logger, $smarty, $invitationsModel, $sidesModel;
+      global $logger, $smarty, $usersModel, $invitationsModel, $sidesModel;
 
       if (!$invitee = (is_array($invitee) ? $invitee : $usersModel->findActive($invitee)) ) {
         return $logger->error('INVITATION_MAILER_INVITE Invitee User not found - ' . json_encode($invitee));
@@ -18,6 +18,10 @@
       if ( !$side = $sidesModel->getByUserAndCase($sender['pkaddressbookid'], $caseId) ) {
         return $logger->error("INVITATION_MAILER_INVITE Side Not Found (user: $sender[pkaddressbookid], case: $caseId)");
       }
+      $primaryAttorney = $sidesModel->getPrimaryAttorney($side['id']);
+      if ( !is_array($primaryAttorney) ) {
+        return $logger->error('LC for this case NOT FOUND - ' . json_encode($side));
+      }
 
       $invitation = $invitationsModel->create($invitee['pkaddressbookid']);
       $smarty->assign([
@@ -25,7 +29,7 @@
         'name'        => User::getFullName($invitee),
         'senderName'  => User::getFullName($sender),
         'senderEmail' => $sender['email'],
-        'senderFirm'  => $sender['companyname'],
+        'senderFirm'  => $primaryAttorney['companyname'],
         'caseName'    => $side['case_title'],
         'actionUrl'   => $invitation['link'],
         'actionText'  => self::ACTION_TEXT
@@ -38,7 +42,7 @@
     }
 
     static function teamInvite($invitee, $sender) {
-      global $usersModel, $logger, $smarty, $invitationsModel;
+      global $logger, $smarty, $usersModel, $invitationsModel;
 
       if (!$invitee = (is_array($invitee) ? $invitee : $usersModel->findActive($invitee)) ) {
         return $logger->error('INVITATION_MAILER_INVITE Invitee User not found - ' . print_r($invitee, true));
