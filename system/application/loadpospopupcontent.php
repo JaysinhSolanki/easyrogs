@@ -287,8 +287,13 @@ td, th {
 
 <script>
   stripe = Stripe('<?= STRIPE_PUBLISHABLE_KEY ?>');
-  caseId = <?= $case_id ?>;
-  discoveryId = <?= $discovery_id ?>;
+  
+  const caseId = <?= $case_id ?>;
+  const discoveryId = <?= $discovery_id ?>;
+  
+  let pos_state   = $("#pos_state").val();
+  let pos_city    = $("#pos_city").val();
+  let pos_address = $("#pos_address").val();
 </script>
 
 <script src="<?= ROOTURL ?>system/assets/payments.js"></script>
@@ -304,9 +309,10 @@ td, th {
   }
 
   function validate() {
-    var pos_state   = $("#pos_state").val();
-    var pos_city    = $("#pos_city").val();
-    var pos_address = $("#pos_address").val();
+    pos_state   = $("#pos_state").val();
+    pos_city    = $("#pos_city").val();
+    pos_address = $("#pos_address").val();
+    
     var error = 0;
     var msg = "";
     if( !pos_address ) {
@@ -360,6 +366,13 @@ td, th {
             .done( data => {
                 $('#general_modal').modal('toggle');
                 $.LoadingOverlay("hide");
+                confirmAction({
+                  title: 'Service Complete!',
+                  text: '',
+                  icon: 'success',
+                  dangerMode: false,
+                  buttons: null
+                });
                 response(data);
             });
     }, 2000 );

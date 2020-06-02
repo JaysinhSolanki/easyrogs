@@ -1655,7 +1655,7 @@ function addform(url,frm,div,page)
 	} }, 3000);
 	
 }
-function response(text)
+function response(text, showMessage = true)
 {
 	
 	$("#loading").hide();
@@ -1693,7 +1693,7 @@ function response(text)
 			
 		}
 		
-		msg(text);
+		showMessage && msg(text);
 		$('#'+reloaddiv).load(reloadpage, function() {
 					// alert( "Load was performed." );
 				loading(1);
@@ -1725,7 +1725,7 @@ function response(text)
 	{
 		
 		
-		msg(text);
+		showMessage && msg(text);
 			loading(1);
 	}
 	//loading(1);
