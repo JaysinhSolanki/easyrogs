@@ -288,12 +288,12 @@ td, th {
 <script>
   stripe = Stripe('<?= STRIPE_PUBLISHABLE_KEY ?>');
   
-  const caseId = <?= $case_id ?>;
-  const discoveryId = <?= $discovery_id ?>;
+  caseId = <?= $case_id ?>;
+  discoveryId = <?= $discovery_id ?>;
   
-  let pos_state   = $("#pos_state").val();
-  let pos_city    = $("#pos_city").val();
-  let pos_address = $("#pos_address").val();
+  pos_state   = $("#pos_state").val();
+  pos_city    = $("#pos_city").val();
+  pos_address = $("#pos_address").val();
 </script>
 
 <script src="<?= ROOTURL ?>system/assets/payments.js"></script>
