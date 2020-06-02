@@ -550,6 +550,10 @@ function loadinstructions()
     var type = '<?php echo $type ?>';
     var form_id = '<?php echo $form_id ?>';
     var id = '<?php echo $discovery_id ?>';
-    $.get("discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=1&type="+type).done(function(resp){$("#instruction").val(trim(resp));});
+    $.get("discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=1&type="+type)
+        .done( resp => {
+            $("#instruction").val( trim(resp) );
+            CKEDITOR.replace( 'instruction' );
+        });
 }
 </script>

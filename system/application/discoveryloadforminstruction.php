@@ -343,9 +343,3 @@ else {
 	}
 }
 ?>
-
-<script>
-jQuery( $ => {
-	setTimeout( _ => CKEDITOR.replace( 'instruction' ), 8000 );
-} );
-</script>

@@ -1103,7 +1103,11 @@ function addObjectionFunction(discovery_question_id)
 function loadinstructions(form_id,id)
 {
     var type = '<?php echo $type ?>';
-    $.get("discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=1&type="+type).done(function(resp){$("#loadinstructions").html(trim(resp));});
+    $.get("discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=1&type="+type)
+        .done( resp => {
+            $("#loadinstructions").html( trim(resp) );
+            CKEDITOR.replace( 'instruction' );
+        });
 }
 function checkFunction(subdivid, option)
 {

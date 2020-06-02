@@ -609,6 +609,7 @@ function loadinstructions(id,form_id) {
     $.get( "discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=0&type="+type )
         .done( resp => { 
             $("#loadinstructions").html( trim(resp) );
+            CKEDITOR.replace( 'instruction' );
         } );
 }
 function loadrespondings(case_id,client_id,responding_id) {
