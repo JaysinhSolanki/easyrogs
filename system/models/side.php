@@ -203,11 +203,18 @@
     }
 
     // $user - user id OR a hash with user data
-    function addUser($sideId, $user, $active = true) {
+    function addUser($sideId, $user, $active = true, $checkUniqueSide = true) {
       global $usersModel, $casesModel;
 
       $user = is_array($user) ? $user : $usersModel->find($user);
       $side = $this->find($sideId);
+
+      if ($checkUniqueSide) {
+        $userSide = $this->getByUserAndCase($user['pkaddressbookid'], $side['case_id']);
+        if ($userSide && $userSide['id'] != $side['id']) {
+          return false;
+        }
+      }
 
       $this->insert('sides_users', [
         'side_id'               => $sideId,
