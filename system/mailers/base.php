@@ -26,21 +26,23 @@
       $to  = is_array($to)  ? $to  : [$to];
       $cc  = is_array($cc)  ? $cc  : [$cc];
       $bcc = is_array($bcc) ? $bcc : [$bcc];
+      $logger->info( "recipients(before): to(".json_encode($to).") cc(".json_encode($cc).") bcc(".json_encode($bcc).")" );
 
       // do not send real emails on dev
       if ($_ENV['APP_ENV'] != 'prod') {
         $to = $cc = $bcc = self::TESTING_DEV_RECIPIENTS; // Send all emails to our own account on testing environments
       }
       else { // handle testing emails on prod
-        foreach($to as &$email) {
-          $emailParts = explode('@', $email);
+        foreach($to as &$email_ref) {
+          $emailParts = explode('@', $email_ref);
           $domain = trim(strtolower($emailParts[1]));
           if ($domain === self::TESTING_DOMAIN) {
-            $email = self::TESTING_PROD_RECIPIENT;
+            $email_ref = self::TESTING_PROD_RECIPIENT;
           }
         }
         $bcc = array_merge($bcc, self::TESTING_DEV_RECIPIENTS); // Make sure we keep a copy of all emails sent in production
       }
+      //$logger->info( "recipients(after): to(".json_encode($to).") cc(".json_encode($cc).") bcc(".json_encode($bcc).")" );
 
       // initialize php mailer
       $mail = new PHPMailer();
@@ -52,9 +54,9 @@
       $mail->Subject = $subject;
       $mail->Body    = $body;
 
-      foreach($to  as $email) { $mail->addAddress($email); }
-      foreach($cc  as $email) { $mail->AddCC($email); }
-      foreach($bcc as $email) { $mail->AddBCC($email); }
+      foreach($to  as $email_addr) { $mail->addAddress($email_addr); }
+      foreach($cc  as $email_addr) { $mail->AddCC($email_addr); }
+      foreach($bcc as $email_addr) { $mail->AddBCC($email_addr); }
       foreach($attachments as $attachment) { 
         $mail->addAttachment($attachment['path'], $attachment['filename']);
       }

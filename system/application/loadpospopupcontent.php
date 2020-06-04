@@ -286,14 +286,18 @@ td, th {
 </div>
 
 <script>
-  stripe = Stripe('<?= STRIPE_PUBLISHABLE_KEY ?>');
-  
   caseId = <?= $case_id ?>;
   discoveryId = <?= $discovery_id ?>;
   
   pos_state   = $("#pos_state").val();
   pos_city    = $("#pos_city").val();
   pos_address = $("#pos_address").val();
+
+  try {
+    stripe = Stripe('<?= STRIPE_PUBLISHABLE_KEY ?>');
+  } catch( e ) {
+    console.error( e );
+  }
 </script>
 
 <script src="<?= ROOTURL ?>system/assets/payments.js"></script>
