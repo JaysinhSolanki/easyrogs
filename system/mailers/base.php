@@ -62,9 +62,8 @@
       // send email
       try { 
         $mail->send(); 
+        $logger->info("Mail sent to: " .json_encode($to). ", Subject: $subject, Body: --\n\r\n\r" .$body. "\n\r--\n\r\n\r" );
         if ($_ENV['APP_ENV'] != 'prod') {
-          $logger->info("Mail sent to: " .json_encode($to). ", Subject: $subject, Body: \n\r\n\r" .$body. "\n\r\n\r\n\r" );
-
           // Save copy of the last email
           $savedir = __DIR__ . '/../_dev';
           if(!is_dir($savedir)) { mkdir( $savedir, 0755, true ); }
