@@ -51,7 +51,7 @@ const onAddTeamMember = (e) => {
   $('#memberModal').modal('show');
 }
 
-$(document).ready(() => {
+jQuery( $ => {
   // controls
   erInviteControl();
   $('[data-toggle="tooltip"]').tooltip();
@@ -60,7 +60,8 @@ $(document).ready(() => {
   loadTeam();
   
   // Hooks
-  $(document).on('click', 'a.delete-team-member', onDeleteTeamMember);
-  $(document).on('click', 'a#submit-team-member-btn', onSubmitTeamMember);
-  $(document).on('click', 'a#add-team-member-btn', onAddTeamMember);
+  $(document)
+    .on('click', 'a.delete-team-member', onDeleteTeamMember)
+    .on('click', 'a#submit-team-member-btn', onSubmitTeamMember)
+    .on('click', 'a#add-team-member-btn', onAddTeamMember);
 });

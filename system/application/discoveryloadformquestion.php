@@ -160,21 +160,17 @@ if($forms[0]['allow_custom_questions']==1)
                     <th style="text-align:center"><?php echo $s_titleQuestion; ?></th>
                     <th style="text-align:center">Action</th>
                 </tr>
-            <?php
-			if(count($newquestions)>0)
-			{
-            foreach($newquestions as $thisrow)
-            {
-                ?>
-                <tr id="this_<?php echo $thisrow['id']?>">
+<?php
+			if( count($newquestions) ) {
+            foreach( $newquestions as $thisrow ) {
+?>
+                <tr id="this_<?= $thisrow['id'] ?>">
                     <td style="vertical-align:middle; text-align:center">
-                    	<input type="hidden" name="new_questions[]" value="<?php echo $thisrow['id']?>">
-                    	<input type="text"  name="question_numbers[]" id="question_numbers"  readonly="readonly"  placeholder="Question No." class="form-control m-b questionscls" value="<?php echo ($thisrow['question_number'])?>" >
-                        
+                    	<input type="hidden" name="new_questions[]" value="<?= $thisrow['id'] ?>">
+                    	<input type="text"  name="question_numbers[]" id="question_numbers<?= $thisrow['id'] ?>"  readonly="readonly"  placeholder="Question No." class="form-control m-b questionscls" value="<?= $thisrow['question_number'] ?>" >
                     </td>
                     <td>
-                    	<textarea name="question_titles[]" id="question_titles"  placeholder="Question No." class="form-control m-b question_titlecls" ><?php echo ($thisrow['question_title'])?></textarea>
-					
+                    	<textarea name="question_titles[]" id="question_titles<?= $thisrow['question_number'] ?>"  placeholder="Question No." class="form-control m-b question_titlecls" ><?php echo ($thisrow['question_title'])?></textarea>
                     </td>
                     <td style="vertical-align:middle; text-align:center">
                     <a href="javascript:;" title="Add Row Above." onclick="addrow('this_<?php echo $thisrow['id']?>')"><img src="<?=$_SESSION['upload_url']?>icons/table-row-up.png" style="width: 35px;margin-bottom: 10px;" /></i></a>

@@ -136,13 +136,13 @@ $otherClients = $sidesModel->getOtherClients($currentSide['id'], $case_id);
 // 	$otherclients	=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND $otherWhere ", array(":case_id"=>$case_id), "client_name", "ASC");
 
 
-// 	if($type == 1) //External
+// 	if( $type == Discovery::TYPE_EXTERNAL ) 
 // 	{
 // 		$propondingClients	=	$ownclients;
 // 		$respondingClients	=	$otherclients;
 
 // 	}
-// 	else if($type == 2) //Internal
+// 	else if( $type == Discovery::TYPE_INTERNAL ) 
 // 	{
 // 		$propondingClients	=	$otherclients;
 // 		$respondingClients	=	$ownclients;
@@ -356,7 +356,7 @@ body.modal-open {
                     <div class="form-group">
                         <label class=" col-sm-2 control-label">Propounder<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                         <div class="col-sm-3">
-                            <select  name="propounding" id="propounding"  class="form-control m-b" onchange="<?php if ($type == 2) {
+                            <select  name="propounding" id="propounding"  class="form-control m-b" onchange="<?php if( $type == Discovery::TYPE_INTERNAL ) {
 ?> loadpropondingattorneys('<?= $case_id; ?>',this.value,'<?= @$discovery['proponding_attorney'] ?>'),<?php
 } ?>setquestionnumber(),loadrespondings('<?= $case_id; ?>',this.value,'<?= @$discovery['responding'] ?>')">
 <?php
@@ -396,7 +396,7 @@ body.modal-open {
 ?>
                     </div>
 <?php
-                    if($type == Discovery::TYPE_INTERNAL ) {
+                    if( $type == Discovery::TYPE_INTERNAL ) {
 ?>
                         <div class="form-group">
                             <label class=" col-sm-2 control-label">Served<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
@@ -477,7 +477,7 @@ body.modal-open {
 <?php
                             //buttonsave('discoveryaction.php','discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid='.$case_id,0);
                             buttoncancel(45, 'discoveries.php?pid='.$case_id.'&iscancel=1');
-                            if($type == Discovery::TYPE_INTERNAL ) {
+                            if( $type == Discovery::TYPE_INTERNAL ) {
 ?>
                                 <button type="button" class="btn btn-info buttonid client-btn" data-style="zoom-in" onclick="checkClientEmailFound('<?= $discovery_id ?>',2);"  title="">
                                     <i class="icon-ok bigger-110"></i>
@@ -488,7 +488,7 @@ body.modal-open {
                                     <span class="ladda-spinner"></span>
                                 </button>
 <?php
-                            } elseif ($type == 1) {
+                            } elseif( $type == Discovery::TYPE_EXTERNAL ) {
 ?>
                                 <a href="javascript:;" class="btn btn-purple" onclick="serveFunction()"><i class="fa fa-share"></i> Serve </a>
                                 <span id="errorMsg" style="color:red"></span>
@@ -525,32 +525,14 @@ body.modal-open {
 include_once(SYSTEMPATH.'application/client-email-found_modal.php');
 include_once(SYSTEMPATH.'application/client_instructions_modal.php'); 
 ?>
-
-<script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
-<script src="<?= VENDOR_URL ?>ckeditor/ckeditor.js"></script>
-<script src="<?= VENDOR_URL ?>jquery-validation/jquery-1.9.0.min.js"></script>
-
 <link href="<?= VENDOR_URL ?>uploadfile.css" rel="stylesheet">
 <script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
 
 <script>
-$.noConflict();
-
-<?php
-    $formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
-    echo "
-        globalThis['discoveryType'] = ". $type .";
-        globalThis['discoveryFormNames'] = ". json_encode($formNames, JSON_PRETTY_PRINT) .";
-    ";
-?>
-
-$(document).ready( _ => {
-    setTimeout( _ => loadToolTipForClientBtn(), 1000 );
+jQuery.ready( $ => {
+    setTimeout( _ => loadToolTipForClientBtn(), 500 );
     loadpropondingattorneys('<?= $case_id ?>','<?= @$proponding ?>','<?= @$proponding_attorney ?>');
-    $('.tooltipshow').tooltip( {
-        container: 'body',
-        html: true
-    });
+    
     var extraObj = $("#extraupload")
             .uploadFile({
                 url:"frontdocumentuploads.php",
@@ -605,10 +587,17 @@ function loadpropondingattorneys( case_id, client_id, selected ) {
         .load("loadpropondingattorneys.php?case_id="+case_id+"&client_id="+client_id+"&selected_id="+selected);
 }
 function loadinstructions(id,form_id) {
-    var type = $("#type").val();
+    const type = <?= $type ?>;
+
     $.get( "discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=0&type="+type )
         .done( resp => { 
             $("#loadinstructions").html( trim(resp) );
+
+            const { discoveryType, discoveryFormNames, discoveryForm, 
+                    currentPage, } = globalThis,
+                suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
+            ctxUpdate({ id: `47_${type}${suffix}`, pkscreenid: '47', url: 'discoveryfront.php', } );
+
             CKEDITOR.replace( 'instruction' );
         } );
 }
@@ -621,9 +610,6 @@ function loadrespondings(case_id,client_id,responding_id) {
 }
 function callFunction() { 
     form_id = $("#form_id").val(); 
-
-	const { pkscreenid, } = globalThis['currentPage'] || {};
-	ctxUpdate({ id: pkscreenid + '_<?= $type ?>' + (form_id ? '@' + discoveryFormNames[form_id-1] : ''), pkscreenid: '47', url: 'discoveryfront.php', } );
 
     if( form_id == 1 || form_id == 2 || form_id == "" ) {
         $("#start_questionid").hide();
@@ -737,8 +723,10 @@ function loadformquestions( form_id, id ) {
         $("#discovery_name").val($("#form_id option:selected").html());
     }
 
-    $('#loadformquestion').html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='../assets/images/ownageLoader/loader4.gif'></div></div><br/>");
-    $('#loadinstructions').html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='../assets/images/ownageLoader/loader4.gif'></div></div><br/>");
+    $('#loadformquestion')
+      .html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='../assets/images/ownageLoader/loader4.gif'></div></div><br/>");
+    $('#loadinstructions')
+      .html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='../assets/images/ownageLoader/loader4.gif'></div></div><br/>");
     if( form_id )     {
         if( form_id == 4 ) {
             $("#in_conjunctionDiv").show();
@@ -890,7 +878,7 @@ function writeDiscoveryPDF( uid ) {
     $.get( "makepdf.php", { id: uid, downloadORwrite: 1,view:0 }).done(function( data ) {});
 }
 function saveFunction() {
-    var type = '<?php echo $type ?>';
+    var type = '<?= $type ?>';
     var formid = $("#form_id").val();
     var isagree = true;
     if( formid == 1 || formid == 2 || formid == 5 || formid == '' ) {

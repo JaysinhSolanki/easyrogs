@@ -1,6 +1,6 @@
 <?php
-    require_once __DIR__ . '/../bootstrap.php';
-    require_once("adminsecurity.php");
+require_once __DIR__ . '/../bootstrap.php';
+require_once("adminsecurity.php");
 
 $discovery_uid		=	$_POST['discovery_id'];
 $response_id		=	$_POST['response_id'];
@@ -547,12 +547,17 @@ $(document).ready(function()
 });
 function loadinstructions()
 {
-    var type = '<?php echo $type ?>';
-    var form_id = '<?php echo $form_id ?>';
-    var id = '<?php echo $discovery_id ?>';
+    var type = '<?= $type ?>',
+        id = '<?= $discovery_id ?>',
+        form_id = '<?= $form_id ?>';
     $.get("discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=1&type="+type)
         .done( resp => {
             $("#instruction").val( trim(resp) );
+
+            // const { discoveryType, discoveryFormNames, discoveryForm, } = globalThis,
+			// 		suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
+			// ctxUpdate({ id: `4x_${discoveryType}${suffix}`, pkscreenid: '47', url: 'sloadfinaldraftcontent.php', } );
+
             CKEDITOR.replace( 'instruction' );
         });
 }

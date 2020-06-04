@@ -240,9 +240,3 @@ function toggleAll(selector, self) {
 		$(self).prop("checked", newValue);
 	} else console.warn( `${selector} didn't match anything` );
 }
-
-$(document).ready( _ => {
-  $('.tooltipshow').tooltip({
-	   container: 'body'
-	  });
-});

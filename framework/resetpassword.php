@@ -47,9 +47,6 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
         </div>
     </div>
 </div>
-<?php
-	require_once($_SESSION['system_path']."jsinclude.php");
-?>
 <script type="text/javascript">
 $("#ajaxformsubmit").click(function(event)
 {

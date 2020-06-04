@@ -1,6 +1,4 @@
 <?php
-@session_start();
-require_once("{$_SESSION['system_path']}jsinclude.php");
 require_once(SYSTEMPATH.'body.php');
 ?>
 
@@ -37,25 +35,36 @@ require_once(SYSTEMPATH.'body.php');
         const videos = [ 
 //          {id: "-3",              video: "forgot-password.mp4",       title: "Forgot Password",                                    }, 
             {id: "-2",              video: "join.mp4",                  title: "Join",                                               }, 
-            {id: "-1",              video: "login.mp4",                 title: "Login",                                              }, // dashboard
-            {id: "8",               video: "user_profile.mp4",          title: "My Profile",                                         }, // myprofile
-            {id: "44",              video: "my_cases.mp4",              title: "My Case List",                                       }, // cases
-            {id: "45",              video: ".mp4",                      title: "Discovery in Case",                                  }, // discoveries
-            {id: "46",              video: ".mp4",                      title: "Case",                                               }, // case
+            {id: "-1",              video: "login.mp4",                 title: "Login",                                              }, 
+            {id: "7",               video: ".mp4",                      title: "??7",                                                }, // Dashboard, shouldn't be found in the wild
+            {id: "8",               video: "user_profile.mp4",          title: "My Profile",                                         }, 
+            {id: "44",              video: "my_cases.mp4",              title: "My Case List",                                       }, 
+            {id: "45",              video: "case_discoveries.mp4",      title: "Discovery in Case",                                  }, 
+            {id: "46",              video: "case.mp4",                  title: "Case",                                               }, 
             {id: "47",              video: "create_discovery.mp4",      title: "Creating Discovery",                                 }, // discovery-propound
             {id: "47_1",            video: "create_discovery.mp4",      title: "Creating Discovery",                                 }, 
-            {id: "47_1@FROGS",      video: ".mp4",                      title: "Form Interrogatories - General",                     }, 
-            {id: "47_1@FROGSE",     video: ".mp4",                      title: "Form Interrogatories - Employment",                  }, 
-            {id: "47_1@SROGS",      video: ".mp4",                      title: "Special Interrogatories",                            }, 
-            {id: "47_1@RFAs",       video: ".mp4",                      title: "Requests for Admission",                             }, 
-            {id: "47_1@RPDs",       video: ".mp4",                      title: "Requests for Production of Documents",               }, 
-            {id: "47_2",            video: ".mp4",                      title: "Responding to Discovery",                            }, // discovery-respond
-            {id: "47_2@FROGS",      video: ".mp4",                      title: "Responding to Form Interrogatories - General",       }, 
-            {id: "47_2@FROGSE",     video: ".mp4",                      title: "Responding to Form Interrogatories - Employment",    }, 
-            {id: "47_2@SROGS",      video: ".mp4",                      title: "Responding to Special Interrogatories",              }, 
-            {id: "47_2@RFAs",       video: ".mp4",                      title: "Responding to Requests for Admission",               }, 
-            {id: "47_2@RPDs",       video: ".mp4",                      title: "Responding to Requests for Production of Documents", }, 
-            {id: "49",              video: ".mp4",                      title: "PDF Viewer",                                         }, // pdfviewer
+            {id: "47_1@FROGS",      video: "creating_FROGS.mp4",        title: "Form Interrogatories - General",                     }, 
+            {id: "47_1@FROGSE",     video: "creating_FROGSE.mp4",       title: "Form Interrogatories - Employment",                  }, 
+            {id: "47_1@SROGS",      video: "creating_SROGS.mp4",        title: "Special Interrogatories",                            }, 
+            {id: "47_1@RFAs",       video: "creating_RFAS.mp4",         title: "Requests for Admission",                             }, 
+            {id: "47_1@RPDs",       video: "creating_RPDS.mp4",         title: "Requests for Production of Documents",               }, 
+            {id: "47_2",            video: "respond_discovery.mp4",     title: "Responding to Discovery",                            }, // discovery-respond
+            {id: "47_2@FROGS",      video: "responding_FROGS.mp4",      title: "Responding to Form Interrogatories - General",       }, 
+            {id: "47_2@FROGSE",     video: "responding_FROGSE.mp4",     title: "Responding to Form Interrogatories - Employment",    }, 
+            {id: "47_2@SROGS",      video: "responding_SROGS.mp4",      title: "Responding to Special Interrogatories",              }, 
+            {id: "47_2@RFAs",       video: "responding_RFAS.mp4",       title: "Responding to Requests for Admission",               }, 
+            {id: "47_2@RPDs",       video: "responding_RPDS.mp4",       title: "Responding to Requests for Production of Documents", }, 
+            {id: "49_1@FROGS",      video: "creating_FROGS.mp4",        title: "Form Interrogatories - General",                     }, 
+            {id: "49_1@FROGSE",     video: "creating_FROGSE.mp4",       title: "Form Interrogatories - Employment",                  }, 
+            {id: "49_1@SROGS",      video: "creating_SROGS.mp4",        title: "Special Interrogatories",                            }, 
+            {id: "49_1@RFAs",       video: "creating_RFAS.mp4",         title: "Requests for Admission",                             }, 
+            {id: "49_1@RPDs",       video: "creating_RPDS.mp4",         title: "Requests for Production of Documents",               }, 
+            {id: "49_2@FROGS",      video: "responding_FROGS.mp4",      title: "Responding to Form Interrogatories - General",       }, 
+            {id: "49_2@FROGSE",     video: "responding_FROGSE.mp4",     title: "Responding to Form Interrogatories - Employment",    }, 
+            {id: "49_2@SROGS",      video: "responding_SROGS.mp4",      title: "Responding to Special Interrogatories",              }, 
+            {id: "49_2@RFAs",       video: "responding_RFAS.mp4",       title: "Responding to Requests for Admission",               }, 
+            {id: "49_2@RPDs",       video: "responding_RPDS.mp4",       title: "Responding to Requests for Production of Documents", }, 
+            {id: "49",              video: "pdf_view.mp4",              title: "PDF Viewer",                                         }, // pdfviewer
         ];
         const idx = videos.findIndex( item => item && item.id == currentPage.id );
         if( idx < 0 ) {
@@ -66,6 +75,7 @@ require_once(SYSTEMPATH.'body.php');
                 $title = $("#ctxhelp-video-modal .modal-title");
           $video[0].src = "<?= ROOTURL ?>system/application/" + videos[idx].video;
           $title.text( videos[idx].title );
+          console.table( {help: videos[idx], currentPage, } );
           $('#ctxhelp-video-modal')
             .on('show.bs.modal', _ => { 
                 $('#ctxhelp-video')[0].play();

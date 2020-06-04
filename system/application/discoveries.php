@@ -981,11 +981,6 @@ $(function () {
 <?php
 	}
 ?>
-$(document).ready( _ => {
-  $('.tooltipshow').tooltip( {
-	   container: 'body'
-	  } );
-});
 </script>
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 <script src="<?= ROOTURL ?>system/application/custom.js"></script>

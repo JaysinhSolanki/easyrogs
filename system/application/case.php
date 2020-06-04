@@ -556,7 +556,7 @@ function deleteLeaveCases(case_id,delete_or_leave)
 function loadCasePeople(case_id) {
 	$("#loadclients").load(`get-case-clients.php?format=html&case_id=${case_id}`)
 	$("#loadusers").load(`get-case-users.php?format=html&case_id=${case_id}`, _ => {
-			$('.tooltipshow').tooltip( { container: 'body' });
+			addTooltips();
 		} );
 	$("#service-list").load(`get-service-list.php?format=html&case_id=${case_id}`);
 	loadSides(case_id);

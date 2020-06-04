@@ -1,5 +1,4 @@
 <?php
-require_once(SYSTEMPATH.'jsinclude.php');
 require_once(SYSTEMPATH.'body.php');
 ?>
 <div id="faq-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">

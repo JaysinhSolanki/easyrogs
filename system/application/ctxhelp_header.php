@@ -19,6 +19,7 @@ navbar.navbar-static-top a, .nav.navbar-nav li a {
 }
 </style>
 <?php
+require_once(SYSTEMPATH.'jsinclude.php');
 require_once(FRAMEWORK_PATH.'faq_modal.php');
 require_once(SYSTEMPATH.'application/ctxhelp_modal.php');
 ?>

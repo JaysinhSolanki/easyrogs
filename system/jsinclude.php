@@ -1,43 +1,43 @@
 <!-- Vendor scripts --> 
+<script src="<?= VENDOR_URL ?>jquery/dist/jquery.min.js"></script>
 <script src="<?= VENDOR_URL ?>jquery-ui/jquery-ui.min.js"></script> 
 <script src="<?= VENDOR_URL ?>toastr/build/toastr.min.js"></script> 
+<script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 <script src="<?= VENDOR_URL ?>metisMenu/dist/metisMenu.min.js"></script> 
 <script src="<?= VENDOR_URL ?>iCheck/icheck.min.js"></script> 
-<?php /*?><script src="<?= VENDOR_URL ?>peity/jquery.peity.min.js"></script> <?php */?>
-<script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
+
+<script src="<?= VENDOR_URL ?>jquery-validation/jquery.validate.min.js"></script>
+<script src="<?= VENDOR_URL ?>customjscss/jquery.numslider.js"></script>
+<script src="<?= VENDOR_URL ?>jquery.tablesorter.js"></script>
+<script src="<?= VENDOR_URL ?>moment/moment.js"></script>
+<script src="<?= VENDOR_URL ?>daterangepicker.min.js"></script>
+<script src="<?= VENDOR_URL ?>bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="<?= VENDOR_URL ?>bootstrap-datepicker.js"></script>
+<script src="<?= VENDOR_URL ?>bootstrap-clockpicker.min.js"></script>
+<script src="<?= VENDOR_URL ?>bootstrap-datetimepicker.js"></script>
+
+<!-- isInViewport jQuery plugin @ https://cdnjs.cloudflare.com/ajax/libs/is-in-viewport/3.0.4/isInViewport.js -->
+<script src="<?= VENDOR_URL ?>is-in-viewport/3.0.4/isInViewport.min.js"></script> 
+
+<script src="<?= VENDOR_URL ?>jquery.form.js"></script>
+<script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
+<script src="<?= VENDOR_URL ?>jquery-loading-overlay/2.1.7/loadingoverlay.min.js"></script>
+<script src="<?= VENDOR_URL ?>select2.full.js"></script>
+
 <!-- DataTables -->
 <script src="<?= VENDOR_URL ?>datatables/media/js/jquery.dataTables.min.js"></script>
 <!-- DataTables buttons scripts -->
 <script src="<?= VENDOR_URL ?>pdfmake/build/pdfmake.min.js"></script>
 <script src="<?= VENDOR_URL ?>pdfmake/build/vfs_fonts.js"></script>
 
-<!-- easyrogs --> 
-<script src="<?= VENDOR_URL ?>homer.js"></script> 
-<script src="<?= ROOTURL ?>system/application/custom.js"></script>
-<!-- Gumption scripts --> 
-<script type="text/javascript" src="<?= VENDOR_URL ?>header.js"></script> 
-<script type="text/javascript" src="<?= VENDOR_URL ?>common.js"></script> 
-
-<script src="<?= VENDOR_URL ?>jquery-validation/jquery.validate.min.js"></script>
-<script type="text/javascript" src="<?= VENDOR_URL ?>customjscss/jquery.numslider.js"></script>
-<script type="text/javascript" src="<?= VENDOR_URL ?>jquery.tablesorter.js"></script>
-<script src="<?= VENDOR_URL ?>moment/moment.js"></script>
-<script src="<?= VENDOR_URL ?>bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="<?= VENDOR_URL ?>bootstrap-datepicker.js"></script>
-<script src="<?= VENDOR_URL ?>bootstrap-clockpicker.min.js"></script>
-<script src="<?= VENDOR_URL ?>bootstrap-datetimepicker.js"></script>
-<script src="<?= VENDOR_URL ?>daterangepicker.min.js"></script>
+<script src="<?= VENDOR_URL ?>dropzone.js"></script>
 <script src="<?= VENDOR_URL ?>ckeditor/ckeditor.js"></script>
 
-<script type="text/javascript" src="<?= VENDOR_URL ?>dropzone.js"></script> 
-<script src="<?= VENDOR_URL ?>jquery.form.js"></script>
-<script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
-<script src="<?= VENDOR_URL ?>jquery-loading-overlay/2.1.7/loadingoverlay.min.js"></script>
-
-<!-- isInViewport jQuery plugin @ https://cdnjs.cloudflare.com/ajax/libs/is-in-viewport/3.0.4/isInViewport.js -->
-<script type="text/javascript" src="<?= VENDOR_URL ?>is-in-viewport/3.0.4/isInViewport.min.js"></script> 
-
-<script src="https://js.stripe.com/v3/"></script>
+<!-- easyrogs --> 
+<!--script src="<?= VENDOR_URL ?>homer.js"></script--> 
+<script src="<?= VENDOR_URL ?>header.js"></script> 
+<script src="<?= VENDOR_URL ?>common.js"></script> 
+<script src="<?= ROOTURL ?>system/application/custom.js"></script>
 
 <script type="text/javascript">
 function loadToolTipForClientBtn( c_id='' ) {
@@ -60,6 +60,8 @@ function loadToolTipForClientBtn( c_id='' ) {
 
 var previous = '';
 function ctxUpdate( aPage, fn ) { 
+	addTooltips(); // activate any new tooltips loaded in the new context
+
 	const { id, pkscreenid, } = globalThis['currentPage'] || {},
 		  page = Object.assign( {}, { id, pkscreenid, }, aPage, {previous} );
 
@@ -67,27 +69,38 @@ function ctxUpdate( aPage, fn ) {
 	previous = page.pkscreenid;
 //!! this is a temporary copy, to detect untracked pages
 const videos = [ 
-            {id: "-2",               }, 
-            {id: "-1",               }, 
-            {id: "7",                }, 
-            {id: "8",                }, 
-            {id: "44",               }, 
-            {id: "45",               }, 
-            {id: "46",               }, 
-            {id: "47",               }, 
-            {id: "47_1",             }, 
-            {id: "47_1@FROGS",       }, 
-            {id: "47_1@FROGSE",      }, 
-            {id: "47_1@SROGS",       }, 
-            {id: "47_1@RFAs",        }, 
-            {id: "47_1@RPDs",        }, 
-            {id: "47_2",             }, 
-            {id: "47_2@FROGS",       }, 
-            {id: "47_2@FROGSE",      }, 
-            {id: "47_2@SROGS",       }, 
-            {id: "47_2@RFAs",        }, 
-            {id: "47_2@RPDs",        }, 
-            {id: "49",               }, 
+//          {id: "-3",              }, 
+            {id: "-2",              }, 
+            {id: "-1",              }, // login
+            {id: "7",               }, // Dashboard
+            {id: "8",               }, // myprofile
+            {id: "44",              }, // cases
+            {id: "45",              }, // discoveries
+            {id: "46",              }, // case
+            {id: "47",              }, // discovery-propound
+            {id: "47_1",            }, 
+            {id: "47_1@FROGS",      }, 
+            {id: "47_1@FROGSE",     }, 
+            {id: "47_1@SROGS",      }, 
+            {id: "47_1@RFAs",       }, 
+            {id: "47_1@RPDs",       }, 
+            {id: "47_2",            }, // discovery-respond
+            {id: "47_2@FROGS",      }, 
+            {id: "47_2@FROGSE",     }, 
+            {id: "47_2@SROGS",      }, 
+            {id: "47_2@RFAs",       }, 
+            {id: "47_2@RPDs",       }, 
+            {id: "49_1@FROGS",      }, 
+            {id: "49_1@FROGSE",     }, 
+            {id: "49_1@SROGS",      }, 
+            {id: "49_1@RFAs",       }, 
+            {id: "49_1@RPDs",       }, 
+            {id: "49_2@FROGS",      }, 
+            {id: "49_2@FROGSE",     }, 
+            {id: "49_2@SROGS",      }, 
+            {id: "49_2@RFAs",       }, 
+            {id: "49_2@RPDs",       }, 
+            {id: "49",              }, // pdfviewer
 ];
 const idx = videos.findIndex(item => item && item.id == currentPage.id);
 if (idx < 0) { console.log("[!] TAB NOT FOUND:", currentPage ); debugger; }
@@ -121,15 +134,20 @@ function _doAutoplayVideos() {
 		}
 	} );
 }
-function autoPlayOrPauseVideos( options = { watchdog: null } ) { 
+function autoPlayOrPauseVideos( options = { watchdog: null } ) {
+	// Autoplay visible videos, pause not visible ones, 
+	//      use {watchdog:"yes"} to install a background task that enforces this
+	//      use {watchdog:"no"/"remove"} to remove it
     _doAutoplayVideos();
 	const { watchdog, } = ( typeof options === "object" ) && options || { watchdog: String(options).toLowerCase() };
 	switch( watchdog ) {
+		case true:
 		case "yes":
 			if( !globalThis.timerAutoPlayVideos ) {
 				globalThis.timerAutoPlayVideos = setInterval( _doAutoplayVideos, 500 ) ;
 			}
 			break;	
+		case "remove":
 		case "no":
 			globalThis.timerAutoPlayVideos && clearInterval( globalThis.timerAutoPlayVideos );
 			break;
@@ -137,7 +155,16 @@ function autoPlayOrPauseVideos( options = { watchdog: null } ) {
 			console.assert( !watchdog, {options} );
 	}
 }
+function addTooltips() { //console.log( $('.tooltipshow').length, "tooltips enabled.." );
+	$('.tooltipshow').tooltip( {
+		container: 'body',
+		html: true,
+	} );
+}
 jQuery( $ => {
 	autoPlayOrPauseVideos();
+	addTooltips();
 });
 </script>
+
+<script src="https://js.stripe.com/v3/"></script>

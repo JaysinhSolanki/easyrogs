@@ -17,10 +17,6 @@
 <link rel="stylesheet" href="<?php echo VENDOR_URL;?>datepicker.css" />
 <link rel="stylesheet" href="<?php echo VENDOR_URL;?>datatables/media/css/jquery.dataTables.css"/>
 
-<script src="<?php echo VENDOR_URL;?>jquery/dist/jquery.min.js"></script>
-<script src="<?php echo VENDOR_URL; ?>dropzone.js"></script>
-<script src="<?php echo VENDOR_URL;?>select2.full.js"></script>
-
 <style>
 table.dataTable thead th, table.dataTable thead td {
     padding: 10px 18px;

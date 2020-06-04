@@ -700,35 +700,22 @@ function getRPDetails($rp_id) {
         </div>
     </div>
 </div>
-<?php
-require_once("../jsinclude.php");
-?>
-
-<script src="<?= VENDOR_URL ?>jquery-validation/jquery-1.9.0.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="<?= VENDOR_URL ?>bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
 
 <link href="<?= VENDOR_URL ?>uploadfile.css" rel="stylesheet">
 <script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
 
 <script>
-$.noConflict();
-
-<?php 
-$forms = $AdminDAO->getrows('forms', "*");
-$formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
-echo "
-	globalThis['discoveryType'] = ". $type .";
-	globalThis['discoveryFormNames'] = ". json_encode($formNames, JSON_PRETTY_PRINT) .";
-";
-?>
 
 function loadinstructions( form_id, id ) {
 	var type = '<?= $type ?>';
-	globalThis['discoveryForm'] = form_id;
 	$.get("discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=1&type="+type)
 		.done( resp => {
 			$("#loadinstructions").html( trim(resp) );
+
+			const { discoveryType, discoveryFormNames, discoveryForm, } = globalThis,
+					suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
+			ctxUpdate({ id: `47_${discoveryType}${suffix}`, pkscreenid: '47', url: 'discoveryfront.php', } );
+
 			CKEDITOR.replace( 'instruction' );
 		});
 }
@@ -973,10 +960,9 @@ ob_start();
 </html>
 
 <script>
+globalThis['discoveryType'] = "<?= $type ?>";
+
 jQuery( $ => { 
 	CKEDITOR.replace( 'email_body_popup' );
-
-	const { discoveryFormNames, discoveryForm, } = globalThis; 
-	ctxUpdate({ id: '47_<?= $type ?>' + (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : ''), pkscreenid: '47', url: 'discoveryfront.php', } );
 } );
 </script>

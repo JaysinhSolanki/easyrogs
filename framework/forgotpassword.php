@@ -71,7 +71,6 @@ include_once(SYSTEMPATH.'body.php');
 <?php
 	//$errorData			=	json_encode(array("pkerrorid"=>$pkerrorid,"messagetype"=>$errortype, "messagetext"=>$errormsg));
 	//$_SESSION['userenteremail']	=	'';
-	require_once($_SESSION['system_path']."jsinclude.php");
 	if(@$errorData !="")
 	{
 	?>

@@ -3,23 +3,20 @@
 include_once(__DIR__ . "/../bootstrap.php");
 include_once(__DIR__ . "/../library/classes/functions.php");
 $discovery_id	=	$_GET['id'];
+$type			=	$_GET['type'];
 $form_id		=	$_GET['form_id'];
 $viewonly		=	$_GET['viewonly'];
-$type			=	$_GET['type'];
-if($viewonly == "")
-{
+if( !@$viewonly ) {
 	$viewonly = 0;
 }
 
-if($discovery_id != '')
-{
+if( !$discovery_id ) {
 	$discoveries	=	$AdminDAO->getrows('discoveries',"*","id	= :id ",array('id'=>$discovery_id));
 	$discovery		=	$discoveries[0];
 	$incidentoption	=	$discovery['incidentoption'];
 	$incidenttext	=	$discovery['incidenttext'];
 	$instruction_text=	html_entity_decode($discovery['discovery_instrunctions']);
 }
-
 
 //Attorney Details
 $attorneyDetails	=	$AdminDAO->getrows("system_addressbook","*","pkaddressbookid = :pkaddressbookid", array(":pkaddressbookid"=>$_SESSION['addressbookid']));
@@ -342,4 +339,11 @@ else {
 <?php
 	}
 }
+$forms = $AdminDAO->getrows('forms', "*");
+$formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
 ?>
+<script> 
+	globalThis['discoveryType'] = "<?= $type ?>";
+	globalThis['discoveryForm'] = "<?= $form_id ?>";
+    globalThis['discoveryFormNames'] = <?= json_encode($formNames, JSON_PRETTY_PRINT) ?>;
+</script>

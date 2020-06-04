@@ -199,9 +199,6 @@ input[type=checkbox]
         </form>
     </div>
 </div>
-<?php
-require_once("../jsinclude.php");
-?>
 
 <script type="text/javascript">
 
@@ -212,19 +209,16 @@ require_once("../jsinclude.php");
  
 
 </script>
-<script src="vendor/jquery-validation/jquery-1.9.0.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="vendor/jquery-validation/jquery.maskedinput.js"></script>
 <script type="text/javascript">
-function loadLoginDetails()
-{
+function loadLoginDetails() {
 	$('#login_email').val($('#email').val());
 	$('#login_pass').val($('#password').val());
 }
-$(function() 
-{
+jQuery( $ => {
 	$.mask.definitions['~'] = "[+-]";
 	$("#phone").mask("+41 99 999 99 99");
-});
+} );
 </script>
 
 </body>
