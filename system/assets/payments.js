@@ -89,9 +89,11 @@ class DiscoveryPayment {
       $(this).val() ? self.hidePaymentForm() : self.showPaymentForm();
       if ($(this).data('type') == 'side') {
         $('input#save_to_side').prop('disabled', true).prop('checked', true);
+        $('#save-to-side-input').hide();
       }
       else {
         $('input#save_to_side').prop('disabled', false).prop('checked', false);
+        $('#save-to-side-input').show();
       }
     });
     $('input[name=payment_method_id]:checked').trigger('change');

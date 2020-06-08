@@ -242,7 +242,7 @@ td, th {
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header" style="padding: 15px;">
-        <h5 class="modal-title" style="font-size: 22px;">How would you like to pay?</h5>
+        <h5 class="modal-title" style="font-size: 22px;">Please select a payment method</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px !important;font-size: 25px !important;">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -271,10 +271,9 @@ td, th {
             <label class="form-check-label" for="save_to_profile" style="cursor: pointer">Save for future payments.</label>
           </div>
 				</form>
-        <br/>
-        <div class="form-check" style="cursor: pointer">
+        <div class="form-check" style="cursor: pointer" id="save-to-side-input">
           <input type="checkbox" name="save_to_side" id="save_to_side" value="" class="form-check-input"/>
-          <label class="form-check-label" for="save_to_side" style="cursor: pointer">Set as Team's Payment Method.</label>
+          <label class="form-check-label" for="save_to_side" style="cursor: pointer">Allow case team members to use this card.</label>
         </div>
       </div>
       <div class="modal-footer">
