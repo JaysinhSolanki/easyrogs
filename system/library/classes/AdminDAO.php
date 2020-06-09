@@ -51,7 +51,7 @@ class AdminDAO
 			self::$dbConn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
 	}
-	
+
 	function executeQuery($query)
 	{
 		if($this->displayquery == 1)
@@ -209,7 +209,7 @@ class AdminDAO
 				$keyvalues .=  $field[$i] .'=:'. $field[$i] .",\n";
 			}
 			$keyvalues = trim($keyvalues,",\n\r");
-			$this->query .= " ON DUPLICATE KEY UPDATE $keyvalues";				
+			$this->query .= " ON DUPLICATE KEY UPDATE $keyvalues";
 		}
 
 		$this->displayquery($this->query, $parameters);
@@ -707,31 +707,19 @@ function radiobuttons($name,$tblname,$valuefield,$labelfield,$selected =array(),
 			return $uid;
 		}
 	}
-	function formatcurrency($currency)
-	{
-		$cur	=	number_format($currency,'2', '.', ',');
+
+	function formatcurrency($currency) {
+		$cur = number_format( $currency,'2', '.', ',' );
 		return $cur;
 	}
-	/*function formatcurrency($currency)
-	{
-		$cur	=	number_format($currency,'2', '.', ',');
-		return $cur;
+
+	function filter($input) {
+		return htmlentities( trim($input), ENT_QUOTES );
 	}
-	*/
-	function filter($input)
-	{
-		 if (get_magic_quotes_gpc()==1)
-		 {
-		  	return(htmlentities(trim($input),ENT_QUOTES));
-		 }
-		 else
-		 {
-		  	return(htmlentities((trim($input)),ENT_QUOTES));
-		 }
-	}
-	function startsWith($haystack, $needle = '@')
-	{
+
+	function startsWith($haystack, $needle = '@') {
 		preg_match_all("/(?<!\w)*{$needle}\w+/",$haystack,$matches);
 		return $matches;
 	}
+
 }//end of class
