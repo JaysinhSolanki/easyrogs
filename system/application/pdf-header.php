@@ -100,7 +100,7 @@
 <?php
 	if( in_array($form_id,array(3,4,5)) ) {
 ?>
-    <p> <?= html_entity_decode($instructions) ?></p>
+    <div> <?= html_entity_decode($instructions) ?> </div>
 <?php
 	}
 	else {
