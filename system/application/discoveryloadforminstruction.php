@@ -29,7 +29,7 @@ $attorneyName		=	$attorneyDetail['firstname']." ".$attorneyDetail['lastname'];
 $attorneyAddress	=	makeaddress($_SESSION['addressbookid']);//$attorneyDetail['address'].", ".$attorneyDetail['cityname'].", ".$attorneyDetail['street'];
 
 
-if( in_array($form_id,array(1,2)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
+if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
 ?>
     <div class="">
     <div class="<?php if($viewonly == 0){ echo "col-sm-offset-2 col-sm-8"; }else{ echo "col-md-12"; } ?>">
@@ -53,7 +53,7 @@ if( in_array($form_id,array(1,2)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
             <div id="collapseOne" class="panel-collapse collapse in">
                 <div class="panel-body">
 <?php
-                    if( $form_id == 1 ) {
+                    if( $form_id == Discovery::FORM_FROGS ) {
                         if( $viewonly == 1 ) {
                             $checkedimg			=	'<img src="../uploads/icons/checkbox_checked_small.png" width="15px">';
                             $uncheckedimg		=	'<img src="../uploads/icons/checkbox_empty_small.png" width="15px">';
@@ -154,7 +154,7 @@ if( in_array($form_id,array(1,2)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
                             <p>(f) ADDRESS means the street address, including the city, state, and zip code.</p>
                         </td>
                     </tr>
-                    <tr>
+                    <!--tr>
                         <td colspan="2" style="border:none;">
                             <h5 class="text-center">Sec. 5. INVALID OBJECTIONS</h5>
                         </td>
@@ -165,12 +165,12 @@ if( in_array($form_id,array(1,2)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
                             <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery. Rylaarsdam et al., California Practice Guide: Civil Procedure Before Trial (The Rutter Group 2019) ¶ 8:721-8:722.</p>
                             <p>Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. Cal. Judges Benchbook Civ. Proc. Discovery (September 2018) § 18.36.</p>
                         </td>
-                    </tr>
+                    </tr-->
                     </table>
                     </div>
 <?php
                     }
-                    else if( $form_id == 2 ) {
+                    else if( $form_id == Discovery::FORM_FROGSE ) {
                         $personnames2	=	$discovery['personnames2'];
                         $personnames1	=	$discovery['personnames1']
 ?>
@@ -271,11 +271,11 @@ if( in_array($form_id,array(1,2)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
 <?php
 }
 else {
-	if( $discovery_id == '' && $type == 1 ) {
-		if( $form_id == 3 ) {
+	if( !$discovery_id && $type == 1 ) {
+		if( $form_id == Discovery::FORM_SROGS ) {
 			$instruction_text	=	"<p>Each answer must be as complete and straightforward as the information reasonably available to you, including the information possessed by your attorneys or agents, permits. If an interrogatory cannot be answered completely, answer it to the extent possible. If you do not have enough personal knowledge to fully answer an interrogatory, say so, but make a reasonable and good faith effort to get the information by asking other persons or organizations, unless the information is equally available to the asking party. Whenever an interrogatory may be answered by referring to a document, the document may be attached as an exhibit to the response and referred to in the response. If the document has more than one page, refer to the page and section where the answer to the interrogatory can be found. You may respond by attaching a copy of the document to your answers to these interrogatories. Whenever an address or telephone number for the same person are requested in more than one interrogatory, you are required to furnish them in answering only the first interrogatory asking for that information.</p><p>If you are asserting a privilege or making an objection to an interrogatory, you must specifically assert the privilege or state the objection in your written response. Your answers to these interrogatories must be verified, dated, signed, and the original must be included in your response.</p>";
 		}
-		else if( $form_id == 4 ) {
+		else if( $form_id == Discovery::FORM_RFAS ) {
             $instruction_text = "
             <p>Pursuant to Code of Civil Procedure section 2030 et seq., propounding party hereby requests that responding party answer the following Requests for Admission, under oath, within thirty (30) days from the date hereof.</p>
             <h5>INVALID OBJECTIONS</h5>
@@ -284,7 +284,7 @@ else {
             ";
 
 		}
-		else if( $form_id == 5 ) {
+		else if( $form_id == Discovery::FORM_RPDS ) {
             $instruction_text = "
             <p>DEMAND IS HEREBY MADE UPON YOU, pursuant to Code of Civil Procedure section 2031, et seq. to produce the documents and things described herein at ".$attorneyFirm.", ".$attorneyAddress." within thirty (30) days of service hereof. Each respondent shall respond separately, under oath, to each item or category of item by any of the following:</p>
 			<ol>

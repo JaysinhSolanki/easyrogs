@@ -13,18 +13,25 @@
       ]);
     }
 
+    const FORM_FROGS  = 1;
+    const FORM_FROGSE = 2;
+    const FORM_SROGS  = 3;
+    const FORM_RFAS   = 4;
+    const FORM_RPDS   = 5;
+
     const TYPE_EXTERNAL = 1;
     const TYPE_INTERNAL = 2;
+
     const VIEW_RESPONDING  = 0;
     const VIEW_PROPOUNDING = 1;
-
-    function find($id) { return $this->getBy( 'discoveries', ['id' => $id], 1); }
-    function findByUID($uid) { return $this->getBy( 'discoveries', ['uid' => $uid], 1); }
 
     const STYLE_AS_IS     = 'as_IS';
     const STYLE_WORDCAPS  = 'WordCaps';
     const STYLE_ALLCAPS   = 'ALLCAPS';
     const STYLE_LOWERCASE = 'lowercase';
+
+    function find($id) { return $this->getBy( 'discoveries', ['id' => $id], 1); }
+    function findByUID($uid) { return $this->getBy( 'discoveries', ['uid' => $uid], 1); }
 
     public function updateById($id, $fields, $ignore = false ) {
       return parent::update('discoveries', $fields, ['id' => $id], $ignore);
