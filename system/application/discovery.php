@@ -529,7 +529,7 @@ include_once(SYSTEMPATH.'application/client_instructions_modal.php');
 <script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
 
 <script>
-jQuery.ready( $ => {
+jQuery( $ => {
     setTimeout( _ => loadToolTipForClientBtn(), 500 );
     loadpropondingattorneys('<?= $case_id ?>','<?= @$proponding ?>','<?= @$proponding_attorney ?>');
     

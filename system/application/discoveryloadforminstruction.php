@@ -10,7 +10,7 @@ if( !@$viewonly ) {
 	$viewonly = 0;
 }
 
-if( !$discovery_id ) {
+if( $discovery_id ) {
 	$discoveries	    = $AdminDAO->getrows('discoveries',"*","id	= :id ",array('id'=>$discovery_id));
 	$discovery		    = $discoveries[0];
 	$incidentoption	    = $discovery['incidentoption'];
@@ -274,7 +274,7 @@ if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { /
 <?php
 }
 else {
-	if( $discovery_id == '' && $type == 1 ) {
+	if( !$discovery_id && $type == 1 ) {
 		if( $form_id == Discovery::FORM_SROGS ) {
             $instruction_text	=	"
                 <div style='text-align:left'>
@@ -383,7 +383,7 @@ $forms = $AdminDAO->getrows('forms', "*");
 $formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
 ?>
 <script> 
-	globalThis['discoveryType'] = "<?= $type ?>";
-	globalThis['discoveryForm'] = "<?= $form_id ?>";
-  globalThis['discoveryFormNames'] = <?= json_encode($formNames, JSON_PRETTY_PRINT) ?>;
+    globalThis['discoveryType'] = "<?= $type ?>";
+    globalThis['discoveryForm'] = "<?= $form_id ?>";
+    globalThis['discoveryFormNames'] = <?= json_encode($formNames, JSON_PRETTY_PRINT) ?>;
 </script>
