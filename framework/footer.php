@@ -11,9 +11,9 @@
 
 
 <?php
-require_once("{$_SESSION['system_path']}jsinclude.php");
-require_once("{$_SESSION['system_path']}application/ctxhelp_modal.php");
-require_once("{$_SESSION['framework_path']}faq_modal.php");
+require_once( SYSTEMPATH.'jsinclude.php');
+require_once( SYSTEMPATH.'application/ctxhelp_modal.php');
+require_once( FRAMEWORK_PATH.'faq_modal.php');
 ?>
 <style>
 	body.modal-open {
@@ -31,6 +31,9 @@ require_once("{$_SESSION['framework_path']}faq_modal.php");
   window.setInterval( _ => checksession(), <?= $_ENV['APP_ENV'] == 'local' ? 3600000 : 10000 ?> );
 </script>
 
+<?php
+	if( !@$_ENV['SMARTSUPP_DISABLED'] ) {
+?>
 <!-- Smartsupp Live Chat script -->
 <script type="text/javascript">
 	var _smartsupp = _smartsupp || {};
@@ -42,8 +45,10 @@ require_once("{$_SESSION['framework_path']}faq_modal.php");
 		c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
 	})(document);
 </script>
-
-
+<?php
+	}
+	if( !@$_ENV['ANALYTICS_DISABLED'] ) {
+?>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-168067186-1"></script>
 <script>
@@ -53,6 +58,9 @@ require_once("{$_SESSION['framework_path']}faq_modal.php");
 
   gtag('config', 'UA-168067186-1');
 </script>
+<?php
+	}
+?>
 
 </body>
 </html>

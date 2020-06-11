@@ -38,12 +38,16 @@
     }
 
     public function isPaid($discoveryId) {
-      global $currentUser;
+      global $logger, $currentUser;
       
-      foreach(PAYMENT_WHITELIST as $whitelistedEmail) {
-        if (preg_match($whitelistedEmail, $currentUser->user['email'])) {
-          return true;
+      try {
+        foreach(PAYMENT_WHITELIST as $whitelistedEmail) {
+          if (preg_match($whitelistedEmail, $currentUser->user['email'])) {
+            return true;
+          }
         }
+      } catch( Exception $e ) {
+        $logger->error( ["Exception while processing PAYMENT_WHITELIST", e] ); 
       }
 
       $discovery = $this->find($discoveryId);

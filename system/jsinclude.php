@@ -167,4 +167,6 @@ jQuery( $ => {
 });
 </script>
 
-<script src="https://js.stripe.com/v3/"></script>
+<?php if( !@$_ENV['PAY_DISABLED'] ) { ?>
+	<script src="https://js.stripe.com/v3/"></script>
+<?php } ?>
