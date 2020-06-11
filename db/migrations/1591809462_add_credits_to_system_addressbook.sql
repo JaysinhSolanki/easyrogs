@@ -1,0 +1,6 @@
+START TRANSACTION;
+
+  ALTER TABLE `system_addressbook` 
+    ADD COLUMN `credits` INT NULL DEFAULT NULL;
+
+COMMIT;

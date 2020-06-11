@@ -2,17 +2,25 @@
 require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
-$discovery_id		= $_POST['discovery_id'];
-$pos_text			= $_POST['pos_text'];
-$posstate			= $_POST['posstate']; 
-$poscity			= $_POST['poscity'];
-$posaddress			= $_POST['posaddress'];
-$respond			= $_POST['respond'];
-$discovery_type		= $_POST['discovery_type'];
-$response_id		= $_POST['response_id'];
+$discovery_id   = $_POST['discovery_id'];
+$pos_text       = $_POST['pos_text'];
+$posstate       = $_POST['posstate']; 
+$poscity        = $_POST['poscity'];
+$posaddress     = $_POST['posaddress'];
+$respond        = $_POST['respond'];
+$discovery_type = $_POST['discovery_type'];
+$response_id    = $_POST['response_id'];
 
-if (!$discoveriesModel->isPaid($discovery_id)) {
-	HttpResponse::paymentRequired();
+if ( ! $discoveriesModel->isPaid($discovery_id) ) {
+  $discovery       = $discoveriesModel->find($discovery_id);
+  $currentSide     = $sidesModel->getByUserAndCase($currentUser->id, $discovery['case_id']);
+  $primaryAttorney = $sidesModel->getPrimaryAttorney($currentSide['id']);
+  if ( ! User::hasCredits($primaryAttorney) ) {
+    HttpResponse::paymentRequired();
+  }
+  else {
+    $usersModel->redeemCredits($primaryAttorney);
+  }
 }
 
 $pos_updated_by			= $_SESSION['addressbookid'];

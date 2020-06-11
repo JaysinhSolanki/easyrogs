@@ -194,6 +194,18 @@ const showResponseMessage = (response) => {
   }
 }
 
+// https://stackoverflow.com/questions/20425771/how-to-replace-1-with-first-2-with-second-3-with-third-etc
+// handles up to 99, otherwise returns the number
+function stringifyNumber(n) {
+	const special = ['zeroth','first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 'thirteenth', 'fourteenth', 'fifteenth', 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth'];
+	const deca 		= ['twent', 'thirt', 'fort', 'fift', 'sixt', 'sevent', 'eight', 'ninet'];
+	
+	if (n > 99) return n;
+  if (n < 20) return special[n];
+  if (n % 10 === 0) return deca[Math.floor(n/10)-2] + 'ieth';
+  return deca[Math.floor(n/10)-2] + 'y-' + special[n%10];
+}
+
 // LEGACY ----------------------------------------------------------------------
 
 function editCaseClient(id, caseId)

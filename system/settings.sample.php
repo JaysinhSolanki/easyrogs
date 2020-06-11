@@ -22,6 +22,7 @@ define('STRIPE_API_KEY',                $_ENV['STRIPE_API_KEY']);
 define('STRIPE_PUBLISHABLE_KEY',        $_ENV['STRIPE_PUBLISHABLE_KEY']);
 define('STRIPE_WEBHOOK_SIGNING_SECRET', $_ENV['STRIPE_WEBHOOK_SIGNING_SECRET']);
 
+define('SIGNUP_CREDITS', 3);
 define('SERVE_DISCOVERY_COST', 1000); // $10
 define('PAYMENTS_CURRENCY',    'usd');
 define('PAYMENT_WHITELIST', [ // add email regular expressions here, for users that do not require payment

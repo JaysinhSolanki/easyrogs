@@ -102,8 +102,9 @@ $getstate		= $result_address['statename'];
 
 $loggedin_email = $_SESSION['loggedin_email'];
 
-$currentSide = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
-$serviceList = $sidesModel->getServiceList( $currentSide );
+$currentSide     = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
+$serviceList     = $sidesModel->getServiceList( $currentSide );
+$primaryAttorney = $sidesModel->getPrimaryAttorney($currentSide['id']);
 
 ?>
 <!DOCTYPE html>
@@ -229,10 +230,14 @@ td, th {
 	<input type="hidden" name="poscity" id="poscity" value="" />
 
 	<input type="hidden" name="respond" value="<?= $respond ?>" />
-	<div class="row">
+  
+  <div class="row">
 		<div class="col-md-12" style="text-align:right">
-			<i id="POS_msgdiv" class="POS_msgdiv" style="color:red"></i>
-			<button type="button" class="btn btn-purple" onclick="payAndServe()"><i class="fa fa-share"></i> Pay & Serve</button>
+      <i id="POS_msgdiv" class="POS_msgdiv" style="color:red"></i>
+      <i><?= $primaryAttorney['credits'] ?: 'No' ?> credits left.</i>
+			<button type="button" class="btn btn-purple" onclick="payAndServe()">
+        <i class="fa fa-share"></i> Pay & Serve
+      </button>
 			<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
 		</div>
 	</div>
@@ -285,8 +290,11 @@ td, th {
 </div>
 
 <script>
-  caseId = <?= $case_id ?>;
-  discoveryId = <?= $discovery_id ?>;
+  caseId        = <?= $case_id ?>;
+  discoveryId   = <?= $discovery_id ?>;
+  signupCredits = <?= SIGNUP_CREDITS ?>;
+  userCredits   = <?= $primaryAttorney['credits'] ?: 0 ?>;
+  serviceNumber = signupCredits - userCredits + 1;
   
   pos_state   = $("#pos_state").val();
   pos_city    = $("#pos_city").val();
@@ -303,7 +311,7 @@ td, th {
 <script>
   function payAndServe() {
     if ( validate() ) {
-      <?php if ($discoveriesModel->isPaid($discovery_id)): ?>
+      <?php if ($discoveriesModel->isPaid($discovery_id) || User::hasCredits($primaryAttorney)): ?>
         servePOS();
       <?php else: ?>
         new DiscoveryPayment(discoveryId, caseId, servePOS);
@@ -335,6 +343,12 @@ td, th {
         $(".POS_msgdiv").html(msg);
     }
     return error == 0;
+  }
+
+  function creditsText() {
+    if (userCredits <= 0) { return ''; }
+    if (signupCredits == serviceNumber) { return 'This is your final complimentary service'; }
+    return 'This is your ' + stringifyNumber(serviceNumber) + ' complimentary service';
   }
 
   function servePOS() { 
@@ -371,7 +385,7 @@ td, th {
                 $.LoadingOverlay("hide");
                 confirmAction({
                   title: 'Service Complete!',
-                  text: '',
+                  text: creditsText(),
                   icon: 'success',
                   dangerMode: false,
                   buttons: null

@@ -5,12 +5,6 @@
       parent::__construct( $dbConfig );
 
       $this->queryTemplates = array_merge( $this->queryTemplates, [
-        'getPrimaryAttorney' => 'SELECT u.* 
-                                 FROM system_addressbook as u
-                                      INNER JOIN cases AS c
-                                        ON c.case_attorney = u.pkaddressbookid
-                                 WHERE c.id = :case_id',
-
         'removeClient'       => 'DELETE 
                                  FROM sides_clients
                                  WHERE sides_clients.side_id IN ( 
@@ -60,13 +54,6 @@
       ]);
       $this->sides = new Side();
       $this->users = new User();
-    }
-
-    function getPrimaryAttorney($caseId) {
-      $query = $this->queryTemplates['getPrimaryAttorney'];
-      return User::publishable(
-        $this->readQuery($query, ['case_id' => $caseId], 1)
-      );
     }
 
     function find($caseId) {

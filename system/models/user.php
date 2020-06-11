@@ -4,7 +4,8 @@
 
     const PUBLISHABLE_KEYS = [
       'pkaddressbookid', 'firstname', 'middlename', 'lastname', 'email', 
-      'address', 'barnumber', 'masterhead', 'fkgroupid', 'side_active', 'emailverified'
+      'address', 'barnumber', 'masterhead', 'fkgroupid', 'side_active',
+      'emailverified', 'credits'
     ];
 
     const SEARCH_FIELDS = [
@@ -262,6 +263,19 @@
 
     function getSlAttorney($slAttorneyId) {
       return $this->getBy('attorney', ['id' => $slAttorneyId], 1);
+    }
+
+    function redeemCredits($user, $credits = 1) {
+      $user    = is_array($user) ? $user : $this->find($user);
+
+      return $this->update('system_addressbook',
+        ['credits' => $user['credits'] - abs($credits)],
+        ['pkaddressbookid' => $user['pkaddressbookid']]
+      );
+    }
+
+    static function hasCredits($user) {
+      return $user['credits'] > 0;
     }
 
     static function inCollection($user, $users, $key = 'pkaddressbookid' ) {
