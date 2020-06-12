@@ -7,10 +7,10 @@ function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $frome
     global $logger;
     $fromname  = "EasyRogs Service";
     $fromemail = "service@easyrogs.com";
-    
+
     if ( $_ENV['APP_ENV'] != 'prod') {
       $to = $cc = $bcc = [
-        'easyrogs@mailinator.com', 
+        'easyrogs@mailinator.com',
         'easyrogs@gmail.com'
       ];
     }
@@ -76,7 +76,7 @@ function replaceUrls($string) {
 		}
 		$video_allowed = array('mp4');
 		if (in_array($ext, $video_allowed)) {
-		    return '<br /><video style="position: relative; max-width: 99%; width: 100% !important; height: auto !important;" preload="none" x-autoplay controls><source src="'. $url .'" type="video/mp4"></video>';
+            return "<br /><video  style='position: relative; max-width: 99%; width: 100% !important; height: auto !important;' preload='none' x-autoplay controls data-src='$url'><source src='$url' type='video/mp4'></video>";
 		}
 	}
 	return $url;
@@ -84,10 +84,10 @@ function replaceUrls($string) {
 
 function enforceYesNo( &$value = null ) {
     $value = trim( strtolower($value) );
-    if( $value == 'yes' ) { 
+    if( $value == 'yes' ) {
         $value= "Yes"; } // TODO
-    elseif( $value == 'no' ) { 
-        $value =  "No"; 
+    elseif( $value == 'no' ) {
+        $value =  "No";
     }
     else {
         $value = "";
@@ -146,7 +146,7 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
     // file_put_contents( ROOTPATH .'logs/html-org.htm', $html );
     // file_put_contents( ROOTPATH .'logs/html-dom.htm', $doc->saveHTML() );
     //return;
-    
+
     $mpdf->WriteHTML($doc->saveHTML());
     if ($filename!="") {
         if ($downloadORwrite != 1) {
@@ -163,7 +163,7 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
 * FUNCTION FOR DATE FORMAT
 **/
 function dateformat( $date, $type = 1 ) {
-    if ($date == "0000-00-00" || $date == "0000-00-00 00:00:00" || !$date ) { 
+    if ($date == "0000-00-00" || $date == "0000-00-00 00:00:00" || !$date ) {
         $date = "";
     } else {
         // type = 1: n/j/Y to n-j-Y
@@ -281,13 +281,13 @@ function getAnswerOfDependentParentQuestion($discovery_id, $questoin_id, $respon
 										rq.fkresponse_id				=	'$response_id'	AND
 										dq.discovery_id 				= 	'$discovery_id' AND
 										(
-											q.sub_part 		= 	'' OR 
-											q.sub_part IS NULL OR 
+											q.sub_part 		= 	'' OR
+											q.sub_part IS NULL OR
 											have_main_question	IN (0,2)
-											
+
 										)
 										GROUP BY q.id
-										ORDER BY display_order, q.id 
+										ORDER BY display_order, q.id
 										"
     );
     if (!empty($mainQuestions)) {

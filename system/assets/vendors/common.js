@@ -1605,15 +1605,12 @@ function isNumberKey(evt)
 }
 /*******************************************Form Submission***************************************/
 var reloaddiv, reloadpage,formid,pagetype;
-function addform(url,frm,div,page) 
-{
-	if(frm=="signupform")
-	{
-		//alert('Here');
+
+function addform( url, frm, div, page ) {
+	if( frm == "signupform" ) {
 		loadLoginDetails();
 	}
 	loading();
-	//displayloading();
 	$("#loading").show();
 	$(".buttonid").hide();
 	$("#loading").html('<img src="../assets/images/ownageLoader/loader4.gif" id="imageloaderid">');
@@ -1621,39 +1618,28 @@ function addform(url,frm,div,page)
 	reloaddiv	=	div;
 	reloadpage	=	page;
 	formid		=	frm;
-	/*if(document.getElementById('pagedescription'))
-	{
-		$('#pagedescription_tinymce').val($('.tinymce').html());
-	}*/
-	  //var fd = new FormData(document.getElementById("fileinfo"));
-	var formData = new FormData(document.getElementById(formid));
-   $.ajax({
-       url: url,
-       type: 'POST',
-       data: formData,
-       async: false,
-       cache: false,
-       contentType: false,
-       enctype: 'multipart/form-data',
-       processData: false,
-       success: function (data) {
-         //alert(response);
-		 response(data);
-       }
-   });
-   //return;
-	/*
-	options	=	{	
-					url : url,
-					type: 'POST',
-					success: response
-				}
-	$('#'+formid).ajaxSubmit(options);*/
-	setTimeout(function(){ if(page != "" && page == 'discoveryfront-thanks.php')
-	{
-		window.location.replace(page);
-	} }, 3000);
-	
+
+	const formData = new FormData( document.getElementById(formid) );
+   	$.ajax( {
+		url: url,
+		type: 'POST',
+		data: formData,
+		async: false,
+		cache: false,
+		contentType: false,
+		enctype: 'multipart/form-data',
+		processData: false,
+		success: data => {
+			if (url == 'signupaction.php' ) {
+				trackEvent('signup', { event_category: 'account', event_label: data.email ||'', });
+			}
+			response(data);
+		}
+	} );
+	setTimeout( _ =>{ 
+		if( page && page == 'discoveryfront-thanks.php' ) {
+			window.location.replace(page);
+		} }, 2000);
 }
 function response(text, showMessage = true)
 {

@@ -50,13 +50,13 @@ require_once( FRAMEWORK_PATH.'faq_modal.php');
 	if( !@$_ENV['ANALYTICS_DISABLED'] ) {
 ?>
 <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-168067186-1"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=<?= APP_GOOGLE_ANALYTICS_ID ?>"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'UA-168067186-1');
+  gtag('config', '<?= APP_GOOGLE_ANALYTICS_ID ?>', { 'transport_type': 'beacon'});
 </script>
 <?php
 	}

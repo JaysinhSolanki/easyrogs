@@ -69,6 +69,8 @@ if(sizeof($_POST)>0)
 			setcookie("rememberme","", time()-3600);
 		}
 		header("Location: " .ROOTURL. "system/application/index.php");
+		// TODO Add analytics event login 
+		// trackEvent('login', { event_category: 'account', event_label: <?= $email ?->, });
 		exit;
 	}
 	else
@@ -173,7 +175,8 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
 																				top: 0; left: 0;
 																				max-width: 100vw; max-height: 100vh; 
 																				height: auto;
-																			">
+																			"
+								data-src="demo.mp4">
                             <source src="<?= ROOTURL ?>system/application/demo.mp4" type="video/mp4">
                         </video>
                     </div>

@@ -398,6 +398,10 @@ td, th {
                   buttons: null
                 });
                 response(data);
+                (_ => {
+                  const { discoveryFormNames, discoveryForm, } = globalThis;
+                  trackEvent('serve', { event_category: 'discovery', event_label: discoveryForm && discoveryFormNames[discoveryForm-1], } );
+                })();
             });
     }, 2000 );
   }

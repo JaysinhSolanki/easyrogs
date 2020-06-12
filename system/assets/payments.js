@@ -79,6 +79,9 @@ class ERPayment {
       else if ( result.paymentIntent.status === 'succeeded' ) {
         $('#payment-modal').modal('hide');
         toastr.success("Payment received, thanks!");
+        ( _=> { debugger;
+          trackEvent('pay', { event_category: 'payment', event_value: Math.floor( result.paymentIntent.amount / 100 ), });
+        })()
         self.success();
       }
 
