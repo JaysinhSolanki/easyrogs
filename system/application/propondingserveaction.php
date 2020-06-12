@@ -11,7 +11,9 @@ $respond        = $_POST['respond'];
 $discovery_type = $_POST['discovery_type'];
 $response_id    = $_POST['response_id'];
 
-if ( ! $discoveriesModel->isPaid($discovery_id) ) {
+$payable = $respond ? $responsesModel : $discoveriesModel;
+$itemId  = $respond ? $response_id 	  : $discovery_id;
+if ( ! $payable->isPaid($itemId) ) {
   $discovery       = $discoveriesModel->find($discovery_id);
   $currentSide     = $sidesModel->getByUserAndCase($currentUser->id, $discovery['case_id']);
   $primaryAttorney = $sidesModel->getPrimaryAttorney($currentSide['id']);

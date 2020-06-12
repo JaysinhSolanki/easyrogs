@@ -59,8 +59,9 @@ if( $discovery_id ) {
 												array(":id" => $discovery_id) 
 											);
 	$discovery_data = $discoveryDetails[0]; 
-	Side::legacyTranslateCaseData($discovery_data['case_id'], $discovery_data);
 
+  Side::legacyTranslateCaseData($discovery_data['case_id'], $discovery_data);
+  
 	$uid				= $discovery_data['uid'];
 	$case_uid			= $discovery_data['case_uid'];
 	$discovery_name		= $discovery_data['discovery_name'];
@@ -105,6 +106,10 @@ $loggedin_email = $_SESSION['loggedin_email'];
 $currentSide     = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
 $serviceList     = $sidesModel->getServiceList( $currentSide );
 $primaryAttorney = $sidesModel->getPrimaryAttorney($currentSide['id']);
+
+$payableType   = $respond ? Payable::ITEM_TYPE_RESPONSE : Payable::ITEM_TYPE_DISCOVERY;
+$payable       = $respond ? $responsesModel             : $discoveriesModel;
+$payableItemId = $respond ? $response_id                : $discovery_id;
 
 ?>
 <!DOCTYPE html>
@@ -290,12 +295,14 @@ td, th {
 </div>
 
 <script>
-  caseId        = <?= $case_id ?>;
-  discoveryId   = <?= $discovery_id ?>;
+  caseId   = <?= $case_id ?>;
+  itemId   = <?= $payableItemId ?>;
+  itemType = '<?= $payableType ?>';
+
   signupCredits = <?= SIGNUP_CREDITS ?>;
   userCredits   = <?= $primaryAttorney['credits'] ?: 0 ?>;
   serviceNumber = signupCredits - userCredits + 1;
-  
+
   pos_state   = $("#pos_state").val();
   pos_city    = $("#pos_city").val();
   pos_address = $("#pos_address").val();
@@ -311,10 +318,10 @@ td, th {
 <script>
   function payAndServe() {
     if ( validate() ) {
-      <?php if ($discoveriesModel->isPaid($discovery_id) || User::hasCredits($primaryAttorney)): ?>
+      <?php if ($payable->isPaid($payableItemId) || User::hasCredits($primaryAttorney)): ?>
         servePOS();
       <?php else: ?>
-        new DiscoveryPayment(discoveryId, caseId, servePOS);
+        new ERPayment(itemId, itemType, caseId, servePOS);
       <?php endif; ?>
     }
   }

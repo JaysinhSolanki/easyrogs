@@ -1,8 +1,5 @@
 <?php
-  
-  use Stripe\PaymentIntent;
-
-  class Discovery extends BaseModel {
+  class Discovery extends Payable {
 
     function __construct( $dbConfig = null )
     {
@@ -37,32 +34,6 @@
       return parent::update('discoveries', $fields, ['id' => $id], $ignore);
     }
 
-    public function isPaid($discoveryId) {
-      global $logger, $currentUser;
-      
-      try {
-        foreach(PAYMENT_WHITELIST as $whitelistedEmail) {
-          if (preg_match($whitelistedEmail, $currentUser->user['email'])) {
-            return true;
-          }
-        }
-      } catch( Exception $e ) {
-        $logger->error( ["Exception while processing PAYMENT_WHITELIST", e] ); 
-      }
-
-      $discovery = $this->find($discoveryId);
-      if ($discovery['payment_intent_id']) {
-        $intent = PaymentIntent::retrieve($discovery['payment_intent_id']);
-        $this->logger->info($intent);
-        return $intent->status === 'succeeded';
-      }
-      return false;
-    }
-
-    public function setPaymentIntent($discoveryId, $paymentIntentId) {
-      return $this->updateById($discoveryId, ['payment_intent_id' => $paymentIntentId]);
-    }
-    
     static function getTitle($name, $set_number = null, $style = self::STYLE_WORDCAPS ) {
       global $logger;
       $logger->info("getTitle: \$name=$name, \$set=$set_number, \$style=$style" );

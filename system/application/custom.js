@@ -80,8 +80,8 @@ getPaymentMethods = (caseId = null, success, error) => {
    .fail(error);
 }
 
-getDiscoveryPayment = (id, paymentMethodId, saveToSide, saveToProfile) => {
-  return fetch(API_BASE + `/get-discovery-payment.php?id=${id}&payment_method_id=${paymentMethodId}&save_to_side=${saveToSide}&save_to_profile=${saveToProfile}`);
+getPayment = (id, type, paymentMethodId, saveToSide, saveToProfile) => {
+  return fetch(API_BASE + `/get-payment.php?id=${id}&type=${type}&payment_method_id=${paymentMethodId}&save_to_side=${saveToSide}&save_to_profile=${saveToProfile}`);
 }
 
 getPaymentSetup = () => {

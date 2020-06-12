@@ -1,9 +1,13 @@
-class DiscoveryPayment {
-  constructor(discoveryId, caseId, success)  {
+class ERPayment {
+  // TODO: YAGNI. make generic, caseId may not be always required
+  constructor(itemId, itemType, caseId, success)  {
     this.setupIntentSecret = null;
-    this.discoveryId  = discoveryId;
-    this.caseId       = caseId;
-    this.success      = success;
+
+    this.itemId   = itemId;
+    this.itemType = itemType;
+    this.caseId   = caseId;
+    this.success  = success;
+
     this.ccElementStyle = {
       base: {
         color: '#32325d',
@@ -50,8 +54,9 @@ class DiscoveryPayment {
       $(this).attr('disabled', true)
 
       let paymentMethodId = $("input[name=payment_method_id]:checked").val();
-      const response = await getDiscoveryPayment(
-        self.discoveryId,
+      const response = await getPayment(
+        self.itemId,
+        self.itemType,
         paymentMethodId,
         $('#save_to_side').is(":checked") ? 1 : 0,
         $('#save_to_profile').is(":checked") ? 1 : 0,
@@ -77,8 +82,8 @@ class DiscoveryPayment {
         self.success();
       }
 
-      $(this).text(buttonText)
-      $(this).attr('disabled', false)
+      $(this).text(buttonText);
+      $(this).attr('disabled', false);
 		});
   }
 
@@ -134,4 +139,4 @@ class DiscoveryPayment {
 
 }
 
-window.DiscoveryPayment = DiscoveryPayment;
+window.ERPayment = ERPayment;
