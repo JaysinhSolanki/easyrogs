@@ -18,7 +18,7 @@ if( sizeof($discoverydetails) ) {
 			$AdminDAO->deleterows( 'response_questions'," fkresponse_id = :fkresponse_id", array("fkresponse_id"=>$response_id) );
 		}
 	}
-	if( !in_array($form_id,array(1,2)) ) {
+	if( !in_array( $form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE) ) ) {
 		$AdminDAO->deleterows( 'questions'," discovery_id = :discovery_id", array("discovery_id"=>$discovery_id) );
 	}
 	$AdminDAO->deleterows( 'discovery_questions'," discovery_id = :discovery_id", array("discovery_id"=>$discovery_id) );

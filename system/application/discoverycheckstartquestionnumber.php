@@ -55,7 +55,7 @@ else
 													':responding' 	=> 	$responding
 												  )
 											);
-	if(in_array($form_id,array(3,4,5)) && $set_number == 1)
+	if(in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS, Discovery::FORM_CA_RPDS)) && $set_number == 1)
 	{
 		echo 1;
 	}

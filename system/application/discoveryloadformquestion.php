@@ -6,7 +6,7 @@ require_once("adminsecurity.php");
 
 $discovery_id	=	$_GET['id']; 
 $form_id		=	$_GET['form_id']; 
-if(in_array($form_id,array(1,2,3)))
+if(in_array($form_id,array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE, Discovery::FORM_CA_SROGS)))
 	{
 		$s_titleQuestion	=	"Interrogatory";
 		$p_titleQuestion	=	"Interrogatories";

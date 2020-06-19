@@ -173,7 +173,7 @@ if(! $verification_state) {
 /***************************************
 Query For Forms 1,2,3,4,5 Questions
 ****************************************/
-if(in_array($form_id,array(3,4,5))) {
+if(in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS, Discovery::FORM_CA_RPDS))) {
 	$orderByMainQuestions	= "  ORDER BY CAST(question_number as DECIMAL(10,2)), q.question_number ";
 }
 else {
@@ -220,7 +220,7 @@ $generalQuestions	= $AdminDAO->getrows('question_admits',"*");
 ****************************************/
 $_SESSION['documents'][$uid]=array();
 $where	= "";
-if( $form_id == 5 ) {
+if( $form_id == Discovery::FORM_CA_RPDS ) {
 	$where	= " AND fkresponse_id = '$response_id' ";
 }
 $olddocuments = $AdminDAO->getrows('documents',"*","discovery_id = '$discovery_id' $where");
@@ -293,7 +293,7 @@ function getRPDetails($rp_id) {
 				<div class="col-md-12">
 					<ul class="list-group">
 <?php
-										if( in_array( $form_id, array(1,2) ) ) {
+										if( in_array( $form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE) ) ) {
 											foreach($mainQuestions as $data) {
 												$dependent_answer		= "";
 												$question_id 			= $data['question_id'];
@@ -456,7 +456,7 @@ function getRPDetails($rp_id) {
 <?php
 											}
 										}
-										else if($form_id == 4) {
+										else if( $form_id == Discovery::FORM_CA_RFAS ) {
 											foreach( $mainQuestions as $data ) {
 ?>
 												<li class="list-group-item">
@@ -534,7 +534,7 @@ function getRPDetails($rp_id) {
 <?php
 											}
 										}
-										else if( in_array( $form_id, array(3,5)) ) {
+										else if( in_array( $form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RPDS)) ) {
 											foreach( $mainQuestions as $data ) {
 ?>
 												<li class="list-group-item">
@@ -568,8 +568,8 @@ function getRPDetails($rp_id) {
 															<?= $question_title; ?>
 														</p>
 <?php
-														if( $view != 1 ) {
-															if( $form_id == 5 ) {
+														if( !$view ) {
+															if( $form_id == Discovery::FORM_CA_RPDS ) {
 ?>
                                                                 <select class="form-control" id="answer<?= $discovery_question_id; ?>"  name="answer[<?= $discovery_question_id; ?>]" onChange="checkFunctionForm5('<?= $discovery_question_id ?>',this.value)" <?= $css ?>>
                                                                 <option <?php if($answer == "Select Your Response") echo "selected"; ?>>Select Your Response</option>
@@ -580,14 +580,14 @@ function getRPDetails($rp_id) {
                                                                 </select>
 <?php
 															}
-															else if( $form_id == 3 ) {
+															else if( $form_id == Discovery::FORM_CA_SROGS ) {
 ?>
 																<textarea id="answer<?= $discovery_question_id ?>" class="form-control " name="answer[<?= $discovery_question_id; ?>]" placeholder="Your Answer" required <?= $css ?>><?= 
 																	htmlentities($answer) 
 																?></textarea>
 <?php
 															}
-															if( $form_id == 5 ) {
+															if( $form_id == Discovery::FORM_CA_RPDS ) {
 ?>
 																<ul class="list-group" id="note<?= $discovery_question_id ?>" <?php if($answer != "I have responsive documents"){ ?>style="display:none" <?php } ?>>
 																	<li class="list-group-item">
@@ -630,7 +630,9 @@ function getRPDetails($rp_id) {
                                 </ul>
                             </div>
 <?php
-							if( in_array( $form_id, array(3,4) ) && $view != 1 && !empty($_SESSION['documents'][$uid]) ) {
+							if( in_array( $form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS) ) 
+								&& !$view
+								&& !empty($_SESSION['documents'][$uid]) ) {
 ?>
                             <div class="col-md-12">
                             <hr>
@@ -649,7 +651,7 @@ function getRPDetails($rp_id) {
                             </div>
 <?php
 							}
-							if( in_array( $form_id, array(5) ) && $view != 1 ) {
+							if( in_array( $form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RPDS) ) && !$view ) {
 ?>
                             <div class="col-md-12">
                             	<hr>
@@ -663,9 +665,7 @@ function getRPDetails($rp_id) {
                                             <i class="icon-ok bigger-110"></i>
                                             <span class="ladda-label">Upload</span><span class="ladda-spinner"></span>
                                         </button>
-                                        <div id="uploadeddocs">
-
-                                        </div>
+                                        <div id="uploadeddocs" /> <!-- documents are uploaded here -->
                                     </li>
                                 </ul>
                             </div>
@@ -759,7 +759,7 @@ $(document).ready( _ => {
 	loadinstructions('<?= $form_id ?>','<?= $discovery_id ?>');
 	loaduploadeddocs();
 <?php
-	if( in_array($form_id,array(3,4)) ) {
+	if( in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS)) ) {
 ?>
 		loaduploaddiscoverydocs();
 <?php
@@ -902,11 +902,11 @@ ob_start();
                 <img src="<?= ASSETS_URL; ?>images/court.png" style="width: 18px;padding-right: 3px;">
 <?php
                     // added by JS 3/7/20
-                    if( $form_id == 3 ){
+                    if( $form_id == Discovery::FORM_CA_SROGS ){
                         echo "Code Civ.Proc., &sect; 2030.250  ";
                         echo instruction(16);
                     }
-                    else if( $form_id == 4 ){
+                    else if( $form_id == Discovery::FORM_CA_RFAS ){
                         echo "Code Civ.Proc., &sect; 2033.240 ";
                         echo instruction(19);
                     }

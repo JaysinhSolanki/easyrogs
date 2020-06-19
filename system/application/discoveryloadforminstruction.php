@@ -28,19 +28,17 @@ $attorneyName		= $attorneyDetail['firstname']." ".$attorneyDetail['lastname'];
 $attorneyAddress	= makeaddress($_SESSION['addressbookid']);//$attorneyDetail['address'].", ".$attorneyDetail['cityname'].", ".$attorneyDetail['street'];
 
 
-if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
+if( in_array($form_id,array(Discovery::FORM_CA_FROGS,Discovery::FORM_CA_FROGSE)) ) { // FROGS & FROGSE in EXTERNAL case
 ?>
     <div class="">
-    <div class="<?php if($viewonly == 0){ echo "col-sm-offset-2 col-sm-8"; }else{ echo "col-md-12"; } ?>">
+    <div class="<?= !$viewonly ? "col-sm-offset-2 col-sm-8" : "col-md-12" ?>">
         <!-- Instructions Section load -->
         <div class="panel panel-default">
             <div class="panel-heading instruction-collapse">
                 <div class="row">
                 	<div class="col-md-4"></div>
                     <div class="col-md-4 text-center">
-                    	<h3>
-                            Instructions
-                        </h3>
+                    	<h3> Instructions </h3>
                     </div>
 
                     <div class="col-md-4">
@@ -52,8 +50,8 @@ if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { /
             <div id="collapseOne" class="panel-collapse collapse in">
                 <div class="panel-body">
 <?php
-                    if( $form_id == Discovery::FORM_FROGS ) {
-                        if( $viewonly == 1 ) {
+                    if( $form_id == Discovery::FORM_CA_FROGS ) {
+                        if( $viewonly ) {
                             $checkedimg			=	'<img src="../uploads/icons/checkbox_checked_small.png" width="15px">';
                             $uncheckedimg		=	'<img src="../uploads/icons/checkbox_empty_small.png" width="15px">';
                             $incidenttext1		=	"&nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.";
@@ -71,11 +69,6 @@ if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { /
                             }
                         }
 ?>
-                    <style>
-                    .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
-                        /*border:none !important*/
-                    }
-                    </style>
                     <div  id="instruction_data" >
                     <table class="table" style="border:none !important">
                     <tr>
@@ -118,14 +111,14 @@ if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { /
                     <tr>
                         <td colspan="2" style="border:none;">
 <?php
-                            if( $viewonly == 1 ) {
+                            if( $viewonly ) {
                                 echo $option1;
                             }
                             else {
 ?>
                                 <div class='checkbox_replace1'>
-                                <input type="radio" name="incidentoption" value="1" <?php if($discovery['incidentoption'] == 1) {echo "checked";}  ?> onclick="incidentmeans(1)" />
-                                &nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.
+                                    <input type="radio" name="incidentoption" value="1" <?php if($discovery['incidentoption'] == 1) {echo "checked";}  ?> onclick="incidentmeans(1)" />
+                                    &nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.
                                 </div>
 <?php
                             }
@@ -135,7 +128,7 @@ if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { /
                     <tr>
                         <td  colspan="2" style="border:none;">
 <?php
-                            if( $viewonly == 1 ) {
+                            if( $viewonly ) {
                                 echo $option2;
                             }
                             else {
@@ -156,23 +149,11 @@ if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { /
                             <p>(f) ADDRESS means the street address, including the city, state, and zip code.</p>
                         </td>
                     </tr>
-                    <!--tr>
-                        <td colspan="2" style="border:none;">
-                            <h5 class="text-center">Sec. 5. INVALID OBJECTIONS</h5>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="border:none;">
-                            <p>Calls for a legal conclusion: “An interrogatory is not objectionable because an answer to it involves an opinion or contention that relates to fact or the application of law to fact, or would be based on information obtained or legal theories developed in anticipation of litigation or in preparation for trial.” Code Civ.Proc., § 2030.010, subd. (b).</p>
-                            <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery. Rylaarsdam et al., California Practice Guide: Civil Procedure Before Trial (The Rutter Group 2019) ¶ 8:721-8:722.</p>
-                            <p>Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. Cal. Judges Benchbook Civ. Proc. Discovery (September 2018) § 18.36.</p>
-                        </td>
-                    </tr-->
                     </table>
                     </div>
 <?php
                     }
-                    else if( $form_id == Discovery::FORM_FROGSE ) {
+                    else if( $form_id == Discovery::FORM_CA_FROGSE ) {
                         $personnames2	=	$discovery['personnames2'];
                         $personnames1	=	$discovery['personnames1']
 ?>
@@ -182,6 +163,7 @@ if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { /
                     <tr>
                         <td colspan="2" style="border:none;">
                             <div style="text-align:left">
+
                             <h5 class="text-center">Sec. 1. Instructions to All Parties</h5>
                             <p>(a) Interrogatories are written questions prepared by a party to an action that are sent to any other party in the action to be answered under oath. The interrogatories below are form interrogatories approved for use in employment cases.</p>
                             <p>(b) For time limitations, requirements for service on other parties, and other details, see Code of Civil Procedure sections 2030.010-2030.410 and the cases construing those sections.</p>
@@ -219,7 +201,7 @@ if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { /
                             <p>(b) YOU OR ANYONE ACTING ON YOUR BEHALF includes you, your agents, your employees, your insurance companies, their agents, their employees, your attorneys, your accountants, your investigators, and anyone else acting on your behalf.</p>
                             <p>(c) EMPLOYMENT means a relationship in which an EMPLOYEE provides services requested by or on behalf of an EMPLOYER, other than an independent contractor relationship.</p>
 <?php
-                            if( $viewonly == 1 ) {
+                            if( $viewonly ) {
                                 if( $personnames1 ) {
 ?>
                                     <p>(d) EMPLOYEE means a PERSON who provides services in an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes of these interrogatories, EMPLOYEE refers to: <?php echo $personnames1; ?> </p>
@@ -253,11 +235,11 @@ if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { /
 ?>
                             <p>(f) ADVERSE EMPLOYMENT ACTION means any TERMINATION, suspension, demotion, reprimand, loss of pay, failure or refusal to hire, failure or refusal to promote, or other action or failure to act that adversely affects the EMPLOYEE'S rights or interests and which is alleged in the PLEADINGS.</p>
                             <p>(g) TERMINATION means the actual or constructive termination of employment and includes a discharge, firing, layoff, resignation, or completion of the term of the employment agreement.</p>
-                            <p>(h) PUBLISH means to communicate orally or in writing to anyone other than the plaintiff. This includes communications by one of the defendant's employees to others. (Kelly v. General Telephone Co. (1982) 136 Cal.App.3d 278, 284.)</p>
+                            <p>(h) PUBLISH means to communicate orally or in writing to anyone other than the plaintiff. This includes communications by one of the defendant's employees to others. (<i>Kelly v. General Telephone Co.</i> (1982) 136 Cal.App.3d 278, 284.)</p>
                             <p>(i) PLEADINGS means the original or most recent amended version of any complaint, answer, cross-complaint, or answer to cross-complaint.</p>
-                            <p>(j) BENEFIT means any benefit from an EMPLOYER, including an "employee welfare benefit plan" or employee pension benefit plan" within the meaning of Title 29 United States Code section 1002(1) or (2) or ERISA.</p>
-                            <p>(k) HEALTH CARE PROVIDER includes any PERSON referred to in Code of Civil Procedure section 667.7(e)(3).</p>
-                            <p>(l) DOCUMENT means a writing, as defined in Evidence Code section 250, and includes the original or a copy of handwriting, typewriting, printing, photostats, photographs, electronically stored information, and every other means of recording upon any tangible thing and form of communicating or representation, including letters, words, pictures, sounds, or symbols, or combinations of them.</p>
+                            <p>(j) BENEFIT means any benefit from an EMPLOYER, including an "employee welfare benefit plan" or employee pension benefit plan" within the meaning of <i>Title 29 United States Code</i> section 1002(1) or (2) or ERISA.</p>
+                            <p>(k) HEALTH CARE PROVIDER includes any PERSON referred to in <i>Code of Civil Procedure</i> section 667.7(e)(3).</p>
+                            <p>(l) DOCUMENT means a writing, as defined in <i>Evidence Code</i> section 250, and includes the original or a copy of handwriting, typewriting, printing, photostats, photographs, electronically stored information, and every other means of recording upon any tangible thing and form of communicating or representation, including letters, words, pictures, sounds, or symbols, or combinations of them.</p>
                             <p>(m) ADDRESS means the street address, including the city, state, and zip code.</p>
                         </td>
                     </tr>
@@ -274,68 +256,90 @@ if( in_array($form_id,array(Discovery::FORM_FROGS,Discovery::FORM_FROGSE)) ) { /
 <?php
 }
 else {
-	if( !$discovery_id && $type == 1 ) {
-		if( $form_id == Discovery::FORM_SROGS ) {
-            $instruction_text	=	"
-                <div style='text-align:left'>
-                    <p>Each answer must be as complete and straightforward as the information reasonably available to you, including the information possessed by your attorneys or agents, permits. If an interrogatory cannot be answered completely, answer it to the extent possible. If you do not have enough personal knowledge to fully answer an interrogatory, say so, but make a reasonable and good faith effort to get the information by asking other persons or organizations, unless the information is equally available to the asking party. Whenever an interrogatory may be answered by referring to a document, the document may be attached as an exhibit to the response and referred to in the response. If the document has more than one page, refer to the page and section where the answer to the interrogatory can be found. You may respond by attaching a copy of the document to your answers to these interrogatories. Whenever an address or telephone number for the same person are requested in more than one interrogatory, you are required to furnish them in answering only the first interrogatory asking for that information.</p><p>If you are asserting a privilege or making an objection to an interrogatory, you must specifically assert the privilege or state the objection in your written response. Your answers to these interrogatories must be verified, dated, signed, and the original must be included in your response.</p>
-                </div>
-                    ";
-		}
-		else if( $form_id == Discovery::FORM_RFAS ) {
+	if( !$discovery_id && $type == Discovery::TYPE_EXTERNAL ) {
+		if( $form_id == Discovery::FORM_CA_SROGS ) {
             $instruction_text = "
-                <div style='text-align:left'>
-                    <p>Pursuant to Code of Civil Procedure section 2030 et seq., propounding party hereby requests that responding party answer the following Requests for Admission, under oath, within thirty (30) days from the date hereof.</p>
-                    
-                    <h5><b>INVALID OBJECTIONS</b></h5>
-                    <p>Calls for a legal conclusion: “When a party is served with a request for admission concerning a legal question properly raised in the pleadings he cannot object simply by asserting that the request calls for a conclusion of law. He should make the admission if he is able to do so and does not in good faith intend to contest the issue at trial, thereby 'setting at rest a triable issue.' Otherwise he should set forth in detail the reasons why he cannot truthfully admit or deny the request.” Burke v. Superior Court (1969) 71 Cal.2d 276, 282, internal citations omitted. See also, Cembrook v. Superior Court In and For City and County of San Francisco (1961) 56 Cal.2d 423, 429 [“calls for a legal conclusion” is not a valid objection.].</p>
-                    <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery. Rylaarsdam et al., California Practice Guide: Civil Procedure Before Trial (The Rutter Group 2019) ¶ 8:721-8:722.</p>
-                </div>
+                <p> Each answer must be as complete and straightforward as the information reasonably available to you, including the
+                    information possessed by your attorneys or agents, permits. If an interrogatory cannot be answered completely, answer it to
+                    the extent possible. If you do not have enough personal knowledge to fully answer an interrogatory, say so, but make a
+                    reasonable and good faith effort to get the information by asking other persons or organizations, unless the information is
+                    equally available to the asking party. Whenever an interrogatory may be answered by referring to a document, the document
+                    may be attached as an exhibit to the response and referred to in the response. If the document has more than one page,
+                    refer to the page and section where the answer to the interrogatory can be found. You may respond by attaching a copy of
+                    the document to your answers to these interrogatories. Whenever an address or telephone number for the same person are
+                    requested in more than one interrogatory, you are required to furnish them in answering only the first interrogatory asking
+                    for that information.</p><p>If you are asserting a privilege or making an objection to an interrogatory, you must
+                    specifically assert the privilege or state the objection in your written response. Your answers to these interrogatories
+                    must be verified, dated, signed, and the original must be included in your response.</p>
+
+                <h5 class='text-center'> INVALID OBJECTIONS </h5>
+                <p> Calls for a legal conclusion: “An interrogatory is not objectionable because an answer to it involves an opinion or contention that relates to fact 
+                    or the application of law to fact, or would be based on information obtained or legal theories developed in anticipation of litigation or in preparation 
+                    for trial.” <i>Code Civ.Proc.</i>, § 2030.010, subd. (b). </p>
+                <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery. 
+                    Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group 2019) ¶ 8:721-8:722. </p>
+                <p> Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. <i>Cal. Judges Benchbook Civ. Proc. Discovery</i> (September 2018) § 18.36. </p>
+                ";
+		}
+		else if( $form_id == Discovery::FORM_CA_RFAS ) {
+            $instruction_text = "
+                <p> Pursuant to Code of Civil Procedure section 2030 et seq., propounding party hereby requests that responding party answer the
+                    following Requests for Admission, under oath, within thirty (30) days from the date hereof. </p>
+
+                <h5 class='text-center'><b> INVALID OBJECTIONS </b></h5>
+                <p> Calls for a legal conclusion: “When a party is served with a request for admission concerning a legal question properly
+                    raised in the pleadings he cannot object simply by asserting that the request calls for a conclusion of law. He should make
+                    the admission if he is able to do so and does not in good faith intend to contest the issue at trial, thereby 'setting at
+                    rest a triable issue.' Otherwise he should set forth in detail the reasons why he cannot truthfully admit or deny the
+                    request.” <i>Burke v. Superior Court</i> (1969) 71 Cal.2d 276, 282, internal citations omitted. See also, <i>Cembrook v. Superior
+                    Court In and For City and County of San Francisco</i> (1961) 56 Cal.2d 423, 429 [“calls for a legal conclusion” is not a valid
+                    objection.]. </p>
+                <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition,
+                    not for written discovery. Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group
+                    2019) ¶ 8:721-8:722. </p>
             ";
 
 		}
-		else if( $form_id == Discovery::FORM_RPDS ) {
+		else if( $form_id == Discovery::FORM_CA_RPDS ) {
             $instruction_text = "
-                <div style='text-align:left'>
-                    <p>DEMAND IS HEREBY MADE UPON YOU, pursuant to Code of Civil Procedure section 2031, et seq. to produce the documents and
-                        things described herein at ".$attorneyFirm.", ".$attorneyAddress." within thirty (30) days of service hereof. Each
-                        respondent shall respond separately, under oath, to each item or category of item by any of the following:</p>
-                    
-                        <ol>
-                        <li>A statement that you will comply with the demand;</li>
-                        <li>A representation that you lack the ability to comply with the demand; or</li>
-                        <li>An objection to the demand setting forth, in detail, the nature and factual basis for</li>
-                    </ol>
+                <p>DEMAND IS HEREBY MADE UPON YOU, pursuant to Code of Civil Procedure section 2031, et seq. to produce the documents and
+                    things described herein at ".$attorneyFirm.", ".$attorneyAddress." within thirty (30) days of service hereof. Each
+                    respondent shall respond separately, under oath, to each item or category of item by any of the following:</p>
 
-                    <p> the objection. If objection is made on the basis of a privilege, then you must include a Privilege Log identifying each
-                        document being withheld and the basis under which privilege has been asserted.</p>
-                    <p><b>THE DOCUMENTS DEMANDED HEREIN ARE LIMITED TO THOSE IN THE POSSESSION, CUSTODY OR CONTROL OF RESPONDING PARTY, OR THAT
-                            PARTY'S ATTORNEY, INSURERS OR AGENTS</b>. Said documents are relevant to the subject matter of this action, or
-                        reasonably calculated to lead to the discovery of admissible evidence in this action.</p>
-                    <br />
+                <ol>
+                    <li>A statement that you will comply with the demand;</li>
+                    <li>A representation that you lack the ability to comply with the demand; or</li>
+                    <li>An objection to the demand setting forth, in detail, the nature and factual basis for</li>
+                </ol>
 
-                    <h5 class='text-center'><b>DEFINITIONS AND INSTRUCTIONS</b></h5>
-                    <p>Words in all CAPITALS are defined as follows: YOU or YOUR mean respondent or any of YOUR agents, representatives, and/or
-                        affiliated entities or anyone acting or whom YOU know or believe is purporting to act on YOUR behalf or who has acted or
-                        whom YOU know or believe is purporting to act on YOUR behalf. IDENTIFY, IDENTITY, or INDENTIFYING mean to provide the name,
-                        address, and telephone number. DOCUMENT means a writing, as defined in Evidence Code &sect; 250, and includes the original
-                        or a copy of handwriting, typewriting, printing, photocopies, photostating, photographing, and every other means of
-                        recording upon any tangible thing and form of communicating or representation, including letters, words, pictures, sounds,
-                        or symbols, or combinations of them. COMMUNICATION means any conveyance of information, oral, written, or via gesture, and
-                        regardless of whether the information was received or acknowledged. RELATED TO means referencing or referring to in any
-                        way, whether expressly or impliedly. POLICIES mean the way YOU run YOUR business, including but not limited to policies,
-                        procedures, handbooks, guidelines, and rules. DISCIPLINARY ACTION means an action including but not limited to, a warning
-                        or admonishment, whether oral or written, any reduction in rank, seniority, duties, schedule changes, title, benefits, pay,
-                        suspension, or termination.</p>
+                <p> the objection. If objection is made on the basis of a privilege, then you must include a Privilege Log identifying each
+                    document being withheld and the basis under which privilege has been asserted.</p>
+                <p><b>THE DOCUMENTS DEMANDED HEREIN ARE LIMITED TO THOSE IN THE POSSESSION, CUSTODY OR CONTROL OF RESPONDING PARTY, OR THAT
+                    PARTY'S ATTORNEY, INSURERS OR AGENTS</b>. Said documents are relevant to the subject matter of this action, or
+                    reasonably calculated to lead to the discovery of admissible evidence in this action.</p>
+                <br />
+                
+                <h5 class='text-center'><b>DEFINITIONS</b></h5>
+                <p>Words in all CAPITALS are defined as follows: YOU or YOUR mean respondent or any of YOUR agents, representatives, and/or
+                    affiliated entities or anyone acting or whom YOU know or believe is purporting to act on YOUR behalf or who has acted or
+                    whom YOU know or believe is purporting to act on YOUR behalf. IDENTIFY, IDENTITY, or INDENTIFYING mean to provide the name,
+                    address, and telephone number. DOCUMENT means a writing, as defined in Evidence Code &sect; 250, and includes the original
+                    or a copy of handwriting, typewriting, printing, photocopies, photostating, photographing, and every other means of
+                    recording upon any tangible thing and form of communicating or representation, including letters, words, pictures, sounds,
+                    or symbols, or combinations of them. COMMUNICATION means any conveyance of information, oral, written, or via gesture, and
+                    regardless of whether the information was received or acknowledged. RELATED TO means referencing or referring to in any
+                    way, whether expressly or impliedly. POLICIES mean the way YOU run YOUR business, including but not limited to policies,
+                    procedures, handbooks, guidelines, and rules. DISCIPLINARY ACTION means an action including but not limited to, a warning
+                    or admonishment, whether oral or written, any reduction in rank, seniority, duties, schedule changes, title, benefits, pay,
+                    suspension, or termination.</p>
 
-                    <h5 class='text-center'><b>INVALID OBJECTIONS</b></h5>
-                    <p>Calls for a legal conclusion: Although there is no authority directly on point, such requests in both Requests for Admission
-                        and Interrogatories are non-objectionable. Burke v. Superior Court (1969) 71 Cal.2d 276, 282 and Code Civ.Proc., §
-                        2030.010(b).</p>
-                    <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition,
-                        not for written discovery. Rylaarsdam et al., California Practice Guide: Civil Procedure Before Trial (The Rutter Group
-                        2019) ¶ 8:721-8:722.</p>
-                </div>
+                <h5 class='text-center'><b>INVALID OBJECTIONS</b></h5>
+                <p>Calls for a legal conclusion: Although there is no authority directly on point, such requests in both Requests for Admission
+                    and Interrogatories are non-objectionable. <i>Burke v. Superior Court</i> (1969) 71 Cal.2d 276, 282 and <i>Code Civ.Proc.</i>, 
+                    §2030.010(b).</p>
+                <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition,
+                    not for written discovery. Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group
+                    2019) ¶ 8:721-8:722.</p>
             ";
 		}
 	}
@@ -345,7 +349,7 @@ else {
     <label class=" col-sm-2 control-label">Instructions<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
         <div class="col-sm-8">
             <textarea  rows="5" name="instruction" id="instruction" placeholder="Form Instruction"  class="form-control m-b"><?= 
-                $instruction_text 
+                $instruction_text
             ?></textarea>
         </div>
     </div>

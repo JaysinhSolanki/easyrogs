@@ -203,7 +203,7 @@ if( $id ) {
 		$fields[]	= "proponding_attorney";
 		$values[]	= $proponding_attorney;
 	}
-	if( $form_id == 4 ) {
+	if( $form_id == Discovery::FORM_CA_RFAS ) {
 		$fields[]	= "in_conjunction";
 		$values[]	= $in_conjunction ?: 0;
 		$fields[]	= "conjunction_setnumber";
@@ -211,7 +211,7 @@ if( $id ) {
 		$fields[]	= "interogatory_type";
 		$values[]	= $interogatory_type ?: 0;
 	}
-	if( !in_array($form_id,array(1,2)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
+	if( !in_array($form_id,array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
 		$fields[]	= "discovery_instrunctions";
 		$values[]	= $instruction;
 	}
@@ -275,7 +275,7 @@ else {
 		$fields[]	= "due";
 		$values[]	= $due;
 	}
-	if( $form_id == 4 ) {
+	if( $form_id == Discovery::FORM_CA_RFAS ) {
 		$fields[]	= "in_conjunction";
 		$values[]	= $in_conjunction ?: 0;
 		$fields[]	= "conjunction_setnumber";
@@ -283,7 +283,7 @@ else {
 		$fields[]	= "interogatory_type";
 		$values[]	= $interogatory_type ?: 0;
 	}
-	if( !in_array($form_id,array(1,2)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
+	if( !in_array($form_id,array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
 		$fields[]	= "discovery_instrunctions";
 		$values[]	= $instruction;
 	}
@@ -309,7 +309,7 @@ else {
  
 //Upload documents here
 $doc_uid = $_POST['uid'];
-if( in_array($form_id,array(4,3)) ) {
+if( in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS)) ) {
 	$olddocuments			= $_SESSION['documents'][$doc_uid] ?? [];
 	$getdescovery_details	= $AdminDAO->getrows("discoveries","*","id='$id'");
 	$attorney_id			= $getdescovery_details[0]['attorney_id'];
@@ -350,7 +350,7 @@ if( !empty($new_questions) && @count($new_questions) ) {
 				}	
 			}
 			else {
-				if( !in_array($form_id,array(1,2)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
+				if( !in_array($form_id,array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
 					$delQuestionId	=  $new_questions[$key];
 					$AdminDAO->deleterows('questions',"id	= '$delQuestionId'");
 					$AdminDAO->deleterows('discovery_questions',"question_id	= '$delQuestionId'");

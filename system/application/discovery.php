@@ -170,11 +170,10 @@ $otherClients = $sidesModel->getOtherClients($currentSide['id'], $case_id);
 // ------------------------------------------------
 
 /****************************************
-	Load Documents Array if Form 5 case
+	Load Documents Array if FORM_RPDS case
 ****************************************/
 $_SESSION['documents']=array();
-if ($id > 0 && in_array($form_id, array(3,4))) {
-    //$AdminDAO->displayquery=1;
+if ($id > 0 && in_array($form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS))) {
     $olddocuments   = $AdminDAO->getrows('documents', "*", "discovery_id = '$id'");
     if( sizeof($olddocuments) ) {
         foreach ($olddocuments as $data) {
@@ -598,7 +597,9 @@ function loadinstructions(id,form_id) {
                 suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
             ctxUpdate({ id: `47_${type}${suffix}`, pkscreenid: '47', url: 'discoveryfront.php', } );
 
-            CKEDITOR.replace( 'instruction' );
+            if( $('textarea#instruction').length ) {
+                CKEDITOR.replace( 'instruction' );
+            }
         } );
 }
 function loadrespondings(case_id,client_id,responding_id) {

@@ -201,6 +201,15 @@ function addTooltips() { //console.log( $('.tooltipshow').length, "tooltips enab
 	} );
 }
 jQuery( $ => {
+	CKEDITOR.addCss(`h4, h5 { font-weight: 600; font-size: 14px; }
+					.text-center { text-align: center; }
+					`);
+	CKEDITOR.config.allowedContent = 'u b i strong em span div ol ul li h3 h5(*){*}[*]';
+	// CKEDITOR.on( 'instanceReady', _ => { // check the filter is working properly
+	// 	console.table( _.editor.filter.allowedContent.map(_=>_.elements) );
+	// } );
+});
+jQuery( $ => {
 	autoPlayOrPauseVideos();
 	addTooltips();
 });

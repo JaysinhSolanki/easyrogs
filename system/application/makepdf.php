@@ -274,7 +274,7 @@ $allotherattornies = $AdminDAO->getrows('clients', "other_attorney_name,other_at
 /***************************************
     Query For Forms 1,2,3,4,5 Questions
 ****************************************/
-if( in_array($form_id,array(3,4,5)) ) {
+if( in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS, Discovery::FORM_CA_RPDS)) ) {
     $orderByMainQuestions = "  ORDER BY CAST(question_number as DECIMAL(10,2)), q.question_number ";
 } 
 else{
@@ -312,7 +312,7 @@ $generalQuestions = $AdminDAO->getrows('question_admits',"*");
 ************************************************/
 
 $isconwithdiscoveryid = 0;
-if( in_array($form_id,array(1,2)) ) {
+if( in_array($form_id,array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE)) ) {
     $isConWithDiscovery = $AdminDAO->getrows(   'discoveries',"*",
                                                 "propounding		= 	'$propounding' AND
                                                 responding 			= '$responding' AND
@@ -327,7 +327,7 @@ if( in_array($form_id,array(1,2)) ) {
         }
     }
 }
-if(in_array($form_id,array(4))) {
+if(in_array($form_id,array(Discovery::FORM_CA_RFAS))) {
     if($interogatory_type == 1)
     {
         $con_discovery	= "FORM INTERROGATORIES - GENERAL";
@@ -396,7 +396,6 @@ ob_start();
 <!-- =================================================== 	-->
 
 <?php include_once('pdf-header.php');?>
-<br/>
 
 <!-- ===================================================	-->
 <!-- 			QUESTIONS PAGE 								-->
@@ -404,7 +403,7 @@ ob_start();
 <p class="break-page1"></p>
 <div class="wikitable1 tabela1">
 <?php
-        if( in_array( $form_id, array(1,2) ) ) {
+        if( in_array( $form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE) ) ) {
             foreach( $mainQuestions as $data ) {
                 $dependent_answer	= "";
                 $question_id 			= $data['question_id'];
@@ -637,7 +636,7 @@ ob_start();
                 echo "</div>";
             }
         }
-        else if( $form_id == 4 ) {
+        else if( $form_id == Discovery::FORM_CA_RFAS ) {
             foreach($mainQuestions as $data) {
                 $question_id 			= $data['question_id'];
                 $question_type_id 		= $data['question_type_id'];
@@ -692,7 +691,7 @@ ob_start();
                         </div>";
             }
         }
-        else if(in_array($form_id,array(3,5))) {
+        else if(in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RPDS))) {
             foreach( $mainQuestions as $data ) {
                 $question_id 		    = $data['question_id'];
                 $question_type_id 	    = $data['question_type_id'];
@@ -724,7 +723,7 @@ ob_start();
                     $final_response 		= "";
                 }
                 echo "	<div class='q-row'>";
-                if( $form_id == 5 ) {
+                if( $form_id == Discovery::FORM_CA_RPDS ) {
                     echo "	<h3>REQUEST NO. $question_number:</h3>";
                 }
                 else {
@@ -736,7 +735,7 @@ ob_start();
                 if( $view == Discovery::VIEW_RESPONDING ) {
                         echo "	<br/>
                                 <b><u>Response</u></b>";
-                        if( $form_id == 5 ) {
+                        if( $form_id == Discovery::FORM_CA_RPDS ) {
                             $reponse	= '';
                             if( $answer == "Select Your Response" ){
                                 //echo "";

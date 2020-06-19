@@ -13,6 +13,12 @@
 	border:0px solid #A2A9B1;
 	border-collapse: collapse;
 }
+.text-center {
+    text-align: center;
+}
+h5 {
+    font-size: 1.1em;
+}
 @page :right {
 	footer: htmlpagefooter ;
 }
@@ -98,13 +104,13 @@
         </tr>
     </table>
 <?php
-	if( in_array($form_id,array(3,4,5)) ) {
+	if( in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS, Discovery::FORM_CA_RPDS)) ) {
 ?>
     <div> <?= html_entity_decode($instructions) ?> </div>
 <?php
 	}
 	else {
-		if( $form_id == 1 ) {
+		if( $form_id == Discovery::FORM_CA_FROGS ) {
 			$checkedimg			=	'<img src="../uploads/icons/checkbox_checked_small.png" width="15px">';
 			$uncheckedimg		=	'<img src="../uploads/icons/checkbox_empty_small.png" width="15px">';
 			$incidenttext1		=	"&nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.";
@@ -166,7 +172,7 @@
             <p>Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. Cal. Judges Benchbook Civ. Proc. Discovery (September 2018) § 18.36.</p>
 <?php
 		}
-		else if( $form_id == 2 ) {
+		else if( $form_id == Discovery::FORM_CA_FROGSE ) {
 ?>
 		<div style="text-align:left">
             <h4 class="text-center">Sec. 1. Instructions to All Parties</h4>

@@ -114,7 +114,7 @@ $form_name          = $form_name." [Set ".$set_number."]";
 /***************************************
 Query For Forms 1,2,3,4,5 Questions
 ****************************************/
-if (in_array($form_id, array(3,4,5))) {
+if (in_array($form_id, array(Discovery::FORM_CA_SROGS,Discovery::FORM_CA_RFAS,Discovery::FORM_CA_RPDS))) {
     $orderByMainQuestions   = "  ORDER BY CAST(question_number as DECIMAL(10,2)), q.question_number ";
 } else {
     $orderByMainQuestions   = "  ORDER BY display_order, q.id ";
@@ -194,7 +194,7 @@ $generalQuestions = $AdminDAO->getrows('question_admits', "*");
 /****************************************
 	Load Documents Array if Form 3,4,5 case
 ****************************************/
-if ($form_id == 5) {
+if ($form_id == Discovery::FORM_CA_RPDS) {
     $where = " AND fkresponse_id = '$response_id' ";
 }
 $olddocuments = $AdminDAO->getrows('documents', "*", "discovery_id = '$discovery_id' $where");
@@ -217,7 +217,7 @@ if (sizeof($olddocuments) > 0) {
 //$isConWithDiscovery = $AdminDAO->getrows('discoveries',"id","conjunction_with = '$discovery_id'");
 //$AdminDAO->displayquery=1;
 $isconwithdiscoveryid = 0;
-if (in_array($form_id, array(1,2))) {
+if (in_array($form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE))) {
     $isConWithDiscovery = $AdminDAO->getrows(
                                         'discoveries',
                                         "*",
@@ -343,7 +343,7 @@ body.modal-open
                 <div class="col-md-12">
                     <ul class="list-group">
                     <?php
-                    if (in_array($form_id, array(1,2))) {
+                    if (in_array($form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE))) {
                         foreach ($mainQuestions as $data) {
                             $dependent_answer       = "";
                             $question_id            = $data['question_id'];
@@ -639,7 +639,7 @@ body.modal-open
 
 <?php
                         }
-                    } elseif ($form_id == 4) {
+                    } elseif ($form_id == Discovery::FORM_CA_RFAS) {
                         foreach ($mainQuestions as $data) {
 ?>
                             <li class="list-group-item">
@@ -754,7 +754,7 @@ if ($question_admit_id == 1) {
                             </li>
 <?php
                         }
-                    } elseif (in_array($form_id, array(3,5))) {
+                    } elseif (in_array($form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RPDS))) {
                         foreach ($mainQuestions as $data) {
 ?>
                             <li class="list-group-item">
@@ -799,8 +799,8 @@ if ($question_admit_id == 1) {
 ?>
                                     </p>
 <?php
-                                    if ($view != 1) {
-                                        if ($form_id == 5) {
+                                    if( !$view ) {
+                                        if($form_id == Discovery::FORM_CA_RPDS ) {
 ?>
                                             <select class="form-control" id="answer<?php echo $discovery_question_id; ?>"  name="answer[<?php echo $discovery_question_id; ?>]" onChange="checkFunctionForm5('<?php echo $discovery_question_id; ?>',this.value)" <?php echo $css ?>>
                                             <option <?php if ($answer == "Select Your Response") {
@@ -820,12 +820,12 @@ if ($question_admit_id == 1) {
 } ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
                                             </select>
 <?php
-                                        } elseif ($form_id == 3) {
+                                        } elseif( $form_id == Discovery::FORM_CA_SROGS ) {
 ?>
                                             <textarea id="answer<?php echo $discovery_question_id ?>" class="form-control " name="answer[<?php echo $discovery_question_id; ?>]" placeholder="Your Answer" required <?php echo $css ?>><?php echo html_entity_decode($answer) ?></textarea>
 <?php
                                         }
-                                        if ($form_id == 5) {
+                                        if( $form_id == Discovery::FORM_CA_RPDS ) {
 ?>
                                             <ul class="list-group" id="note<?php echo $discovery_question_id;?>" <?php if ($answer != "I have responsive documents") {
 ?>style="display:none" <?php
@@ -867,7 +867,7 @@ if ($question_admit_id == 1) {
                     </ul>
                 </div>
 <?php
-                if( in_array($form_id, array(3,4)) && sizeof($olddocuments) ) {
+                if( in_array($form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS)) && sizeof($olddocuments) ) {
 ?>
                 <div class="col-md-12">
                 <hr>
@@ -1242,7 +1242,7 @@ function writeDiscoveryPDF(uid) {
 
 jQuery( $ => {
 <?php
-    if( in_array($form_id, array(3,4)) ) {
+    if( in_array($form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS)) ) {
 ?>
         loaduploaddiscoverydocs();
 <?php

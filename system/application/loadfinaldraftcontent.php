@@ -4,7 +4,7 @@ require_once("adminsecurity.php");
 
 $discovery_uid		=	$_POST['discovery_id'];
 $response_id		=	$_POST['response_id'];
-    
+
 $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook a,forms f',
                                                 'c.case_title 	as case_title,
                                                 c.plaintiff,
@@ -14,10 +14,10 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
                                                 c.judge_name 	as judge_name,
                                                 c.county_name 	as county_name,
                                                 c.court_address as court_address,
-                                                c.department 	as department, 
-                                                c.uid 	as case_uid, 
+                                                c.department 	as department,
+                                                c.uid 	as case_uid,
                                                 d.case_id 		as case_id,
-                                                d.id 			as discovery_id, 
+                                                d.id 			as discovery_id,
                                                 d.uid,
                                                 d.send_date,
                                                 d.propounding,
@@ -44,28 +44,28 @@ $discoveryDetails	=	$AdminDAO->getrows('discoveries d,cases c,system_addressbook
                                                 a.email,
                                                 a.phone,
                                                 a.attorney_info,
-                                                (CASE WHEN (form_id = 1 OR form_id = 2) 
+                                                (CASE WHEN (form_id = 1 OR form_id = 2)
                                                  THEN
-                                                      f.form_instructions 
+                                                      f.form_instructions
                                                  ELSE
-                                                      d.discovery_instrunctions 
+                                                      d.discovery_instrunctions
                                                  END)
-                                                 as instructions 
+                                                 as instructions
                                                 ',
-                                                "d.uid 			= :id AND 
-                                                d.case_id 		= c.id AND  
+                                                "d.uid 			= :id AND
+                                                d.case_id 		= c.id AND
                                                 d.form_id		= f.id AND
                                                 d.attorney_id 	= a.pkaddressbookid",
                                                 array(":id"=>$discovery_uid)
                                             );
-    
+
 //$AdminDAO->displayquery=0;
 //exit;
 
 $discovery_data		=	$discoveryDetails[0];
 Side::legacyTranslateCaseData(
-    $discovery_data['case_id'], 
-    $discovery_data, 
+    $discovery_data['case_id'],
+    $discovery_data,
     $discovery_data['attorney_id'] // !! will use this attorney's side data
 );
 
@@ -103,10 +103,10 @@ $proponding_type		=	$propondingdetails[0]['client_type'];
 $proponding_role		=	$propondingdetails[0]['client_role'];
 
 /***************************************
-Query For Forms 1,2,3,4,5 Questions 
+Query For Forms 1,2,3,4,5 Questions
 ****************************************/
-if( in_array($form_id,array(3,4,5)) ) {
-    $orderByMainQuestions	=	"  ORDER BY CAST(question_number as DECIMAL(10,2)), q.question_number "; 
+if( in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS, Discovery::FORM_CA_RPDS)) ) {
+    $orderByMainQuestions	=	"  ORDER BY CAST(question_number as DECIMAL(10,2)), q.question_number ";
 }
 else {
     $orderByMainQuestions	=	"  ORDER BY display_order, q.id ";
@@ -120,17 +120,17 @@ $mainQuestions	=	$AdminDAO->getrows('discovery_questions dq,questions q',
                                         q.sub_part 			as 	sub_part,
                                         q.is_pre_defined 	as 	is_pre_defined,
                                         is_depended_parent,
-                                        depends_on_question, 
+                                        depends_on_question,
                                         have_main_question',
-                
+
                                         "
                                         q.id 				= 	dq.question_id  AND
                                         dq.discovery_id = '$discovery_id' AND
                                         (
-                                            q.sub_part 		= 	'' OR 
-                                            q.sub_part IS NULL OR 
+                                            q.sub_part 		= 	'' OR
+                                            q.sub_part IS NULL OR
                                             have_main_question	IN (0,2)
-                                            
+
                                         )
                                         GROUP BY q.id
                                         $orderByMainQuestions
@@ -146,7 +146,7 @@ $generalQuestions	=	$AdminDAO->getrows('question_admits',"*");
     Discovery Conjuction with some RFA or not
 ************************************************/
 $isconwithdiscoveryid	=	0;
-if(in_array($form_id,array(1,2))) {
+if(in_array($form_id,array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE))) {
     $isConWithDiscovery		=	$AdminDAO->getrows('discoveries',"*",
                                                         "propounding			= 	'$propounding' AND
                                                         responding 				=	'$responding' AND
@@ -154,7 +154,7 @@ if(in_array($form_id,array(1,2))) {
                                                         interogatory_type		=	'$form_id' AND
                                                         conjunction_setnumber 	= 	'$set_number'");
     if( sizeof($isConWithDiscovery) ) {
-        $isconwithdiscoveryid	=	$isConWithDiscovery[0]['id'];	
+        $isconwithdiscoveryid	=	$isConWithDiscovery[0]['id'];
     }
 }
 $respond = 1;
@@ -187,11 +187,11 @@ $instructions = "This responding party has not completed its investigation or di
               <textarea class="form-control" rows="10" id="instruction" name="instruction"><?=
                   $instructions
               ?></textarea>
-            </div> 
+            </div>
             <div class="">
                 <ul class="list-group">
 <?php
-                        if( in_array($form_id,array(1,2)) ) {
+                        if( in_array($form_id,array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE)) ) {
                             foreach($mainQuestions as $data) {
                                 $question_id 			=	$data['question_id'];
                                 $question_type_id 		=	$data['question_type_id'];
@@ -208,7 +208,7 @@ $instructions = "This responding party has not completed its investigation or di
                                 $question_no_makeid		=	str_replace('.','_',$question_number);
                                 if( $response_id ) {
                                     $getAnswers				=	$AdminDAO->getrows("response_questions","*",
-                                                                        "fkresponse_id				=	:fkresponse_id AND  	
+                                                                        "fkresponse_id				=	:fkresponse_id AND
                                                                         fkdiscovery_question_id 	= 	:discovery_question_id",
                                                                         array(	"discovery_question_id"	=>	$discovery_question_id,
                                                                                 "fkresponse_id"			=>	$response_id));
@@ -227,7 +227,7 @@ $instructions = "This responding party has not completed its investigation or di
                                     if($question_type_id != 1)
                                     {
                                         $subQuestions	=	$AdminDAO->getrows('discovery_questions dq,questions q',
-        
+
                                                                             'dq.id as discovery_question_id,
                                                                             q.id as question_id,
                                                                             q.question_type_id as question_type_id,
@@ -237,16 +237,16 @@ $instructions = "This responding party has not completed its investigation or di
                                                                             q.sub_part as sub_part,
                                                                             q.is_pre_defined as is_pre_defined,
                                                                             have_main_question',
-                                                                            
-                                                                "q.question_number 	= 	:question_number AND  
+
+                                                                "q.question_number 	= 	:question_number AND
                                                                 q.id 				= 	 dq.question_id  AND
-                                                                dq.discovery_id 	= 	:discovery_id AND 
+                                                                dq.discovery_id 	= 	:discovery_id AND
                                                                 q.sub_part 			!=   '' GROUP BY question_id",
                                                                 array(":question_number"=>$question_number,":discovery_id"=>$discovery_id));
-                                    
+
                                     }
 ?>
-                                    <div class="form-group"> 
+                                    <div class="form-group">
 <?php
                                         if(($question_number == "17.1" || $question_number == "217.1") && $isconwithdiscoveryid != 0)
                                         {
@@ -265,14 +265,14 @@ $instructions = "This responding party has not completed its investigation or di
                                                                     q.is_pre_defined 	as 	is_pre_defined,
                                                                     q.question_title 	as 	question_title,
                                                                     is_depended_parent,
-                                                                    depends_on_question, 
+                                                                    depends_on_question,
                                                                     have_main_question',
-                                            
+
                                                                     "
                                                                     q.id 				= 	dq.question_id  	AND
                                                                     rq.fkdiscovery_question_id	=	dq.id		AND
                                                                     rq.answer			=	'Deny' 				AND
-                                                                    dq.discovery_id = '$isconwithdiscoveryid' 	
+                                                                    dq.discovery_id = '$isconwithdiscoveryid'
                                                                     ORDER BY q.question_number
                                                                     "
                                                                   );
@@ -291,14 +291,14 @@ $instructions = "This responding party has not completed its investigation or di
                                                             {
                                                                 $con_discovery_question_id	=	$con_question['discovery_question_id'];
                                                                 $con_response_id			=	$con_question['fkresponse_id'];
-                                                            
+
                                                                    $query		=	"SELECT * FROM question_admits qa
-                                                                                    LEFT JOIN question_admit_results qar 
+                                                                                    LEFT JOIN question_admit_results qar
                                                                                     ON  qar.discovery_question_id 	= 	'$con_discovery_question_id'  	AND
                                                                                     qar.question_admit_id			=	qa.id AND qar.fkresponse_id			=	'$con_response_id'";
-                                                            
+
                                                                 $con_SubQuestions	=	$AdminDAO->executeQuery($query);
-                                                            
+
                                                                 foreach($con_SubQuestions as $con_SubQuestion)
                                                                 {
                                                                     $finaldraftResponse	.=	$con_SubQuestion['question_no'].". ".$con_SubQuestion['sub_answer']."\n";
@@ -306,21 +306,21 @@ $instructions = "This responding party has not completed its investigation or di
                                                                 $finaldraftResponse	.=	"\n";
                                                             }
 ?>
-                                                            <textarea rows="5" id="final_response<?php echo $discovery_question_id ?>" class="form-control" name="final_response[<?php echo $discovery_question_id; ?>]" placeholder="Final Response" required><?= 
+                                                            <textarea rows="5" id="final_response<?php echo $discovery_question_id ?>" class="form-control" name="final_response[<?php echo $discovery_question_id; ?>]" placeholder="Final Response" required><?=
                                                                 $finaldraftResponse
                                                              ?></textarea>
                                                         </div>
                                                     </li>
                                                 </ul>
-                                                <?php	
+                                                <?php
                                             }
                                             else
                                             {
                                             ?>
                                             <ul class="list-group">
                                                 <li class="list-group-item">
-                                                    <div class="form-group"> 
-                                                        <p> 
+                                                    <div class="form-group">
+                                                        <p>
                                                             No Deny answer in RFA conjunction with this discovery.
                                                         </p>
                                                     </div>
@@ -332,7 +332,7 @@ $instructions = "This responding party has not completed its investigation or di
                                         else
                                         {
                                             ?>
-                                            <p> 
+                                            <p>
                                                 <b>Q No. <?php echo $question_number;?><?php echo $have_main_question==0?"&nbsp;($sub_part)":""?>: </b>
                                                 <?php echo $question_title; ?>
                                             </p>
@@ -340,8 +340,8 @@ $instructions = "This responding party has not completed its investigation or di
                                             if(in_array($question_type_id,array(1,2)))
                                             {
                                             ?>
-                                            <textarea rows="5" id="final_response<?php echo $discovery_question_id ?>" class="form-control" name="final_response[<?php echo $discovery_question_id; ?>]" placeholder="Final Response" required><?= 
-                                                finalResponseGenerate( $objection, $answer ) 
+                                            <textarea rows="5" id="final_response<?php echo $discovery_question_id ?>" class="form-control" name="final_response[<?php echo $discovery_question_id; ?>]" placeholder="Final Response" required><?=
+                                                finalResponseGenerate( $objection, $answer )
                                             ?></textarea>
                                             <?php
                                             }
@@ -364,7 +364,7 @@ $instructions = "This responding party has not completed its investigation or di
                                                         if($response_id > 0)
                                                         {
                                                             $getAnswers				=	$AdminDAO->getrows("response_questions","*",
-                                                                                            "fkresponse_id				=	:fkresponse_id AND  	
+                                                                                            "fkresponse_id				=	:fkresponse_id AND
                                                                                             fkdiscovery_question_id 	= 	:discovery_question_id",
                                                                                             array(	"discovery_question_id"	=>	$discovery_question_id,
                                                                                                     "fkresponse_id"			=>	$response_id));
@@ -381,33 +381,31 @@ $instructions = "This responding party has not completed its investigation or di
                                                     ?>
                                                      <li class="list-group-item">
                                                         <div class="form-group">
-                                                            <p> 
+                                                            <p>
                                                                 <b><?php echo $sub_part.")" ?> </b>
                                                                 <?php echo $question_title; ?>
                                                             </p>
-                                                            <textarea rows="5" id="final_response<?php echo $discovery_question_id ?>" class="form-control" name="final_response[<?php echo $discovery_question_id; ?>]" placeholder="Final Response" required><?= 
-                                                                finalResponseGenerate( $objection, $answer1 ) 
+                                                            <textarea rows="5" id="final_response<?php echo $discovery_question_id ?>" class="form-control" name="final_response[<?php echo $discovery_question_id; ?>]" placeholder="Final Response" required><?=
+                                                                finalResponseGenerate( $objection, $answer1 )
                                                             ?></textarea>
-                                                        </div>  
-                                                    </li>   
+                                                        </div>
+                                                    </li>
                                                     <?php
                                                     }
                                                     ?>
-                                              </ul> 
+                                              </ul>
                                                 <?php
                                             }
-                                        } 
+                                        }
                                         ?>
                                     </div>
                                 </li>
-                                <?php	
+                                <?php
                             }
                         }
-                        else if($form_id == 4)
-                        {
-                            foreach($mainQuestions as $data)
-                            {
-                                ?>
+                        else if( $form_id == Discovery::FORM_CA_RFAS ) {
+                            foreach( $mainQuestions as $data ) {
+?>
                                 <li class="list-group-item">
                                     <?php
                                     $question_id 			=	$data['question_id'];
@@ -417,10 +415,9 @@ $instructions = "This responding party has not completed its investigation or di
                                     $sub_part 				=	$data['sub_part'];
                                     $is_pre_defined 		=	$data['is_pre_defined'];
                                     $discovery_question_id	=	$data['discovery_question_id'];
-                                    if($response_id > 0)
-                                    {
+                                    if( $response_id ) {
                                         $getAnswers				=	$AdminDAO->getrows("response_questions","*",
-                                                                        "fkresponse_id				=	:fkresponse_id AND  	
+                                                                        "fkresponse_id				=	:fkresponse_id AND
                                                                         fkdiscovery_question_id 	= 	:discovery_question_id",
                                                                         array(	"discovery_question_id"	=>	$discovery_question_id,
                                                                                 "fkresponse_id"			=>	$response_id));
@@ -429,37 +426,34 @@ $instructions = "This responding party has not completed its investigation or di
                                         $answer_detail 			=	$getAnswers[0]['answer_detail'];
                                         $objection 				=	$getAnswers[0]['objection'];
                                     }
-                                    else
-                                    {
+                                    else {
                                         $answer 				=	"";
                                         $answer_time 			=	"";
                                         $answer_detail 			=	"";
                                         $objection 				=	"";
                                     }
-                                    ?>
+?>
                                     <div class="form-group">
-                                        <p> 
+                                        <p>
                                             <b>Q No. <?php echo $question_number ?>: </b>
                                             <?php echo $question_title; ?>
                                         </p>
-                                        <textarea rows="5" id="final_response<?= $discovery_question_id ?>" class="form-control" name="final_response[<?php echo $discovery_question_id; ?>]" placeholder="Final Response" required><?= 
-                                            finalResponseGenerate( $objection, $answer ) 
+                                        <textarea rows="5" id="final_response<?= $discovery_question_id ?>" class="form-control" name="final_response[<?php echo $discovery_question_id; ?>]" placeholder="Final Response" required><?=
+                                            finalResponseGenerate( $objection, $answer )
                                         ?></textarea>
-                                        <!-- 
-                                        We commented out this code because in RFA we do not show sub parts if deny because we show sub parts of this in SROGS or FROGSE
+                                        <!--
+                                        [!] We commented out this code because in RFA we do not show sub parts if deny because we show sub parts of this in SROGS or FROGSE
                                         -->
                                     </div>
-                                </li> 
-                                <?php	
+                                </li>
+                                <?php
                             }
                         }
-                        else if(in_array($form_id,array(3,5)))
-                        {
-                            foreach($mainQuestions as $data)
-                            {
-                                ?>
+                        else if( in_array($form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RPDS)) ) {
+                            foreach( $mainQuestions as $data ) {
+?>
                                 <li class="list-group-item">
-                                    <?php
+<?php
                                     $question_id 		=	$data['question_id'];
                                     $question_type_id 	=	$data['question_type_id'];
                                     $question_title 	=	$data['question_title'];
@@ -467,65 +461,56 @@ $instructions = "This responding party has not completed its investigation or di
                                     $sub_part 			=	$data['sub_part'];
                                     $is_pre_defined 	=	$data['is_pre_defined'];
                                     $discovery_question_id	=	$data['discovery_question_id'];
-                                    if($response_id > 0)
-                                    {
+                                    if( $response_id ) {
                                         $getAnswers				=	$AdminDAO->getrows("response_questions","*",
-                                                                            "fkresponse_id				=	:fkresponse_id AND  	
+                                                                            "fkresponse_id				=	:fkresponse_id AND
                                                                             fkdiscovery_question_id 	= 	:discovery_question_id",
                                                                             array(	"discovery_question_id"	=>	$discovery_question_id,
                                                                                     "fkresponse_id"			=>	$response_id));
-                                        $answer 				=	$getAnswers[0]['answer'];
+                                        $answer 				=	trim($getAnswers[0]['answer']);
                                         $answer_time 			=	$getAnswers[0]['answer_time'];
                                         $answer_detail 			=	$getAnswers[0]['answer_detail'];
                                         $objection 				=	$getAnswers[0]['objection'];
                                     }
-                                    else
-                                    {
+                                    else {
                                         $answer 				=	"";
                                         $answer_time 			=	"";
                                         $answer_detail 			=	"";
                                         $objection 				=	"";
                                     }
-                                    if($form_id == 5)
-                                    { 	
+                                    if( $form_id == Discovery::FORM_CA_RPDS ) {
                                         $reponse	=	'';
-                                        if($answer == "Select Your Response")
-                                        {
+                                        if( $answer == "Select Your Response" ) {
                                             echo "";
                                         }
-                                        if(trim($answer) == "I have responsive documents") 
-                                        {
+                                        if( $answer == "I have responsive documents" )  {
                                             $answer	= "Responsive documents have been provided.";
                                         }
                                         $str1	=	"A diligent search and a reasonable inquiry have been made in an effort to comply with this demand, however, responding party is unable to comply because they do not have any responsive documents in their possession, custody, or control.";
                                         $str2	=	" However, respondent believes that ".$answer_detail." may have responsive documents.";
-                                        if(trim($answer) == "Responsive documents have never existed") 
-                                        {
+                                        if( $answer == "Responsive documents have never existed") {
                                             $answer	=	 $str1." Respondent does not believe that such documents have ever existed. ".$str2;
                                         }
-                                        if(trim($answer) == "Responsive documents were destroyed") 
-                                        {
-                                            $answer	=	 $str1." Respondent does not believe that such documents have ever existed. ".$str2; 
+                                        if( $answer == "Responsive documents were destroyed") {
+                                            $answer	=	 $str1." Respondent does not believe that such documents have ever existed. ".$str2;
                                         }
-                                        if(trim($answer) == "Responsive documents were lost, misplaced, stolen, or I lack access to them") 
-                                        {
+                                        if( $answer == "Responsive documents were lost, misplaced, stolen, or I lack access to them") {
                                             $answer	=	 $str1." Respondent believes that such documents were lost, misplace, stolen, or respondent lacks access to them. ".$str2;
                                         }
                                     }
                                     ?>
                                     <div class="form-group">
-                                        <p> 
+                                        <p>
                                             <b>Q No. <?php echo $question_number ?>: </b>
                                             <?php echo $question_title; ?>
-                                            
                                         </p>
-                                        <textarea rows="5" id="final_response<?php echo $discovery_question_id ?>" class="form-control" name="final_response[<?php echo $discovery_question_id; ?>]" placeholder="Final Response" required><?= 
-                                            finalResponseGenerate( $objection,$answer ) 
+                                        <textarea rows="5" id="final_response<?php echo $discovery_question_id ?>" class="form-control" name="final_response[<?php echo $discovery_question_id; ?>]" placeholder="Final Response" required><?=
+                                            finalResponseGenerate( $objection,$answer )
                                         ?></textarea>
                                     </div>
                                 </li>
-                                <?php	
-                            }												
+                                <?php
+                            }
                         }
                         ?>
                 </ul>

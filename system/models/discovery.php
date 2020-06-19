@@ -10,11 +10,17 @@
       ]);
     }
 
-    const FORM_FROGS  = 1;
-    const FORM_FROGSE = 2;
-    const FORM_SROGS  = 3;
-    const FORM_RFAS   = 4;
-    const FORM_RPDS   = 5;
+    const FORM_FED_FROGS  = 11;
+    const FORM_FED_FROGSE = 12;
+    const FORM_FED_SROGS  = 13;
+    const FORM_FED_RFAS   = 14;
+    const FORM_FED_RPDS   = 15;
+
+    const FORM_CA_FROGS   = 01;
+    const FORM_CA_FROGSE  = 02;
+    const FORM_CA_SROGS   = 03;
+    const FORM_CA_RFAS    = 04;
+    const FORM_CA_RPDS    = 05;
 
     const TYPE_EXTERNAL = 1;
     const TYPE_INTERNAL = 2;

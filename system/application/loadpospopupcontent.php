@@ -3,10 +3,10 @@
 	require_once("adminsecurity.php");
 
 $discovery_id	= $_POST['id']; 
-$respond		= $_POST['respond']; 
+$respond		  = $_POST['respond']; 
 $response_id	= $_POST['response_id'];  
 if( $discovery_id ) {
-	$discoveryDetails = $AdminDAO->getrows(	'discoveries d,cases c,system_addressbook a,forms f',
+	$discoveryDetails = $AdminDAO->getrows(	'discoveries d, cases c, system_addressbook a, forms f',
 												'c.case_title 	as case_title,
 												c.plaintiff,
 												c.defendant,
@@ -44,7 +44,7 @@ if( $discovery_id ) {
 												a.email,
 												a.phone,
 												a.attorney_info,
-												(CASE WHEN (form_id = 1 OR form_id = 2) 
+												(CASE WHEN (form_id = '.Discovery::FORM_CA_FROGS.' OR form_id = '.Discovery::FORM_CA_FROGSE.') 
 												 THEN
 													  f.form_instructions 
 												 ELSE
@@ -62,21 +62,22 @@ if( $discovery_id ) {
 
   Side::legacyTranslateCaseData($discovery_data['case_id'], $discovery_data);
   
-	$uid				= $discovery_data['uid'];
-	$case_uid			= $discovery_data['case_uid'];
+	$uid							= $discovery_data['uid'];
+	$case_uid					= $discovery_data['case_uid'];
 	$discovery_name		= $discovery_data['discovery_name'];
 	$discovery_type		= $discovery_data['type'];
-	$case_id			= $discovery_data['case_id'];
-	$case_title			= $discovery_data['case_title'];
-	$case_number		= $discovery_data['case_number'];
-	$county_name		= $discovery_data['county_name'];
-	$is_send			= $discovery_data['is_send'];
-	$set_number			= $discovery_data['set_number'];
-	$form_name			= $discovery_data['form_name'];
-	$propounding		= $discovery_data['propounding'];
-	$responding			= $discovery_data['responding'];
-	$discovery_id		= $discovery_data['discovery_id'];
-	$attr_id			= $discovery_data['attr_id'];
+	$case_id			    = $discovery_data['case_id'];
+	$case_title			  = $discovery_data['case_title'];
+	$case_number		  = $discovery_data['case_number'];
+	$county_name		  = $discovery_data['county_name'];
+	$is_send			    = $discovery_data['is_send'];
+	$set_number			  = $discovery_data['set_number'];
+	$form_name			  = $discovery_data['form_name'];
+	$form_id 			    = $discovery_data['form_id'];
+	$propounding		  = $discovery_data['propounding'];
+	$responding			  = $discovery_data['responding'];
+	$discovery_id		  = $discovery_data['discovery_id'];
+	$attr_id			    = $discovery_data['attr_id'];
 	
 }
 
