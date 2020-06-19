@@ -1,0 +1,20 @@
+RewriteEngine on
+RewriteRule (^\.|/\.) - [F]
+
+<Files 403.shtml>
+order allow,deny
+allow from all
+</Files>
+
+deny from 185.234.216.198
+deny from 178.128.251.229
+deny from 52.183.70.32
+deny from 5.62.41.173
+deny from 52.186.137.163
+deny from 13.68.188.74
+deny from 40.71.251.111
+deny from 52.188.109.7
+deny from 45.82.223.104
+deny from 104.214.104.61
+deny from 51.38.189.197
+deny from 185.234.216.38
