@@ -1,263 +1,411 @@
 <?php
 @session_start();
-include_once(__DIR__ . "/../bootstrap.php");
-include_once(__DIR__ . "/../library/classes/functions.php");
-$discovery_id	=	$_GET['id'];
-$type			=	$_GET['type'];
-$form_id		=	$_GET['form_id'];
-$viewonly		=	$_GET['viewonly'];
+include_once( __DIR__ . "/../bootstrap.php" );
+include_once( __DIR__ . "/../library/classes/functions.php" );
+$type         = $_GET['type'];
+$discovery_id = $_GET['id'];
+$form_id      = $_GET['form_id'];
+$case_id      = $_GET['case_id'];
+$viewonly     = $_GET['viewonly'];
 if( !@$viewonly ) {
-	$viewonly = 0;
+    $viewonly = 0;
 }
 
 if( $discovery_id ) {
-	$discoveries	    = $AdminDAO->getrows('discoveries',"*","id	= :id ",array('id'=>$discovery_id));
-	$discovery		    = $discoveries[0];
-	$incidentoption	    = $discovery['incidentoption'];
-	$incidenttext	    = $discovery['incidenttext'];
-	$instruction_text   = html_entity_decode($discovery['discovery_instrunctions']);
+    $discoveries      = $AdminDAO->getrows( 'discoveries', "*",
+                                            "id	= :id ",
+                                            ['id' => $discovery_id] );
+    $discovery        = $discoveries[0];
+    $incidentoption   = $discovery['incidentoption'];
+    $incidenttext     = $discovery['incidenttext'];
+    $instruction_text = html_entity_decode( $discovery['discovery_instrunctions'] );
 }
 
 //Attorney Details
-$attorneyDetails	= $AdminDAO->getrows("system_addressbook","*","pkaddressbookid = :pkaddressbookid", array(":pkaddressbookid"=>$_SESSION['addressbookid']));
-$attorneyDetail		= $attorneyDetails[0];
-$attorneyEmail		= $attorneyDetail['email'];
-$attorneyPhone		= $attorneyDetail['phone'];
-$attorneyFirm		= $attorneyDetail['companyname'];
-$attorneyName		= $attorneyDetail['firstname']." ".$attorneyDetail['lastname'];
-$attorneyAddress	= makeaddress($_SESSION['addressbookid']);//$attorneyDetail['address'].", ".$attorneyDetail['cityname'].", ".$attorneyDetail['street'];
+$attorneyDetails = $AdminDAO->getrows( "system_addressbook", "*",
+                                       "pkaddressbookid = :pkaddressbookid",
+                                       [":pkaddressbookid" => $_SESSION['addressbookid']] );
+$attorneyDetail  = $attorneyDetails[0];
+$attorneyEmail   = $attorneyDetail['email'];
+$attorneyPhone   = $attorneyDetail['phone'];
+$attorneyName    = $attorneyDetail['firstname']." ".$attorneyDetail['lastname'];
 
+$sides                  = new Side();
+$currentSide            = $sides->getByUserAndCase( $currentUser->id, $case_id );
+$primaryAttorney        = $sides->getPrimaryAttorney( $currentSide['id'] );
+$primaryAttorneyFirm    = $primaryAttorney['companyname'];
+$primaryAttorneyAddress = makeaddress( $primaryAttorney['pkaddressbookid'] );
 
-if( in_array($form_id,array(Discovery::FORM_CA_FROGS,Discovery::FORM_CA_FROGSE)) ) { // FROGS & FROGSE in EXTERNAL case
+if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) ) { // FROGS & FROGSE in EXTERNAL case
 ?>
     <div class="">
-    <div class="<?= !$viewonly ? "col-sm-offset-2 col-sm-8" : "col-md-12" ?>">
-        <!-- Instructions Section load -->
-        <div class="panel panel-default">
-            <div class="panel-heading instruction-collapse">
-                <div class="row">
-                	<div class="col-md-4"></div>
-                    <div class="col-md-4 text-center">
-                    	<h3> Instructions </h3>
-                    </div>
+        <div class="<?= !$viewonly ? "col-sm-offset-2 col-sm-8" : "col-md-12" ?>">
+            <!-- Instructions Section load -->
+            <div class="panel panel-default">
+                <div class="panel-heading instruction-collapse">
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4 text-center">
+                            <h3> Instructions </h3>
+                        </div>
 
-                    <div class="col-md-4">
-                        <a style="float:right" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" class="btn btn-primary"></a>
-                    </div>
+                        <div class="col-md-4">
+                            <a style="float:right" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                               aria-expanded="true" class="btn btn-primary"></a>
+                        </div>
 
+                    </div>
                 </div>
-            </div>
-            <div id="collapseOne" class="panel-collapse collapse in">
-                <div class="panel-body">
+                <div id="collapseOne" class="panel-collapse collapse in">
+                    <div class="panel-body">
 <?php
-                    if( $form_id == Discovery::FORM_CA_FROGS ) {
-                        if( $viewonly ) {
-                            $checkedimg			=	'<img src="../uploads/icons/checkbox_checked_small.png" width="15px">';
-                            $uncheckedimg		=	'<img src="../uploads/icons/checkbox_empty_small.png" width="15px">';
-                            $incidenttext1		=	"&nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.";
+                        if( $form_id == Discovery::FORM_CA_FROGS ) {
+                            if( $viewonly ) {
+                                $checkedimg    = '<img src="../uploads/icons/checkbox_checked_small.png" width="15px">';
+                                $uncheckedimg  = '<img src="../uploads/icons/checkbox_empty_small.png" width="15px">';
+                                $incidenttext1 = "&nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.";
 
 
-                            if( $incidentoption == 1 ) {
-                                $incidenttext2		=	"&nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled 'Sec. 4(a)(2)'):";
-                                $option1			=	$checkedimg.$incidenttext1;
-                                $option2			=	$uncheckedimg.$incidenttext2;
+                                if( $incidentoption == 1 ) {
+                                    $incidenttext2 = "&nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled 'Sec. 4(a)(2)'):";
+                                    $option1       = $checkedimg . $incidenttext1;
+                                    $option2       = $uncheckedimg . $incidenttext2;
+                                } elseif( $incidentoption == 2 ) {
+                                    $incidenttext2 = "&nbsp;&nbsp;(2) $incidenttext";
+                                    $option1       = $uncheckedimg . $incidenttext1;
+                                    $option2       = $checkedimg . $incidenttext2;
+                                }
                             }
-                            else if( $incidentoption == 2 ) {
-                                $incidenttext2		=	"&nbsp;&nbsp;(2) $incidenttext";
-                                $option1			=	$uncheckedimg.$incidenttext1;
-                                $option2			=	$checkedimg.$incidenttext2;
-                            }
+?>
+                            <div id="instruction_data">
+                                <table class="table" style="border:none !important">
+                                    <tr>
+                                        <td colspan="2" style="border:none">
+                                            <div style="text-align:left">
+
+                                                <h5 class="text-center">Sec. 1. Instructions to All Parties</h5>
+                                                <p>(a) Interrogatories are written questions prepared by a party to an action
+                                                    that are sent to any other party in the action to be answered under oath.
+                                                    The interrogatories below are form interrogatories approved for use in
+                                                    civil cases.</p>
+                                                <p>(b) For time limitations, requirements for service on other parties, and
+                                                    other details, see Code of Civil Procedure section 2030 and the cases
+                                                    construing it.</p>
+                                                <p>(c) These form interrogatories do not change existing law relating to
+                                                    interrogatories nor do they affect an answering party's right to assert any
+                                                    privilege or make any objection.</p>
+
+                                                <h5 class="text-center">Sec. 2. Instructions to the Asking Party</h5>
+                                                <p>(a) These interrogatories are designed for optional use by parties in
+                                                    unlimited civil cases where the amount demanded exceeds $25,000. Separate
+                                                    interrogatories, Form Interrogatories --Economic Litigation (form FI-129),
+                                                    which have no subparts, are designed for use in limited civil cases where
+                                                    the amount demanded is $25,000 or less; however, those interrogatories may
+                                                    also be used in unlimited civil cases.</p>
+                                                <p>(b) Check the box next to each interrogatory that you want the answering
+                                                    party to answer. Use care in choosing those interrogatories that are
+                                                    applicable to the case.</p>
+                                                <p>(c) You may insert your own definition of INCIDENT in Section 4, but only
+                                                    where the action arises from a course of conduct or a series of events
+                                                    occurring over a period of time.</p>
+                                                <p>(d) The interrogatories in section 16.0, Defendant's Contentions -- Personal
+                                                    Injury, should not be used until the defendant has had a reasonable
+                                                    opportunity to conduct an investigation or discovery of plaintiff's
+                                                    injuries and damages.</p>
+                                                <p>(e) Additional interrogatories may be attached.</p>
+
+                                                <h5 class="text-center">Sec. 3. Instructions to the Answering Party</h5>
+                                                <p>(a) An answer or other appropriate response must be given to each
+                                                    interrogatory checked by the asking party.</p>
+                                                <p>(b) As a general rule, within 30 days after you are served with these
+                                                    interrogatories, you must serve your responses on the asking party and
+                                                    serve copies of your responses on all other parties to the action who have
+                                                    appeared. See Code of Civil Procedure section 2030 for details.</p>
+                                                <p>(c) Each answer must be as complete and straightforward as the information
+                                                    reasonably available to you, including the information possessed by your
+                                                    attorneys or agents, permits. If an interrogatory cannot be answered
+                                                    completely, answer it to the extent possible.</p>
+                                                <p>(d) If you do not have enough personal knowledge to fully answer an
+                                                    interrogatory, say so, but make a reasonable and good faith effort to get
+                                                    the information by asking other persons or organizations, unless the
+                                                    information is equally available to the asking party.</p>
+                                                <p>(e) Whenever an interrogatory may be answered by referring to a document,
+                                                    the document may be attached as an exhibit to the response and referred to
+                                                    in the response. If the document has more than one page, refer to the page
+                                                    and section where the answer to the interrogatory can be found.</p>
+                                                <p>(f) Whenever an address and telephone number for the same person are
+                                                    requested in more than one interrogatory, you are required to furnish them
+                                                    in answering only the first interrogatory asking for that information.</p>
+                                                <p>(g) If you are asserting a privilege or making an objection to an
+                                                    interrogatory, you must specifically assert the privilege or state the
+                                                    objection in your written response.</p>
+                                                <p>(h) Your answers to these interrogatories must be verified, dated, and
+                                                    signed. You may wish to use the following form at the end of your
+                                                    answers.</p>
+                                                <p>I declare under penalty of perjury under the laws of the State of California
+                                                    that the foregoing answers are true and correct.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border:none;" align="center">(DATE)</td>
+                                        <td style="border:none;" align="center">(SIGNATURE)</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="border:none;">
+                                            <h5 class="text-center">Sec. 4. Definitions</h5>
+                                            <p>Words in BOLDFACE CAPITALS in these interrogatories are defined as follows:</p>
+                                            <p>(a) (Check one of the following):</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="border:none;">
+<?php
+                                            if( $viewonly ) {
+                                                echo $option1;
+                                            } else {
+?>
+                                                <div class='checkbox_replace1'>
+                                                    <input type="radio" name="incidentoption"
+                                                           value="1" <?= ( $discovery['incidentoption'] == 1 ) ? "checked" : '' ?> onclick="incidentmeans(1)" />
+                                                    &nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding
+                                                    the alleged accident, injury, or other occurrence or breach of contract
+                                                    giving rise to this action or proceeding.
+                                                </div>
+<?php
+                                            }
+?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="border:none;">
+<?php
+                                            if( $viewonly ) {
+                                                echo $option2;
+                                            } else {
+?>
+                                                <div class='checkbox_replace2'>
+                                                    <input type="radio" name="incidentoption"
+                                                                        value="2" 
+                                                                        <?= ( $discovery['incidentoption'] == 2 ) ? "checked" : '' ?> onclick="incidentmeans(2)" />
+                                                    &nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled "Sec. 4(a)(2)"):
+                                                </div>
+                                                <div class='remove_incidenttext'>
+                                                    <div id="incidentDiv"
+                                                         <?= ( $discovery['incidentoption'] == 1 || $discovery['incidentoption'] == "" ) ? 'style="display:none" ' : '' ?>>
+                                                        <textarea class="form-control" rows="5" name="incidenttext"
+                                                                  id="incidenttext"><?= 
+                                                            $discovery['incidenttext']
+                                                        ?></textarea>
+                                                    </div>
+                                                </div>
+<?php
+                                            }
+?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="border:none;">
+                                            <p>(b) YOU OR ANYONE ACTING ON YOUR BEHALF includes you, your agents, your
+                                                employees, your insurance companies, their agents, their employees, your
+                                                attorneys, your accountants, your investigators, and anyone else acting on your
+                                                behalf.</p>
+                                            <p>(c) PERSON includes a natural person, firm, association, organization,
+                                                partnership, business, trust, limited liability company, corporation, or public
+                                                entity.</p>
+                                            <p>(d) DOCUMENT means a writing, as defined in Evidence Code section 250, and
+                                                includes the original or a copy of handwriting, typewriting, printing,
+                                                photostats, photographs, electronically stored information, and every other
+                                                means of recording upon any tangible thing and form of communicating or
+                                                representation, including letters, words, pictures, sounds, or symbols, or
+                                                combinations of them.</p>
+                                            <p>(e) HEALTH CARE PROVIDER includes any PERSON referred to in Code of Civil
+                                                Procedure section 667.7(e)(3).</p>
+                                            <p>(f) ADDRESS means the street address, including the city, state, and zip
+                                                code.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+<?php
+                        } elseif( $form_id == Discovery::FORM_CA_FROGSE ) {
+                            $personnames2 = $discovery['personnames2'];
+                            $personnames1 = $discovery['personnames1']
+?>
+                            <div id="instruction_data">
+                                <table class="table">
+                                    <tr>
+                                        <td colspan="2" style="border:none;">
+                                            <div style="text-align:left">
+
+                                                <h5 class="text-center">Sec. 1. Instructions to All Parties</h5>
+                                                <p>(a) Interrogatories are written questions prepared by a party to an action
+                                                    that are sent to any other party in the action to be answered under oath.
+                                                    The interrogatories below are form interrogatories approved for use in
+                                                    employment cases.</p>
+                                                <p>(b) For time limitations, requirements for service on other parties, and
+                                                    other details, see Code of Civil Procedure sections 2030.010-2030.410 and
+                                                    the cases construing those sections.</p>
+                                                <p>(c) These form interrogatories do not change existing law relating to
+                                                    interrogatories nor do they affect an answering party's right to assert any
+                                                    privilege or make any objection.</p>
+
+                                                <h5 class="text-center">Sec. 2. Instructions to the Asking Party</h5>
+                                                <p>(a) These form interrogatories are designed for optional use by parties in
+                                                    employment cases. (Separate sets of interrogatories, Form
+                                                    Interrogatories-General (form DISC-001) and Form Interrogatories-Limited
+                                                    Civil Cases (Economic Litigation) (form DISC-004) may also be used where
+                                                    applicable in employment cases.)</p>
+                                                <p>(b) Insert the names of the EMPLOYEE and EMPLOYER to whom these
+                                                    interrogatories apply in the definitions in sections 4(d) and (e)
+                                                    below.</p>
+                                                <p>(c) Check the box next to each interrogatory that you want the answering
+                                                    party to answer. Use care in choosing those interrogatories that are
+                                                    applicable to the case.</p>
+                                                <p>(d) The interrogatories in section 211.0, Loss of Income Interrogatories to
+                                                    Employer, should not be used until the employer has had a reasonable
+                                                    opportunity to conduct an investigation or discovery of the employee's
+                                                    injuries and damages.</p>
+                                                <p>(e) Additional interrogatories may be attached.</p>
+
+                                                <h5 class="text-center">Sec. 3. Instructions to the Answering Party</h5>
+                                                <p>(a) You must answer or provide another appropriate response to each
+                                                    interrogatory that has been checked below.</p>
+                                                <p>(b) As a general rule, within 30 days after you are served with these
+                                                    interrogatories, you must serve your responses on the asking party and
+                                                    serve copies of your responses on all other parties to the action who have
+                                                    appeared. See Code of Civil Procedure sections 2030.260-2030.270 for
+                                                    details.</p>
+                                                <p>(c) Each answer must be as complete and straightforward as the information
+                                                    reasonably available to you permits. If an interrogatory cannot be answered
+                                                    completely, answer it to the extent possible.</p>
+                                                <p>(d) If you do not have enough personal knowledge to fully answer an
+                                                    interrogatory, say so but make a reasonable and good faith effort to get
+                                                    the information by asking other persons or organizations, unless the
+                                                    information is equally available to the asking party.</p>
+                                                <p>(e) Whenever an interrogatory may be answered by referring to a document,
+                                                    the document may be attached as an exhibit to the response and referred to
+                                                    in the response. If the document has more than one page, refer to the page
+                                                    and section where the answer to the interrogatory can be found.</p>
+                                                <p>(f) Whenever an address and telephone number for the same person are
+                                                    requested in more than one interrogatory, you are required to furnish them
+                                                    in answering only the first interrogatory asking for that information.</p>
+                                                <p>(g) If you are asserting a privilege or making an objection to an
+                                                    interrogatory, you must specifically assert the privilege or state the
+                                                    objection in your written response.</p>
+                                                <p>(h) Your answers to these interrogatories must be verified, dated, and
+                                                    signed. You may wish to use the following form at the end of your
+                                                    answers:</p>
+                                                <p>I declare under penalty of perjury under the laws of the State of California
+                                                    that the foregoing answers are true and correct.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border:none !important" align="center">(DATE)</td>
+                                        <td style="border:none !important" align="center">(SIGNATURE)</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="border:none !important">
+                                            <h5 class="text-center">Sec. 4. Definitions</h5>
+                                            <p>Words in BOLDFACE CAPITALS in these interrogatories are defined as follows:</p>
+                                            <p>(a) PERSON includes a natural person, firm, association, organization,
+                                                partnership, business, trust, limited liability company, corporation, or public
+                                                entity.</p>
+                                            <p>(b) YOU OR ANYONE ACTING ON YOUR BEHALF includes you, your agents, your
+                                                employees, your insurance companies, their agents, their employees, your
+                                                attorneys, your accountants, your investigators, and anyone else acting on your
+                                                behalf.</p>
+                                            <p>(c) EMPLOYMENT means a relationship in which an EMPLOYEE provides services
+                                                requested by or on behalf of an EMPLOYER, other than an independent contractor
+                                                relationship.</p>
+<?php
+                                            if( $viewonly ) {
+                                                if( $personnames1 ) {
+?>
+                                                    <p>(d) EMPLOYEE means a PERSON who provides services in an EMPLOYMENT
+                                                        relationship and who is a party to this lawsuit. For purposes of these
+                                                        interrogatories, EMPLOYEE refers to: <?= $personnames1 ?> </p>
+<?php
+                                                } else {
+?>
+                                                    <p>(d) EMPLOYEE means all such PERSONS</p>
+<?php
+                                                }
+                                                if( $personnames2 ) {
+?>
+                                                    <p>(e) EMPLOYER means a PERSON who employs an EMPLOYEE to provide services
+                                                        in an EMPLOYMENT relationship and who is a party to this lawsuit. For
+                                                        purposes of these interrogatories, EMPLOYER refers
+                                                        to <?php echo $personnames2; ?>:</p>
+<?php
+                                                } else {
+?>
+                                                    <p>(d) EMPLOYEE means all such PERSONS</p>
+<?php
+                                                }
+                                            } 
+                                            else {
+?>
+                                                <p>(d) EMPLOYEE means a PERSON who provides services in an EMPLOYMENT
+                                                    relationship and who is a party to this lawsuit. For purposes of these
+                                                    interrogatories, EMPLOYEE refers to (insert name): </p>
+                                                <textarea class="form-control" rows="5" name="personnames1"
+                                                          id="personnames1"><?= 
+                                                    $discovery['personnames1'] 
+                                                ?></textarea>
+                                                <p>(e) EMPLOYER means a PERSON who employs an EMPLOYEE to provide services in
+                                                    an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes
+                                                    of these interrogatories, EMPLOYER refers to (insert name):</p>
+                                                <textarea class="form-control" rows="5" 
+                                                          id="personnames2" name="personnames2"><?=
+                                                    $discovery['personnames2']; 
+                                                ?></textarea>
+<?php
+                                            }
+?>
+                                            <p>(f) ADVERSE EMPLOYMENT ACTION means any TERMINATION, suspension, demotion,
+                                                reprimand, loss of pay, failure or refusal to hire, failure or refusal to
+                                                promote, or other action or failure to act that adversely affects the
+                                                EMPLOYEE'S rights or interests and which is alleged in the PLEADINGS.</p>
+                                            <p>(g) TERMINATION means the actual or constructive termination of employment and
+                                                includes a discharge, firing, layoff, resignation, or completion of the term of
+                                                the employment agreement.</p>
+                                            <p>(h) PUBLISH means to communicate orally or in writing to anyone other than the
+                                                plaintiff. This includes communications by one of the defendant's employees to
+                                                others. (<i>Kelly v. General Telephone Co.</i> (1982) 136 Cal.App.3d 278, 284.)
+                                            </p>
+                                            <p>(i) PLEADINGS means the original or most recent amended version of any
+                                                complaint, answer, cross-complaint, or answer to cross-complaint.</p>
+                                            <p>(j) BENEFIT means any benefit from an EMPLOYER, including an "employee welfare
+                                                benefit plan" or employee pension benefit plan" within the meaning of <i>Title
+                                                    29 United States Code</i> section 1002(1) or (2) or ERISA.</p>
+                                            <p>(k) HEALTH CARE PROVIDER includes any PERSON referred to in <i>Code of Civil
+                                                    Procedure</i> section 667.7(e)(3).</p>
+                                            <p>(l) DOCUMENT means a writing, as defined in <i>Evidence Code</i> section 250,
+                                                and includes the original or a copy of handwriting, typewriting, printing,
+                                                photostats, photographs, electronically stored information, and every other
+                                                means of recording upon any tangible thing and form of communicating or
+                                                representation, including letters, words, pictures, sounds, or symbols, or
+                                                combinations of them.</p>
+                                            <p>(m) ADDRESS means the street address, including the city, state, and zip
+                                                code.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+<?php
                         }
 ?>
-                    <div  id="instruction_data" >
-                    <table class="table" style="border:none !important">
-                    <tr>
-                        <td colspan="2" style="border:none">
-                            <div style="text-align:left">
-
-                            <h5 class="text-center">Sec. 1. Instructions to All Parties</h5>
-                            <p>(a) Interrogatories are written questions prepared by a party to an action that are sent to any other party in the action to be answered under oath. The interrogatories below are form interrogatories approved for use in civil cases.</p><p>(b) For time limitations, requirements for service on other parties, and other details, see Code of Civil Procedure section 2030 and the cases construing it.</p>
-                            <p>(c) These form interrogatories do not change existing law relating to interrogatories nor do they affect an answering party's right to assert any privilege or make any objection.</p>
-
-                            <h5 class="text-center">Sec. 2. Instructions to the Asking Party</h5><p>(a) These interrogatories are designed for optional use by parties in unlimited civil cases where the amount demanded exceeds $25,000. Separate interrogatories, Form Interrogatories --Economic Litigation (form FI-129), which have no subparts, are designed for use in limited civil cases where the amount demanded is $25,000 or less; however, those interrogatories may also be used in unlimited civil cases.</p>
-                            <p>(b) Check the box next to each interrogatory that you want the answering party to answer. Use care in choosing those interrogatories that are applicable to the case.</p>
-                            <p>(c) You may insert your own definition of INCIDENT in Section 4, but only where the action arises from a course of conduct or a series of events occurring over a period of time.</p>
-                            <p>(d) The interrogatories in section 16.0, Defendant's Contentions -- Personal Injury, should not be used until the defendant has had a reasonable opportunity to conduct an investigation or discovery of plaintiff's injuries and damages.</p>
-                            <p>(e) Additional interrogatories may be attached.</p>
-
-                            <h5 class="text-center">Sec. 3. Instructions to the Answering Party</h5>
-                            <p>(a) An answer or other appropriate response must be given to each interrogatory checked by the asking party.</p>
-                            <p>(b) As a general rule, within 30 days after you are served with these interrogatories, you must serve your responses on the asking party and serve copies of your responses on all other parties to the action who have appeared. See Code of Civil Procedure section 2030 for details.</p>
-                            <p>(c) Each answer must be as complete and straightforward as the information reasonably available to you, including the information possessed by your attorneys or agents, permits. If an interrogatory cannot be answered completely, answer it to the extent possible.</p>
-                            <p>(d) If you do not have enough personal knowledge to fully answer an interrogatory, say so, but make a reasonable and good faith effort to get the information by asking other persons or organizations, unless the information is equally available to the asking party.</p>
-                            <p>(e) Whenever an interrogatory may be answered by referring to a document, the document may be attached as an exhibit to the response and referred to in the response. If the document has more than one page, refer to the page and section where the answer to the interrogatory can be found.</p>
-                            <p>(f) Whenever an address and telephone number for the same person are requested in more than one interrogatory, you are required to furnish them in answering only the first interrogatory asking for that information.</p>
-                            <p>(g) If you are asserting a privilege or making an objection to an interrogatory, you must specifically assert the privilege or state the objection in your written response.</p><p>(h) Your answers to these interrogatories must be verified, dated, and signed. You may wish to use the following form at the end of your answers.</p>
-                            <p>I declare under penalty of perjury under the laws of the State of California that the foregoing answers are true and correct.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="border:none;"  align="center">(DATE)</td>
-                        <td style="border:none;" align="center">(SIGNATURE)</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="border:none;">
-                            <h5 class="text-center">Sec. 4. Definitions</h5>
-                            <p>Words in BOLDFACE CAPITALS in these interrogatories are defined as follows:</p>
-                            <p>(a) (Check one of the following):</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="border:none;">
-<?php
-                            if( $viewonly ) {
-                                echo $option1;
-                            }
-                            else {
-?>
-                                <div class='checkbox_replace1'>
-                                    <input type="radio" name="incidentoption" value="1" <?php if($discovery['incidentoption'] == 1) {echo "checked";}  ?> onclick="incidentmeans(1)" />
-                                    &nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.
-                                </div>
-<?php
-                            }
-?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  colspan="2" style="border:none;">
-<?php
-                            if( $viewonly ) {
-                                echo $option2;
-                            }
-                            else {
-?>
-                            <div class='checkbox_replace2'><input type="radio" name="incidentoption" value="2" <?php if($discovery['incidentoption'] == 2) {echo "checked";}  ?> onclick="incidentmeans(2)" />&nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled "Sec. 4(a)(2)"):</div>
-                            <div class='remove_incidenttext'><div id="incidentDiv" <?php if($discovery['incidentoption'] == 1 || $discovery['incidentoption'] == ""){ ?>style="display:none" <?php } ?>><textarea class="form-control" rows="5" name="incidenttext" id="incidenttext"><?php echo $discovery['incidenttext']; ?></textarea></div></div>
-<?php
-                            }
-?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="border:none;">
-                            <p>(b) YOU OR ANYONE ACTING ON YOUR BEHALF includes you, your agents, your employees, your insurance companies, their agents, their employees, your attorneys, your accountants, your investigators, and anyone else acting on your behalf.</p>
-                            <p>(c) PERSON includes a natural person, firm, association, organization, partnership, business, trust, limited liability company, corporation, or public entity.</p>
-                            <p>(d) DOCUMENT means a writing, as defined in Evidence Code section 250, and includes the original or a copy of handwriting, typewriting, printing, photostats, photographs, electronically stored information, and every other means of recording upon any tangible thing and form of communicating or representation, including letters, words, pictures, sounds, or symbols, or combinations of them.</p>
-                            <p>(e) HEALTH CARE PROVIDER includes any PERSON referred to in Code of Civil Procedure section 667.7(e)(3).</p>
-                            <p>(f) ADDRESS means the street address, including the city, state, and zip code.</p>
-                        </td>
-                    </tr>
-                    </table>
                     </div>
-<?php
-                    }
-                    else if( $form_id == Discovery::FORM_CA_FROGSE ) {
-                        $personnames2	=	$discovery['personnames2'];
-                        $personnames1	=	$discovery['personnames1']
-?>
-
-                    <div  id="instruction_data" >
-                    <table class="table" >
-                    <tr>
-                        <td colspan="2" style="border:none;">
-                            <div style="text-align:left">
-
-                            <h5 class="text-center">Sec. 1. Instructions to All Parties</h5>
-                            <p>(a) Interrogatories are written questions prepared by a party to an action that are sent to any other party in the action to be answered under oath. The interrogatories below are form interrogatories approved for use in employment cases.</p>
-                            <p>(b) For time limitations, requirements for service on other parties, and other details, see Code of Civil Procedure sections 2030.010-2030.410 and the cases construing those sections.</p>
-                            <p>(c) These form interrogatories do not change existing law relating to interrogatories nor do they affect an answering party's right to assert any privilege or make any objection.</p>
-
-                            <h5 class="text-center">Sec. 2. Instructions to the Asking Party</h5>
-                            <p>(a) These form interrogatories are designed for optional use by parties in employment cases. (Separate sets of interrogatories, Form Interrogatories-General (form DISC-001) and Form Interrogatories-Limited Civil Cases (Economic Litigation) (form DISC-004) may also be used where applicable in employment cases.)</p>
-                            <p>(b) Insert the names of the EMPLOYEE and EMPLOYER to whom these interrogatories apply in the definitions in sections 4(d) and (e) below.</p>
-                            <p>(c) Check the box next to each interrogatory that you want the answering party to answer. Use care in choosing those interrogatories that are applicable to the case.</p>
-                            <p>(d) The interrogatories in section 211.0, Loss of Income Interrogatories to Employer, should not be used until the employer has had a reasonable opportunity to conduct an investigation or discovery of the employee's injuries and damages.</p>
-                            <p>(e) Additional interrogatories may be attached.</p>
-
-                            <h5 class="text-center">Sec. 3. Instructions to the Answering Party</h5>
-                            <p>(a) You must answer or provide another appropriate response to each interrogatory that has been checked below.</p>
-                            <p>(b) As a general rule, within 30 days after you are served with these interrogatories, you must serve your responses on the asking party and serve copies of your responses on all other parties to the action who have appeared. See Code of Civil Procedure sections 2030.260-2030.270 for details.</p>
-                            <p>(c) Each answer must be as complete and straightforward as the information reasonably available to you permits. If an interrogatory cannot be answered completely, answer it to the extent possible.</p>
-                            <p>(d) If you do not have enough personal knowledge to fully answer an interrogatory, say so but make a reasonable and good faith effort to get the information by asking other persons or organizations, unless the information is equally available to the asking party.</p>
-                            <p>(e) Whenever an interrogatory may be answered by referring to a document, the document may be attached as an exhibit to the response and referred to in the response. If the document has more than one page, refer to the page and section where the answer to the interrogatory can be found.</p>
-                            <p>(f) Whenever an address and telephone number for the same person are requested in more than one interrogatory, you are required to furnish them in answering only the first interrogatory asking for that information.</p>
-                            <p>(g) If you are asserting a privilege or making an objection to an interrogatory, you must specifically assert the privilege or state the objection in your written response.</p>
-                            <p>(h) Your answers to these interrogatories must be verified, dated, and signed. You may wish to use the following form at the end of your answers:</p>
-                            <p>I declare under penalty of perjury under the laws of the State of California that the foregoing answers are true and correct.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="border:none !important" align="center">(DATE)</td>
-                        <td style="border:none !important"  align="center">(SIGNATURE)</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="border:none !important">
-                            <h5 class="text-center">Sec. 4. Definitions</h5>
-                            <p>Words in BOLDFACE CAPITALS in these interrogatories are defined as follows:</p>
-                            <p>(a) PERSON includes a natural person, firm, association, organization, partnership, business, trust, limited liability company, corporation, or public entity.</p>
-                            <p>(b) YOU OR ANYONE ACTING ON YOUR BEHALF includes you, your agents, your employees, your insurance companies, their agents, their employees, your attorneys, your accountants, your investigators, and anyone else acting on your behalf.</p>
-                            <p>(c) EMPLOYMENT means a relationship in which an EMPLOYEE provides services requested by or on behalf of an EMPLOYER, other than an independent contractor relationship.</p>
-<?php
-                            if( $viewonly ) {
-                                if( $personnames1 ) {
-?>
-                                    <p>(d) EMPLOYEE means a PERSON who provides services in an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes of these interrogatories, EMPLOYEE refers to: <?php echo $personnames1; ?> </p>
-<?php
-                                }
-                                else {
-?>
-                                    <p>(d) EMPLOYEE means all such PERSONS</p>
-<?php
-                                }
-                                if( $personnames2 ) {
-?>
-                                    <p>(e) EMPLOYER means a PERSON who employs an EMPLOYEE to provide services in an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes of these interrogatories, EMPLOYER refers to  <?php echo $personnames2; ?>:</p>
-<?php
-                                }
-                                else {
-?>
-                                    <p>(d) EMPLOYEE means all such PERSONS</p>
-<?php
-                                }
-                            }
-                            else {
-?>
-                            <p>(d) EMPLOYEE means a PERSON who provides services in an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes of these interrogatories, EMPLOYEE refers to (insert name): </p>
-                            <textarea class="form-control" rows="5" name="personnames1" id="personnames1"><?php echo $discovery['personnames1']; ?></textarea>
-                            <p>(e) EMPLOYER means a PERSON who employs an EMPLOYEE to provide services in an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes of these interrogatories, EMPLOYER refers to (insert name):</p>
-                            <textarea class="form-control" rows="5" name="personnames2" id="personnames2"><?php echo $discovery['personnames2']; ?></textarea>
-
-<?php
-                            }
-?>
-                            <p>(f) ADVERSE EMPLOYMENT ACTION means any TERMINATION, suspension, demotion, reprimand, loss of pay, failure or refusal to hire, failure or refusal to promote, or other action or failure to act that adversely affects the EMPLOYEE'S rights or interests and which is alleged in the PLEADINGS.</p>
-                            <p>(g) TERMINATION means the actual or constructive termination of employment and includes a discharge, firing, layoff, resignation, or completion of the term of the employment agreement.</p>
-                            <p>(h) PUBLISH means to communicate orally or in writing to anyone other than the plaintiff. This includes communications by one of the defendant's employees to others. (<i>Kelly v. General Telephone Co.</i> (1982) 136 Cal.App.3d 278, 284.)</p>
-                            <p>(i) PLEADINGS means the original or most recent amended version of any complaint, answer, cross-complaint, or answer to cross-complaint.</p>
-                            <p>(j) BENEFIT means any benefit from an EMPLOYER, including an "employee welfare benefit plan" or employee pension benefit plan" within the meaning of <i>Title 29 United States Code</i> section 1002(1) or (2) or ERISA.</p>
-                            <p>(k) HEALTH CARE PROVIDER includes any PERSON referred to in <i>Code of Civil Procedure</i> section 667.7(e)(3).</p>
-                            <p>(l) DOCUMENT means a writing, as defined in <i>Evidence Code</i> section 250, and includes the original or a copy of handwriting, typewriting, printing, photostats, photographs, electronically stored information, and every other means of recording upon any tangible thing and form of communicating or representation, including letters, words, pictures, sounds, or symbols, or combinations of them.</p>
-                            <p>(m) ADDRESS means the street address, including the city, state, and zip code.</p>
-                        </td>
-                    </tr>
-                    </table>
-                    </div>
-<?php
-                    }
-?>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 <?php
-}
-else {
-	if( !$discovery_id && $type == Discovery::TYPE_EXTERNAL ) {
-		if( $form_id == Discovery::FORM_CA_SROGS ) {
+} else {
+    if( !$discovery_id && $type == Discovery::TYPE_EXTERNAL ) {
+        if( $form_id == Discovery::FORM_CA_SROGS ) {
             $instruction_text = "
                 <p> Each answer must be as complete and straightforward as the information reasonably available to you, including the
                     information possessed by your attorneys or agents, permits. If an interrogatory cannot be answered completely, answer it to
@@ -280,8 +428,7 @@ else {
                     Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group 2019) ¶ 8:721-8:722. </p>
                 <p> Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. <i>Cal. Judges Benchbook Civ. Proc. Discovery</i> (September 2018) § 18.36. </p>
                 ";
-		}
-		else if( $form_id == Discovery::FORM_CA_RFAS ) {
+        } elseif( $form_id == Discovery::FORM_CA_RFAS ) {
             $instruction_text = "
                 <p> Pursuant to Code of Civil Procedure section 2030 et seq., propounding party hereby requests that responding party answer the
                     following Requests for Admission, under oath, within thirty (30) days from the date hereof. </p>
@@ -299,11 +446,10 @@ else {
                     2019) ¶ 8:721-8:722. </p>
             ";
 
-		}
-		else if( $form_id == Discovery::FORM_CA_RPDS ) {
+        } elseif( $form_id == Discovery::FORM_CA_RPDS ) {
             $instruction_text = "
                 <p>DEMAND IS HEREBY MADE UPON YOU, pursuant to Code of Civil Procedure section 2031, et seq. to produce the documents and
-                    things described herein at ".$attorneyFirm.", ".$attorneyAddress." within thirty (30) days of service hereof. Each
+                    things described herein at " . $primaryAttorneyFirm . ", " . $primaryAttorneyAddress . " within thirty (30) days of service hereof. Each
                     respondent shall respond separately, under oath, to each item or category of item by any of the following:</p>
 
                 <ol>
@@ -341,53 +487,54 @@ else {
                     not for written discovery. Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group
                     2019) ¶ 8:721-8:722.</p>
             ";
-		}
-	}
-	if( !$viewonly ) {
+        }
+    }
+    if( !$viewonly ) {
 ?>
-    <div class="form-group" id="instruction_id1">
-    <label class=" col-sm-2 control-label">Instructions<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
-        <div class="col-sm-8">
-            <textarea  rows="5" name="instruction" id="instruction" placeholder="Form Instruction"  class="form-control m-b"><?= 
-                $instruction_text
-            ?></textarea>
+        <div class="form-group" id="instruction_id1">
+            <label class=" col-sm-2 control-label">Instructions<span class="redstar" style="color:#F00"
+                                                                     title="This field is compulsory"></span></label>
+            <div class="col-sm-8">
+                <textarea rows="5" name="instruction" id="instruction" placeholder="Form Instruction" class="form-control m-b"><?=
+                    $instruction_text
+                ?></textarea>
+            </div>
         </div>
-    </div>
 <?php
-	}
-	else {
+    } else {
 ?>
-    <div class="">
-    	<div class="col-md-12">
-        <!-- Instructions Section load -->
-        <div class="panel panel-default">
-            <div class="panel-heading instruction-collapse">
-                <div class="row">
-                	<div class="col-md-4"></div>
-                    <div class="col-md-4 text-center">
-                        <h3> Instructions </h3>
+        <div class="">
+            <div class="col-md-12">
+                <!-- Instructions Section load -->
+                <div class="panel panel-default">
+                    <div class="panel-heading instruction-collapse">
+                        <div class="row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4 text-center">
+                                <h3> Instructions </h3>
+                            </div>
+                            <div class="col-md-4" style="margin-top: 8px;">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"
+                                   class="btn btn-primary pull-right"></a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-4" style="margin-top: 8px;">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" class="btn btn-primary pull-right"></a>
+                    <div id="collapseOne" class="panel-collapse collapse in">
+                        <div class="panel-body"><?=
+                            $instruction_text
+                        ?></div>
                     </div>
                 </div>
             </div>
-            <div id="collapseOne" class="panel-collapse collapse in">
-                <div class="panel-body"><?= 
-                    $instruction_text 
-                ?></div>
-            </div>
         </div>
-    </div>
-    </div>
 <?php
-	}
+    }
 }
-$forms = $AdminDAO->getrows('forms', "*");
-$formNames = array_map( function($item) { return $item['short_form_name']; }, $forms );
+$forms     = $AdminDAO->getrows( 'forms', "*" );
+$formNames = array_map( function( $item ) { return $item['short_form_name']; }, $forms );
 ?>
-<script> 
-    globalThis['discoveryType'] = "<?= $type ?>";
-    globalThis['discoveryForm'] = "<?= $form_id ?>";
-    globalThis['discoveryFormNames'] = <?= json_encode($formNames, JSON_PRETTY_PRINT) ?>;
+<script>
+globalThis["discoveryType"] = "<?= $type ?>";
+globalThis["discoveryForm"] = "<?= $form_id ?>";
+globalThis["discoveryFormNames"] = <?= json_encode( $formNames, JSON_PRETTY_PRINT ) ?>;
 </script>

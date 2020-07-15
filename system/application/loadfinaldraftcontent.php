@@ -535,7 +535,7 @@ function loadinstructions()
     var type = '<?= $type ?>',
         id = '<?= $discovery_id ?>',
         form_id = '<?= $form_id ?>';
-    $.get("discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=1&type="+type)
+    $.get(`discoveryloadforminstruction.php?form_id=${form_id}&id=${id}&case_id=<?= $case_id ?>&viewonly=1&type=${type}`)
         .done( resp => {
             $("#instruction").val( trim(resp) );
 

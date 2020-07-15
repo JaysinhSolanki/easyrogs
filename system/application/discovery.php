@@ -588,7 +588,7 @@ function loadpropondingattorneys( case_id, client_id, selected ) {
 function loadinstructions(id,form_id) {
     const type = <?= $type ?>;
 
-    $.get( "discoveryloadforminstruction.php?form_id="+form_id+"&id="+id+"&viewonly=0&type="+type )
+    $.get( `discoveryloadforminstruction.php?form_id=${form_id}&id=${id}&case_id=<?= $case_id ?>&viewonly=0&type=${type}` )
         .done( resp => { 
             $("#loadinstructions").html( trim(resp) );
 
