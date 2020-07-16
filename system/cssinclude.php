@@ -26,7 +26,8 @@ table.dataTable.no-footer {
     border-bottom: 1px !important;
 }
 .tooltip-inner {
-    text-align: left;
+	max-width: 500px;
+	text-align: left;
 }
 .swal2-title
 {

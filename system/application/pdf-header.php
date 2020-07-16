@@ -97,6 +97,7 @@ h5 {
 <?php
     }
     else {
+        if( trim($instructions) || !in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS)) ) {
 ?>
     <table class="tabela1" style="border:none !important;overflow: wrap">
         <tr>
@@ -104,6 +105,7 @@ h5 {
         </tr>
     </table>
 <?php
+        }
 	if( in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS, Discovery::FORM_CA_RPDS)) ) {
 ?>
     <div> <?= html_entity_decode($instructions) ?> </div>

@@ -228,7 +228,7 @@ body.modal-open {
     font-size:13px !important;
 }
 .tooltip-inner {
-    text-align: center !important;
+    text-align: center;
 }
 .q-checkbox {
     padding: 0.5em 2em;

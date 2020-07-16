@@ -274,7 +274,7 @@ body.modal-open
     width:900px !important
 }
 .tooltip-inner {
-    text-align: center !important;
+    text-align: center;
 }
 </style>
 

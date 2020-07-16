@@ -403,53 +403,105 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
         </div>
     </div>
 <?php
-} else {
-    if( !$discovery_id && $type == Discovery::TYPE_EXTERNAL ) {
-        if( $form_id == Discovery::FORM_CA_SROGS ) {
-            $instruction_text = "
-                <p> Each answer must be as complete and straightforward as the information reasonably available to you, including the
-                    information possessed by your attorneys or agents, permits. If an interrogatory cannot be answered completely, answer it to
-                    the extent possible. If you do not have enough personal knowledge to fully answer an interrogatory, say so, but make a
-                    reasonable and good faith effort to get the information by asking other persons or organizations, unless the information is
-                    equally available to the asking party. Whenever an interrogatory may be answered by referring to a document, the document
-                    may be attached as an exhibit to the response and referred to in the response. If the document has more than one page,
-                    refer to the page and section where the answer to the interrogatory can be found. You may respond by attaching a copy of
-                    the document to your answers to these interrogatories. Whenever an address or telephone number for the same person are
-                    requested in more than one interrogatory, you are required to furnish them in answering only the first interrogatory asking
-                    for that information.</p><p>If you are asserting a privilege or making an objection to an interrogatory, you must
-                    specifically assert the privilege or state the objection in your written response. Your answers to these interrogatories
-                    must be verified, dated, signed, and the original must be included in your response.</p>
+}
+else {
+	if( !$discovery_id && $type == Discovery::TYPE_EXTERNAL ) {
+		if( $form_id == Discovery::FORM_CA_SROGS ) {
+                // [old instructions]  
+                // <p> Each answer must be as complete and straightforward as the information reasonably available to you, including the
+                //     information possessed by your attorneys or agents, permits. If an interrogatory cannot be answered completely, answer it to
+                //     the extent possible. If you do not have enough personal knowledge to fully answer an interrogatory, say so, but make a
+                //     reasonable and good faith effort to get the information by asking other persons or organizations, unless the information is
+                //     equally available to the asking party. Whenever an interrogatory may be answered by referring to a document, the document
+                //     may be attached as an exhibit to the response and referred to in the response. If the document has more than one page,
+                //     refer to the page and section where the answer to the interrogatory can be found. You may respond by attaching a copy of
+                //     the document to your answers to these interrogatories. Whenever an address or telephone number for the same person are
+                //     requested in more than one interrogatory, you are required to furnish them in answering only the first interrogatory asking
+                //     for that information.</p><p>If you are asserting a privilege or making an objection to an interrogatory, you must
+                //     specifically assert the privilege or state the objection in your written response. Your answers to these interrogatories
+                //     must be verified, dated, signed, and the original must be included in your response.</p>
 
-                <h5 class='text-center'> INVALID OBJECTIONS </h5>
-                <p> Calls for a legal conclusion: “An interrogatory is not objectionable because an answer to it involves an opinion or contention that relates to fact 
-                    or the application of law to fact, or would be based on information obtained or legal theories developed in anticipation of litigation or in preparation 
-                    for trial.” <i>Code Civ.Proc.</i>, § 2030.010, subd. (b). </p>
-                <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery. 
-                    Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group 2019) ¶ 8:721-8:722. </p>
-                <p> Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. <i>Cal. Judges Benchbook Civ. Proc. Discovery</i> (September 2018) § 18.36. </p>
-                ";
-        } elseif( $form_id == Discovery::FORM_CA_RFAS ) {
-            $instruction_text = "
-                <p> Pursuant to Code of Civil Procedure section 2030 et seq., propounding party hereby requests that responding party answer the
-                    following Requests for Admission, under oath, within thirty (30) days from the date hereof. </p>
-
-                <h5 class='text-center'><b> INVALID OBJECTIONS </b></h5>
-                <p> Calls for a legal conclusion: “When a party is served with a request for admission concerning a legal question properly
-                    raised in the pleadings he cannot object simply by asserting that the request calls for a conclusion of law. He should make
-                    the admission if he is able to do so and does not in good faith intend to contest the issue at trial, thereby 'setting at
-                    rest a triable issue.' Otherwise he should set forth in detail the reasons why he cannot truthfully admit or deny the
-                    request.” <i>Burke v. Superior Court</i> (1969) 71 Cal.2d 276, 282, internal citations omitted. See also, <i>Cembrook v. Superior
-                    Court In and For City and County of San Francisco</i> (1961) 56 Cal.2d 423, 429 [“calls for a legal conclusion” is not a valid
-                    objection.]. </p>
-                <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition,
-                    not for written discovery. Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group
-                    2019) ¶ 8:721-8:722. </p>
+                // <h5 class='text-center'> INVALID OBJECTIONS </h5>
+                // <p> Calls for a legal conclusion: “An interrogatory is not objectionable because an answer to it involves an opinion or contention that relates to fact 
+                //     or the application of law to fact, or would be based on information obtained or legal theories developed in anticipation of litigation or in preparation 
+                //     for trial.” <i>Code Civ.Proc.</i>, § 2030.010, subd. (b). </p>
+                // <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery. 
+                //     Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group 2019) ¶ 8:721-8:722. </p>
+                // <p> Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. <i>Cal. Judges Benchbook Civ. Proc. Discovery</i> (September 2018) § 18.36. </p>
+            $instruction_text = "";
+            $instruction_info = "
+            <p> 
+                <img src='". ASSETS_URL ."images/court.png' style='width: 18px;padding-right: 3px;'>
+                No preface or instruction is allowed. 
+                <a href='#'>
+                    <i style='font-size:16px;' data-placement='top' data-toggle='tooltip' title='' class='fa fa-info-circle tooltipshow client-btn' aria-hidden='true' data-original-title='
+                        Code of Civil Procedure section 2030.060, subdivision (d)<br/>
+                        <p style=\"text-align:left;\">No preface or instruction shall be included with a set of admission requests unless it has been approved under Chapter 17.'>
+                    </i>
+                </a>
+            </p>
             ";
+		}
+		else if( $form_id == Discovery::FORM_CA_RFAS ) {
+                // [old instructions]  
+                // <p> Pursuant to Code of Civil Procedure section 2030 et seq., propounding party hereby requests that responding party answer the
+                //     following Requests for Admission, under oath, within thirty (30) days from the date hereof. </p>
 
-        } elseif( $form_id == Discovery::FORM_CA_RPDS ) {
+                // <h5 class='text-center'><b> INVALID OBJECTIONS </b></h5>
+                // <p> Calls for a legal conclusion: “When a party is served with a request for admission concerning a legal question properly
+                //     raised in the pleadings he cannot object simply by asserting that the request calls for a conclusion of law. He should make
+                //     the admission if he is able to do so and does not in good faith intend to contest the issue at trial, thereby 'setting at
+                //     rest a triable issue.' Otherwise he should set forth in detail the reasons why he cannot truthfully admit or deny the
+                //     request.” <i>Burke v. Superior Court</i> (1969) 71 Cal.2d 276, 282, internal citations omitted. See also, <i>Cembrook v. Superior
+                //     Court In and For City and County of San Francisco</i> (1961) 56 Cal.2d 423, 429 [“calls for a legal conclusion” is not a valid
+                //     objection.]. </p>
+                // <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition,
+                //     not for written discovery. Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group
+                //     2019) ¶ 8:721-8:722. </p>
+            $instruction_text = "
+                <p> Requests for admission are written requests by a party to an action requiring that any other party to the action either admit or deny, under oath, the truth of certain facts or the genuineness of certain documents. 
+                    For information on timing, the number of admissions a party may request from any other party, service of requests and responses, restriction on the style, format, and scope of requests for admission and responses to requests, and other details, see <i>Code of Civil Procedure</i> sections 94&mdash;95, 1013 and 2033.010&mdash;2033.420 and the case law relating to those sections. </p>
+                <p> An answering party should consider carefully whether to admit or deny the truth of facts or the genuineness of documents. 
+                    With limited exceptions, an answering party will not be allowed to change an answer to a request for admission. 
+                    There may be penalties if an answering party fails to admit the truth of any fact or the genuineness of any document when requested to do so and the requesting party later proves that the fact is true or that the document is genuine. 
+                    These penalties may include, among other things, payment of the requesting party's attorney's fees incurred in making that proof. </p>    
+                <p> Unless there is an agreement or a court order providing otherwise, the answering party must respond in writing to requests for admission within 30 days after they are served, or within 5 days after service in an unlawful detainer action.
+                    There may be significant penalties if an answering party fails to provide a timely written response to each request for admission.
+                    These penalties may include, among other things, an order that the facts in issue are deemed true or the documents in issue are deemed genuine for purposes of the case. </p>
+                <p> Answers to <i>Requests for Admission</i> must be given under oath. The answering party should use the following language at the end of the responses: </p>
+                <table class='tabela1' style='border:none !important; border-spacing: 3em 0; overflow: wrap'>
+                    <tr>
+                        <td  align='center' colspan='2'><em>I declare under penalty of perjury under the laws of the State of California that the foregoing answers are true and correct.</em></td>
+                    </tr>
+                    <tr>
+                        <td> </td>
+                        <td> </td>
+                    </tr>
+                    <tr>
+                        <td align='center' style='border-top: 1px solid black;' > (DATE)         </td>
+                        <td align='center' style='border-top: 1px solid black;' > (SIGNATURE)    </td>
+                    </tr>
+                </table>
+                <p> These instructions are only a summary and are not intended to provide complete information about requests for admission. 
+                    This <i>Requests for Admission</i> form does not change existing law relating to requests for admission, nor does it affect an answering party's right to assert any privilege or to make any objection. </p>
+            ";
+            $instruction_info = "
+            <p> 
+                <img src='". ASSETS_URL ."images/court.png' style='width: 18px;padding-right: 3px;'>
+                These are the only instructions allowed. 
+                <a href='#'>
+                    <i style='font-size:16px;' data-placement='top' data-toggle='tooltip' title='' class='fa fa-info-circle tooltipshow client-btn' aria-hidden='true' data-original-title='
+                        Code of Civil Procedure section 2033.060, subdivision (d)<br/>
+                        <p style=\"text-align:left;\">Each request for admission shall be full and complete in and of itself. No preface or instruction shall be included with a set of admission requests unless it has been approved under Chapter 17 (commencing with Section 2033.710).</p>'>
+                    </i>
+                </a>
+            </p>
+            ";
+		}
+		else if( $form_id == Discovery::FORM_CA_RPDS ) {
             $instruction_text = "
                 <p>DEMAND IS HEREBY MADE UPON YOU, pursuant to Code of Civil Procedure section 2031, et seq. to produce the documents and
-                    things described herein at " . $primaryAttorneyFirm . ", " . $primaryAttorneyAddress . " within thirty (30) days of service hereof. Each
+                    things described herein at ". $primaryAttorneyFirm .", ". $primaryAttorneyAddress ." within thirty (30) days of service hereof. Each
                     respondent shall respond separately, under oath, to each item or category of item by any of the following:</p>
 
                 <ol>
@@ -491,14 +543,15 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
     }
     if( !$viewonly ) {
 ?>
-        <div class="form-group" id="instruction_id1">
-            <label class=" col-sm-2 control-label">Instructions<span class="redstar" style="color:#F00"
-                                                                     title="This field is compulsory"></span></label>
-            <div class="col-sm-8">
-                <textarea rows="5" name="instruction" id="instruction" placeholder="Form Instruction" class="form-control m-b"><?=
-                    $instruction_text
-                ?></textarea>
-            </div>
+    <div class="form-group" id="instruction_id1">
+    <label class=" col-sm-2 control-label">Instructions<span class="redstar" style="color:#F00"></span></label>
+        <div class="col-sm-8">
+            <?=
+                $instruction_info
+            ?>
+            <textarea  rows="5" name="instruction" id="instruction" placeholder="Form Instruction"  class="form-control m-b"><?= 
+                $instruction_text
+            ?></textarea>
         </div>
 <?php
     } else {
@@ -533,8 +586,8 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
 $forms     = $AdminDAO->getrows( 'forms', "*" );
 $formNames = array_map( function( $item ) { return $item['short_form_name']; }, $forms );
 ?>
-<script>
-globalThis["discoveryType"] = "<?= $type ?>";
-globalThis["discoveryForm"] = "<?= $form_id ?>";
-globalThis["discoveryFormNames"] = <?= json_encode( $formNames, JSON_PRETTY_PRINT ) ?>;
+<script> 
+    globalThis['discoveryType'] = "<?= $type ?>";
+    globalThis['discoveryForm'] = "<?= $form_id ?>";
+    globalThis['discoveryFormNames'] = <?= json_encode($formNames, JSON_PRETTY_PRINT) ?>;
 </script>
