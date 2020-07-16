@@ -378,11 +378,11 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                             <p>(i) PLEADINGS means the original or most recent amended version of any
                                                 complaint, answer, cross-complaint, or answer to cross-complaint.</p>
                                             <p>(j) BENEFIT means any benefit from an EMPLOYER, including an "employee welfare
-                                                benefit plan" or employee pension benefit plan" within the meaning of <i>Title
-                                                    29 United States Code</i> section 1002(1) or (2) or ERISA.</p>
-                                            <p>(k) HEALTH CARE PROVIDER includes any PERSON referred to in <i>Code of Civil
-                                                    Procedure</i> section 667.7(e)(3).</p>
-                                            <p>(l) DOCUMENT means a writing, as defined in <i>Evidence Code</i> section 250,
+                                                benefit plan" or employee pension benefit plan" within the meaning of Title
+                                                    29 United States Code section 1002(1) or (2) or ERISA.</p>
+                                            <p>(k) HEALTH CARE PROVIDER includes any PERSON referred to in Code of Civil
+                                                    Procedure section 667.7(e)(3).</p>
+                                            <p>(l) DOCUMENT means a writing, as defined in Evidence Code section 250,
                                                 and includes the original or a copy of handwriting, typewriting, printing,
                                                 photostats, photographs, electronically stored information, and every other
                                                 means of recording upon any tangible thing and form of communicating or
@@ -533,10 +533,10 @@ else {
 
                 <h5 class='text-center'><b>INVALID OBJECTIONS</b></h5>
                 <p>Calls for a legal conclusion: Although there is no authority directly on point, such requests in both Requests for Admission
-                    and Interrogatories are non-objectionable. <i>Burke v. Superior Court</i> (1969) 71 Cal.2d 276, 282 and <i>Code Civ.Proc.</i>, 
+                    and Interrogatories are non-objectionable. <i>Burke v. Superior Court</i> (1969) 71 Cal.2d 276, 282 and Code Civ.Proc., 
                     §2030.010(b).</p>
                 <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition,
-                    not for written discovery. Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group
+                    not for written discovery. Rylaarsdam et al., California Practice Guide: Civil Procedure Before Trial (The Rutter Group
                     2019) ¶ 8:721-8:722.</p>
             ";
         }
