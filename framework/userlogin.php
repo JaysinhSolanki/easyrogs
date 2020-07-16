@@ -127,7 +127,7 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
                                 <p class="help-block small" style="margin-left:26px">Recommended only if this is your personal computer.</p>
                             </div>
                             <button class="ladda-button btn btn-info btn-block" data-style="zoom-in">
-                            	<span class="ladda-label">Login</span><span class="ladda-spinner"></span>
+                            	<span class="ladda-label">Log In</span><span class="ladda-spinner"></span>
                             </button>
                             
                             <a  href="<?php echo $_SESSION['framework_url'];?>forgotpassword.php" style="float:right; margin-top:5px;">Forgot Password?</a>
@@ -189,7 +189,7 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
 				<button class="ladda-button btn btn-success btn-block" style="padding-bottom: 25px;">
 					<a  href="<?php echo DOMAIN;?>signup.php" style="color: white;">
 						<div style="font-size: 2.2em;">Join</div>
-						<div style="margin-top:0.5em">Membership is complementary</div>
+						<div style="margin-top:0.5em">Membership is complimentary</div>
 					</a>
 				</button>
             </div>
