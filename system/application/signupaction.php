@@ -89,7 +89,7 @@ else
 	* Save Data in addressbook table
 	**/
 	$fields			=	array('firstname','middlename','lastname','email','password','companyname','address','street','cityname','fkstateid','zip','phone','fkadmittedstateid','barnumber','fkcountryid','signupdate','signupip','fkgroupid','uid','emailverified','username', 'credits');
-	$values			=	array($firstname,$middlename,$lastname,$email,$password,$companyname,$address,$street,$city,$fkstateid,$zipcode,$phone,$fkadmittedstateid ?? 0,$barnumber,254,$todaydatetime,$ipaddress,$fkgroupid,$uid,1,$email, SIGNUP_CREDITS);
+	$values			=	array($firstname,$middlename,$lastname,$email,password_hash($password,PASSWORD_DEFAULT),$companyname,$address,$street,$city,$fkstateid,$zipcode,$phone,$fkadmittedstateid ?? 0,$barnumber,254,$todaydatetime,$ipaddress,$fkgroupid,$uid,1,$email, SIGNUP_CREDITS);
 	
 	$id				=	$AdminDAO->insertrow("system_addressbook",$fields,$values,true/*orUpdate*/);
 	

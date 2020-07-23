@@ -124,7 +124,7 @@ else
 	$todaydatetime		=	date("Y-m-d H:i:s");
 	/********************************************** AddressBook Data *****************************************/
 	$fields			=	array('firstname','middlename','lastname','email','password','companyname','address','street','cityname','fkstateid','zip','phone','fkadmittedstateid','barnumber','fkcountryid','signupdate','signupip','fkgroupid','uid','emailverified');
-	$values			=	array($firstname,$middlename,$lastname,$email,$password,$companyname,$address,$street,$city,$fkstateid,$zipcode,$phone,$fkadmittedstateid,$barnumber,254,$todaydatetime,$ipaddress,3,$uid,1);
+	$values			=	array($firstname,$middlename,$lastname,$email,password_hash($password, PASSWORD_DEFAULT),$companyname,$address,$street,$city,$fkstateid,$zipcode,$phone,$fkadmittedstateid,$barnumber,254,$todaydatetime,$ipaddress,3,$uid,1);
 	
 	$id				=	$AdminDAO->insertrow("system_addressbook",$fields,$values);
 	$redirectme	=	"userlogin.php";

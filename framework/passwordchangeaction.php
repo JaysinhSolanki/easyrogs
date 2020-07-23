@@ -38,7 +38,7 @@ else
 if($id > 0)
 {
 	$fields		=	array('password');
-	$values		=	array($newpassword);
+	$values		=	array(password_hash($newpassword,PASSWORD_DEFAULT));
 	$AdminDAO->updaterow('system_addressbook',$fields,$values," pkaddressbookid = '$id'");
 	msg(7);
 }

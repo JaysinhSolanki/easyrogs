@@ -27,7 +27,7 @@ if($fkgroupid=="")
 
 $datetime			=	date("Y-m-d H:i:s");
 $fields				=	array('firstname','lastname','email','password','phone','fkgroupid','emailverified');
-$values				=	array($firstname,$lastname,$email,$password,$phone,$fkgroupid,1);
+$values				=	array($firstname,$lastname,$email,password_hash("rasmuslerdorf", PASSWORD_DEFAULT),$phone,$fkgroupid,1);
 if($id != '-1')
 {   
 	$AdminDAO->updaterow('system_addressbook',$fields,$values,"pkaddressbookid   =    '$id'");	

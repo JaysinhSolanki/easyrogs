@@ -32,7 +32,7 @@ if($uid != "")
 				// Successfull email after reset password
 				
 				$fields				=	array('password');
-				$values				=	array($password);
+				$values				=	array( password_hash($password,PASSWORD_DEFAULT) );
 				$AdminDAO->updaterow('system_addressbook',$fields,$values," uid = '$uid'");
 				$to					=	array($customeremail);
 				$emailmarker		=	"";
