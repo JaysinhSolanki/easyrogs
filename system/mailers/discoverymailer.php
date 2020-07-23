@@ -95,7 +95,7 @@
       }
       $responseName = ( $response && $response['responsename'] ) 
                           ? Discovery::getTitle( $response['responsename'], null, Discovery::STYLE_WORDCAPS )
-                          : 'Response to '. $discovery['discovery_name'] .'[Set '. $discovery['set_number'] .']'; // failsafe, shouldn't be needed
+                          : 'Response to '. $discovery['discovery_name'] .' [Set '. $discovery['set_number'] .']'; // failsafe, shouldn't be needed
 
       $smarty->assign([
         'ASSETS_URL'    => ASSETS_URL,

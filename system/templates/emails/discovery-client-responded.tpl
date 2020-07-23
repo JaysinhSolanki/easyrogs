@@ -1,7 +1,7 @@
 {extends file="emails/layout.tpl"}
 
 {block name=body}
-  <p>Greetings {$name},</p>
 	<br/>
+  <p>Greetings {$name},</p>
   <strong>{$clientName} has returned {$responseName}</strong>
 {/block}
