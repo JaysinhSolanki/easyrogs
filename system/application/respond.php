@@ -1,6 +1,6 @@
 <?php
 @session_start();
-include_once("../bootstrap.php");
+include_once(__DIR__."/../bootstrap.php");
 include_once("../library/classes/AdminDAO.php");
 $AdminDAO		=	new AdminDAO();
 include_once("../library/classes/functions.php");

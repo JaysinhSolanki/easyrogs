@@ -10,28 +10,27 @@ $type       = $_GET['type'] ?: Discovery::TYPE_EXTERNAL;
 /**
 * Check that logged in user is the owner of case
 **/
-// $checkOwnerCase = $AdminDAO->getrows( "cases", "*", 
-//                                       "attorney_id = :fkaddressbookid AND id = :case_id", 
+// $checkOwnerCase = $AdminDAO->getrows( "cases", "*",
+//                                       "attorney_id = :fkaddressbookid AND id = :case_id",
 //                                       array( "fkaddressbookid" => $_SESSION['addressbookid'], "case_id" => $case_id ) );
 
 /**
 * Check logged in user is case service list or not
 **/
-$isServiceListMember = $AdminDAO->getrows(
-    'attorney a, client_attorney ca',
-    "*,ca.id as client_attorney_id",
-    "a.attorney_email = :attorney_email AND
-    a.id 				= ca.attorney_id AND
-    ca.case_id 			= :case_id ",
-    array( 'attorney_email'=>$_SESSION['loggedin_email'], 'case_id'=>$case_id )
-);
+// $isServiceListMember = $AdminDAO->getrows(
+//     'attorney a, client_attorney ca',
+//     "*,ca.id as client_attorney_id",
+//     "a.attorney_email = :attorney_email AND
+//     a.id 				= ca.attorney_id AND
+//     ca.case_id 			= :case_id ",
+//     array( 'attorney_email'=>$_SESSION['loggedin_email'], 'case_id'=>$case_id )
+// );
 
 $forms = $AdminDAO->getrows('forms', "*");
 
 $cases = $AdminDAO->getrows(
                             "cases c,system_addressbook a",
-                            "
-                            c.*,
+                            "c.*,
                             c.case_title 	as case_title,
                             c.case_number 	as case_number,
                             c.jurisdiction 	as jurisdiction,
@@ -40,13 +39,14 @@ $cases = $AdminDAO->getrows(
                             c.court_address as court_address,
                             c.department 	as department,
                             a.firstname 	as atorny_fname,
-                            a.lastname 		as atorny_lname",
+                            a.lastname 		as atorny_lname,
+                            a.cityname 		as atorny_city",
 
                             "id 			= :case_id AND
                             c.attorney_id 	= a.pkaddressbookid",
 
                             array( 'case_id'=>$case_id )
-); 
+                        );
 Side::legacyTranslateCaseData($case_id, $cases);
 
 $case               = $cases[0];
@@ -59,11 +59,13 @@ $court_address      = $case['court_address'];
 $department         = $case['department'];
 $set_number         = $case['set_number'];
 $atorny_name        = $case['atorny_fname']." ".$case['atorny_lname'];
+$atorny_city        = $currentUser->user['cityname']; //$case['atorny_city'];
 $uid                = "addnew";
 $conjunction_with   = 0;
 $doctype            = 1;
 if( $id ) {
-    $discoveries            = $AdminDAO->getrows('discoveries', "*", "id	= :id ", array('id'=>$id));
+    $discoveries            = $AdminDAO->getrows( 'discoveries', "*",
+                                                  "id = :id ", array('id'=>$id) );
     $discovery              = $discoveries[0];
     $type                   = $discovery['type'];
     $conjunction_setnumber  = $discovery['conjunction_setnumber'];
@@ -73,8 +75,8 @@ if( $id ) {
     $proponding             = $discovery['proponding'];
     $proponding_attorney    = $discovery['proponding_attorney'];
 
-    //IF CURRENT USER IS NOT THE USER WHO CREATE THIS DISCOVERY THEN IN SROGS & RFAS
-    //WE ONLY SHOW THEM UPLOADED DOCUMENTS HE CANNOT DELETE THEM.
+    // IF CURRENT USER IS NOT THE USER WHO CREATE THIS DISCOVERY THEN IN SROGS & RFAS
+    // WE ONLY SHOW THEM UPLOADED DOCUMENTS HE CANNOT DELETE THEM.
     if ($_SESSION['addressbookid'] != $dicsovery_creator) {
         $doctype = 0;
     }
@@ -136,13 +138,13 @@ $otherClients = $sidesModel->getOtherClients($currentSide['id'], $case_id);
 // 	$otherclients	=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND $otherWhere ", array(":case_id"=>$case_id), "client_name", "ASC");
 
 
-// 	if( $type == Discovery::TYPE_EXTERNAL ) 
+// 	if( $type == Discovery::TYPE_EXTERNAL )
 // 	{
 // 		$propondingClients	=	$ownclients;
 // 		$respondingClients	=	$otherclients;
 
 // 	}
-// 	else if( $type == Discovery::TYPE_INTERNAL ) 
+// 	else if( $type == Discovery::TYPE_INTERNAL )
 // 	{
 // 		$propondingClients	=	$otherclients;
 // 		$respondingClients	=	$ownclients;
@@ -265,15 +267,15 @@ body.modal-open {
                     <div class="form-group">
                         <label class=" col-sm-2 control-label">Form<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                         <div class="col-sm-8">
-                            <select  name="form_id" id="form_id"  
-<?php 
-                                if( $id ) { echo "disabled"; } 
+                            <select  name="form_id" id="form_id"
+<?php
+                                if( $id ) { echo "disabled"; }
                                 else {
 ?>
-                                onchange="loadformquestions(this.value,'<?= $discovery['id']?>'),callFunction(),loaddocsFunction(this.value)" 
+                                onchange="loadformquestions(this.value,'<?= $discovery['id']?>'),callFunction(),loaddocsFunction(this.value)"
 <?php
-                                } 
-?> 
+                                }
+?>
                                 class="form-control m-b" >
                                 <option value="">Select form</option>
 <?php
@@ -281,7 +283,7 @@ body.modal-open {
 ?>
                                     <option <?php if ($thisrow['id']==$discovery['form_id']) {
                                         echo "selected";
-}?> 
+}?>
                                         value="<?= $thisrow['id'] ?>"><?= $thisrow['form_name'] ?></option>
 <?php
                                 }
@@ -317,10 +319,10 @@ body.modal-open {
                     <div class="row form-group">
                             <label class=" col-sm-2 control-label" style="margin-top: 20px;">In Conjunction with <span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
                             <div class="col-sm-2" style="margin-top: 25px;">
-                                <input type="checkbox" onclick="inConjunctionForm()" <?= $discovery['in_conjunction'] ? "checked" : '' ?> value="1" name="in_conjunction" id="in_conjunction"> 
+                                <input type="checkbox" onclick="inConjunctionForm()" <?= $discovery['in_conjunction'] ? "checked" : '' ?> value="1" name="in_conjunction" id="in_conjunction">
                                 <label for="in_conjunction">Form Interrogatories</label>
                             </div>
-                            
+
                             <div  id="interogatoriesTypeDiv" <?= (!$id || !$discovery['in_conjunction']) ? "style='display:none'" : '' ?>>
                                 <div class="col-md-3">
                                 <label class="control-label">Type<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
@@ -382,7 +384,7 @@ body.modal-open {
 
                     </div>
                     <div class="form-group">
-<?php 
+<?php
                         if( $type == Discovery::TYPE_INTERNAL ) {
 ?>
                             <label class=" col-sm-2 control-label">Attorney<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
@@ -417,11 +419,11 @@ body.modal-open {
 <?php
                     }
 ?>
-                    <div class="form-group" id="start_questionid" 
-<?php 
+                    <div class="form-group" id="start_questionid"
+<?php
                         if( in_array(@$discovery['form_id'], array(1,2)) && $id ) {
                             echo "style='display:none'";
-                        } 
+                        }
 ?>>
                         <label class=" col-sm-2 control-label">First Question Number<span class="redstar" style="color:#F00" title="This field is compulsory"></span> <?php  echo instruction(7) ?></label>
                         <div class="col-sm-8">
@@ -481,7 +483,7 @@ body.modal-open {
                                 <button type="button" class="btn btn-info buttonid client-btn" data-style="zoom-in" onclick="checkClientEmailFound('<?= $discovery_id ?>',2);"  title="">
                                     <i class="icon-ok bigger-110"></i>
                                         <span class="ladda-label">
-                                            Client <i class="fa fa-play" aria-hidden="true"></i>
+                                            Client <i class="fa fa-play" aria-hidden="true" />
                                         </span>
                                         <a href="#"><i style="font-size:16px" data-placement="top" data-toggle="tooltip" title="" class="fa fa-info-circle tooltipshow client-btn" aria-hidden="true" data-original-title=""></i></a>
                                     <span class="ladda-spinner"></span>
@@ -520,9 +522,9 @@ body.modal-open {
   </div>
 </div>
 
-<?php 
+<?php
 include_once(SYSTEMPATH.'application/client-email-found_modal.php');
-include_once(SYSTEMPATH.'application/client_instructions_modal.php'); 
+include_once(SYSTEMPATH.'application/client_instructions_modal.php');
 ?>
 <link href="<?= VENDOR_URL ?>uploadfile.css" rel="stylesheet">
 <script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
@@ -531,7 +533,7 @@ include_once(SYSTEMPATH.'application/client_instructions_modal.php');
 jQuery( $ => {
     setTimeout( _ => loadToolTipForClientBtn(), 500 );
     loadpropondingattorneys('<?= $case_id ?>','<?= @$proponding ?>','<?= @$proponding_attorney ?>');
-    
+
     var extraObj = $("#extraupload")
             .uploadFile({
                 url:"frontdocumentuploads.php",
@@ -592,7 +594,7 @@ function loadinstructions(id,form_id) {
         .done( resp => { 
             $("#loadinstructions").html( trim(resp) );
 
-            const { discoveryType, discoveryFormNames, discoveryForm, 
+            const { discoveryType, discoveryFormNames, discoveryForm,
                     currentPage, } = globalThis,
                 suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
             ctxUpdate({ id: `47_${type}${suffix}`, pkscreenid: '47', url: 'discoveryfront.php', } );
@@ -609,8 +611,8 @@ function loadrespondings(case_id,client_id,responding_id) {
     $("#loadrespondingsDiv")
         .load("loadrespondings.php?case_id="+case_id+"&client_id="+client_id+"&selected_id="+responding_id);
 }
-function callFunction() { 
-    form_id = $("#form_id").val(); 
+function callFunction() {
+    form_id = $("#form_id").val();
 
     if( form_id == 1 || form_id == 2 || form_id == "" ) {
         $("#start_questionid").hide();
@@ -642,12 +644,12 @@ function buttonsave() {
     }
     //$("#instruction_html").val($("#instruction_data").html());
     var isagree = true;
-    setTimeout( _ => { 
+    setTimeout( _ => {
         $.LoadingOverlay("hide");
         addform( 'discoveryaction.php?save=yes','discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid=<?= $case_id ?>' );
     }, 200);
 }
-// function buttonsaveandsendpopup() { 
+// function buttonsaveandsendpopup() {
 //     $.post( "loademailcontentpopup.php",
 //             $("#discoveriesform" )
 //                 .serialize() )
@@ -656,7 +658,7 @@ function buttonsave() {
 //         } );
 //     $('#client_modal').modal('toggle');
 // }
-function buttonsaveandsend( notesElement = '' ) { 
+function buttonsaveandsend( notesElement = '' ) {
     const notes_for_client = notesElement && $(notesElement).val().trimEnd() || "";
     for(instance in CKEDITOR.instances ) {
         CKEDITOR.instances[instance].updateElement();
@@ -819,8 +821,8 @@ function calculatedduedateaction() {
         .done( data => {
             $("#due").val(data);
         } );
-    setTimeout( _ => { 
-        $('#general_modal').modal('toggle') 
+    setTimeout( _ => {
+        $('#general_modal').modal('toggle')
     }, 2000);
 }
 
@@ -830,24 +832,24 @@ function serveFunction() { //debugger;
     $.LoadingOverlay("show");
     var formid = $("#form_id").val();
     var isagree = true;
-    if( formid == 1 || formid == 2  || formid == 5) {
+    if( formid == <?= Discovery::FORM_CA_FROGS  ?> ||
+        formid == <?= Discovery::FORM_CA_FROGSE ?> ||
+        formid == <?= Discovery::FORM_CA_RPDS   ?> ) {
         serveFunctionMain();
-    } 
-    else if( formid == 3 || formid == 4 ) {
+    }
+    else if( formid == <?= Discovery::FORM_CA_SROGS ?> ||
+             formid == <?= Discovery::FORM_CA_RFAS  ?> ) {
         $(".questionscls").each( function(index) {
             if( $(this).val() > 35 && $(".question_titlecls:eq("+index+")").val() ) {
                 isagree = false;
             }
         } );
-        setTimeout( _ => {
-            if( !isagree && type != 2 ) {
-                PopupForDeclaration(1);
-            }
-            else {
-                serveFunctionMain();
-            }
-        }, 1000);
-
+        if( /*true ||*/ !isagree && type != 2 ) {
+            PopupForDeclaration(1);
+        }
+        else {
+            serveFunctionMain();
+        }
     }
     else {
         $.LoadingOverlay("hide");
@@ -882,11 +884,15 @@ function saveFunction() {
     var type = '<?= $type ?>';
     var formid = $("#form_id").val();
     var isagree = true;
-    if( formid == 1 || formid == 2 || formid == 5 || formid == '' ) {
+    if( formid == <?= Discovery::FORM_CA_FROGS  ?> ||
+        formid == <?= Discovery::FORM_CA_FROGSE ?> ||
+        formid == <?= Discovery::FORM_CA_RPDS   ?> ||
+        formid == '' ) {
         //PopupForPOS();
         buttonsave();
     }
-    else if( formid == 3 || formid == 4 ) {
+    else if( formid == <?= Discovery::FORM_CA_SROGS ?> ||
+             formid == <?= Discovery::FORM_CA_RFAS  ?> ) {
         $( ".questionscls" )
             .each( function(index) {
                 if( $(this).val() > 35 && $(".question_titlecls:eq("+index+")").val() ) {
@@ -905,24 +911,24 @@ function saveFunction() {
     }
 }
 function PopupForDeclaration( pos_or_save ) { //pos_or_save: 1: POS, 2: Save
-    $.post( "loaddeclarationpopupcontent.php?pos_or_save=" + pos_or_save,
+    const _state = '<?= $discovery['dec_state'] ?>',
+          _city  = '<?= $discovery['dec_city']  ?: $atorny_city ?>'
+
+    $.post( `loaddeclarationpopupcontent.php?pos_or_save=${pos_or_save}&dec_city=${_city}&dec_state=${_state}`,
             $("#discoveriesform" )
                 .serialize() )
         .done( data => {
+            $('#general-width').addClass('w-900');
+            $('#general_modal_title').html("DECLARATION FOR ADDITIONAL DISCOVERY");
             $("#load_general_modal_content").html(data);
+            //END LOADER
+            $.LoadingOverlay("hide");
+            $('#general_modal').modal('toggle');
         });
-    $('#general_modal_title').html("DECLARATION FOR ADDITIONAL DISCOVERY");
-    $('#general-width').addClass('w-900');
-    setTimeout( _ => {
-        //END LOADER
-        $.LoadingOverlay("hide");
-        $('#general_modal').modal('toggle');
-    }, 2000);
 }
 function signdeclaration( pos_or_save ) {
-    //console.log($("#formdeclaration" ).serialize());
-    for (instance in CKEDITOR.instances) {
-        CKEDITOR.instances[instance].updateElement();
+    for( instance in CKEDITOR.instances ) {
+        CKEDITOR.instances[instance].updateElement(); // 🤔🧐
     }
     var dec_state   = $("#dec_state").val();
     var dec_city    = $("#dec_city").val();
@@ -980,7 +986,7 @@ function loaduploadeddocs() {
         .load("loaduploadeddocs.php?rp_uid="+rp_uid+"&doctype="+doctype);
 }
 function deleteDoc( id, rp_uid ) {
-    $.post( "deletefrontdocs.php", 
+    $.post( "deletefrontdocs.php",
             { id: id,rp_uid:rp_uid } )
         .done( data => {
             loaduploadeddocs();
@@ -1014,7 +1020,7 @@ function checkClientEmailFound( discovery_id, actiontype ) {
         .done( data => {
             var obj = JSON.parse(data);
             if( obj.found  ) {
-                if( actiontype == 2 ) { 
+                if( actiontype == 2 ) {
                     $('#client-instructions-send').on('click', _ => buttonsaveandsend('#notes_for_client') );
                     $('#discovery-client-instructions_modal').modal('show');
                 } else {

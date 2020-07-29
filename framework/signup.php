@@ -8,7 +8,7 @@ setcookie('rememberme','', time()+(86400*30), "/");
 setcookie("rememberme",'', time()-3600);
 @session_destroy();
 
-require_once("../bootstrap.php");
+require_once(__DIR__.'/../system/bootstrap.php');
 include_once("../includes/classes/login.class.php");
 require_once("head.php");
 /********************* Load Countries **************************/
