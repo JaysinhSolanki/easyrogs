@@ -1,5 +1,13 @@
 <!-- Vendor scripts --> 
 <script src="<?= VENDOR_URL ?>jquery/dist/jquery.min.js"></script>
+
+<?/* 
+	!!!! WARNING !!!!
+	Changing the load order of this (jquery.uploadfile) plugin could break it !!!!
+	https://github.com/EasyRogs/easyrogs/pull/420
+*/?>
+<script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
+
 <script src="<?= VENDOR_URL ?>jquery-ui/jquery-ui.min.js"></script> 
 <script src="<?= VENDOR_URL ?>toastr/build/toastr.min.js"></script> 
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
@@ -22,7 +30,6 @@
 <script src="<?= VENDOR_URL ?>jquery.initialize/jquery.initialize.min.js"></script>
 
 <script src="<?= VENDOR_URL ?>jquery.form.js"></script>
-<script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
 <script src="<?= VENDOR_URL ?>jquery-loading-overlay/2.1.7/loadingoverlay.min.js"></script>
 <script src="<?= VENDOR_URL ?>select2.full.js"></script>
 
