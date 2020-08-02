@@ -65,7 +65,7 @@
         'name'        => $client['client_name'],
         'senderEmail' => $actionUser['email'],
         'senderPhone' => $actionUser['phone'],
-        'masterhead'  => $usersModel->getMasterHead($actionUser),
+        'masterhead'  => $sidesModel->getMasterHead($side),
         'notes'       => $notes,
         'actionUrl'   => DOMAIN . "discoveryfront.php?uid=$discovery[uid]",
         'actionText'  => 'Respond Now'
