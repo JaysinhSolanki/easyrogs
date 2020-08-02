@@ -215,7 +215,9 @@ if( $id ) {
 		$fields[]	= "discovery_instrunctions";
 		$values[]	= $instruction;
 	}
-	$AdminDAO->updaterow("discoveries",$fields,$values,"id ='$id'");
+	
+	$AdminDAO->updaterow("discoveries", $fields,               $values,    "id ='$id'");
+	$AdminDAO->updaterow('responses',   array('is_submitted'), array('0'), "fkdiscoveryid='$id'");
 	
 	$selectedids = array();
 	if( !empty($is_selected) && @count($is_selected) ) { // !?

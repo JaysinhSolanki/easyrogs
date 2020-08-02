@@ -844,7 +844,7 @@ function serveFunction() { //debugger;
                 isagree = false;
             }
         } );
-        if( /*true ||*/ !isagree && type != 2 ) {
+        if( /*true ||*/ !isagree && type ==  <?= Discovery::TYPE_EXTERNAL ?> ) {
             PopupForDeclaration(1);
         }
         else {
@@ -901,7 +901,7 @@ function saveFunction() {
             });
 
         setTimeout( _ => {
-            if( isagree == false && type != 2 ) {
+            if( !isagree && type == <?= Discovery::TYPE_EXTERNAL ?> ) {
                 PopupForDeclaration(2);
             }
             else {
