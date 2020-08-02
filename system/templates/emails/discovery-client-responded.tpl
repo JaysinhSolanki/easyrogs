@@ -4,4 +4,5 @@
 	<br/>
   <p>Greetings {$name},</p>
   <strong>{$clientName} has returned {$responseName}</strong>
+	<br/>
 {/block}
