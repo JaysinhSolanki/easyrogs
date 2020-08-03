@@ -421,7 +421,7 @@ body.modal-open {
 ?>
                     <div class="form-group" id="start_questionid"
 <?php
-                        if( in_array(@$discovery['form_id'], array(1,2)) && $id ) {
+                        if( in_array(@$discovery['form_id'], array(Discovery::FORM_CA_FROGS,Discovery::FORM_CA_FROGSE)) && $id ) {
                             echo "style='display:none'";
                         }
 ?>>

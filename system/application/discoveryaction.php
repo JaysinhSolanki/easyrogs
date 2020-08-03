@@ -215,7 +215,6 @@ if( $id ) {
 		$fields[]	= "discovery_instrunctions";
 		$values[]	= $instruction;
 	}
-	
 	$AdminDAO->updaterow("discoveries", $fields,               $values,    "id ='$id'");
 	$AdminDAO->updaterow('responses',   array('is_submitted'), array('0'), "fkdiscoveryid='$id'");
 	
@@ -369,7 +368,8 @@ if( $isemail ) {
 		$values	= array(1,date("Y-m-d H:i:s"));
 		$fields[] = "is_work_in_progress";
 		$values[] = 0;
-		$AdminDAO->updaterow('discoveries',$fields,$values,"id='$id'");
+		$AdminDAO->updaterow('discoveries', $fields,               $values,    "id='$id'");
+		$AdminDAO->updaterow('responses',   array('is_submitted'), array('0'), "fkdiscoveryid='$id'");
 	}
 
 	$discovery = $discoveriesModel->find($id);
@@ -387,7 +387,8 @@ if( !empty($signdeclarationdataarray) ) {
 	$dec_state	= $signdeclarationdataarray['dec_state'];
 	$fields		= array('declaration_text','declaration_updated_at','declaration_updated_by','dec_state','dec_city');
 	$values		= array($declaration_text,$declaration_updated_at,$declaration_updated_by,$dec_state,$dec_city);
-	$AdminDAO->updaterow("discoveries",$fields,$values,"id ='$id'");
+	$AdminDAO->updaterow("discoveries", $fields,               $values,    "id ='$id'");
+	$AdminDAO->updaterow('responses',   array('is_submitted'), array('0'), "fkdiscoveryid='$id'");
 	$_SESSION['signdeclarationdataarray']	= array();
 }
 

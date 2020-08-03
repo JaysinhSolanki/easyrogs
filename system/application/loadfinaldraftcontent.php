@@ -337,7 +337,7 @@ $instructions = "This responding party has not completed its investigation or di
                                                 <?php echo $question_title; ?>
                                             </p>
                                             <?php
-                                            if(in_array($question_type_id,array(1,2)))
+                                            if(in_array($question_type_id,array(Discovery::FORM_CA_FROGS,Discovery::FORM_CA_FROGSE)))
                                             {
                                             ?>
                                             <textarea rows="5" id="final_response<?php echo $discovery_question_id ?>" class="form-control" name="final_response[<?php echo $discovery_question_id; ?>]" placeholder="Final Response" required><?=

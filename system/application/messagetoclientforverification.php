@@ -12,6 +12,7 @@
 		case 1: DiscoveryMailer::clientVerification($discovery); break;
 		case 2: DiscoveryMailer::clientResponse($discovery, $currentUser->user, $notesForClient); break;
 	}
+	$AdminDAO->updaterow('responses', array('is_submitted'), array('0'), "fkdiscoveryid = :id", array("id"=>$discoveryId) );	
 
 	// struct is legacy.
 	HttpResponse::successPayload([
