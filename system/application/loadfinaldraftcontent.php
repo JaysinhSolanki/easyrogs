@@ -221,6 +221,17 @@ $instructions = "This responding party has not completed its investigation or di
                                     $answer_time 			=	"";
                                     $objection 				=	"";
                                 }
+
+                                /**
+                                * IF Depends-on-some-question then we need that question answer
+                                **/
+                                if( $depends_on_question && $response_id ) {
+                                    $dependent_answer = trim( getAnswerOfDependentParentQuestion( $discovery_id, $depends_on_question, $response_id ) );
+                                }
+                                if( $depends_on_question && ( $dependent_answer == 'No' || !$dependent_answer ) && $view == Discovery::VIEW_RESPONDING ) {
+                                    continue;
+                                }
+
                                 ?>
                                 <li  class="list-group-item">
 <?php
