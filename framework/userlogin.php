@@ -207,6 +207,21 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
 <?php
 	}
 ?>
+
+
+	<!-- Start of Survicate (www.survicate.com) code -->
+	<script type="text/javascript">
+    (function (w) {
+      var s = document.createElement('script');
+      s.src = 'https://survey.survicate.com/workspaces/555212db8a02dddaa3033312095fcba4/web_surveys.js';
+      s.async = true;
+      var e = document.getElementsByTagName('script')[0];
+      e.parentNode.insertBefore(s, e);
+    })(window);
+  </script>
+	<!-- End of Survicate code -->
+
+
 </body>
 </html>
 <script type="text/javascript">
