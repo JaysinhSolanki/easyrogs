@@ -205,7 +205,7 @@ td, th {
             <tr>
                 <td align="justify">
 					<br />
-					I declare under penalty of perjury under the laws of the State of California that the above is true and correct. Executed on <?= date('F j, Y') ?> at <span id="citystate"><input type="text" name="pos_city" id="pos_city" placeholder="Enter your city..." value="<?= $senderDetail['cityname'] ?>"/>, <input type="text" name="pos_state" id="pos_state" value="<?= $getstate ?>" /></span>. <span style='display:none' id='signtime'></span>
+					I declare under penalty of perjury under the laws of the State of California that the above is true and correct. Executed on <?= date('F j, Y') ?> at <span id="citystate"><input type="text" name="pos_city" id="pos_city" placeholder="Enter your city..." value="<?= $senderDetail['cityname'] ?>" required pattern="[A-Za-z]+" />, <input type="text" name="pos_state" id="pos_state" value="<?= $getstate ?>" required pattern="[A-Za-z]+" /></span>. <span style='display:none' id='signtime'></span>
 					<br />
 					<br />
                 </td>
@@ -334,16 +334,16 @@ td, th {
     
     var error = 0;
     var msg = "";
-    if( !pos_address ) {
+    if( !pos_address.trim() ) {
         error   = 1;
         msg     = "Please enter address.";
     }
 
-    if( !pos_city ) {
+    if( !pos_city.trim() ) {
         error   = 1;
         msg     = "Please enter city.";
     }
-    if( !pos_state ) {
+    if( !pos_state.trim() ) {
         error   = 1;
         msg     = "Please enter state.";
     }

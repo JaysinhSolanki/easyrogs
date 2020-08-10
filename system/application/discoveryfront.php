@@ -801,19 +801,19 @@ function SaveVerificationText(flag) {
 		$("#email_solicitation").val($("#email_solicitation_popup").val());
 		$("#email_body").val($("#email_body_popup").val());
 
-		if( $("#verification_city").val() == "" ) {
+		if( !$("#verification_city").val().trim() ) {
 			$("#msgVerification").html("Please enter your city.");
 			var checkerror	= 1;
 			//callModal();
 			//addform('discoveryfrontaction.php?q=1','discoverydetailsform',' ','discoveryfront-thanks.php');
 		}
-		else if( $("#verification_by_name").val() == "" ) {
+		else if( !$("#verification_by_name").val().trim() ) {
 			$("#msgVerification").html("Please enter your type.");
 			var checkerror	= 1;
 			//callModal();
 			//addform('discoveryfrontaction.php?q=1','discoverydetailsform',' ','discoveryfront-thanks.php');
 		}
-		else if( $("#verification_signed_by").val() == "" ) {
+		else if( !$("#verification_signed_by").val().trim() ) {
 			$("#msgVerification").html("Please enter your name.");
 			var checkerror	= 1;
 			//callModal();
@@ -881,14 +881,16 @@ ob_start();
 		}
 ?>
         <div id="verification_text" style="line-height:23px !important; text-align:justify; font-size:13px">
-            <p>I am the <input type='text' name='verification_by_name' id='verification_by_name' value='<?= $verification_by_name ?>' placeholder='Role: Plaintiff, Defendant, etc.'> in this action, and I have read the foregoing <b><?= Discovery::getTitle($discovery_name) ?></b> and know its contents. The matters stated therein are true based on my own knowledge, except as to those matters stated on information and belief, and as to those matters I believe them to be true.
+            <p>I am the <input type='text' name='verification_by_name' id='verification_by_name' value='<?= $verification_by_name ?>' placeholder='Role: Plaintiff, Defendant, etc.' required pattern="[A-Za-z]+" /> in this action, and I have read the foregoing <b><?= Discovery::getTitle($discovery_name) ?></b> and know its contents. The matters stated therein are true based on my own knowledge, except as to those matters stated on information and belief, and as to those matters I believe them to be true.
             </p>
 			<p>I declare under penalty of perjury under the laws of the State of California that the foregoing is true and correct.<br>
-			Executed on <?= date("F j, Y") ?> at <input placeholder="City" type='text' name='verification_city' id='verification_city' value='<?= $verification_city; ?>'>,
-			<input type='text' name='verification_state' id='verification_state' value='<?= $verification_state; ?>' placeholder="State">.
+			Executed on <?= date("F j, Y") ?> at <input placeholder="City" type='text' name='verification_city' id='verification_city' value='<?= $verification_city; ?>' required pattern="[A-Za-z]+" />,
+			<input type='text' name='verification_state' id='verification_state' value='<?= $verification_state; ?>' placeholder="State" required pattern="[A-Za-z]+" />.
             </p>
             <p>
-                <img src="<?= ASSETS_URL; ?>images/court.png" style="width: 18px;padding-right: 3px;">
+						<?php if( in_array( $form_id, [Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS]) ): ?>
+              <img src="<?= ASSETS_URL; ?>images/court.png" style="width: 18px;padding-right: 3px;">
+						<?php endif; ?>
 <?php
                     // added by JS 3/7/20
                     if( $form_id == Discovery::FORM_CA_SROGS ){
@@ -905,7 +907,7 @@ ob_start();
         <br>
         <br>
         <p class="text-right">
-        	By: <input placeholder="Signed By" type='text' name='verification_signed_by' id='verification_signed_by' value='<?= $verification_signed_by ?>'><br>
+        	By: <input placeholder="Signed By" type='text' name='verification_signed_by' id='verification_signed_by' value='<?= $verification_signed_by ?>' required pattern="[A-Za-z]+" /><br>
 
 			Signed electronically,<br>
 
