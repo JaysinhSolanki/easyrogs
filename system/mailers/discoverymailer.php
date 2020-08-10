@@ -61,14 +61,15 @@
       }
 
       $smarty->assign([
-        'ASSETS_URL'  => ASSETS_URL,
-        'name'        => $client['client_name'],
-        'senderEmail' => $actionUser['email'],
-        'senderPhone' => $actionUser['phone'],
-        'masterhead'  => $sidesModel->getMasterHead($side),
-        'notes'       => $notes,
-        'actionUrl'   => DOMAIN . "discoveryfront.php?uid=$discovery[uid]",
-        'actionText'  => 'Respond Now'
+        'ASSETS_URL'    => ASSETS_URL,
+        'name'          => $client['client_name'],
+        'discoveryName' => Discovery::getTitle($discovery['discovery_name'], $discovery['set_number'], Discovery::STYLE_WORDCAPS),
+        'senderEmail'   => $actionUser['email'],
+        'senderPhone'   => $actionUser['phone'],
+        'masterhead'    => $sidesModel->getMasterHead($side),
+        'notes'         => $notes,
+        'actionUrl'     => DOMAIN . "discoveryfront.php?uid=$discovery[uid]",
+        'actionText'    => 'Respond Now'
       ]);
       $body = $smarty->fetch('emails/discovery-client-response.tpl');
       $subject = sprintf(self::CLIENT_RESPONSE_SUBJECT, $side['case_title']);

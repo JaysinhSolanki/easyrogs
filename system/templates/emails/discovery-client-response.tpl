@@ -4,7 +4,7 @@
 {block name=body}
   <p>Dear {$name},</p>
   <br/>
-	<strong>Please click the button below to respond to discovery in your case.</strong>
+	Please click the button below to respond to <strong>{$discoveryName}</strong> in your case.
   {if $notes}
     <h4 style="display: block !important; text-align: center;">Instructions</h4>
     <div style="white-space: pre-wrap; margin: -1em 0 0; border: 1px solid black; padding: 0.5em;" class="notes-for-client">{$notes}</div>
