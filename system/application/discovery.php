@@ -192,16 +192,6 @@ if ($id > 0 && in_array($form_id, array(Discovery::FORM_CA_SROGS, Discovery::FOR
 ?>
 
 <style>
-.instruction-collapse [data-toggle="collapse"]:after {
-    content: "Hide";
-    float: right;
-    font-size: 14px;
-    line-height: 20px;
-}
-.instruction-collapse [data-toggle="collapse"].collapsed:after {
-    content: "Show";
-    color: #fff;
-}
 body.modal-open {
     position: static !important;
 }
@@ -430,10 +420,10 @@ body.modal-open {
                             <input type="text" onkeypress="return isNumberKey(event)"  name="question_number_start_from" id="question_number_start_from" onblur="arrangequestionnumber()" placeholder="First Question Number"  min="1" class="form-control m-b" value="<?php echo $discovery['question_number_start_from'];?>">
                         </div>
                     </div>
-                    <div id="loadinstructions" class="row" /><!--Instructions Here--->
+                    <div id="loadinstructions" class="row"></div><!--Instructions Here--->
 
                     <div class="row">
-                     <div id="loadformquestion" /><!--Form Question Here--->
+                     <div id="loadformquestion"></div><!--Form Question Here--->
                     </div>
                     <input type="hidden" name="instruction_html" id="instruction_html"  />
                     <input type="hidden" name="email_body" id="email_body"  />

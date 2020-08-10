@@ -18,6 +18,9 @@
 <link rel="stylesheet" href="<?php echo VENDOR_URL;?>datatables/media/css/jquery.dataTables.css"/>
 
 <style>
+#screenfrmdiv {
+  width: 100%;
+}
 table.dataTable thead th, table.dataTable thead td {
     padding: 10px 18px;
     border-bottom: 1px !important;
@@ -73,9 +76,73 @@ table.dataTable.no-footer {
 	border-color:#951f06 !important;
 	color:#fff !important;
 }
-.btn-gray
-{
+.btn-gray {
 	
 }
-</style>
+.btn-round {
+  border-radius: 50%;
+}
+.btn-outline {
+  border-width: 1px;
+  border-style: solid;
+}
 
+.instruction-collapse [data-toggle="collapse"]:after {
+    content: "Hide instructions";
+    float: right;
+    font-size: 14px;
+    line-height: 20px;
+}
+.instruction-collapse [data-toggle="collapse"].collapsed:after {
+    content: "Show instructions";
+    color: #fff;
+}
+
+.main {
+    display: flex;
+    align-items: stretch;
+}
+.sidebar {
+    min-width: 0px;
+    max-width: 0px;
+    transition: all 0.3s;
+}
+.sidebar>.fixed {
+    position: fixed; 
+    margin-top: 70px; /* skip the header */
+    height: 100vh; 
+	  width: 0;
+    z-index: 5;
+    overflow-x: hidden;
+    transition: all 0.3s;
+}
+.sidebar.left>.fixed {
+    left: 0;
+}
+.sidebar.right>.fixed {
+  right: calc(100wh-280px);
+}
+.sidebar.open {
+    min-width: 280px;
+    max-width: 280px;
+    text-align: center;
+}
+.sidebar.open>.fixed {
+	width: 280px;
+}
+
+@keyframes anim-glow {
+  0% {
+    box-shadow: 0 0 2px #fff;
+  }
+  50% {
+    box-shadow: 0 0 10px #31b0d5;
+  }
+  100% {
+    box-shadow: 0 0 2px #fff;
+  }
+}
+.glowing {
+	animation: anim-glow 2s ease infinite;
+}
+</style>

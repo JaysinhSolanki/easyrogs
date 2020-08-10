@@ -28,6 +28,9 @@
   require_once __DIR__ . '/library/helper.php';  
 
   // templates
+  mb_internal_encoding('utf-8');
+  mb_regex_encoding('utf-8');
+
   $smarty = new Smarty();
   $smarty->template_dir = __DIR__ . '/templates';
   $smarty->compile_dir  = __DIR__ . '/../tmp/templates_c';

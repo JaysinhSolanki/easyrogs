@@ -1,6 +1,26 @@
 <?php
 require_once(SYSTEMPATH.'body.php');
 ?>
+
+<style>
+.register-container {
+	max-width:100% !important;	
+}
+p {
+    line-height: 20px;
+    text-align: justify;
+}
+.faq-question {
+	font-size:16px !important;
+}
+#faq_modal {
+	z-index: 9999; position: absolute;
+}
+#load_faq_modal_content{
+	overflow: hidden;
+}
+</style>
+
 <div id="faq-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">

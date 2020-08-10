@@ -6,8 +6,8 @@ $type         = $_GET['type'];
 $discovery_id = $_GET['id'];
 $form_id      = $_GET['form_id'];
 $case_id      = $_GET['case_id'];
-$viewonly     = $_GET['viewonly'];
-if( !@$viewonly ) {
+$viewonly     = @$_GET['viewonly'];
+if( !$viewonly ) {
     $viewonly = 0;
 }
 
@@ -50,8 +50,22 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                         </div>
 
                         <div class="col-md-4">
-                            <a style="float:right" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                               aria-expanded="true" class="btn btn-primary"></a>
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                               aria-expanded="true" class="btn btn-primary pull-right"></a> 
+<?php if( $viewonly && $currentUser->isAttorney() ) { ?>
+                            <button type="button" id="btn-objections" class="btn btn-primary pull-right"
+                                    onclick="javascript:showObjectionTemplates(<?= $form_id ?>);"> 
+                                <i class="fa fa-book" /><span>Objections</span>
+                            </button>
+<script>
+    jQuery( $ => { 
+        const $textboxes = $('textarea[name*="objection["]')
+        if( !$textboxes.length ) {
+            $("#btn-objections").css("display","none")
+        }
+    } );
+</script>
+<?php } ?>
                         </div>
 
                     </div>
@@ -568,7 +582,13 @@ else {
                             </div>
                             <div class="col-md-4" style="margin-top: 8px;">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"
-                                   class="btn btn-primary pull-right"></a>
+                                   class="btn btn-primary pull-right"></a> 
+<?php if( $viewonly && $currentUser->isAttorney() ) { ?>
+                                <button type="button" id="btn-objections" class="btn btn-primary pull-right"
+                                        onclick="javascript:showObjectionTemplates(<?= $form_id ?>);"> 
+                                    <i class="fa fa-book" /><span>Objections</span>
+                                </button>
+<?php } ?>
                             </div>
                         </div>
                     </div>

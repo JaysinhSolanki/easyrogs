@@ -25,7 +25,7 @@ require_once(SYSTEMPATH.'application/ctxhelp_modal.php');
 ?>
 
 <div id="header" class="" style="background-color:#f7f9fa">
-    <div class="color-line" />
+    <div class="color-line"></div>
     <div id="logo" class="light-version"> 
         <h4 style="color:#34495e; font-size:17px; font-weight:600; ">
             <a class="mylogo f32" href="index.php">

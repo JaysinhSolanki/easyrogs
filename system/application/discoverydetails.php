@@ -251,20 +251,6 @@ $proponding_type        = $propondingdetails[0]['client_type'];
 $proponding_role        = $propondingdetails[0]['client_role'];
 ?>
 <style>
-.instruction-collapse [data-toggle="collapse"]:after
-{
-    content: "Hide";
-    float: right;
-    font-size: 14px;
-    line-height: 20px;
-
-}
-.instruction-collapse [data-toggle="collapse"].collapsed:after
-{
-    content: "Show";
-    color: #fff;
-}
-
 body.modal-open
 {
     position: static !important;
@@ -278,7 +264,10 @@ body.modal-open
 }
 </style>
 
-<div id="screenfrmdiv" style="display: block;">
+
+<div id="screenfrmdiv" class="main">
+    
+    <aside class="sidebar left "><div class="fixed"></div></aside>
     <div class="col-lg-12">
         <div class="hpanel">
             <div class="panel-heading"></div>
@@ -505,7 +494,13 @@ body.modal-open
                                                             <b>Q No. <?= $question_number ?>: </b>
                                                             <?= $question_title.$subquestuions_string; ?>
                                                         </p>
-                                                        <textarea style="background-color: antiquewhite;"  id="objection_<?php echo $discovery_question_id; ?>" class="form-control" name="objection[<?php echo $discovery_question_id ?>]" placeholder="Objection" required><?=
+                                        <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
+                                                        <textarea   style="background-color: antiquewhite;"  
+                                                                    id="objection_<?= $discovery_question_id ?>" 
+                                                                    class="form-control" 
+                                                                    name="objection[<?= $discovery_question_id ?>]" 
+                                                                    placeholder="Objection" 
+                                                                    required><?=
                                                             html_entity_decode($objection)
                                                         ?></textarea>
 <?php
@@ -525,6 +520,7 @@ body.modal-open
 		                                               $objection = "Objection, this interrogatory seeks information protected by the attorney work product privilege because it reflects counsel's evaluation of the case by revealing which witnesses counsel deemed important enough to interview. Nacht & Lewis Architects, Inc. v. Superior Court (1996) 47 Cal.App.4th 214, 217.";
 	                                                }
 ?>
+                                        <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
                                                     <textarea   style="background-color: antiquewhite;"
                                                                 id="objection_<?= $discovery_question_id; ?>"
                                                                 class="form-control"
@@ -601,7 +597,14 @@ body.modal-open
 <?php
                                                                     if( $respond == 1 ) {
 ?>
-                                                                    <textarea style="background-color: antiquewhite;"  id="objection_<?php echo $discovery_question_id; ?>" class="form-control" name="objection[<?php echo $discovery_question_id ?>]" placeholder="Objection" ><?php echo html_entity_decode($objection) ?></textarea>
+                                        <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
+                                                                    <textarea   style="background-color: antiquewhite;"  
+                                                                                id="objection_<?= $discovery_question_id ?>" 
+                                                                                class="form-control" 
+                                                                                name="objection[<?= $discovery_question_id ?>]" 
+                                                                                placeholder="Objection" ><?= 
+                                                                        html_entity_decode($objection) 
+                                                                    ?></textarea>
 <?php
                                                                     }
 ?>
@@ -678,7 +681,15 @@ body.modal-open
 <?php
                                         if ($respond == 1) {
 ?>
-                                        <textarea style="background-color: antiquewhite;"  id="objection_<?php echo $discovery_question_id; ?>" class="form-control" name="objection[<?php echo $discovery_question_id ?>]" placeholder="Objection" required><?php echo html_entity_decode($objection) ?></textarea>
+                                        <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
+                                        <textarea   style="background-color: antiquewhite;"  
+                                                    id="objection_<?= $discovery_question_id ?>" 
+                                                    class="form-control" 
+                                                    name="objection[<?= $discovery_question_id ?>]" 
+                                                    placeholder="Objection" 
+                                                    required><?= 
+                                            html_entity_decode($objection) 
+                                        ?></textarea>
 <?php
                                         }
 ?>
@@ -713,34 +724,33 @@ body.modal-open
 ?>
                                     <li class="list-group-item">
                                     <div class="form-group">
-                                        <p>
-                                            <b><?php echo $generalQuestion['question_no'] ?>) </b>
-                                            <?php echo $generalQuestion['question'] ?>
-                                        </p>
+                                        <p><b><?= $generalQuestion['question_no'] ?>) </b><?= $generalQuestion['question'] ?></p>
                                         <textarea  style="background-color: antiquewhite; <?php if ($question_admit_id == 1) {
 ?> display:none <?php
 } ?> "
                                         <?php if ($answer == "Admit" || $answer == "") {
 ?> disabled <?php
 } ?>
-                                        id="sub_objection<?php echo $discovery_question_id.'_'.$question_admit_id ?>"
-                                        class="form-control subanswer_<?php echo $discovery_question_id;?>"
-                                        name="rfa_objection[<?php echo $discovery_question_id ?>][<?php echo $question_admit_id; ?>]"
-                                        placeholder="Objection" required <?php echo $css ?>><?php echo ($sub_objection); ?></textarea>
+                                            id="sub_objection<?= $discovery_question_id.'_'.$question_admit_id ?>"
+                                            class="form-control subanswer_<?= $discovery_question_id;?>"
+                                            name="rfa_objection[<?= $discovery_question_id ?>][<?= $question_admit_id ?>]"
+                                            placeholder="Objection" 
+                                            required 
+                                            <?= $css ?>><?= 
+                                                $sub_objection
+                                        ?></textarea>
                                         <br />
                                         <textarea
-                                        <?php if ($answer == "Admit" || $answer == "") {
-?> disabled <?php
-}
-if ($question_admit_id == 1) {
-?> readonly <?php
-} ?>
-                                        id="subanswer<?php echo $discovery_question_id.'_'.$question_admit_id ?>"
-                                        class="form-control subanswer_<?php echo $discovery_question_id;?>"
-                                        name="subanswer[<?php echo $discovery_question_id ?>][<?php echo $question_admit_id; ?>]"
-                                        placeholder="Your Answer" required <?php echo $css ?>><?php echo ($sub_answer_show); ?></textarea>
-
-
+                                            <?= ($answer == "Admit" || $answer == "") ? "disabled" : "" ?>
+                                            <?= ($question_admit_id == 1) ? "readonly" : "" ?>
+                                            id="subanswer<?= $discovery_question_id.'_'.$question_admit_id ?>"
+                                            class="form-control subanswer_<?= $discovery_question_id;?>"
+                                            name="subanswer[<?= $discovery_question_id ?>][<?= $question_admit_id; ?>]"
+                                            placeholder="Your Answer" 
+                                            required 
+                                            <?= $css ?>><?= 
+                                                $sub_answer_show
+                                        ?></textarea>
                                     </div>
                                     </li>
 <?php
@@ -792,8 +802,15 @@ if ($question_admit_id == 1) {
 <?php
                                         if ($respond == 1) {
 ?>
-                                        <?php /*?>&nbsp;&nbsp;<a href="javascript:;" class="btn-info btn-sm" onclick="addObjectionFunction('<?php echo $discovery_question_id; ?>')">Add Objection</a><?php */?>
-                                        <textarea style="background-color: antiquewhite;"  id="objection_<?php echo $discovery_question_id; ?>" class="form-control" name="objection[<?php echo $discovery_question_id ?>]" placeholder="Objection" required><?php echo html_entity_decode($objection) ?></textarea>
+                                        <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
+                                        <textarea   style="background-color: antiquewhite;"  
+                                                    id="objection_<?= $discovery_question_id ?>" 
+                                                    class="form-control" 
+                                                    name="objection[<?= $discovery_question_id ?>]" 
+                                                    placeholder="Objection" 
+                                                    required><?= 
+                                            html_entity_decode($objection) 
+                                        ?></textarea>
 <?php
                                         }
 ?>
@@ -943,6 +960,7 @@ if ($question_admit_id == 1) {
             </div>
         </div>
     </div>
+    <aside class="sidebar right"><div class="fixed"></div></aside>
 </div>
 
 <div class="modal fade" id="serve_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1099,7 +1117,9 @@ function loadinstructions( form_id, id ) {
                     suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
             ctxUpdate({ id: `49_${type}${suffix}`, pkscreenid: '49', url: 'discoverydetails.php', } );
 
-            CKEDITOR.replace( 'instruction' );
+            if( $('#instruction').length ) {
+                CKEDITOR.replace( 'instruction' );
+            }
         });
 }
 function checkFunction(subdivid, option)

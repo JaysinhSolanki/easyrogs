@@ -3,24 +3,6 @@ require_once __DIR__ . '/../bootstrap.php';
 
 $faq_areaDetails = $AdminDAO->getrows("faq_area","*", "", array());
 ?>
-<style>
-.register-container {
-	max-width:100% !important;	
-}
-p {
-    line-height: 20px;
-    text-align: justify;
-}
-.faq-question {
-	font-size:16px !important;
-}
-#faq_modal {
-	z-index: 9999; position: absolute;
-}
-#load_faq_modal_content{
-	overflow: hidden;
-}
-</style>
 
 <!--<div class="color-line"></div>-->
 

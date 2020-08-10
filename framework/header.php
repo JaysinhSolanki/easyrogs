@@ -28,7 +28,7 @@ navbar.navbar-static-top a, .nav.navbar-nav li a {
 </style>
 
 <div id="header" class="" style="background-color:#f7f9fa">
-    <div class="color-line" />
+    <div class="color-line"></div>
     <div id="logo" class="light-version"> 
         <h4 style="color:#34495e; font-size:17px; font-weight:600; ">
             <a class="mylogo f32" href="index.php">
@@ -62,6 +62,11 @@ navbar.navbar-static-top a, .nav.navbar-nav li a {
                 <li class="dropdown"  id="nav-cases">
                     <h4 style="color:#34495e !important; font-size:12px !important; font-weight:500 !important; padding-top:10px; margin-right:20px;">  
                         <a href="javascript:void(0);" onclick="selecttab('44_tab','get-cases.php','44');"><b>Cases</b></a> 
+                    </h4>
+                </li>
+                <li class="dropdown"  id="nav-objection-killers-kb">
+                    <h4 style="color:#34495e !important; font-size:12px !important; font-weight:500 !important; padding-top:10px; margin-right:20px;">  
+                        <a onclick="javascript:showKB(1);" href="#"><b>Objection Killers</b></a>
                     </h4>
                 </li>
                 <li class="dropdown"  id="nav-myprofile">

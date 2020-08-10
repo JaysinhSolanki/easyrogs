@@ -5,7 +5,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="font-size: 30px;"><span aria-hidden="true">&times;</span></button>
         <h5 class="modal-title text-center" style="font-size:24px">Please enter <span class="responding-client-name" />'s email address below</h5>
       </div>
-      <div class="modal-body" id="clientemailfound_loads_here" />
+      <div class="modal-body" id="clientemailfound_loads_here"></div>
     </div>
   </div>
 </div>

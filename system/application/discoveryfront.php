@@ -2,6 +2,7 @@
 @session_start();
 require_once("../bootstrap.php"); 
 require_once(SYSTEMPATH."application/ctxhelp_header.php"); 
+require_once(SYSTEMPATH."application/kb_modal.php"); 
 include_once("../library/classes/login.class.php");
 include_once("../library/classes/functions.php");
 
@@ -105,17 +106,6 @@ include_once(SYSTEMPATH.'application/client_instructions_modal.php');
 .register-container {
 	max-width:100% !important;
 }
-.instruction-collapse [data-toggle="collapse"]:after {
-	content: "Hide";
-	float: right;
-	font-size: 14px;
-	line-height: 20px;
-
-}
-.instruction-collapse [data-toggle="collapse"].collapsed:after {
-	content: "Show";
-	color: #fff;
-}
 body.modal-open {
     position: static !important;
 }
@@ -123,12 +113,11 @@ textarea#answer {
 	white-space: pre-line;
 }
 </style>
-</div>
-<div class="container register-container" style="">
-    <div class="row">
-        <div class="col-md-10 center-block" style="float: none;">
-            <div class="hpanel">
-                <div class="panel-body">
+<div class="main" style="">
+    <aside class="sidebar left "><div class="fixed"></div></aside>
+	<div class="container register-container col-md-10 col-lg-10 center-block" style="float: none;">
+		<div class="hpanel">
+			<div class="panel-body">
 <?php
 if(!empty($getResponses))
 {
@@ -665,7 +654,7 @@ function getRPDetails($rp_id) {
                                             <i class="icon-ok bigger-110"></i>
                                             <span class="ladda-label">Upload</span><span class="ladda-spinner"></span>
                                         </button>
-                                        <div id="uploadeddocs" /> <!-- documents are uploaded here -->
+                                        <div id="uploadeddocs"></div> <!-- documents are uploaded here -->
                                     </li>
                                 </ul>
                             </div>
@@ -698,7 +687,7 @@ function getRPDetails($rp_id) {
                 </div>
             </div>
         </div>
-    </div>
+    <aside class="sidebar right"><div class="fixed"></div></aside>
 </div>
 
 <link href="<?= VENDOR_URL ?>uploadfile.css" rel="stylesheet">
