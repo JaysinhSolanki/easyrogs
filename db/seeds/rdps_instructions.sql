@@ -1,0 +1,1 @@
+INSERT IGNORE INTO `instructions` (`pkinstructionid`, `show_on`, `title`, `statute`, `placement`) VALUES (20, 'Verification', 'The party to whom the demand for inspection, copying, testing, or sampling is directed shall sign the response under oath unless the response contains only objections.', 'CCP 2031.250, subd. (a)', 'right');

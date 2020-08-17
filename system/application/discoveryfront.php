@@ -893,14 +893,18 @@ ob_start();
 						<?php endif; ?>
 <?php
                     // added by JS 3/7/20
-                    if( $form_id == Discovery::FORM_CA_SROGS ){
+                    if(in_array($form_id, [Discovery::FORM_CA_SROGS, Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE])) {
                         echo "Code Civ.Proc., &sect; 2030.250  ";
                         echo instruction(16);
                     }
-                    else if( $form_id == Discovery::FORM_CA_RFAS ){
+                    else if($form_id == Discovery::FORM_CA_RFAS){
                         echo "Code Civ.Proc., &sect; 2033.240 ";
                         echo instruction(19);
-                    }
+										}
+										else if($form_id == Discovery::FORM_CA_RPDS ){
+											echo "Code Civ.Proc., &sect; 2031.250, subd. (a)";
+											echo instruction(20);
+										}
 ?>
             </p>
         </div>
