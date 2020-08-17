@@ -169,13 +169,11 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								/**
 								* SET UP ACL FOR DISCOVERIES
 								**/
-								//if($is_served == 1)
-								{
-									$discovery_ACL[]	= "request-pdf";
-								}
-								$discovery_ACL[]	= "view";
-								$discovery_ACL[]	= "edit";
-								$discovery_ACL[]	= "delete";
+								$discovery_ACL[] = "request-pdf";
+								$discovery_ACL[] = "view";
+								$discovery_ACL[] = "edit";
+								$discovery_ACL[] = "delete";
+
 								if( !sizeof($responses) ) {
 									$discovery_ACL[]	= "respond";
 								}
@@ -259,7 +257,8 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									foreach($responses as $response_data) {
 										$response_id	= $response_data['id'];
 
-										$response_ACL	= array('response-pdf','view');
+										$response_ACL[] = 'response-pdf';
+										$response_ACL[] = 'view';
 
 										if( $response_data['isserved'] ) {
 											$response_ACL[]	= "supp-amend";
@@ -378,9 +377,10 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								/**
 								* SET UP ACL FOR DISCOVERIES
 								**/
+								$discovery_ACL[] = "request-pdf"; // always allow PDFing
+
 								if( $is_served == 1 ) {
 									$discovery_ACL[]	= "view";
-									$discovery_ACL[]	= "request-pdf";
 									$discovery_ACL[]	= "change-due-date";
 
 									if( $creator_id == $_SESSION['addressbookid'] ) {
@@ -396,7 +396,6 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								else {
 									$discovery_ACL[]	= "edit";
 									$discovery_ACL[]	= "delete";
-									$discovery_ACL[]	= "request-pdf";
 								}
 ?>
 								<tr style="background-color:#18fd4736">
@@ -512,6 +511,8 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 											$totalChildsNotIncludes++; continue;
 										}
 
+										$response_ACL[] = "response-pdf"; // always allow PDFing
+
 										if( $isserved ) {
 											if( $response_creator_id == $_SESSION['addressbookid'] ) {
 												$response_ACL[]		= "supp-amend";
@@ -520,13 +521,11 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 												$response_ACL[]		= "unserve";
 											}
 											$response_ACL[]		= "view";
-											$response_ACL[]		= "response-pdf";
 										}
 										else {
 											if( $response_creator_id == $_SESSION['addressbookid'] ) {
 												$response_ACL[]	= "edit";
 												$response_ACL[]	= "delete";
-												$response_ACL[]	= "response-pdf";
 											}
 										}
 ?>
@@ -693,10 +692,12 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 										/**
 										* SET UP ACL FOR DISCOVERIES
 										**/
+										$supp_discovery_ACL[] = "request-pdf"; // always allow PDFing
+
 										if( $supp_is_served ) {
 											$supp_discovery_ACL[]	= "view";
 											$supp_discovery_ACL[]	= "change-due-date";
-											$supp_discovery_ACL[]	= "request-pdf";
+
 											if( $supp_creator_id == $_SESSION['addressbookid'] ) {
 												$supp_discovery_ACL[]	= "supp-amend";
 											}
@@ -708,7 +709,6 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 											}
 										}
 										else {
-											$supp_discovery_ACL[]	= "request-pdf";
 											$supp_discovery_ACL[]	= "edit";
 											$supp_discovery_ACL[]	= "delete";
 										}
@@ -825,6 +825,8 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 													$totalChildsNotIncludes++; continue;
 												}
 
+												$supp_response_ACL[] = "response-pdf"; // always allow PDFing
+
 												if( $supp_isserved ) {
 													if( $supp_response_creator_id == $_SESSION['addressbookid']) {
 														$supp_response_ACL[]		= "supp-amend";
@@ -833,13 +835,11 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 														$supp_response_ACL[]		= "unserve";
 													}
 													$supp_response_ACL[]		= "view";
-													$supp_response_ACL[]		= "response-pdf";
 												}
 												else {
 													if( $supp_response_creator_id == $_SESSION['addressbookid'] ) {
 														$supp_response_ACL[]	= "edit";
 														$supp_response_ACL[]	= "delete";
-														$supp_response_ACL[]	= "response-pdf";
 													}
 												}
 ?>
