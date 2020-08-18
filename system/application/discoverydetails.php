@@ -266,7 +266,7 @@ body.modal-open
 
 
 <div id="screenfrmdiv" class="main">
-    
+
     <aside class="sidebar left "><div class="fixed"></div></aside>
     <div class="col-lg-12">
         <div class="hpanel">
@@ -376,13 +376,11 @@ body.modal-open
                                 $dependent_answer = getAnswerOfDependentParentQuestion($discovery_id, $depends_on_question, $response_id);
                             }
 ?>
-                            <li <?php if ($depends_on_question != 0) {
-?>class="list-group-item row_<?php echo $depends_on_question; ?>" <?php if (($dependent_answer == 'No' || $dependent_answer == '') && $view != 1) {
-?>style='display:none;' <?php
-}
-} else {
-?> class="list-group-item"  <?php
-} ?>>
+							<li class='list-group-item <?=
+									!$depends_on_question
+										? "'"
+										: "row_$depends_on_question' " .( (( $dependent_answer == 'No' || $dependent_answer == '' ) && $view != 1) ? " style='display:none;'" : '' )
+								?>>
 <?php
                                 if ($question_type_id != 1) {
                                     $subQuestions   = $AdminDAO->getrows(
@@ -495,11 +493,11 @@ body.modal-open
                                                             <?= $question_title.$subquestuions_string; ?>
                                                         </p>
                                         <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
-                                                        <textarea   style="background-color: antiquewhite;"  
-                                                                    id="objection_<?= $discovery_question_id ?>" 
-                                                                    class="form-control" 
-                                                                    name="objection[<?= $discovery_question_id ?>]" 
-                                                                    placeholder="Objection" 
+                                                        <textarea   style="background-color: antiquewhite;"
+                                                                    id="objection_<?= $discovery_question_id ?>"
+                                                                    class="form-control"
+                                                                    name="objection[<?= $discovery_question_id ?>]"
+                                                                    placeholder="Objection"
                                                                     required><?=
                                                             html_entity_decode($objection)
                                                         ?></textarea>
@@ -510,7 +508,7 @@ body.modal-open
 ?>
                                             <p>
                                                 <b>Q No. <?= $question_number ?><?= $have_main_question==0 ? "&nbsp;($sub_part)" : "" ?>: </b>
-<?php 
+<?php
                                                 echo $question_title;
                                                 if ($has_extra_text == 1) {
                                                     echo "<p><b>$extra_text_field_label: </b>$extra_text</p>";
@@ -556,13 +554,11 @@ body.modal-open
 <?php
                                                 }
                                                 if ($question_type_id != 1) {
-                                                    ?>
+?>
 
-                                                    <ul class="list-group" id="subdiv<?php echo $question_no_makeid;?>" <?php if ($question_type_id == 2 && $answer != "Yes") {
-?>style="display:none" <?php
-} ?>>
+                                                    <ul class="list-group" id="subdiv<?= $question_no_makeid ?>" <?= ($question_type_id == 2 && $answer != "Yes") ? 'style="display:none"' : '' ?>>
 <?php
-                                                        foreach ($subQuestions as $data) {
+                                                        foreach( $subQuestions as $data ) {
                                                             $question_id            = $data['question_id'];
                                                             $question_type_id       = $data['question_type_id'];
                                                             $form_id                = $data['form_id'];
@@ -571,16 +567,13 @@ body.modal-open
                                                             $sub_part               = $data['sub_part'];
                                                             $is_pre_defined         = $data['is_pre_defined'];
                                                             $discovery_question_id  = $data['discovery_question_id'];
-                                                            $have_main_question         = $data['have_main_question'];
-                                                            if ($response_id > 0) {
-                                                                $getAnswers                 = $AdminDAO->getrows(
-                                                                    "response_questions",
-                                                                    "*",
-                                                                    "fkresponse_id				= :fkresponse_id AND
-                                                                                                fkdiscovery_question_id 	= :discovery_question_id",
-                                                                    array(  "discovery_question_id"     =>  $discovery_question_id,
-                                                                    "fkresponse_id"             =>  $response_id)
-                                                                );
+                                                            $have_main_question     = $data['have_main_question'];
+                                                            if( $response_id ) {
+                                                                $getAnswers = $AdminDAO->getrows( "response_questions", "*",
+                                                                    								"fkresponse_id			= :fkresponse_id AND
+																									fkdiscovery_question_id = :discovery_question_id",
+                                                                    							   array( "discovery_question_id" =>  $discovery_question_id,
+                                                                    									   "fkresponse_id"        =>  $response_id ) );
                                                                 $answer1                = $getAnswers[0]['answer'];
                                                                 $answer_time            = $getAnswers[0]['answer_time'];
                                                                 $objection              = $getAnswers[0]['objection'];
@@ -598,12 +591,12 @@ body.modal-open
                                                                     if( $respond == 1 ) {
 ?>
                                         <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
-                                                                    <textarea   style="background-color: antiquewhite;"  
-                                                                                id="objection_<?= $discovery_question_id ?>" 
-                                                                                class="form-control" 
-                                                                                name="objection[<?= $discovery_question_id ?>]" 
-                                                                                placeholder="Objection" ><?= 
-                                                                        html_entity_decode($objection) 
+                                                                    <textarea   style="background-color: antiquewhite;"
+                                                                                id="objection_<?= $discovery_question_id ?>"
+                                                                                class="form-control"
+                                                                                name="objection[<?= $discovery_question_id ?>]"
+                                                                                placeholder="Objection" ><?=
+                                                                        html_entity_decode($objection)
                                                                     ?></textarea>
 <?php
                                                                     }
@@ -622,7 +615,7 @@ body.modal-open
                                                                 class="form-control subanswer_<?php echo $question_no_makeid?>"
                                                                 name="answer[<?php echo $discovery_question_id; ?>]"
                                                                 placeholder="Your Answer" required <?= $css ?>
-<?php 
+<?php
                                                                 if (($answer == "No" || $answer == "") && $p_q_type_id != 3) {
 ?> disabled <?php
 } ?>><?= html_entity_decode($answer1) ?></textarea>
@@ -630,7 +623,7 @@ body.modal-open
                                                         </li>
 <?php
                                                         }
-                                                        ?>
+?>
                                                   </ul>
 <?php
                                                 }
@@ -682,13 +675,13 @@ body.modal-open
                                         if ($respond == 1) {
 ?>
                                         <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
-                                        <textarea   style="background-color: antiquewhite;"  
-                                                    id="objection_<?= $discovery_question_id ?>" 
-                                                    class="form-control" 
-                                                    name="objection[<?= $discovery_question_id ?>]" 
-                                                    placeholder="Objection" 
-                                                    required><?= 
-                                            html_entity_decode($objection) 
+                                        <textarea   style="background-color: antiquewhite;"
+                                                    id="objection_<?= $discovery_question_id ?>"
+                                                    class="form-control"
+                                                    name="objection[<?= $discovery_question_id ?>]"
+                                                    placeholder="Objection"
+                                                    required><?=
+                                            html_entity_decode($objection)
                                         ?></textarea>
 <?php
                                         }
@@ -734,9 +727,9 @@ body.modal-open
                                             id="sub_objection<?= $discovery_question_id.'_'.$question_admit_id ?>"
                                             class="form-control subanswer_<?= $discovery_question_id;?>"
                                             name="rfa_objection[<?= $discovery_question_id ?>][<?= $question_admit_id ?>]"
-                                            placeholder="Objection" 
-                                            required 
-                                            <?= $css ?>><?= 
+                                            placeholder="Objection"
+                                            required
+                                            <?= $css ?>><?=
                                                 $sub_objection
                                         ?></textarea>
                                         <br />
@@ -746,9 +739,9 @@ body.modal-open
                                             id="subanswer<?= $discovery_question_id.'_'.$question_admit_id ?>"
                                             class="form-control subanswer_<?= $discovery_question_id;?>"
                                             name="subanswer[<?= $discovery_question_id ?>][<?= $question_admit_id; ?>]"
-                                            placeholder="Your Answer" 
-                                            required 
-                                            <?= $css ?>><?= 
+                                            placeholder="Your Answer"
+                                            required
+                                            <?= $css ?>><?=
                                                 $sub_answer_show
                                         ?></textarea>
                                     </div>
@@ -803,13 +796,13 @@ body.modal-open
                                         if ($respond == 1) {
 ?>
                                         <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
-                                        <textarea   style="background-color: antiquewhite;"  
-                                                    id="objection_<?= $discovery_question_id ?>" 
-                                                    class="form-control" 
-                                                    name="objection[<?= $discovery_question_id ?>]" 
-                                                    placeholder="Objection" 
-                                                    required><?= 
-                                            html_entity_decode($objection) 
+                                        <textarea   style="background-color: antiquewhite;"
+                                                    id="objection_<?= $discovery_question_id ?>"
+                                                    class="form-control"
+                                                    name="objection[<?= $discovery_question_id ?>]"
+                                                    placeholder="Objection"
+                                                    required><?=
+                                            html_entity_decode($objection)
                                         ?></textarea>
 <?php
                                         }
@@ -934,11 +927,6 @@ body.modal-open
                     buttonsave('discoveryfrontaction.php', 'discoverydetailsform', 'wrapper', 'discoveries.php?pkscreenid=45&pid='.$case_id, 0);
                 }
                 buttoncancel(45, 'discoveries.php?pid='.$case_id);
-                /*
-                ?>
-                <a  target="_blank" href="makepdf.php?id=<?php echo $_GET['id']?>&view=<?php echo $_GET['view'] ?>" class="btn btn-success" ><i class="fa fa-file-pdf-o"></i> PDF</a>
-                <?php
-                */
                 if ($view != 1) {
 ?>
                 <a href="javascript:;" class="btn btn-purple" onclick="serveFunction2('<?= $discovery_verification ?>','<?= $_GET['id'] ?>','<?= $response_id ?>')"  ><i class="fa fa-share"></i> Serve</a>
@@ -1109,7 +1097,7 @@ function addObjectionFunction(discovery_question_id)
 function loadinstructions( form_id, id ) {
     var type = '<?= $type ?>';
     $.get(`discoveryloadforminstruction.php?form_id=${form_id}&id=${id}&case_id=<?= $case_id ?>&viewonly=1&type=${type}`)
-        .done( resp => { 
+        .done( resp => {
             $("#loadinstructions").html( trim(resp) );
 
             const   type = <?= $respond ?: 0 ?> ? 2 : 1,
@@ -1162,7 +1150,7 @@ function checkFunctionForm5(subdivid, option)
 }
 
 jQuery( $ => {
-    setTimeout( _ => loadToolTipForClientBtn('<?= $responding ?>'), 500 ); 
+    setTimeout( _ => loadToolTipForClientBtn('<?= $responding ?>'), 500 );
 } );
 
 function loaduploadeddocs() {

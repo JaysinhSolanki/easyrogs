@@ -298,7 +298,7 @@ function getRPDetails($rp_id) {
 					<ul class="list-group">
 <?php
 										if( in_array( $form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE) ) ) {
-											foreach($mainQuestions as $data) {
+											foreach( $mainQuestions as $data ) {
 												$dependent_answer		= "";
 												$question_id 			= $data['question_id'];
 												$question_type_id 		= $data['question_type_id'];
@@ -321,12 +321,12 @@ function getRPDetails($rp_id) {
 																						fkdiscovery_question_id 	= 	:discovery_question_id",
 																						array(	"discovery_question_id"	=>	$discovery_question_id,
 																								"fkresponse_id"			=>	$response_id));
-													$answer 				= $getAnswers[0]['answer'];
-													$answer_time 			= $getAnswers[0]['answer_time'];
+													$answer 		= $getAnswers[0]['answer'];
+													$answer_time 	= $getAnswers[0]['answer_time'];
 												}
 												else {
-													$answer 				= "";
-													$answer_time 			= "";
+													$answer 		= "";
+													$answer_time 	= "";
 												}
 												/**
 												* IF depends on some question then we need that question answer
@@ -338,12 +338,11 @@ function getRPDetails($rp_id) {
 												<li class='list-group-item <?= 
 														!$depends_on_question 
 															? "'" 
-															: "row_<?= $depends_on_question ?>' " .( ( $dependent_answer == 'No' || $dependent_answer == '' ) ? "style='display:none;'" : '' ) 
+															: "row_$depends_on_question' " .( ( $dependent_answer == 'No' || $dependent_answer == '' ) ? " style='display:none;'" : '' ) 
 													?>>
 <?php
 												if( $question_type_id != 1 ) {
 														$subQuestions	= $AdminDAO->getrows( 'discovery_questions dq, questions q',
-
 																					'dq.id as discovery_question_id,
 																					q.id as question_id,
 																					q.question_type_id as question_type_id,
@@ -375,7 +374,7 @@ function getRPDetails($rp_id) {
 															}
 															if( ($question_number == "17.1" || $question_number == "217.1") ) {
 																foreach( $subQuestions as $data ) {
-																	echo  ". (".$data['sub_part'].") ". $data['question_title'];
+																	echo  ". (". $data['sub_part'] .") ". $data['question_title'];
 																}
 															}
 ?>
@@ -396,8 +395,22 @@ function getRPDetails($rp_id) {
 																	$question_no_makeid	= str_replace('.','_',$question_number);
 ?>
 																		<div class="form-check form-check-inline">
-																			<label class="radio-inline"><input type="radio" name="answer[<?= $discovery_question_id ?>]" value="Yes" onClick="checkFunction('<?= $question_no_makeid ?>','1')<?php if($is_depended_parent ==1 ){ ?>,showhidequestions('<?= $question_id ?> ',1)<?php }?>" <?php if($answer == 'Yes'){echo "checked";} ?> <?= $css ?>>Yes</label>
-																			<label class="radio-inline"><input type="radio" name="answer[<?= $discovery_question_id ?>]" value="No" onClick="checkFunction('<?= $question_no_makeid ?>','2')<?php if($is_depended_parent ==1 ){ ?>,showhidequestions('<?= $question_id ?> ',2)<?php }?>" <?php if($answer == 'No'){echo "checked";} ?> <?= $css ?>>No</label>
+																			<label class="radio-inline">
+																			  <input type="radio" 
+																			  			name="answer[<?= $discovery_question_id ?>]" 
+																						value="Yes" 
+																						onClick="checkFunction('<?= $question_no_makeid ?>','1'<?= ($is_depended_parent ==1 ) ? "),showhidequestions('$question_id',1" : '' ?>)"
+																						<?= ($answer == 'Yes') ? " checked" : '' ?> <?= $css ?>/>
+																			    Yes
+																			</label>
+																			<label class="radio-inline">
+																			  <input type="radio" 
+																			  			name="answer[<?= $discovery_question_id ?>]" 
+																						value="No"  
+																						onClick="checkFunction('<?= $question_no_makeid ?>','2'<?= ($is_depended_parent ==1 ) ? "),showhidequestions('$question_id',2" : '' ?>)" 
+																						<?= ($answer == 'No' ) ? " checked" : '' ?> <?= $css ?>/>
+																			  No
+																			</label>
 																		</div>
 <?php
 																}
