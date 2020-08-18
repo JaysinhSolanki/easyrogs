@@ -7,7 +7,8 @@
     ],
     "post-install-cmd": [
       "vendor/bin/poorman-migrations setup"
-    ]
+    ],
+    "test": "vendor/bin/phpunit --bootstrap system/bootstrap.test.php tests"
   },
   "require": {
     "soft4good/poorman-migrations": "^1.3",
