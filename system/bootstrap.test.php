@@ -3,10 +3,14 @@
   require_once(__DIR__ . '/../vendor/autoload.php');
 
   // settings
-  $dotEnv = new Dotenv\Dotenv(__DIR__ . '/..');
-  $dotEnv->load();
+  $dotEnv = new Dotenv\Dotenv(__DIR__ . '/..', '.env.test' );
+  $dotEnv->overload();
   require_once(__DIR__ . "/settings.php");
-  
+
+  // INITIALIZE TEST DB
+  require_once __DIR__ . '/../vendor/soft4good/poorman-migrations/src/bootstrap.php';
+  $taskManager->reset();
+
   // payments
   use Stripe\Stripe;
   use Stripe\StripeClient;
@@ -19,8 +23,9 @@
   ini_set("error_log", LOGS_DIR . "/errors.log");
   
   require_once __DIR__ . '/library/classes/logger.class.php';
-  $logger = new EasyRogs\Logger();
-
+  define("LOGS_DIR", __DIR__ . '/../logs/test');
+  $logger = new EasyRogs\Logger( LOGS_DIR, true );
+  
   // lib
   require_once __DIR__ . '/library/classes/httpresponse.php';
   require_once __DIR__ . '/library/classes/AdminDAO.php';

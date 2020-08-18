@@ -14,3 +14,4 @@
   require_once(__DIR__ . '/state.php');
   require_once(__DIR__ . '/country.php');
   require_once(__DIR__ . '/response.php');
+  require_once(__DIR__ . '/membership_whitelist.php');

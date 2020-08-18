@@ -9,7 +9,7 @@
    */
 
   $logContext = 'ADD_CREDITS';
-  $logger = new Logger(LOGS_DIR, true);
+  $logger = new EasyRogs\Logger(LOGS_DIR, true);
 
   $logger->info("$logContext Starting...");
   $logger->info("$logContext Adding " . CREDITS . " initial credits to attorney users...");

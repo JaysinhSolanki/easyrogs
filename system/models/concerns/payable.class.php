@@ -7,9 +7,13 @@
     const ITEM_TYPE_DISCOVERY = 'discovery';
 
     public function isPaid($payableId) {
-      global $logger, $currentUser;
+      global $logger, $currentUser, $membershipWhitelist;
       
       try {
+        if($membershipWhitelist->isWhitelisted($currentUser->user)) {
+          return true;
+        }
+        
         foreach(PAYMENT_WHITELIST as $whitelistedEmail) {
           if (preg_match($whitelistedEmail, $currentUser->user['email'])) {
             return true;

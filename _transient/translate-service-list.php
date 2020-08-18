@@ -9,7 +9,7 @@
    */
 
    $logContext = 'TRANSLATE_SERVICE_LIST';
-   $logger = new Logger(LOGS_DIR, true);
+   $logger = new EasyRogs\Logger(LOGS_DIR, true);
  
    $logger->info("$logContext Starting...");
 

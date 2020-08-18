@@ -12,6 +12,7 @@ settings.php
 .env
 .env.*
 !.env.sample
+!.env.test.sample
 vendor
 /tmp/templates_c/*
 !/tmp/templates_c/.keep

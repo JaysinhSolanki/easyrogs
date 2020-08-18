@@ -18,7 +18,7 @@ jobs:
               MYSQL_ALLOW_EMPTY_PASSWORD: yes
               MYSQL_DATABASE: easyrogs_test
           ports:
-              - 3306
+              - 3306:3306
           options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
@@ -39,20 +39,28 @@ jobs:
     - name: Install dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: composer install --prefer-dist --no-progress --no-suggest
-
+    - name: Create Tests ENV file
+      uses: SpicyPizza/create-envfile@v1
+      with:
+        envkey_APP_ENV: test
+        envkey_DB_NAME: easyrogs_test
+        envkey_DB_HOST: "127.0.0.1"
+        envkey_DB_PORT:
+        envkey_DB_USERNAME: root
+        envkey_DB_PASSWORD: 
+        
+        envkey_ROOTURL: http://easyrogs.local/
+        envkey_ROOTPATH: /home/rei/projects/easyrogs/
+        
+        envkey_STRIPE_API_KEY: sk_test_y9GxEH84MZXKzw95CLjXO85B00ftdQkI5W
+        envkey_STRIPE_PUBLISHABLE_KEY: pk_test_WcvnhZHSShn1uFSSrYc0W10F00pQTJh6lP
+        envkey_STRIPE_WEBHOOK_SIGNING_SECRET: whsec_axgLDqigmEMTklPuSu3u5cPnwBe5UtqW
+        envkey_PAYMENT_WHITELIST:
+        file_name: .env.test
+    - name: Create settings.php
+      uses: canastro/copy-file-action@master
+      with:
+        source: "system/settings.sample.php"
+        target: "system/settings.php"
     - name: Run test suite
       run: composer run-script test
-      env:
-        APP_ENV: test
-        DB_NAME: easyrogs_test
-        DB_HOST: 127.0.0.1
-        DB_USERNAME: easyrogs
-        DB_PASSWORD: ok
-        
-        ROOTURL: http://easyrogs.local/
-        ROOTPATH: /home/rei/projects/easyrogs/
-        
-        STRIPE_API_KEY: sk_test_y9GxEH84MZXKzw95CLjXO85B00ftdQkI5W
-        STRIPE_PUBLISHABLE_KEY: pk_test_WcvnhZHSShn1uFSSrYc0W10F00pQTJh6lP
-        STRIPE_WEBHOOK_SIGNING_SECRET: whsec_axgLDqigmEMTklPuSu3u5cPnwBe5UtqW
-        PAYMENT_WHITELIST:
