@@ -1279,5 +1279,8 @@ jQuery( $ => {
     $("#extrabutton").click( _ =>  {
         extraObj.startUpload();
     } );
+
+	autogrowTextareas()
+
 } );
 </script>

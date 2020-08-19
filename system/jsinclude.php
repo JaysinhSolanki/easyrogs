@@ -207,6 +207,15 @@ function addTooltips() { //console.log( $('.tooltipshow').length, "tooltips enab
 		html: true,
 	} );
 }
+
+function autogrowTextareas(filter='') { debugger;
+	setInterval( _ => {
+		$('textarea'+filter).each( (idx, _) => {
+			$(_).css('height', _.scrollHeight+2+'px' )
+		} )
+	}, 500 )
+}
+
 jQuery( $ => {
 	CKEDITOR.addCss(`h4, h5 { font-weight: 600; font-size: 14px; }
 					.text-center { text-align: center; }

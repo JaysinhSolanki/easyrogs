@@ -998,6 +998,8 @@ ob_start();
 globalThis['discoveryType'] = "<?= $type ?>";
 
 jQuery( $ => { 
-	CKEDITOR.replace( 'email_body_popup' );
+	CKEDITOR.replace( 'email_body_popup' )
+	
+	autogrowTextareas()
 } );
 </script>

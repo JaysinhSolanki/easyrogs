@@ -30,5 +30,6 @@
         </div>
       {counter}
       {/foreach}
+      <div class="kb-padding" style="clear:both;padding-bottom: 250px"></div>
     </div>
 {/if}

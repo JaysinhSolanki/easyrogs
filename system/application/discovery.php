@@ -569,6 +569,9 @@ jQuery( $ => {
     if( !$('#question_number_start_from').val() ) {
         $('#question_number_start_from').val(1);
     }
+
+	autogrowTextareas();
+
 });
 function loadpropondingattorneys( case_id, client_id, selected ) {
     if( !client_id ) {

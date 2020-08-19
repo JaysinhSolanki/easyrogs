@@ -28,30 +28,40 @@
       }
     }
 
-    protected function log($message, $level, $printBacktrace = false)
+    protected function log_text($message, $level, $printBacktrace = false)
     {
-      $time = date('Y-m-d H:i:s');
-
-      $level = trim($level);
-      if (in_array($level, self::LOG_LEVELS)) {
-        $fp = $this->files[$level] = $this->files[$level]
-              ? $this->files[$level] 
-              : fopen($this->logsDir . '/' . strtolower($level) . '.log', 'a+');
-      }
-
       if ( is_array( $message ) || is_object( $message ) ) {
         $message = json_encode($message,JSON_PRETTY_PRINT+JSON_UNESCAPED_LINE_TERMINATORS+JSON_UNESCAPED_SLASHES);
       }
-      
+
+
       if ($printBacktrace) {
         $e = new Exception();
-        $message .= "\n ---------------- \n" . 
-                    $e->getTraceAsString()   . 
+        $message .= "\n ---------------- \n" .
+                    $e->getTraceAsString()   .
                     "\n ----------------";
       }
+      return $message;
+    }
 
+
+    protected function log($message, $level, $printBacktrace = false)
+    {
+      $time = date('Y-m-d H:i:s');
+      $level = trim($level);
+
+
+      if (in_array($level, self::LOG_LEVELS)) {
+        $fp = $this->files[$level] = $this->files[$level]
+              ? $this->files[$level]
+              : fopen($this->logsDir . '/' . strtolower($level) . '.log', 'a+');
+      }
+
+
+      $message = $this->log_text( $message, $level, $printBacktrace );
       if ($fp) { fwrite($fp, "$time $message \n"); }
       fwrite( $this->files['ALL'], "$time [$level] $message \n" );
+
 
       if ($this->stdOut) { echo "$time [$level] $message \n"; }
     }
@@ -65,4 +75,16 @@
       }
     }
 
-  }
+    public function browser_log($message, $alert = "", $level = self::INFO, $printBacktrace = false)
+    {
+      $message = $this->log_text($message, $level, $printBacktrace);
+      $code = '';
+      if( $alert ) {
+        $code .= "window.alert(`$alert`);\n\r";
+      }
+      if( $message ) {
+        $code .= "console.log(`$message`);\n\r"; // TODO select console.?? by $level
+      }
+      echo "<script>$code</script>"; 
+    }
+}
