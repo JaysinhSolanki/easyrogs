@@ -849,18 +849,23 @@ body.modal-open
                                                 </div>
                                                 </li>
                                             </ul>
-                                            <ul class="list-group" id="subdiv<?php echo $discovery_question_id;?>" <?php if ($answer == 'Select Your Response' || $answer == "I have responsive documents") {
-?>style="display:none" <?php
-} ?>>
+                                            <ul class="list-group" 
+                                                    id="subdiv<?= $discovery_question_id ?>" 
+                                                    <?= ($answer == 'Select Your Response' || $answer == "I have responsive documents") ? " style='display:none' " : "" ?>>
                                                 <li class="list-group-item">
                                                 <div class="form-group">
                                                     <p>
                                                         <b>a) </b>
-                                                        Enter the name and address of anyone you believes has the documents.
-                                                       </p>
-                                                    <textarea <?php if ($answer == 'Select Your Response' || $answer == "I have responsive documents") {
-?> disabled <?php
-} ?> id="subanswer<?php echo $discovery_question_id ?>" class="form-control" name="subanswer[<?php echo $discovery_question_id; ?>]" placeholder="Your Answer" required <?php echo $css ?>><?php echo html_entity_decode($answer_detail) ?></textarea>
+                                                        Enter the name and address of anyone you believe has the documents.
+                                                    </p>
+                                                    <textarea id="subanswer<?= $discovery_question_id ?>"
+                                                            class="form-control"
+                                                            name="subanswer[<?= $discovery_question_id ?>]"
+                                                            required <?= $css ?>
+                                                            <?= ($answer == 'Select Your Response' || $answer == "I have responsive documents") ? "disabled" : "" ?>
+                                                            placeholder="Your Answer"> <?=
+                                                        html_entity_decode($answer_detail) 
+                                                    ?></textarea>
                                                 </div>
                                                 </li>
                                             </ul>
@@ -896,8 +901,8 @@ body.modal-open
                 </div>
 <?php
                 }
-                $formArray  = array(5);//3,4,5
-                if (in_array($form_id, $formArray) && $view != 1) {
+                $formArray = array(Discovery::FORM_CA_RPDS);// Discovery::FORM_CA_SROGS,Discovery::FORM_CA_RFAS,Discovery::FORM_CA_RPDS
+                if( in_array($form_id, $formArray) && $view != 1 ) {
 ?>
                 <div class="col-md-12">
                     <hr>

@@ -493,7 +493,7 @@ function getRPDetails($rp_id) {
 																								"fkresponse_id"			=>	$response_id));
 														$answer 				= $getAnswers[0]['answer'];
 														$answer_time 			= $getAnswers[0]['answer_time'];
-														$answer_detail 			= $getAnswers[0]['answer_detail'];
+														$answer_detail 			= trim($getAnswers[0]['answer_detail']);
 													}
 													else
 													{
@@ -571,7 +571,7 @@ function getRPDetails($rp_id) {
 																									"fkresponse_id"			=>	$response_id));
 														$answer 				= $getAnswers[0]['answer'];
 														$answer_time 			= $getAnswers[0]['answer_time'];
-														$answer_detail 			= $getAnswers[0]['answer_detail'];
+														$answer_detail 			= trim($getAnswers[0]['answer_detail']);
 													}
 													else {
 														$answer 				= "";
@@ -588,13 +588,13 @@ function getRPDetails($rp_id) {
 														if( !$view ) {
 															if( $form_id == Discovery::FORM_CA_RPDS ) {
 ?>
-                                                                <select class="form-control" id="answer<?= $discovery_question_id; ?>"  name="answer[<?= $discovery_question_id; ?>]" onChange="checkFunctionForm5('<?= $discovery_question_id ?>',this.value)" <?= $css ?>>
-                                                                <option <?php if($answer == "Select Your Response") echo "selected"; ?>>Select Your Response</option>
-                                                                <option <?php if($answer == "I have responsive documents") echo "selected"; ?>>I have responsive documents</option>
-                                                                <option <?php if($answer == "Responsive documents have never existed") echo "selected"; ?>>Responsive documents have never existed</option>
-                                                                <option <?php if($answer == "Responsive documents were destroyed") echo "selected"; ?>>Responsive documents were destroyed</option>
-                                                                <option <?php if($answer == "Responsive documents were lost, misplaced, stolen, or I lack access to them") echo "selected"; ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
-                                                                </select>
+															<select class="form-control" id="answer<?= $discovery_question_id ?>"  name="answer[<?= $discovery_question_id; ?>]" onChange="checkFunctionForm5('<?= $discovery_question_id ?>',this.value)" <?= $css ?>>
+                                                                <option <?= ($answer == "Select Your Response") ? "selected" : "" ?>>Select Your Response</option>
+                                                                <option <?= ($answer == "I have responsive documents") ? "selected" : "" ?>>I have responsive documents</option>
+                                                                <option <?= ($answer == "Responsive documents have never existed") ? "selected" : "" ?>>Responsive documents have never existed</option>
+                                                                <option <?= ($answer == "Responsive documents were destroyed") ? "selected" : "" ?>>Responsive documents were destroyed</option>
+                                                                <option <?= ($answer == "Responsive documents were lost, misplaced, stolen, or I lack access to them") ? "selected" : "" ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
+															</select>
 <?php
 															}
 															else if( $form_id == Discovery::FORM_CA_SROGS ) {
@@ -621,7 +621,7 @@ function getRPDetails($rp_id) {
 																	<div class="form-group">
 																		<p>
 																			<b>a) </b>
-																			Enter the name and address of anyone you believes has the documents.
+																			Enter the name and address of anyone you believe has the documents.
 																		</p>
 																		<textarea <?= ($answer == 'Select Your Response' || $answer == "I have responsive documents") ? "disabled" : '' ?> 
 																				id="subanswer<?= $discovery_question_id ?>" 

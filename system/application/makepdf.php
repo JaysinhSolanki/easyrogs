@@ -658,7 +658,7 @@ ob_start();
 
                     $answer 				= trim($getAnswers[0]['answer']);
                     $answer_time 			= $getAnswers[0]['answer_time'];
-                    $answer_detail 			= $getAnswers[0]['answer_detail'];
+                    $answer_detail 			= trim($getAnswers[0]['answer_detail']);
                     $objection 				= trim($getAnswers[0]['objection']);
                     $final_response 		= trim($getAnswers[0]['final_response']);
                 }
@@ -711,7 +711,7 @@ ob_start();
                                                 "fkresponse_id"			=>	$response_id) );
                     $answer 				= trim($getAnswers[0]['answer']);
                     $answer_time 			= $getAnswers[0]['answer_time'];
-                    $answer_detail 			= $getAnswers[0]['answer_detail'];
+                    $answer_detail 			= trim($getAnswers[0]['answer_detail']);
                     $objection 				= trim($getAnswers[0]['objection']);
                     $final_response 		= trim($getAnswers[0]['final_response']);
                 }
@@ -745,7 +745,7 @@ ob_start();
                             }
                             
                             $str1	= "A diligent search and a reasonable inquiry have been made in an effort to comply with this demand, however, responding party is unable to comply because they do not have any responsive documents in their possession, custody, or control.";
-                            $str2	= " However, respondent believes that ".$answer_detail." may have responsive documents.";
+                            $str2 = $answer_detail ? (" However, respondent believes that ".$answer_detail." may have responsive documents.") : "";
                             if( $answer  == "Responsive documents have never existed") {
                                 $answer	=  $str1." Respondent does not believe that such documents have ever existed. ".$str2;
                             }
