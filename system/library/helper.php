@@ -223,6 +223,8 @@ function makeaddress($pkaddressbookid, $issplit = 0)
 **/
 function finalResponseGenerate( $objection, $answer ) {
     $transitiontext = "However, in the spirit of cooperation and without waiving any objection, respondent responds: ";
+    $objection = trim($objection);
+    $answer = trim($answer);
 
     if( !$objection && !$answer ) {
         $finalResponse = "";

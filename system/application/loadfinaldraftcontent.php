@@ -434,7 +434,7 @@ $instructions = "This responding party has not completed its investigation or di
                                                                                 "fkresponse_id"			=>	$response_id));
                                         $answer 				=	$getAnswers[0]['answer'];
                                         $answer_time 			=	$getAnswers[0]['answer_time'];
-                                        $answer_detail 			=	$getAnswers[0]['answer_detail'];
+                                        $answer_detail 			=	trim($getAnswers[0]['answer_detail']);
                                         $objection 				=	$getAnswers[0]['objection'];
                                     }
                                     else {
@@ -480,7 +480,7 @@ $instructions = "This responding party has not completed its investigation or di
                                                                                     "fkresponse_id"			=>	$response_id));
                                         $answer 				=	trim($getAnswers[0]['answer']);
                                         $answer_time 			=	$getAnswers[0]['answer_time'];
-                                        $answer_detail 			=	$getAnswers[0]['answer_detail'];
+                                        $answer_detail 			=	trim($getAnswers[0]['answer_detail']);
                                         $objection 				=	$getAnswers[0]['objection'];
                                     }
                                     else {
@@ -500,13 +500,13 @@ $instructions = "This responding party has not completed its investigation or di
                                         $str1 = "A diligent search and a reasonable inquiry have been made in an effort to comply with this demand, however, responding party is unable to comply because they do not have any responsive documents in their possession, custody, or control.";
                                         $str2 = $answer_detail ? (" However, respondent believes that ".$answer_detail." may have responsive documents.") : "";
                                         if( $answer == "Responsive documents have never existed") {
-                                            $answer	=	 $str1." Respondent does not believe that such documents have ever existed. ". $str2;
+                                            $answer	=  $str1." Respondent does not believe that such documents have ever existed. ". $str2;
                                         }
                                         if( $answer == "Responsive documents were destroyed") {
-                                            $answer	=	 $str1." Respondent does not believe that such documents have ever existed. ".$str2;
+                                            $answer	=  $str1." Respondent does not believe that such documents have ever existed. ".$str2;
                                         }
                                         if( $answer == "Responsive documents were lost, misplaced, stolen, or I lack access to them") {
-                                            $answer	=	 $str1." Respondent believes that such documents were lost, misplace, stolen, or respondent lacks access to them. ".$str2;
+                                            $answer	=  $str1." Respondent believes that such documents were lost, misplaced, stolen, or respondent lacks access to them. ".$str2;
                                         }
                                     }
                                     ?>
