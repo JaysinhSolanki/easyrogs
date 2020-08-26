@@ -812,23 +812,17 @@ body.modal-open
                                     if( !$view ) {
                                         if($form_id == Discovery::FORM_CA_RPDS ) {
 ?>
-                                            <select class="form-control" id="answer<?php echo $discovery_question_id; ?>"  name="answer[<?php echo $discovery_question_id; ?>]" onChange="checkFunctionForm5('<?php echo $discovery_question_id; ?>',this.value)" <?php echo $css ?>>
-                                            <option <?php if ($answer == "Select Your Response") {
-                                                echo "selected";
-} ?>>Select Your Response</option>
-                                            <option <?php if ($answer == "I have responsive documents") {
-                                                echo "selected";
-} ?>>I have responsive documents</option>
-                                            <option <?php if ($answer == "Responsive documents have never existed") {
-                                                echo "selected";
-} ?>>Responsive documents have never existed</option>
-                                            <option <?php if ($answer == "Responsive documents were destroyed") {
-                                                echo "selected";
-} ?>>Responsive documents were destroyed</option>
-                                            <option <?php if ($answer == "Responsive documents were lost, misplaced, stolen, or I lack access to them") {
-                                                echo "selected";
-} ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
-                                            </select>
+                                        <select class="form-control" <?= $css ?>
+                                                id="answer<?= $discovery_question_id ?>"  
+                                                name="answer[<?= $discovery_question_id ?>]" 
+                                                onChange="checkFunctionForm5('<?= $discovery_question_id ?>',this.value)">
+                                            <option <?= ($answer == "Select Your Response") ? "selected" : "" ?>>Select Your Response</option>
+                                            <option <?= ($answer == "I have responsive documents") ? "selected" : "" ?>>I have responsive documents</option>
+                                            <option <?= ($answer == "Responsive documents have never existed") ? "selected" : "" ?>>Responsive documents have never existed</option>
+                                            <option <?= ($answer == "Responsive documents were destroyed") ? "selected" : "" ?>>Responsive documents were destroyed</option>
+                                            <option <?= ($answer == "Responsive documents were lost, misplaced, stolen, or I lack access to them") ? "selected" : "" ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
+                                        </select>
+                                        <script>window.requestAnimationFrame( _ => checkFunctionForm5('<?= $discovery_question_id ?>',$('#answer<?= $discovery_question_id ?>').val()) )</script>
 <?php
                                         } elseif( $form_id == Discovery::FORM_CA_SROGS ) {
 ?>
@@ -1130,24 +1124,19 @@ function checkFunction(subdivid, option)
         $(".subanswer_"+subdivid).prop('disabled',true);
     }
 }
-function checkFunctionForm5(subdivid, option)
-{
-    //alert(option);
-    if(option == 'I have responsive documents' || trim(option) == 'Select Your Response')
-    {
-        if(option == 'I have responsive documents')
-        {
+function checkFunctionForm5(subdivid, option) { //debugger;
+    option = String(option).trim();
+    if( option == 'I have responsive documents' || option == 'Select Your Response' || option == 'Responsive documents have never existed') {
+        if(option == 'I have responsive documents') {
             $("#note"+subdivid).show();
         }
-        else
-        {
+        else {
             $("#note"+subdivid).hide();
         }
         $("#subdiv"+subdivid).hide();
         $("#subanswer"+subdivid).prop('disabled',true);
     }
-    else
-    {
+    else {
         $("#subdiv"+subdivid).show();
         $("#subanswer"+subdivid).prop('disabled',false);
         $("#note"+subdivid).hide();
