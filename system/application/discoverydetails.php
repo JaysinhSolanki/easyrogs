@@ -276,7 +276,7 @@ body.modal-open
                 <div class="panel-heading">
                 <div class="row">
                     <div class="col-md-12">
-                        <span style="font-size:18px; font-weight:600"><?php echo $form_name;?></span>
+                        <span style="font-size:18px; font-weight:600"><?= $form_name ?></span>
                     </div>
                 </div>
                 </div>
@@ -285,53 +285,46 @@ body.modal-open
                   <tbody>
                      <tr>
                       <th>Case</th>
-                      <td><?php echo str_replace(" V ", " v ", $case_title);?></td>
+                      <td><?= str_replace(" V ", " v ", $case_title) ?></td>
                       <th>Number</th>
-                      <td><?php echo $case_number ?></td>
+                      <td><?= $case_number ?></td>
                     </tr>
                      <tr>
                         <th>County</th>
-                      <td><?php echo $county_name ?></td>
+                      <td><?= $county_name ?></td>
                       <th>State</th>
-                      <td><?php echo $jurisdiction ?></td>
+                      <td><?= $jurisdiction ?></td>
                     </tr>
-                    <?php /*?><tr>
-                      <th>Court Address</th>
-                      <td><?php echo $court_address ?></td>
-                      <th>Attorney</th>
-                      <td><?php echo $atorny_name ?></td>
-                    </tr><?php */?>
                     <tr>
                       <td><b>Propounding Party</b></td>
-                      <td><?php echo $proponding_name;  ?></td>
+                      <td><?= $proponding_name ?></td>
                       <td><b>Responding Party</b></td>
-                       <td><?php echo $responding_name;  ?></td>
+                       <td><?= $responding_name ?></td>
                     </tr>
                     <tr>
                       <td><b>Served Date</b></td>
-                      <td><?php echo $served;  ?></td>
+                      <td><?= $served ?></td>
                       <td><b>Due Date</b></td>
-                       <td><?php echo $due;  ?></td>
+                       <td><?= $due ?></td>
                     </tr>
                   </tbody>
                 </table>
                     <form name="discoverydetailsform" action="#" method="post" id="discoverydetailsform">
-                <input type="hidden" name="supp" value="<?php echo $supp ?>">
-                <input type="hidden" name="supp_form_name" value="<?php echo $form_name ?>">
-                <input type="hidden" name="form_id" value="<?php echo $form_id ?>">
-                <input type="hidden" name="response_id" value="<?php echo $response_id ?>">
-                <input type="hidden" name="case_id" value="<?php echo $case_id ?>">
-                <input type="hidden" name="uid" value="<?php echo $uid ?>">
-                <input type="hidden" name="discovery_id" value="<?php echo $discovery_id ?>">
-                <input type="hidden" name="respond" value="<?php echo $respond ?>">
-                <input type="hidden" name="discovery_verification" id="discovery_verification" value="<?php echo $discovery_verification ?>">
-                <?php /*?><input type="hidden" name="discovery_verification_text" id="discovery_verification_text" value="<?php echo $discovery_verification_text ?>"><?php */?>
+                <input type="hidden" name="supp" value="<?= $supp ?>">
+                <input type="hidden" name="supp_form_name" value="<?= $form_name ?>">
+                <input type="hidden" name="form_id" value="<?= $form_id ?>">
+                <input type="hidden" name="response_id" value="<?= $response_id ?>">
+                <input type="hidden" name="case_id" value="<?= $case_id ?>">
+                <input type="hidden" name="uid" value="<?= $uid ?>">
+                <input type="hidden" name="discovery_id" value="<?= $discovery_id ?>">
+                <input type="hidden" name="respond" value="<?= $respond ?>">
+                <input type="hidden" name="discovery_verification" id="discovery_verification" value="<?= $discovery_verification ?>">
                 <hr>
                 <div class="row">
                 <div id="loadinstructions"></div>
                 <div class="col-md-12">
                     <ul class="list-group">
-                    <?php
+<?php
                     if (in_array($form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE))) {
                         foreach ($mainQuestions as $data) {
                             $dependent_answer       = "";
@@ -376,11 +369,8 @@ body.modal-open
                                 $dependent_answer = getAnswerOfDependentParentQuestion($discovery_id, $depends_on_question, $response_id);
                             }
 ?>
-							<li class='list-group-item <?=
-									!$depends_on_question
-										? "'"
-										: "row_$depends_on_question' " .( (( $dependent_answer == 'No' || $dependent_answer == '' ) && $view != 1) ? " style='display:none;'" : '' )
-								?>>
+							<li class='list-group-item <?= $depends_on_question ? "row_$depends_on_question" : "" ?>'
+								style='<?= $depends_on_question && ($view != 1) && ( $dependent_answer == 'No' || $dependent_answer == '' ) ? " display:none;" : "" ?>'>
 <?php
                                 if ($question_type_id != 1) {
                                     $subQuestions   = $AdminDAO->getrows(
@@ -404,13 +394,13 @@ body.modal-open
                                                                     array(":question_number"=>$question_number,":discovery_id"=>$discovery_id)
                                                                 );
 
-                                    if (sizeof($subQuestions) > 0) {
+                                    if( sizeof($subQuestions) ) {
                                         $subquestuions_string   = "";
                                         foreach ($subQuestions as $sub) {
                                             $sub_question_title         = $sub['question_title'];
                                             $sub_question_number        = $sub['question_number'];
                                             $sub_sub_part               = $sub['sub_part'];
-                                            $subquestuions_string       .= " (".$sub_sub_part.") ".$sub_question_title." ";
+                                            $subquestuions_string       .= " ($sub_sub_part) $sub_question_title ";
                                         }
                                     } else {
                                         $subquestuions_string = "";
@@ -423,7 +413,7 @@ body.modal-open
 ?>
                                         <p>
                                             <b>Q No. <?= $question_number ?>: </b>
-                                            <?= $question_title.$subquestuions_string ?>
+                                            <?= $question_title . $subquestuions_string ?>
                                         </p>
 <?php
                                     } else { //Get
@@ -455,7 +445,7 @@ body.modal-open
                                                                         "
                                                 );
 ?>
-                                                <h5><u>FORM INTERROGATORY NO. <?php echo  $question_number; ?></u></h5>
+                                                <h5><u>FORM INTERROGATORY NO. <?=  $question_number ?></u></h5>
 <?php
                                                     if( sizeof($con_mainQuestions) ) {
 ?>
@@ -476,7 +466,7 @@ body.modal-open
 
                                                                         foreach ($con_SubQuestions as $con_SubQuestion) {
 ?>
-                                                                            <p><?php echo $con_SubQuestion['question_no'].". ".$con_SubQuestion['sub_answer']; ?></p>
+                                                                            <p><?= $con_SubQuestion['question_no'].". ".$con_SubQuestion['sub_answer'] ?></p>
 <?php
                                                                         }
                                                                         echo "<br>";
@@ -490,15 +480,14 @@ body.modal-open
 ?>
                                                         <p>
                                                             <b>Q No. <?= $question_number ?>: </b>
-                                                            <?= $question_title.$subquestuions_string; ?>
+                                                            <?= $question_title . $subquestuions_string ?>
                                                         </p>
-                                        <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
-                                                        <textarea   style="background-color: antiquewhite;"
-                                                                    id="objection_<?= $discovery_question_id ?>"
-                                                                    class="form-control"
-                                                                    name="objection[<?= $discovery_question_id ?>]"
-                                                                    placeholder="Objection"
-                                                                    required><?=
+                                                        <textarea required  
+                                                                style="background-color: antiquewhite;"
+                                                                id="objection_<?= $discovery_question_id ?>"
+                                                                class="form-control"
+                                                                name="objection[<?= $discovery_question_id ?>]"
+                                                                placeholder="Objection"><?=
                                                             html_entity_decode($objection)
                                                         ?></textarea>
 <?php
@@ -518,13 +507,12 @@ body.modal-open
 		                                               $objection = "Objection, this interrogatory seeks information protected by the attorney work product privilege because it reflects counsel's evaluation of the case by revealing which witnesses counsel deemed important enough to interview. Nacht & Lewis Architects, Inc. v. Superior Court (1996) 47 Cal.App.4th 214, 217.";
 	                                                }
 ?>
-                                        <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
-                                                    <textarea   style="background-color: antiquewhite;"
-                                                                id="objection_<?= $discovery_question_id; ?>"
-                                                                class="form-control"
-                                                                name="objection[<?= $discovery_question_id ?>]"
-                                                                placeholder="Objection"
-                                                                required><?=
+                                                    <textarea required  
+                                                            style="background-color: antiquewhite;"
+                                                            id="objection_<?= $discovery_question_id; ?>"
+                                                            class="form-control"
+                                                            name="objection[<?= $discovery_question_id ?>]"
+                                                            placeholder="Objection"><?=
                                                         html_entity_decode($objection)
                                                     ?></textarea>
 <?php
@@ -534,29 +522,45 @@ body.modal-open
 <?php
                                                 if ($question_type_id == 1) {
 ?>
-                                                    <input type="hidden" name="have_main_question[<?php echo $discovery_question_id; ?>]" value="<?php echo $have_main_question?>"/>
-                                                    <textarea id="answer<?php echo $discovery_question_id ?>" class="form-control" name="answer[<?php echo $discovery_question_id; ?>]" placeholder="Your Answer" required <?php echo $css ?>><?php echo html_entity_decode($answer) ?></textarea>
+                                                    <input type="hidden"
+                                                            name="have_main_question[<?= $discovery_question_id ?>]"
+                                                            value="<?= $have_main_question ?>"/>
+                                                    <textarea required
+                                                            id="answer<?= $discovery_question_id ?>"
+                                                            class="form-control" <?= $css ?>
+                                                            name="answer[<?= $discovery_question_id ?>]"
+                                                            placeholder="Your Answer"><?=
+                                                        html_entity_decode($answer)
+                                                    ?></textarea>
 <?php
-                                                } elseif ($question_type_id == 2) {
+                                                } elseif( $question_type_id == 2 ) {
 ?>
                                                         <div class="form-check form-check-inline">
-                                                            <label class="radio-inline"><input type="radio" name="answer[<?php echo $discovery_question_id ?>]" value="Yes" onClick="checkFunction('<?php echo $question_no_makeid ?>','1')<?php if ($is_depended_parent ==1) {
-?>,showhidequestions('<?php echo $question_id;?>',1)<?php
-}?>" <?php if ($answer == 'Yes') {
-    echo "checked";
-} ?> <?php echo $css ?>>Yes</label>
-                                                            <label class="radio-inline"><input type="radio" name="answer[<?php echo $discovery_question_id ?>]" value="No" onClick="checkFunction('<?php echo $question_no_makeid ?>','2')<?php if ($is_depended_parent ==1) {
-?>,showhidequestions('<?php echo $question_id;?>',2)<?php
-}?>" <?php if ($answer == 'No') {
-    echo "checked";
-} ?> <?php echo $css ?>>No</label>
+                                                            <label class="radio-inline">
+                                                                <input type="radio" <?= ($answer == 'Yes') ? "checked" : "" ?>
+                                                                       value="Yes" <?= $css ?>
+                                                                       onClick="checkFunction('<?= $question_no_makeid ?>','1')<?=
+                                                                            ($is_depended_parent ==1) ? ",showhidequestions('$question_id',1)" : "" ?>"
+                                                                       name="answer[<?= $discovery_question_id ?>]">
+                                                                Yes
+                                                            </label>
+                                                            <label class="radio-inline">
+                                                                <input type="radio" <?= ($answer == 'No') ? "checked" : "" ?>
+                                                                       value="No" <?= $css ?>
+                                                                       onClick="checkFunction('<?= $question_no_makeid ?>','2')<?=
+                                                                            ($is_depended_parent ==1) ? ",showhidequestions('$question_id',2)" : "" ?>"
+                                                                       name="answer[<?= $discovery_question_id ?>]">
+                                                                No
+                                                            </label>
                                                         </div>
 <?php
                                                 }
-                                                if ($question_type_id != 1) {
+                                                if( $question_type_id != 1 ) {
 ?>
 
-                                                    <ul class="list-group" id="subdiv<?= $question_no_makeid ?>" <?= ($question_type_id == 2 && $answer != "Yes") ? 'style="display:none"' : '' ?>>
+                                                    <ul class="list-group"
+                                                        <?= ($question_type_id == 2 && $answer != "Yes") ? ' style="display:none;" ' : '' ?>
+                                                        id="subdiv<?= $question_no_makeid ?>">
 <?php
                                                         foreach( $subQuestions as $data ) {
                                                             $question_id            = $data['question_id'];
@@ -586,11 +590,10 @@ body.modal-open
                                                          <li class="list-group-item">
                                                             <div class="form-group">
                                                                 <p>
-                                                                    <b><?= $sub_part ?>)</b><?= $question_title ?>
+                                                                    <b><?= $sub_part ?>)</b>&nbsp;<?= $question_title ?>
 <?php
                                                                     if( $respond == 1 ) {
 ?>
-                                        <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
                                                                     <textarea   style="background-color: antiquewhite;"
                                                                                 id="objection_<?= $discovery_question_id ?>"
                                                                                 class="form-control"
@@ -602,23 +605,19 @@ body.modal-open
                                                                     }
 ?>
                                                                 </p>
-                                                                <input type="hidden" class="subanswer_<?php echo $question_no_makeid?>" name="have_main_question[<?php echo $discovery_question_id; ?>]" value="<?php echo $have_main_question?>"
-<?php
-    if ($answer == "No" || ($answer == "" && $p_q_type_id == 1) || ($answer == "" && $p_q_type_id == 2)) {
-?>
-        disabled
-<?php
-    }
-?>/>
-                                                                <textarea
-                                                                id="answer<?php echo $discovery_question_id ?>"
-                                                                class="form-control subanswer_<?php echo $question_no_makeid?>"
-                                                                name="answer[<?php echo $discovery_question_id; ?>]"
-                                                                placeholder="Your Answer" required <?= $css ?>
-<?php
-                                                                if (($answer == "No" || $answer == "") && $p_q_type_id != 3) {
-?> disabled <?php
-} ?>><?= html_entity_decode($answer1) ?></textarea>
+                                                                <input type="hidden" 
+                                                                        class="subanswer_<?= $question_no_makeid?>" 
+                                                                        name="have_main_question[<?= $discovery_question_id ?>]" 
+                                                                        value="<?= $have_main_question ?>"
+                                                                        <?= ($answer == "No" || ($answer == "" && $p_q_type_id == 1) || ($answer == "" && $p_q_type_id == 2)) ? " disabled " : "" ?> />
+                                                                <textarea required
+                                                                            id="answer<?= $discovery_question_id ?>"
+                                                                            class="form-control subanswer_<?= $question_no_makeid ?>" <?= $css ?>
+                                                                            name="answer[<?= $discovery_question_id ?>]"
+                                                                            <?= (($answer == "No" || $answer == "") && $p_q_type_id != 3) ? " disabled " : "" ?> 
+                                                                            placeholder="Your Answer" ><?= 
+                                                                    html_entity_decode($answer1) 
+                                                                ?></textarea>
                                                             </div>
                                                         </li>
 <?php
@@ -674,13 +673,12 @@ body.modal-open
 <?php
                                         if ($respond == 1) {
 ?>
-                                        <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
-                                        <textarea   style="background-color: antiquewhite;"
-                                                    id="objection_<?= $discovery_question_id ?>"
-                                                    class="form-control"
-                                                    name="objection[<?= $discovery_question_id ?>]"
-                                                    placeholder="Objection"
-                                                    required><?=
+                                        <textarea required  
+                                                style="background-color: antiquewhite;"
+                                                id="objection_<?= $discovery_question_id ?>"
+                                                class="form-control"
+                                                name="objection[<?= $discovery_question_id ?>]"
+                                                placeholder="Objection"><?=
                                             html_entity_decode($objection)
                                         ?></textarea>
 <?php
@@ -704,9 +702,9 @@ body.modal-open
 } ?>>
 <?php
                                     foreach ($generalQuestions as $generalQuestion) {
-                                        $question_admit_id  = $generalQuestion['id'];
-                                        $subQuestionAnswers     = $AdminDAO->getrows('question_admit_results', "*", ":discovery_question_id = discovery_question_id AND :question_admit_id = question_admit_id AND fkresponse_id = :fkresponse_id", array("discovery_question_id" => $discovery_question_id, "question_admit_id" => $question_admit_id,"fkresponse_id" => $response_id));
-                                        $subQuestionAnswer  = $subQuestionAnswers[0];
+                                        $question_admit_id = $generalQuestion['id'];
+                                        $subQuestionAnswers = $AdminDAO->getrows('question_admit_results', "*", ":discovery_question_id = discovery_question_id AND :question_admit_id = question_admit_id AND fkresponse_id = :fkresponse_id", array("discovery_question_id" => $discovery_question_id, "question_admit_id" => $question_admit_id,"fkresponse_id" => $response_id));
+                                        $subQuestionAnswer = $subQuestionAnswers[0];
 
                                         if ($question_admit_id == 1) {
                                             $sub_answer_show    = $question_number;
@@ -718,30 +716,23 @@ body.modal-open
                                     <li class="list-group-item">
                                     <div class="form-group">
                                         <p><b><?= $generalQuestion['question_no'] ?>) </b><?= $generalQuestion['question'] ?></p>
-                                        <textarea  style="background-color: antiquewhite; <?php if ($question_admit_id == 1) {
-?> display:none <?php
-} ?> "
-                                        <?php if ($answer == "Admit" || $answer == "") {
-?> disabled <?php
-} ?>
+                                        <textarea required 
+                                            style="background-color: antiquewhite; <?= ($question_admit_id == 1) ? 'display:none;' : '' ?>" 
+                                            <?= ($answer == "Admit" || $answer == "") ? " disabled " : "" ?>
                                             id="sub_objection<?= $discovery_question_id.'_'.$question_admit_id ?>"
-                                            class="form-control subanswer_<?= $discovery_question_id;?>"
+                                            class="form-control subanswer_<?= $discovery_question_id ?>" <?= $css ?>
                                             name="rfa_objection[<?= $discovery_question_id ?>][<?= $question_admit_id ?>]"
-                                            placeholder="Objection"
-                                            required
-                                            <?= $css ?>><?=
+                                            placeholder="Objection"><?=
                                                 $sub_objection
                                         ?></textarea>
                                         <br />
-                                        <textarea
+                                        <textarea required
                                             <?= ($answer == "Admit" || $answer == "") ? "disabled" : "" ?>
                                             <?= ($question_admit_id == 1) ? "readonly" : "" ?>
                                             id="subanswer<?= $discovery_question_id.'_'.$question_admit_id ?>"
-                                            class="form-control subanswer_<?= $discovery_question_id;?>"
+                                            class="form-control subanswer_<?= $discovery_question_id;?>" <?= $css ?>
                                             name="subanswer[<?= $discovery_question_id ?>][<?= $question_admit_id; ?>]"
-                                            placeholder="Your Answer"
-                                            required
-                                            <?= $css ?>><?=
+                                            placeholder="Your Answer" ><?=
                                                 $sub_answer_show
                                         ?></textarea>
                                     </div>
@@ -791,17 +782,16 @@ body.modal-open
 ?>
                                 <div class="form-group">
                                     <p>
-                                        <b>Q No. <?= $question_number ?>: </b><?= $question_title; ?>
+                                        <b>Q No. <?= $question_number ?>: </b><?= $question_title ?>
 <?php
                                         if ($respond == 1) {
 ?>
-                                        <!--button id="btn-objections" class="pull-right" onclick="javascript:showObjectionTemplates(<?= $form_id ?>);" type="button"> <i class="fa fa-book" /> Objections </button-->
-                                        <textarea   style="background-color: antiquewhite;"
-                                                    id="objection_<?= $discovery_question_id ?>"
-                                                    class="form-control"
-                                                    name="objection[<?= $discovery_question_id ?>]"
-                                                    placeholder="Objection"
-                                                    required><?=
+                                        <textarea required  
+                                                  style="background-color: antiquewhite;"
+                                                  id="objection_<?= $discovery_question_id ?>"
+                                                  class="form-control"
+                                                  name="objection[<?= $discovery_question_id ?>]"
+                                                  placeholder="Objection" ><?=
                                             html_entity_decode($objection)
                                         ?></textarea>
 <?php
@@ -826,7 +816,13 @@ body.modal-open
 <?php
                                         } elseif( $form_id == Discovery::FORM_CA_SROGS ) {
 ?>
-                                            <textarea id="answer<?php echo $discovery_question_id ?>" class="form-control " name="answer[<?php echo $discovery_question_id; ?>]" placeholder="Your Answer" required <?php echo $css ?>><?php echo html_entity_decode($answer) ?></textarea>
+                                            <textarea required
+                                                        id="answer<?= $discovery_question_id ?>" 
+                                                        class="form-control " <?= $css ?>
+                                                        name="answer[<?= $discovery_question_id ?>]" 
+                                                        placeholder="Your Answer"  ><?= 
+                                                html_entity_decode($answer) 
+                                            ?></textarea>
 <?php
                                         }
                                         if( $form_id == Discovery::FORM_CA_RPDS ) {
@@ -843,8 +839,8 @@ body.modal-open
                                                 </div>
                                                 </li>
                                             </ul>
-                                            <ul class="list-group" 
-                                                    id="subdiv<?= $discovery_question_id ?>" 
+                                            <ul class="list-group"
+                                                    id="subdiv<?= $discovery_question_id ?>"
                                                     <?= ($answer == 'Select Your Response' || $answer == "I have responsive documents") ? " style='display:none' " : "" ?>>
                                                 <li class="list-group-item">
                                                 <div class="form-group">
@@ -852,13 +848,13 @@ body.modal-open
                                                         <b>a) </b>
                                                         Enter the name and address of anyone you believe has the documents.
                                                     </p>
-                                                    <textarea id="subanswer<?= $discovery_question_id ?>"
-                                                            class="form-control"
-                                                            name="subanswer[<?= $discovery_question_id ?>]"
-                                                            required <?= $css ?>
-                                                            <?= ($answer == 'Select Your Response' || $answer == "I have responsive documents") ? "disabled" : "" ?>
-                                                            placeholder="Your Answer"> <?=
-                                                        html_entity_decode($answer_detail) 
+                                                    <textarea required
+                                                                id="subanswer<?= $discovery_question_id ?>"
+                                                                class="form-control" <?= $css ?>
+                                                                name="subanswer[<?= $discovery_question_id ?>]"
+                                                                <?= ($answer == 'Select Your Response' || $answer == "I have responsive documents") ? " disabled " : "" ?>
+                                                                placeholder="Your Answer"><?=
+                                                        html_entity_decode($answer_detail)
                                                     ?></textarea>
                                                 </div>
                                                 </li>
@@ -1082,7 +1078,7 @@ function saveclientemail() {
 function callemailclientmodal()
 {
     $("#serve_modal").modal("toggle");
-    serveaction(1,<?php echo $discovery_id; ?>);
+    serveaction(1,<?= $discovery_id ?>);
 }
 function addObjectionFunction(discovery_question_id)
 {
@@ -1190,7 +1186,7 @@ function serveFunction2(is_verified,discovery_id,response_id) {
     else
     {
         //alert("Go to Final Draft (In progress)");
-        callFinalDraftModal('<?php echo $_GET['id']?>',is_verified,response_id);
+        callFinalDraftModal('<?= $_GET['id'] ?>',is_verified,response_id);
         //serveaction(2,discovery_id);
     }
 }
@@ -1222,7 +1218,7 @@ function FunctionFinalDraftAction()
         if(messagetype == "success")
         {
             $('#finaldraft_modal').modal('toggle');
-            PopupForPOS('<?php echo $discovery_id?>',response_id);
+            PopupForPOS('<?= $discovery_id ?>',response_id);
         }
     });
 }
