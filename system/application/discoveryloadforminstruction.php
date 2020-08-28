@@ -450,7 +450,7 @@ else {
                 <a href='#'>
                     <i style='font-size:16px;' data-placement='top' data-toggle='tooltip' title='' class='fa fa-info-circle tooltipshow client-btn' aria-hidden='true' data-original-title='
                         Code of Civil Procedure section 2030.060, subdivision (d)<br/>
-                        <p style=\"text-align:left;\">No preface or instruction shall be included with a set of admission requests unless it has been approved under Chapter 17.'>
+                        <p style=\"text-align:left;\">No preface or instruction shall be included with a set of interrogatories unless it has been approved under Chapter 17.'>
                     </i>
                 </a>
             </p>
