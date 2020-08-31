@@ -192,6 +192,9 @@ if ($id > 0 && in_array($form_id, array(Discovery::FORM_CA_SROGS, Discovery::FOR
 ?>
 
 <style>
+.col-sm-2.control-label {
+    padding-right: 0;
+}
 body.modal-open {
     position: static !important;
 }
@@ -226,8 +229,9 @@ body.modal-open {
     padding: 0.5em 2em;
 }
 </style>
-<div id="screenfrmdiv" style="display: block;">
-    <div class="col-lg-12">
+<div id="screen-discovery" class="main">
+    <aside class="sidebar left "><div class="fixed"></div></aside>
+    <div class="container" style="">
         <div class="hpanel">
             <div class="panel-heading text-center">
                 <small>
@@ -246,7 +250,7 @@ body.modal-open {
                     </small>
                 <h3 align="center"><strong><?= $case_title ?></strong></h3>
             </div>
-            <div class="panel-body">
+            <div class="--panel-body">
                 <div class="panel panel-primary">
                     <div class="panel-body">
                         <form  name="discoveriesform" id="discoveriesform" class="form form-horizontal" method="post">
@@ -255,8 +259,8 @@ body.modal-open {
                      <input type="hidden" name="supp" value="<?= $supp ?>">
 
                     <div class="form-group">
-                        <label class=" col-sm-2 control-label">Form<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
-                        <div class="col-sm-8">
+                        <label class=" col-sm-2 col-md-1 control-label">Form<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
+                        <div class="col-sm-10 col-md-11">
                             <select  name="form_id" id="form_id"
 <?php
                                 if( $id ) { echo "disabled"; }
@@ -283,12 +287,12 @@ body.modal-open {
                     </div>
 
                     <div class="form-group">
-                        <label class=" col-sm-2 control-label">Name<span class="redstar" style="color:#F00" title="This field is compulsory">*</span> <?php  echo instruction(6) ?></label>
-                        <div class="col-sm-3">
+                        <label class=" col-sm-2 col-md-1 control-label">Name<span class="redstar" style="color:#F00" title="This field is compulsory">*</span> <?php  echo instruction(6) ?></label>
+                        <div class="col-sm-4 col-md-5">
                             <input type="text"  name="discovery_name" id="discovery_name" placeholder="Enter name" class="form-control m-b" value="<?php echo $discovery['discovery_name'];?>">
                         </div>
-                        <label class=" col-sm-2 control-label">Set Number<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
-                        <div class="col-sm-3">
+                        <label class=" col-sm-2 col-md-1 control-label">Set Number<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
+                        <div class="col-sm-4 col-md-5">
                             <select  name="set_number" id="set_number"  class="form-control m-b"  onchange="setquestionnumber()">
 <?php
                                 for( $d=1; $d<=100; $d++ ) {
@@ -307,23 +311,23 @@ body.modal-open {
 ?>
                     <div <?= $id ? '' : "style='display:none'" ?> id="in_conjunctionDiv">
                     <div class="row form-group">
-                            <label class=" col-sm-2 control-label" style="margin-top: 20px;">In Conjunction with <span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
-                            <div class="col-sm-2" style="margin-top: 25px;">
+                            <label class=" col-sm-2 col-md-1 control-label" style="">In Conjunction with <span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+                            <div class="col-sm-4 col-md-3" style="margin-top: 15px;">
                                 <input type="checkbox" onclick="inConjunctionForm()" <?= $discovery['in_conjunction'] ? "checked" : '' ?> value="1" name="in_conjunction" id="in_conjunction">
                                 <label for="in_conjunction">Form Interrogatories</label>
                             </div>
 
-                            <div  id="interogatoriesTypeDiv" <?= (!$id || !$discovery['in_conjunction']) ? "style='display:none'" : '' ?>>
-                                <div class="col-md-3">
-                                <label class="control-label">Type<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
-                                <div>
-                                    <select  name="interogatory_type" id="interogatory_type"  class="form-control m-b">
-                                        <option value="1" <?= ($discovery['interogatory_type'] == 1) ? "selected" : '' ?>>GENERAL</option>
-                                        <option value="2" <?= ($discovery['interogatory_type'] == 2) ? "selected" : '' ?>>EMPLOYMENT</option>
-                                    </select>
+                            <div id="interogatoriesTypeDiv" class="row row-no-gutters col-sm-10 col-md-11" <?= (!$id || !$discovery['in_conjunction']) ? "style='display:none'" : '' ?>>
+                                <div class="col-sm-6 col-md-6">
+                                    <label class="control-label">Type<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
+                                    <div>
+                                        <select  name="interogatory_type" id="interogatory_type"  class="form-control m-b">
+                                            <option value="1" <?= ($discovery['interogatory_type'] == 1) ? "selected" : '' ?>>GENERAL</option>
+                                            <option value="2" <?= ($discovery['interogatory_type'] == 2) ? "selected" : '' ?>>EMPLOYMENT</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                </div>
-                                <div class="col-md-3">
+                                <div class="col-sm-6 col-md-6" style="padding-right:0; margin-right:-15px">
                                     <label class="control-label">Set No.<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                                     <div class="">
                                         <select  name="conjunction_setnumber" id="conjunction_setnumber"  class="form-control m-b" >
@@ -345,8 +349,8 @@ body.modal-open {
                     }
 ?>
                     <div class="form-group">
-                        <label class=" col-sm-2 control-label">Propounder<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
-                        <div class="col-sm-3">
+                        <label class=" col-sm-2 col-md-1 control-label">Propounder<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
+                        <div class="col-sm-4 col-md-5">
                             <select  name="propounding" id="propounding"  class="form-control m-b" onchange="<?php if( $type == Discovery::TYPE_INTERNAL ) {
 ?> loadpropondingattorneys('<?= $case_id; ?>',this.value,'<?= @$discovery['proponding_attorney'] ?>'),<?php
 } ?>setquestionnumber(),loadrespondings('<?= $case_id; ?>',this.value,'<?= @$discovery['responding'] ?>')">
@@ -359,29 +363,15 @@ body.modal-open {
 ?>
                             </select>
                         </div>
-                        <label class=" col-sm-2 control-label">Respondent<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
-                        <div class="col-sm-3" id="loadrespondingsDiv1">
+                        <label class=" col-sm-2 col-md-1 control-label">Respondent<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
+                        <div class="col-sm-4 col-md-5" id="loadrespondingsDiv1">
                             <select  name="responding" id="responding"  class="form-control m-b" onchange="setquestionnumber()">
 <?php
                                 foreach( $respondingClients as $thisrow ) {
 ?>
                                     <option <?= ($thisrow['id']==$discovery['responding']) ? 'selected' : '' ?> value="<?= $thisrow['id'] ?>"><?= $thisrow['client_name'] ?></option>
-<?php
-                                }
-?>
                             </select>
                         </div>
-
-                    </div>
-                    <div class="form-group">
-<?php
-                        if( $type == Discovery::TYPE_INTERNAL ) {
-?>
-                            <label class=" col-sm-2 control-label">Attorney<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
-                            <div class="col-sm-3" id="loadpropondingattorneysDiv">
-                                <select name="proponding_attorney" id="proponding_attorney"  class="form-control m-b" /><!--Proponding Attorneys Here--->
-                                </select>
-                            </div>
 <?php
                         }
 ?>
@@ -389,102 +379,115 @@ body.modal-open {
 <?php
                     if( $type == Discovery::TYPE_INTERNAL ) {
 ?>
-                        <div class="form-group">
-                            <label class=" col-sm-2 control-label">Served<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
-                            <div class="col-sm-6">
-                                <input type="text"  name="served" id="served" placeholder="Served Date" class="form-control m-b datepicker" value="<?php echo $discovery['served']=='0000-00-00' || $discovery['served']==''?'':dateformat($discovery['served']);?>" data-date-end-date="0d">
-                            </div>
-                            <div class="col-sm-2">
-                                <button type="button" id="calculateduedatepopup_btn" class="btn btn-info" onclick="calculateduedatepopup();" >
-                                <i class="fa fa-calculator" aria-hidden="true"></i> Calculate Due Date <?= instruction(8) ?>
-                                </button>
-                            </div>
+                    <div class="form-group">
+                        <label class=" col-sm-2 col-md-1 control-label">Attorney<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
+                        <div class="col-sm-4 col-md-5" id="loadpropondingattorneysDiv">
+                            <select name="proponding_attorney" id="proponding_attorney"  class="form-control m-b" /><!--Proponding Attorneys Here--->
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label class=" col-sm-2 control-label">Due<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
-                            <div class="col-sm-8">
-                                <input type="text"  name="due" id="due" placeholder="Due Date" class="form-control m-b datepicker" value="<?php echo $discovery['due']=='0000-00-00' || $discovery['due']==''?'':dateformat($discovery['due']);?>">
-                            </div>
-                        </div>
+                    </div>
 <?php
                     }
 ?>
-                    <div class="form-group" id="start_questionid"
 <?php
-                        if( in_array(@$discovery['form_id'], array(Discovery::FORM_CA_FROGS,Discovery::FORM_CA_FROGSE)) && $id ) {
-                            echo "style='display:none'";
-                        }
-?>>
-                        <label class=" col-sm-2 control-label">First Question Number<span class="redstar" style="color:#F00" title="This field is compulsory"></span> <?php  echo instruction(7) ?></label>
-                        <div class="col-sm-8">
-                            <input type="text" onkeypress="return isNumberKey(event)"  name="question_number_start_from" id="question_number_start_from" onblur="arrangequestionnumber()" placeholder="First Question Number"  min="1" class="form-control m-b" value="<?php echo $discovery['question_number_start_from'];?>">
+                    if( $type == Discovery::TYPE_INTERNAL ) {
+?>
+                    <div class="form-group">
+                        <label class=" col-sm-2 col-md-1 control-label">Served<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+                        <div class="col-sm-6 col-md-5">
+                            <input type="text"  name="served" id="served" placeholder="Served Date" class="form-control m-b datepicker" value="<?php echo $discovery['served']=='0000-00-00' || $discovery['served']==''?'':dateformat($discovery['served']);?>" data-date-end-date="0d">
                         </div>
-                    </div>
-                    <div id="loadinstructions" class="row"></div><!--Instructions Here--->
-
-                    <div class="row">
-                     <div id="loadformquestion"></div><!--Form Question Here--->
-                    </div>
-                    <input type="hidden" name="instruction_html" id="instruction_html"  />
-                    <input type="hidden" name="email_body" id="email_body"  />
-                    <input type="hidden" name="email_solicitation" id="email_solicitation"  />
-
-                    <input type="hidden" name="case_id" id="case_id" value ="<?= $case_id ?>" />
-                    <input type="hidden" name="id" value ="<?= $id ?>" />
-<?php
-                    if( $id ) {
-?>
-                    <input type="hidden" name="form_id" value ="<?php echo $discovery['form_id'];?>" />
-<?php
-                    }
-?>
-                    <div class="col-md-2"></div>
-                    <div class="col-md-8" id="loaddocs" style="display:none">
-                    <hr>
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <div class="">
-                                <p>
-                                    <h3>Upload your documents here</h3>
-                                </p>
-                            </div>
-                            <div id="extraupload"></div>
-                            <button type="button" class="btn btn-info" id="extrabutton">
-                                <i class="icon-ok bigger-110"></i>
-                                <span class="ladda-label">Upload</span><span class="ladda-spinner"></span>
+                        <div class="col-sm-4 col-md-3">
+                            <button type="button" id="calculateduedatepopup_btn" class="btn btn-info" onclick="calculateduedatepopup();" >
+                            <i class="fa fa-calculator" aria-hidden="true"></i> Calculate Due Date <?= instruction(8) ?>
                             </button>
-                            <div id="uploadeddocs">
-
-                            </div>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class=" col-sm-2 col-md-1 control-label">Due<span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+                        <div class="col-sm-10 col-md-11">
+                            <input type="text"  name="due" id="due" placeholder="Due Date" class="form-control m-b datepicker" value="<?php echo $discovery['due']=='0000-00-00' || $discovery['due']==''?'':dateformat($discovery['due']);?>">
+                        </div>
+                    </div>
+<?php
+                }
+?>
+                <div class="form-group" id="start_questionid"
+<?php
+                    if( in_array(@$discovery['form_id'], array(Discovery::FORM_CA_FROGS,Discovery::FORM_CA_FROGSE)) && $id ) {
+                        echo "style='display:none'";
+                    }
+?>>
+                    <label class=" col-sm-2 col-md-1 control-label">First Question Number<span class="redstar" style="color:#F00" title="This field is compulsory"></span> <?php  echo instruction(7) ?></label>
+                    <div class="col-sm-10 col-md-11">
+                        <input type="text" onkeypress="return isNumberKey(event)"  name="question_number_start_from" id="question_number_start_from" onblur="arrangequestionnumber()" placeholder="First Question Number"  min="1" class="form-control m-b" value="<?php echo $discovery['question_number_start_from'];?>">
+                    </div>
                 </div>
-                    <div class="form-group" style="margin-top:20px">
-                        <div class="col-sm-offset-2 col-sm-8">
-                            <div id="loading" class="loading" style="display:none; position:absolute; color:#F00;"></div>
-                            <button type="button" class="btn btn-success buttonid" data-style="zoom-in" onclick="buttonsave();">
+                <div id="loadinstructions" class="--row"></div><!--Instructions Here--->
+
+                <div class="--row">
+                    <div id="loadformquestion"></div><!--Form Question Here--->
+                </div>
+                <input type="hidden" name="instruction_html" id="instruction_html"  />
+                <input type="hidden" name="email_body" id="email_body"  />
+                <input type="hidden" name="email_solicitation" id="email_solicitation"  />
+
+                <input type="hidden" name="case_id" id="case_id" value ="<?= $case_id ?>" />
+                <input type="hidden" name="id" value ="<?= $id ?>" />
+<?php
+                if( $id ) {
+?>
+                <input type="hidden" name="form_id" value ="<?php echo $discovery['form_id'];?>" />
+<?php
+                }
+?>
+                <div class="col-md-2"></div>
+                <div class="col-md-8" id="loaddocs" style="display:none">
+                <hr>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="">
+                            <p>
+                                <h3>Upload your documents here</h3>
+                            </p>
+                        </div>
+                        <div id="extraupload"></div>
+                        <button type="button" class="btn btn-info" id="extrabutton">
                             <i class="icon-ok bigger-110"></i>
-                            <span class="ladda-label"><i class="fa fa-save"></i> Save</span><span class="ladda-spinner"></span></button>
+                            <span class="ladda-label">Upload</span><span class="ladda-spinner"></span>
+                        </button>
+                        <div id="uploadeddocs">
+
+                        </div>
+                    </li>
+                </ul>
+            </div>
+                <div class="form-group" style="margin-top:20px">
+                    <div class="col-sm-offset-2 col-sm-10 col-md-offset-1 col-md-11">
+                        <div id="loading" class="loading" style="display:none; position:absolute; color:#F00;"></div>
+                        <button type="button" class="btn btn-success buttonid" data-style="zoom-in" onclick="buttonsave();">
+                        <i class="icon-ok bigger-110"></i>
+                        <span class="ladda-label"><i class="fa fa-save"></i> Save</span><span class="ladda-spinner"></span></button>
 <?php
-                            //buttonsave('discoveryaction.php','discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid='.$case_id,0);
-                            buttoncancel(45, 'discoveries.php?pid='.$case_id.'&iscancel=1');
-                            if( $type == Discovery::TYPE_INTERNAL ) {
+                        //buttonsave('discoveryaction.php','discoveriesform','wrapper','discoveries.php?pkscreenid=45&pid='.$case_id,0);
+                        buttoncancel(45, 'discoveries.php?pid='.$case_id.'&iscancel=1');
+                        if( $type == Discovery::TYPE_INTERNAL ) {
 ?>
-                                <button type="button" class="btn btn-info buttonid client-btn" data-style="zoom-in" onclick="checkClientEmailFound('<?= $discovery_id ?>',2);"  title="">
-                                    <i class="icon-ok bigger-110"></i>
-                                        <span class="ladda-label">
-                                            Client <i class="fa fa-play" aria-hidden="true" />
-                                        </span>
-                                        <a href="#"><i style="font-size:16px" data-placement="top" data-toggle="tooltip" title="" class="fa fa-info-circle tooltipshow client-btn" aria-hidden="true" data-original-title=""></i></a>
-                                    <span class="ladda-spinner"></span>
-                                </button>
+                            <button type="button" class="btn btn-info buttonid client-btn" data-style="zoom-in" onclick="checkClientEmailFound('<?= $discovery_id ?>',2);"  title="">
+                                <i class="icon-ok bigger-110"></i>
+                                    <span class="ladda-label">
+                                        Client <i class="fa fa-play" aria-hidden="true" />
+                                    </span>
+                                    <a href="#"><i style="font-size:16px" data-placement="top" data-toggle="tooltip" title="" class="fa fa-info-circle tooltipshow client-btn" aria-hidden="true" data-original-title=""></i></a>
+                                <span class="ladda-spinner"></span>
+                            </button>
 <?php
-                            } elseif( $type == Discovery::TYPE_EXTERNAL ) {
+                        } elseif( $type == Discovery::TYPE_EXTERNAL ) {
 ?>
-                                <a href="javascript:;" class="btn btn-purple" onclick="serveFunction()"><i class="fa fa-share"></i> Serve </a>
-                                <span id="errorMsg" style="color:red"></span>
+                            <a href="javascript:;" class="btn btn-purple" onclick="serveFunction()"><i class="fa fa-share"></i> Serve </a>
+                            <span id="errorMsg" style="color:red"></span>
 <?php
-                            }
+                        }
 ?>
                         </div>
                     </div>
@@ -494,6 +497,7 @@ body.modal-open {
             </div>
         </div>
     </div>
+    <aside class="sidebar right"><div class="fixed"></div></aside>
 </div>
 
 <div class="modal fade" id="client_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">

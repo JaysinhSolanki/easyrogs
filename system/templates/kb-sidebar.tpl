@@ -14,7 +14,7 @@
             </a>
             <p id="kb-issue-{$idx}-user-notes" class="collapse">{render text=$item.explanation}</p>
             {if $item.solution}
-              <button class='btn-add-objection {if $side == 'left' } pull-right {else} pull-left {/if}'
+              <button class='btn-add-{$itemType} {if $side == 'left' } pull-right {else} pull-left {/if}'
                       onclick='javascript:{$fn}(`{render text=$item.solution}`);'>
                   {if $side == 'left' }
                       Insert &nbsp; <i class='fa fa-arrow-right' />

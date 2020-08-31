@@ -39,28 +39,28 @@ $primaryAttorneyAddress = makeaddress( $primaryAttorney['pkaddressbookid'] );
 if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) ) { // FROGS & FROGSE in EXTERNAL case
 ?>
     <div class="">
-        <div class="<?= !$viewonly ? "col-sm-offset-2 col-sm-8" : "col-md-12" ?>">
+        <div class="<?= !$viewonly ? "col-sm-offset-2 col-sm-10 col-md-offset-1 col-md-11" : "col-md-12" ?>" style="padding:0">
             <!-- Instructions Section load -->
             <div class="panel panel-default">
                 <div class="panel-heading instruction-collapse">
                     <div class="row">
-                        <div class="col-md-4"></div>
-                        <div class="col-md-4 text-center">
+                        <div class="col-sm-2 col-md-4"></div>
+                        <div class="col-sm-8 col-md-4 text-center">
                             <h3> Instructions </h3>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-sm-2 col-md-4">
                             <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                               aria-expanded="true" class="btn btn-primary pull-right"></a> 
+                               aria-expanded="true" class="btn btn-primary pull-right"></a>
 <?php if( $viewonly && $currentUser->isAttorney() ) { ?>
                             <button type="button" id="btn-objections" class="btn btn-primary pull-right"
-                                    onclick="javascript:showObjectionTemplates(<?= $form_id ?>);"> 
+                                    onclick="javascript:toggleObjectionTemplates(<?= $form_id ?>);">
                                 <i class="fa fa-book" /><span>Objections</span>
                             </button>
 <script>
-    jQuery( $ => { 
+    jQuery( $ => {
         const $textboxes = $('textarea[name*="objection["]')
-        if( !$textboxes.length ) {
+        if( !$textboxes.length ) { // Hide button if there are no targets
             $("#btn-objections").css("display","none")
         }
     } );
@@ -200,7 +200,7 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
 ?>
                                                 <div class='checkbox_replace2'>
                                                     <input type="radio" name="incidentoption"
-                                                                        value="2" 
+                                                                        value="2"
                                                                         <?= ( $discovery['incidentoption'] == 2 ) ? "checked" : '' ?> onclick="incidentmeans(2)" />
                                                     &nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled "Sec. 4(a)(2)"):
                                                 </div>
@@ -208,7 +208,7 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                                     <div id="incidentDiv"
                                                          <?= ( $discovery['incidentoption'] == 1 || $discovery['incidentoption'] == "" ) ? 'style="display:none" ' : '' ?>>
                                                         <textarea class="form-control" rows="5" name="incidenttext"
-                                                                  id="incidenttext"><?= 
+                                                                  id="incidenttext"><?=
                                                             $discovery['incidenttext']
                                                         ?></textarea>
                                                     </div>
@@ -358,22 +358,22 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                                     <p>(d) EMPLOYEE means all such PERSONS</p>
 <?php
                                                 }
-                                            } 
+                                            }
                                             else {
 ?>
                                                 <p>(d) EMPLOYEE means a PERSON who provides services in an EMPLOYMENT
                                                     relationship and who is a party to this lawsuit. For purposes of these
                                                     interrogatories, EMPLOYEE refers to (insert name): </p>
                                                 <textarea class="form-control" rows="5" name="personnames1"
-                                                          id="personnames1"><?= 
-                                                    $discovery['personnames1'] 
+                                                          id="personnames1"><?=
+                                                    $discovery['personnames1']
                                                 ?></textarea>
                                                 <p>(e) EMPLOYER means a PERSON who employs an EMPLOYEE to provide services in
                                                     an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes
                                                     of these interrogatories, EMPLOYER refers to (insert name):</p>
-                                                <textarea class="form-control" rows="5" 
+                                                <textarea class="form-control" rows="5"
                                                           id="personnames2" name="personnames2"><?=
-                                                    $discovery['personnames2']; 
+                                                    $discovery['personnames2'];
                                                 ?></textarea>
 <?php
                                             }
@@ -419,9 +419,25 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
 <?php
 }
 else {
+?>
+        <div class="--row col-sm-12 col-md-12" style="padding:0">
+            <button type="button" id="btn-definitions" class="btn btn-primary pull-right" 
+                    onclick="javascript:toggleDefinitions(<?= $form_id ?>);">
+                <i class="fa fa-book" /><span>Definitions</span>
+            </button>
+        </div>
+<script>
+    setTimeout( _ => {
+        const $textboxes = $('textarea[name*="question_titles["]')
+        if( !$textboxes.length ) { // Hide button if there are no targets
+            $("#btn-definitions").css("display","none")
+        }
+    }, 1000 );
+</script>
+<?php
 	if( !$discovery_id && $type == Discovery::TYPE_EXTERNAL ) {
 		if( $form_id == Discovery::FORM_CA_SROGS ) {
-                // [old instructions]  
+                // [old instructions]
                 // <p> Each answer must be as complete and straightforward as the information reasonably available to you, including the
                 //     information possessed by your attorneys or agents, permits. If an interrogatory cannot be answered completely, answer it to
                 //     the extent possible. If you do not have enough personal knowledge to fully answer an interrogatory, say so, but make a
@@ -436,17 +452,17 @@ else {
                 //     must be verified, dated, signed, and the original must be included in your response.</p>
 
                 // <h5 class='text-center'> INVALID OBJECTIONS </h5>
-                // <p> Calls for a legal conclusion: “An interrogatory is not objectionable because an answer to it involves an opinion or contention that relates to fact 
-                //     or the application of law to fact, or would be based on information obtained or legal theories developed in anticipation of litigation or in preparation 
+                // <p> Calls for a legal conclusion: “An interrogatory is not objectionable because an answer to it involves an opinion or contention that relates to fact
+                //     or the application of law to fact, or would be based on information obtained or legal theories developed in anticipation of litigation or in preparation
                 //     for trial.” <i>Code Civ.Proc.</i>, § 2030.010, subd. (b). </p>
-                // <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery. 
+                // <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery.
                 //     Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group 2019) ¶ 8:721-8:722. </p>
                 // <p> Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. <i>Cal. Judges Benchbook Civ. Proc. Discovery</i> (September 2018) § 18.36. </p>
             $instruction_text = "";
             $instruction_info = "
-            <p> 
+            <p>
                 <img src='". ASSETS_URL ."images/court.png' style='width: 18px;padding-right: 3px;'>
-                No preface or instruction is allowed. 
+                No preface or instruction is allowed.
                 <a href='#'>
                     <i style='font-size:16px;' data-placement='top' data-toggle='tooltip' title='' class='fa fa-info-circle tooltipshow client-btn' aria-hidden='true' data-original-title='
                         Code of Civil Procedure section 2030.060, subdivision (d)<br/>
@@ -457,7 +473,7 @@ else {
             ";
 		}
 		else if( $form_id == Discovery::FORM_CA_RFAS ) {
-                // [old instructions]  
+                // [old instructions]
                 // <p> Pursuant to Code of Civil Procedure section 2030 et seq., propounding party hereby requests that responding party answer the
                 //     following Requests for Admission, under oath, within thirty (30) days from the date hereof. </p>
 
@@ -473,12 +489,12 @@ else {
                 //     not for written discovery. Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group
                 //     2019) ¶ 8:721-8:722. </p>
             $instruction_text = "
-                <p> Requests for admission are written requests by a party to an action requiring that any other party to the action either admit or deny, under oath, the truth of certain facts or the genuineness of certain documents. 
+                <p> Requests for admission are written requests by a party to an action requiring that any other party to the action either admit or deny, under oath, the truth of certain facts or the genuineness of certain documents.
                     For information on timing, the number of admissions a party may request from any other party, service of requests and responses, restriction on the style, format, and scope of requests for admission and responses to requests, and other details, see <i>Code of Civil Procedure</i> sections 94&mdash;95, 1013 and 2033.010&mdash;2033.420 and the case law relating to those sections. </p>
-                <p> An answering party should consider carefully whether to admit or deny the truth of facts or the genuineness of documents. 
-                    With limited exceptions, an answering party will not be allowed to change an answer to a request for admission. 
-                    There may be penalties if an answering party fails to admit the truth of any fact or the genuineness of any document when requested to do so and the requesting party later proves that the fact is true or that the document is genuine. 
-                    These penalties may include, among other things, payment of the requesting party's attorney's fees incurred in making that proof. </p>    
+                <p> An answering party should consider carefully whether to admit or deny the truth of facts or the genuineness of documents.
+                    With limited exceptions, an answering party will not be allowed to change an answer to a request for admission.
+                    There may be penalties if an answering party fails to admit the truth of any fact or the genuineness of any document when requested to do so and the requesting party later proves that the fact is true or that the document is genuine.
+                    These penalties may include, among other things, payment of the requesting party's attorney's fees incurred in making that proof. </p>
                 <p> Unless there is an agreement or a court order providing otherwise, the answering party must respond in writing to requests for admission within 30 days after they are served, or within 5 days after service in an unlawful detainer action.
                     There may be significant penalties if an answering party fails to provide a timely written response to each request for admission.
                     These penalties may include, among other things, an order that the facts in issue are deemed true or the documents in issue are deemed genuine for purposes of the case. </p>
@@ -496,13 +512,13 @@ else {
                         <td align='center' style='border-top: 1px solid black;' > (SIGNATURE)    </td>
                     </tr>
                 </table>
-                <p> These instructions are only a summary and are not intended to provide complete information about requests for admission. 
+                <p> These instructions are only a summary and are not intended to provide complete information about requests for admission.
                     This <i>Requests for Admission</i> form does not change existing law relating to requests for admission, nor does it affect an answering party's right to assert any privilege or to make any objection. </p>
             ";
             $instruction_info = "
-            <p> 
+            <p>
                 <img src='". ASSETS_URL ."images/court.png' style='width: 18px;padding-right: 3px;'>
-                These are the only instructions allowed. 
+                These are the only instructions allowed.
                 <a href='#'>
                     <i style='font-size:16px;' data-placement='top' data-toggle='tooltip' title='' class='fa fa-info-circle tooltipshow client-btn' aria-hidden='true' data-original-title='
                         Code of Civil Procedure section 2033.060, subdivision (d)<br/>
@@ -530,7 +546,7 @@ else {
                     PARTY'S ATTORNEY, INSURERS OR AGENTS</b>. Said documents are relevant to the subject matter of this action, or
                     reasonably calculated to lead to the discovery of admissible evidence in this action.</p>
                 <br />
-                
+
                 <h5 class='text-center'><b>DEFINITIONS</b></h5>
                 <p>Words in all CAPITALS are defined as follows: YOU or YOUR mean respondent or any of YOUR agents, representatives, and/or
                     affiliated entities or anyone acting or whom YOU know or believe is purporting to act on YOUR behalf or who has acted or
@@ -547,7 +563,7 @@ else {
 
                 <h5 class='text-center'><b>INVALID OBJECTIONS</b></h5>
                 <p>Calls for a legal conclusion: Although there is no authority directly on point, such requests in both Requests for Admission
-                    and Interrogatories are non-objectionable. <i>Burke v. Superior Court</i> (1969) 71 Cal.2d 276, 282 and Code Civ.Proc., 
+                    and Interrogatories are non-objectionable. <i>Burke v. Superior Court</i> (1969) 71 Cal.2d 276, 282 and Code Civ.Proc.,
                     §2030.010(b).</p>
                 <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition,
                     not for written discovery. Rylaarsdam et al., California Practice Guide: Civil Procedure Before Trial (The Rutter Group
@@ -557,13 +573,13 @@ else {
     }
     if( !$viewonly ) {
 ?>
-    <div class="form-group" id="instruction_id1">
-    <label class=" col-sm-2 control-label">Instructions<span class="redstar" style="color:#F00"></span></label>
-        <div class="col-sm-8">
+    <div class="form-group" id="instruction_id1" style="clear:both;">
+        <label class=" col-sm-2 col-md-1 control-label">Instructions<span class="redstar" style="color:#F00"></span></label>
+        <div class="col-sm-10 col-md-11">
             <?=
                 $instruction_info
             ?>
-            <textarea  rows="5" name="instruction" id="instruction" placeholder="Form Instruction"  class="form-control m-b"><?= 
+            <textarea  rows="5" name="instruction" id="instruction" placeholder="Form Instruction"  class="form-control m-b"><?=
                 $instruction_text
             ?></textarea>
         </div>
@@ -576,16 +592,16 @@ else {
                 <div class="panel panel-default">
                     <div class="panel-heading instruction-collapse">
                         <div class="row">
-                            <div class="col-md-4"></div>
-                            <div class="col-md-4 text-center">
+                            <div class="col-sm-2 col-md-4"></div>
+                            <div class="col-sm-8 col-md-4 text-center">
                                 <h3> Instructions </h3>
                             </div>
-                            <div class="col-md-4" style="margin-top: 8px;">
+                            <div class="col-sm-2 col-md-4" style="margin-top: 8px;">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"
-                                   class="btn btn-primary pull-right"></a> 
-<?php if( $viewonly && $currentUser->isAttorney() ) { ?>
+                                   class="btn btn-primary pull-right"></a>
+<?php if( $currentUser->isAttorney() ) { ?>
                                 <button type="button" id="btn-objections" class="btn btn-primary pull-right"
-                                        onclick="javascript:showObjectionTemplates(<?= $form_id ?>);"> 
+                                        onclick="javascript:toggleObjectionTemplates(<?= $form_id ?>);">
                                     <i class="fa fa-book" /><span>Objections</span>
                                 </button>
 <?php } ?>
@@ -606,7 +622,7 @@ else {
 $forms     = $AdminDAO->getrows( 'forms', "*" );
 $formNames = array_map( function( $item ) { return $item['short_form_name']; }, $forms );
 ?>
-<script> 
+<script>
     globalThis['discoveryType'] = "<?= $type ?>";
     globalThis['discoveryForm'] = "<?= $form_id ?>";
     globalThis['discoveryFormNames'] = <?= json_encode($formNames, JSON_PRETTY_PRINT) ?>;

@@ -120,16 +120,28 @@ table.dataTable.no-footer {
     left: 0;
 }
 .sidebar.right>.fixed {
-  right: calc(100wh-280px);
+    right: calc(100wh-280px);
 }
-.sidebar.open {
+body .sidebar.open:not(#-_-) {
     min-width: 280px;
     max-width: 280px;
     text-align: center;
 }
-.sidebar.open>.fixed {
+.sidebar.open>.fixed:not(#-_-) {
 	width: 280px;
 }
+@media screen and (min-width: 960px) {
+  #screen-discovery .sidebar {
+      min-width: 32px;
+      max-width: 32px;
+  }
+}
+#btn-definitions,
+#btn-objections {
+  margin-bottom: 0.5em;
+}
+#btn-definitions {
+ }
 
 @keyframes anim-glow {
   0% {

@@ -208,7 +208,7 @@ function addTooltips() { //console.log( $('.tooltipshow').length, "tooltips enab
 	} );
 }
 
-function autogrowTextareas(filter='') { debugger;
+function autogrowTextareas(filter='') { //debugger;
 	setInterval( _ => {
 		$('textarea'+filter).each( (idx, _) => {
 			$(_).css('height', _.scrollHeight+2+'px' )

@@ -32,7 +32,7 @@ if( $discovery_id > 0 ) {
 if( count( $questions ) ) {
 ?>
     <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-8">
+        <div class="col-sm-offset-2 col-sm-10 col-md-offset-1 col-md-11">
             <h3 class="text-center">Select <?= $p_titleQuestion ?></h3>
             <table class="table table-bordered table-hover table-striped">
 <?php
@@ -160,8 +160,8 @@ if( $forms[0]['allow_custom_questions'] ) {
 ?>
     <h3 class="text-center"><?= $p_titleQuestion ?></h3>
     <div class="form-group" style="margin-top:10px">
-        <label class="col-sm-2 control-label"><span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
-        <div class="col-sm-8">
+        <label class="col-sm-2 col-md-1 control-label"><span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
+        <div class="col-sm-10 col-md-11">
             <div class="col-md-12" align="right">
                 <a href="javascript:;" onclick="loadnewquestion()">
                     <i class="fa fa-plus" /> More <?= $p_titleQuestion ?>

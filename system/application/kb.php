@@ -23,8 +23,16 @@ if( empty($sectionId) ) {
                                     [":area_id" => $areaId, 
                                      ":section_id" => $sectionId] );
 }
-//$logger->browser_log($kbItems, "item.count:".count($kbItems).", section_id:".$sectionId );
 
+array_walk( $kbItems, function(&$item,$key) {
+    if( !$item['explanation'] ) {
+        $item['explanation'] = $item['solution'];
+    } else if( !$item['solution'] ) {
+        $item['solution'] = $item['explanation'];
+    }
+} );
+
+//$logger->browser_log($kbItems, "item.count:".count($kbItems).", section_id:".$sectionId );
 $smarty->assign([
     'items'      => $kbItems,
     'section'    => $sectionId ? $kbSections[0] : "",
@@ -35,7 +43,16 @@ switch( $areaId ) {
     case KB_AREA_OBJECTION_TEMPLATES:
         $smarty->assign([
             'dockSide'  => DOCK_SIDE,
-            'fn'        => 'insertObjectionTemplateHere',
+            'fn'        => 'insertTemplateHere',
+            'itemType'  => 'objection',
+        ]);
+        $body = $smarty->fetch('kb-sidebar.tpl');
+        break;
+    case KB_AREA_DEFINITIONS:
+        $smarty->assign([
+            'dockSide'  => DOCK_SIDE,
+            'fn'        => 'insertTemplateHere',
+            'itemType'  => 'definition',
         ]);
         $body = $smarty->fetch('kb-sidebar.tpl');
         break;
