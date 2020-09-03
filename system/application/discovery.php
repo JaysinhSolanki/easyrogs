@@ -370,11 +370,11 @@ body.modal-open {
                                 foreach( $respondingClients as $thisrow ) {
 ?>
                                     <option <?= ($thisrow['id']==$discovery['responding']) ? 'selected' : '' ?> value="<?= $thisrow['id'] ?>"><?= $thisrow['client_name'] ?></option>
+<?php
+                                }
+?>
                             </select>
                         </div>
-<?php
-                        }
-?>
                     </div>
 <?php
                     if( $type == Discovery::TYPE_INTERNAL ) {
