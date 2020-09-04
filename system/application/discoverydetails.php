@@ -86,7 +86,8 @@ $form_id                        = $discovery_data['form_id'];
 $set_number                     = $discovery_data['set_number'];
 $atorny_name                    = $discovery_data['atorny_fname']." ".$discovery_data['atorny_lname'];
 $attorney_id                    = $discovery_data['attorney_id'];
-$form_name                      = $discovery_data['form_name']." [Set ".$set_number."]";
+$setSuffix                      = " [Set ".$set_number."]";
+$form_name                      = $discovery_data['form_name'].$setSuffix;
 $short_form_name                = $discovery_data['short_form_name'];
 $send_date                      = $discovery_data['send_date'];
 $email                          = $discovery_data['email'];
@@ -110,7 +111,7 @@ if ($view == 1) {
 } else {
     $form_name = strtoupper("RESPONSE TO ".$discovery_name);
 }
-$form_name = $form_name." [Set ".$set_number."]";
+$form_name = $form_name.$setSuffix;
 /***************************************
 Query For Forms 1,2,3,4,5 Questions
 ****************************************/
@@ -167,7 +168,7 @@ if ($response_id > 0) {
     if( $supp == 1 ) {
         $getResponse    = $AdminDAO->getrows("responses", "*", "fkdiscoveryid = :fkdiscoveryid AND fkresponseid != 0", array(":fkdiscoveryid"=>$discovery_id));
         $totalResponses = sizeof($getResponse)+1; // TODO This thing is actually only using the COUNT(*) 
-        $form_name      = numToOrdinalWord($totalResponses) ." Supplemental/Amended Response to ".$discovery_name." [Set ".$set_number."]";
+        $form_name      = numToOrdinalWord($totalResponses) ." Supplemental/Amended Response to ". $discovery_name . $setSuffix;
     }
 } else {
     $discovery_verification = "";
@@ -276,10 +277,12 @@ body.modal-open
                 <div class="panel-heading">
                 <div class="row">
                     <div class="col-md-12">
-                        <span id="form_title" style="font-size:18px; font-weight:600"><?= $form_name ?></span>
-                        <button type="button" class="btn-mini" style="margin:8px;" onclick="formTitle_Edit()">
+                        <input  id="form_title" type="text" class="form-control" 
+                                oninput="formTitle_Edit()"
+                                style="font-size:18px; font-weight:600" value="<?= $form_name ?>" />
+                        <!--button type="button" class="btn-mini" style="margin: -2.2em 0.5em 0 0.8em;" onclick="formTitle_Edit()">
                             <i class="fa fa-pencil " />
-                        </button>
+                        </button-->
                     </div>
                 </div>
                 </div>
@@ -1022,10 +1025,10 @@ You have not verify the discovery SPECIAL INTERROGATORIES. Please click on the l
 </div>
 
 <div id="value-edit_modal" class="modal" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document" id="m-width">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header" style="padding:13px !important">
-        <h5 class="modal-title text-center">Response name</h5>
+        <h5 class="modal-title text-center">Edit response name</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -50px;font-size: 35px;">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -1035,22 +1038,30 @@ You have not verify the discovery SPECIAL INTERROGATORIES. Please click on the l
       </div>
       <div class="modal-footer">
         <button class="btn btn-success" onclick="formTitle_Save()">Change</button>
+        <button class="btn btn-danger" data-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-function formTitle_Edit() { 
-    $(`[name='edited_form_name']`).val( $(`[name='supp_form_name']`).val() )
+function formTitle_Edit() { //debugger;
+    const value = $(`[name='supp_form_name']`).val(),
+          regex = /<?= preg_quote($setSuffix,'/') ?>$/;
+    $(`[name='edited_form_name']`).val( value.replace( regex,'') )
+    $(`#form_title`).val( value )
     $(`#value-edit_modal`).modal('show')
+    $(`[name='edited_form_name']`).focus()
 }
-function formTitle_Save() { 
-    const $el = $(`[name='edited_form_name']`),
-          value = $el.val()
+function formTitle_Save() { //debugger;
+    const $el = $(`[name='edited_form_name']`)
+    let value = $el.val()
     console.assert( $el.length, `Something wrong here`, {$el,value})
     if( value && value.trim() ) {
-        $(`#form_title`).html( value )
+        if( !value.endsWith(`<?= $setSuffix ?>`)) {
+            value = value + `<?= $setSuffix ?>`
+        }
+        $(`#form_title`).val( value )
         $(`[name='supp_form_name']`).val( value )
         $(`#value-edit_modal`).modal('hide')
     }
