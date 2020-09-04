@@ -110,7 +110,7 @@ if ($view == 1) {
 } else {
     $form_name = strtoupper("RESPONSE TO ".$discovery_name);
 }
-$form_name          = $form_name." [Set ".$set_number."]";
+$form_name = $form_name." [Set ".$set_number."]";
 /***************************************
 Query For Forms 1,2,3,4,5 Questions
 ****************************************/
@@ -164,10 +164,10 @@ if ($response_id > 0) {
     /**
     * If going to create Supp/Amend of Response
     **/
-    if ($supp == 1) {
+    if( $supp == 1 ) {
         $getResponse    = $AdminDAO->getrows("responses", "*", "fkdiscoveryid = :fkdiscoveryid AND fkresponseid != 0", array(":fkdiscoveryid"=>$discovery_id));
-        $totalResponses = sizeof($getResponse)+1;
-        $form_name      = strtoupper(numToOrdinalWord($totalResponses))." RESPONSE TO ".$discovery_name." [Set ".$set_number."]";
+        $totalResponses = sizeof($getResponse)+1; // TODO This thing is actually only using the COUNT(*) 
+        $form_name      = numToOrdinalWord($totalResponses) ." Supplemental/Amended Response to ".$discovery_name." [Set ".$set_number."]";
     }
 } else {
     $discovery_verification = "";
@@ -276,7 +276,10 @@ body.modal-open
                 <div class="panel-heading">
                 <div class="row">
                     <div class="col-md-12">
-                        <span style="font-size:18px; font-weight:600"><?= $form_name ?></span>
+                        <span id="form_title" style="font-size:18px; font-weight:600"><?= $form_name ?></span>
+                        <button type="button" class="btn-mini" style="margin:8px;" onclick="formTitle_Edit()">
+                            <i class="fa fa-pencil " />
+                        </button>
                     </div>
                 </div>
                 </div>
@@ -946,7 +949,7 @@ body.modal-open
     <aside class="sidebar right"><div class="fixed"></div></aside>
 </div>
 
-<div class="modal fade" id="serve_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="serve_modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document" style="width:450px !important">
     <div class="modal-content" style="width: 586px">
         <div class="modal-body" id="loadmodalcontent">
@@ -971,7 +974,7 @@ body.modal-open
     </div>
   </div>
 </div>
-<div class="modal fade" id="emailclientmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="emailclientmodal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header" style="padding: 15px;">
@@ -1017,6 +1020,42 @@ You have not verify the discovery SPECIAL INTERROGATORIES. Please click on the l
     </div>
   </div>
 </div>
+
+<div id="value-edit_modal" class="modal" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document" id="m-width">
+    <div class="modal-content">
+      <div class="modal-header" style="padding:13px !important">
+        <h5 class="modal-title text-center">Response name</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -50px;font-size: 35px;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="text" name="edited_form_name" class="form-control m-b" value="">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" onclick="formTitle_Save()">Change</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function formTitle_Edit() { 
+    $(`[name='edited_form_name']`).val( $(`[name='supp_form_name']`).val() )
+    $(`#value-edit_modal`).modal('show')
+}
+function formTitle_Save() { 
+    const $el = $(`[name='edited_form_name']`),
+          value = $el.val()
+    console.assert( $el.length, `Something wrong here`, {$el,value})
+    if( value && value.trim() ) {
+        $(`#form_title`).html( value )
+        $(`[name='supp_form_name']`).val( value )
+        $(`#value-edit_modal`).modal('hide')
+    }
+}
+</script>
 
 <?php
 include_once(SYSTEMPATH.'application/client-email-found_modal.php');
