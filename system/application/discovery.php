@@ -239,7 +239,7 @@ body.modal-open {
                     if( $id ) {
                         if( @$supp == 1 ) {
                             echo "<strong>Supplemental-Amended Discovery</strong>";
-                            $discovery['discovery_name']  = "SUPPLEMENTAL-AMENDED ".$discovery['discovery_name'];
+                            $discovery['discovery_name']  = "Supplemental/Amended ". $discovery['discovery_name'];
                         } else {
                             echo "<strong>Edit Discovery for</strong>";
                         }

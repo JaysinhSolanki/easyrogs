@@ -54,7 +54,7 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                aria-expanded="true" class="btn btn-primary pull-right"></a>
 <?php if( $viewonly && $currentUser->isAttorney() ) { ?>
                             <button type="button" id="btn-objections" class="btn btn-primary pull-right"
-                                    onclick="javascript:toggleObjectionTemplates(<?= $form_id ?>);">
+                                    onclick="javascript:toggleObjectionTemplates(<?= $form_id ?>);"><!--frogs/e-->
                                 <i class="fa fa-book" /><span>Objections</span>
                             </button>
 <script>
@@ -601,9 +601,17 @@ else {
                                    class="btn btn-primary pull-right"></a>
 <?php if( $currentUser->isAttorney() ) { ?>
                                 <button type="button" id="btn-objections" class="btn btn-primary pull-right"
-                                        onclick="javascript:toggleObjectionTemplates(<?= $form_id ?>);">
+                                        onclick="javascript:toggleObjectionTemplates(<?= $form_id ?>);"><!--rfas/rfps/rdps-->
                                     <i class="fa fa-book" /><span>Objections</span>
                                 </button>
+<script>
+    jQuery( $ => {
+        const $textboxes = $('textarea[name*="objection["]')
+        if( !$textboxes.length ) { // Hide button if there are no targets
+            $("#btn-objections").css("display","none")
+        }
+    } );
+</script>
 <?php } ?>
                             </div>
                         </div>
