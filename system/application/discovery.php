@@ -219,7 +219,7 @@ body.modal-open {
 }
 
 .question_titlecls {
-    height:120px !important;
+    min-height:120px !important;
     font-size:13px !important;
 }
 .tooltip-inner {
@@ -727,7 +727,7 @@ function loadformquestions( form_id, id ) {
       .html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='../assets/images/ownageLoader/loader4.gif'></div></div><br/>");
     $('#loadinstructions')
       .html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='../assets/images/ownageLoader/loader4.gif'></div></div><br/>");
-    if( form_id )     {
+    if( form_id ) {
         if( form_id == 4 ) {
             $("#in_conjunctionDiv").show();
         }
@@ -747,6 +747,7 @@ function loadformquestions( form_id, id ) {
                 else  {
                     $("#instruction_id").hide();
                 }
+                autogrowTextareas();
             });
     }
     else {

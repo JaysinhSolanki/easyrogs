@@ -209,10 +209,13 @@ function addTooltips() { //console.log( $('.tooltipshow').length, "tooltips enab
 }
 
 function autogrowTextareas(filter='') { //debugger;
-	setInterval( _ => {
-		$('textarea'+filter).each( (idx, _) => {
-			$(_).css('height', _.scrollHeight+2+'px' )
-		} )
+	setTimeout( _ => {
+		$('textarea'+filter)
+			.on("input", function() { // TODO debounce this once we have a debounce fn available
+				const $el = $(this)
+				$el.css('height', $el[0].scrollHeight+2+'px' )
+				//console.log( $el, "grown")
+			} )
 	}, 500 )
 }
 
