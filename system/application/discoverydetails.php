@@ -167,7 +167,7 @@ if ($response_id > 0) {
     **/
     if( $supp == 1 ) {
         $getResponse    = $AdminDAO->getrows("responses", "*", "fkdiscoveryid = :fkdiscoveryid AND fkresponseid != 0", array(":fkdiscoveryid"=>$discovery_id));
-        $totalResponses = sizeof($getResponse)+1; // TODO This thing is actually only using the COUNT(*) 
+        $totalResponses = sizeof($getResponse)+1; // TODO This thing is actually only using the COUNT(*)
         $form_name      = numToOrdinalWord($totalResponses) ." Supplemental/Amended Response to ". $discovery_name . $setSuffix;
     }
 } else {
@@ -277,12 +277,12 @@ body.modal-open
                 <div class="panel-heading">
                 <div class="row">
                     <div class="col-md-12">
-                        <input  id="form_title" type="text" class="form-control" 
-                                oninput="formTitle_Edit()"
+                        <input  id="form_title" type="text" class="form-control"
+                                onfocus="formTitle_Edit()" onblur="formTitle_Save()"
                                 style="font-size:18px; font-weight:600" value="<?= $form_name ?>" />
-                        <!--button type="button" class="btn-mini" style="margin: -2.2em 0.5em 0 0.8em;" onclick="formTitle_Edit()">
-                            <i class="fa fa-pencil " />
-                        </button-->
+                        <button type="button" class="btn-mini" style="float: right; margin: -2.2em 0.5em 0 0.8em;" onclick="formTitle_Revert()">
+                            <i class="fa fa-undo " />
+                        </button>
                     </div>
                 </div>
                 </div>
@@ -488,7 +488,7 @@ body.modal-open
                                                             <b>Q No. <?= $question_number ?>: </b>
                                                             <?= $question_title . $subquestuions_string ?>
                                                         </p>
-                                                        <textarea required  
+                                                        <textarea required
                                                                 style="background-color: antiquewhite;"
                                                                 id="objection_<?= $discovery_question_id ?>"
                                                                 class="form-control"
@@ -513,7 +513,7 @@ body.modal-open
 		                                               $objection = "Objection, this interrogatory seeks information protected by the attorney work product privilege because it reflects counsel's evaluation of the case by revealing which witnesses counsel deemed important enough to interview. Nacht & Lewis Architects, Inc. v. Superior Court (1996) 47 Cal.App.4th 214, 217.";
 	                                                }
 ?>
-                                                    <textarea required  
+                                                    <textarea required
                                                             style="background-color: antiquewhite;"
                                                             id="objection_<?= $discovery_question_id; ?>"
                                                             class="form-control"
@@ -611,18 +611,18 @@ body.modal-open
                                                                     }
 ?>
                                                                 </p>
-                                                                <input type="hidden" 
-                                                                        class="subanswer_<?= $question_no_makeid?>" 
-                                                                        name="have_main_question[<?= $discovery_question_id ?>]" 
+                                                                <input type="hidden"
+                                                                        class="subanswer_<?= $question_no_makeid?>"
+                                                                        name="have_main_question[<?= $discovery_question_id ?>]"
                                                                         value="<?= $have_main_question ?>"
                                                                         <?= ($answer == "No" || ($answer == "" && $p_q_type_id == 1) || ($answer == "" && $p_q_type_id == 2)) ? " disabled " : "" ?> />
                                                                 <textarea required
                                                                             id="answer<?= $discovery_question_id ?>"
                                                                             class="form-control subanswer_<?= $question_no_makeid ?>" <?= $css ?>
                                                                             name="answer[<?= $discovery_question_id ?>]"
-                                                                            <?= (($answer == "No" || $answer == "") && $p_q_type_id != 3) ? " disabled " : "" ?> 
-                                                                            placeholder="Your Answer" ><?= 
-                                                                    html_entity_decode($answer1) 
+                                                                            <?= (($answer == "No" || $answer == "") && $p_q_type_id != 3) ? " disabled " : "" ?>
+                                                                            placeholder="Your Answer" ><?=
+                                                                    html_entity_decode($answer1)
                                                                 ?></textarea>
                                                             </div>
                                                         </li>
@@ -679,7 +679,7 @@ body.modal-open
 <?php
                                         if ($respond == 1) {
 ?>
-                                        <textarea required  
+                                        <textarea required
                                                 style="background-color: antiquewhite;"
                                                 id="objection_<?= $discovery_question_id ?>"
                                                 class="form-control"
@@ -722,8 +722,8 @@ body.modal-open
                                     <li class="list-group-item">
                                     <div class="form-group">
                                         <p><b><?= $generalQuestion['question_no'] ?>) </b><?= $generalQuestion['question'] ?></p>
-                                        <textarea required 
-                                            style="background-color: antiquewhite; <?= ($question_admit_id == 1) ? 'display:none;' : '' ?>" 
+                                        <textarea required
+                                            style="background-color: antiquewhite; <?= ($question_admit_id == 1) ? 'display:none;' : '' ?>"
                                             <?= ($answer == "Admit" || $answer == "") ? " disabled " : "" ?>
                                             id="sub_objection<?= $discovery_question_id.'_'.$question_admit_id ?>"
                                             class="form-control subanswer_<?= $discovery_question_id ?>" <?= $css ?>
@@ -792,7 +792,7 @@ body.modal-open
 <?php
                                         if ($respond == 1) {
 ?>
-                                        <textarea required  
+                                        <textarea required
                                                   style="background-color: antiquewhite;"
                                                   id="objection_<?= $discovery_question_id ?>"
                                                   class="form-control"
@@ -809,8 +809,8 @@ body.modal-open
                                         if($form_id == Discovery::FORM_CA_RPDS ) {
 ?>
                                         <select class="form-control" <?= $css ?>
-                                                id="answer<?= $discovery_question_id ?>"  
-                                                name="answer[<?= $discovery_question_id ?>]" 
+                                                id="answer<?= $discovery_question_id ?>"
+                                                name="answer[<?= $discovery_question_id ?>]"
                                                 onChange="checkFunctionForm5('<?= $discovery_question_id ?>',this.value)">
                                             <option <?= ($answer == "Select Your Response") ? "selected" : "" ?>>Select Your Response</option>
                                             <option <?= ($answer == "I have responsive documents") ? "selected" : "" ?>>I have responsive documents</option>
@@ -823,11 +823,11 @@ body.modal-open
                                         } elseif( $form_id == Discovery::FORM_CA_SROGS ) {
 ?>
                                             <textarea required
-                                                        id="answer<?= $discovery_question_id ?>" 
+                                                        id="answer<?= $discovery_question_id ?>"
                                                         class="form-control " <?= $css ?>
-                                                        name="answer[<?= $discovery_question_id ?>]" 
-                                                        placeholder="Your Answer"  ><?= 
-                                                html_entity_decode($answer) 
+                                                        name="answer[<?= $discovery_question_id ?>]"
+                                                        placeholder="Your Answer"  ><?=
+                                                html_entity_decode($answer)
                                             ?></textarea>
 <?php
                                         }
@@ -1045,26 +1045,34 @@ You have not verify the discovery SPECIAL INTERROGATORIES. Please click on the l
 </div>
 
 <script>
+function formTitle_Revert() { //debugger;
+    const orgValue = '<?= $form_name ?>',
+          $input = $(`#form_title`)
+    $(`[name='supp_form_name']`).val( orgValue )
+    $input.val( orgValue ); debugger;
+    $input[0].focus({preventScroll: false})
+}
 function formTitle_Edit() { //debugger;
     const value = $(`[name='supp_form_name']`).val(),
-          regex = /<?= preg_quote($setSuffix,'/') ?>$/;
-    $(`[name='edited_form_name']`).val( value.replace( regex,'') )
-    $(`#form_title`).val( value )
-    $(`#value-edit_modal`).modal('show')
-    $(`[name='edited_form_name']`).focus()
+          regex = /<?= preg_quote($setSuffix,'/') ?>$/,
+          $input = $(`#form_title`)
+    $input.val( value.replace( regex,'') )
+    $input[0].scrollIntoView({behavior: "auto", block: "center", inline: "nearest"})
 }
 function formTitle_Save() { //debugger;
-    const $el = $(`[name='edited_form_name']`)
-    let value = $el.val()
-    console.assert( $el.length, `Something wrong here`, {$el,value})
+    const $input = $(`#form_title`)
+
+    let value = $input.val()
+    console.assert( $input.length, `Something wrong here`, {$input,value})
     if( value && value.trim() ) {
-        if( !value.endsWith(`<?= $setSuffix ?>`)) {
-            value = value + `<?= $setSuffix ?>`
+        if( !value.endsWith('<?= $setSuffix ?>')) {
+            value = value + '<?= $setSuffix ?>'
         }
-        $(`#form_title`).val( value )
         $(`[name='supp_form_name']`).val( value )
-        $(`#value-edit_modal`).modal('hide')
+    } else { // revert value
+        value = $(`[name='supp_form_name']`).val()
     }
+    $(`#form_title`).val( value )
 }
 </script>
 
