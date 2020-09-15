@@ -1,24 +1,30 @@
 <?php 
   
   class HttpResponse {
+    static $die = true;
+
     const TYPE_ERROR   = 'error';
     const TYPE_WARNING = 'warning';
     const TYPE_INFO    = 'info';
     const TYPE_SUCCESS = 'success';
 
     static function send($code, $type, $message, $extra) {
-      http_response_code($code);
       header('Content-Type: application/json');
       $response = array_merge($extra, [
         'type' => $type,
         'msg'  => $message
-      ]);      
-      die(json_encode($response));
+      ]);
+      HttpResponse::sendPayload($code, $response);
     }
 
     static function sendPayload($code, $payload) {
       http_response_code($code);
-      die(json_encode($payload));
+      if ( self::$die ) {
+        die(json_encode($payload));
+      }
+      else {
+        echo(json_encode($payload));
+      }
     }
 
     static function malformed($message = 'Malformed Request', $extra = []) {
@@ -52,11 +58,17 @@
 
     static function noContent() {
       http_response_code(204);
-      die();
+      self::$die && die();
     }
 
     static function paymentRequired($message = 'Payment Required.', $extra = []) {
       self::send(402, self::TYPE_ERROR, $message, $extra);
+    }
+
+    static function redirect($location, $code = 302) {
+      http_response_code($code);
+      header("Location: $location");
+      self::$die && die();
     }
     
   }

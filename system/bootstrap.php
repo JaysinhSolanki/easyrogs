@@ -34,8 +34,21 @@
   $smarty->template_dir = __DIR__ . '/templates';
   $smarty->compile_dir  = __DIR__ . '/../tmp/templates_c';
 
+  function smartyAssignGlobals($smarty) {
+    $smarty->assign([
+      'ASSETS_URL'              => ASSETS_URL,
+      'APP_GOOGLE_ANALYTICS_ID' => APP_GOOGLE_ANALYTICS_ID
+      // ... Add globals here ...
+      // WARNING: If $smarty->clearAllAssign() is called these need to be redefined,
+      // you can call smartyAssignGlobals() any time.
+    ]);
+  } smartyAssignGlobals($smarty);
+
   // models
   require_once(__DIR__ . '/models/index.php');
+
+  // controllers
+  require_once(__DIR__ . '/controllers/index.php');
 
   // mailing
   require_once __DIR__ . '/mailers/index.php';
@@ -60,6 +73,8 @@
   $jobsQueue->setPersistor($queuePersistor);
   
   // session
+  require_once __DIR__ . '/library/classes/login.class.php';
+
   @session_start();
   @set_time_limit(0);
   ini_set('session.bug_compat_warn', 0);

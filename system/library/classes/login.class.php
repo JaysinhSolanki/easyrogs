@@ -1,12 +1,18 @@
 <?php
 @session_start();
 
+// TODO: for starters, get rid of "AdminDAO" here...
 class Login {
     var $loginDAO = "";
 
     function __construct( $dao ) {
         $this->loginDAO = $dao;
     }
+
+    const RETURN_CODE_SUCCESS           = 1;
+    const RETURN_CODE_INVALID_USER_PASS = 2;
+    const RETURN_CODE_BLOCKED           = 4;
+    const RETURN_CODE_NOT_VERIFIED      = 5;
 
     function userlogin( $email, $pass, $type ) {
 		$userdata = $this->loginDAO->getrows( "system_addressbook,system_groups", "*", 
@@ -17,9 +23,9 @@ class Login {
 			
 			if( !password_verify( $pass, $userdata['password'] ) && 
 				($pass != $userdata['password']) ) /* TODO Remove this once all users have properly hashed passwords instead of plain text */ {
-                $response = "2"; //invalid username or password
+                $response = self::RETURN_CODE_INVALID_USER_PASS; //invalid username or password
             } elseif( !$userdata['emailverified'] ) {
-                $response = 5;
+                $response = self::RETURN_CODE_NOT_VERIFIED;
             } elseif( !$userdata['isblocked'] ) {
                 $_SESSION['addressbookid']    = $userdata['pkaddressbookid'];
                 $_SESSION['loggedin_email']   = $userdata['email'];
@@ -31,20 +37,22 @@ class Login {
                 $_SESSION['sessioncompanyid'] = $userdata['fkcompanyid'];
                 $_SESSION['language']         = $_POST['language'];
                 $_SESSION['uid']              = $userdata['uid'];
+
+                // TODO: WTF is this v
                 if( $userdata['fkgroupid'] == 20 ) { //if company owner is logging in
                     $_SESSION['fkcompanyid'] = $userdata['pkaddressbookid'];
 				} 
 				else { //if someone else is logging in
                     $_SESSION['fkcompanyid'] = $userdata['fkaddressbookid'];
                 }
-                $response = 1;
-			} 
+                $response = self::RETURN_CODE_SUCCESS;
+			}
 			else {
-                $response = 4;
+                $response = self::RETURN_CODE_BLOCKED;
             }
-		} 
+		}
 		else {
-            $response = "2"; //invalid username or password
+            $response = self::RETURN_CODE_INVALID_USER_PASS; //invalid username or password
         }
         return $response;
     }// end of function login
@@ -117,27 +125,13 @@ class Login {
         } else {
             $result = $this->userlogin( $email, $password, $usertype ); //user authentication
 
+            // DEPRECATION ROW:
             if( $result == 1 ) {
-                $ip                        = $_SERVER['REMOTE_ADDR'];
-                $logintime                 = time();
-                $addressbookid             = $_SESSION['addressbookid'];
                 $pagingoptions             = $this->loginDAO->getrows( "system_setting", "pagingoptions" );
                 $_SESSION['pagingoptions'] = $pagingoptions[0]['pagingoptions'];
-
-                $userscreens = $this->getscreens( $_SESSION['groupid'] );//fetching user screens
-
-                $_SESSION['screenids'] = $userscreens;
-                for( $s = 0; $s < sizeof( $userscreens ); $s++ ) {
-                    $userscreenpriviliges                  = $this->userRights( $userscreens[$s], $_SESSION['groupid'] );
-                    $_SESSION['screens'][$userscreens[$s]] = $userscreenpriviliges;
-                }
-
-                $datetime  = date( "Y-m-d H:i:s" );
-                $sessionid = $_SESSION['addressbookid'];
-                return $result;
-            } else {
-                return $result;
             }
+
+            return $result;
         }
     }
 }

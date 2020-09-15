@@ -187,6 +187,9 @@ if($res_attr_uid != "")
   function userIntroVideoSeen(success, error) {
     $.post('<?= ROOTURL ?>system/application/post-intro-video-seen.php', {}, success )
       .fail(error);
+
+    // go to profile
+    selecttab('8_tab', 'get-profile.php','8')
   }
   function showIntroVideo() {
     $('#new-user-video-modal').modal('show');

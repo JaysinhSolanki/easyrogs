@@ -1,0 +1,7 @@
+html,body {
+  height: 100%;
+}
+
+.er-panel-right, .er-panel-left{
+  padding: 50px;
+}

@@ -8,13 +8,14 @@
     "post-install-cmd": [
       "vendor/bin/poorman-migrations setup"
     ],
-    "test": "vendor/bin/phpunit --bootstrap system/bootstrap.test.php tests"
+    "test": "vendor/bin/phpunit --stderr --verbose --bootstrap system/bootstrap.test.php tests"
   },
   "require": {
     "soft4good/poorman-migrations": "^1.3",
     "smarty/smarty": "^3.1",
     "anorgan/qutee": "^0.9.3",
-    "stripe/stripe-php": "^7.36"
+    "stripe/stripe-php": "^7.36",
+    "firebase/php-jwt": "^5.2"
   },
   "require-dev": {
     "phpunit/phpunit": "^8.5"

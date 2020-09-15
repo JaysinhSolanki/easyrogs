@@ -983,7 +983,7 @@ $(function () {
 ?>
 </script>
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
-<script src="<?= ROOTURL ?>system/application/custom.js"></script>
+<script src="<?= ASSETS_URL ?>custom.js"></script>
 <script>
 /*function createResponseSupp(response_id,discovery_id)
 {

@@ -45,4 +45,19 @@ class SessionUser {
     
     return $sidesModel->getByUserAndCase($this->id, $caseId);
   }
+
+  // $user User Hash Array
+  static function login($user, $password, $successRedirect = '/') { global $AdminDAO, $logger;
+    $login = new Login($AdminDAO);
+
+    $response = $login->loginprocess($user['email'], $password, $user['fkgroupid']);
+
+    if($response == Login::RETURN_CODE_SUCCESS) {
+      return HttpResponse::redirect($successRedirect);
+    }
+    else {
+      return HttpResponse::redirect('userlogin.php');
+    }
+  }
+
 }

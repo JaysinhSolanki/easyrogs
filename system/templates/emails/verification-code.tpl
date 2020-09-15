@@ -8,6 +8,7 @@
   <br/>
   <br/>
   <div style="padding: 5px 10px 5px 10px; background-color: #eee; font-size: 20px; font-weight: bold; display: inline-block">{$code}</div>
+  <br/>
 {/block}
 
 {block name=action}{/block}

@@ -1630,9 +1630,6 @@ function addform( url, frm, div, page ) {
 		enctype: 'multipart/form-data',
 		processData: false,
 		success: data => {
-			if (url == 'signupaction.php' ) {
-				trackEvent('signup', { event_category: 'account', event_label: data.email ||'', });
-			}
 			response(data);
 		}
 	} );

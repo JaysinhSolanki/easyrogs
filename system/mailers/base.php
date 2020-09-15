@@ -60,11 +60,17 @@
       foreach($attachments as $attachment) { 
         $mail->addAttachment($attachment['path'], $attachment['filename']);
       }
-      
+
       // send email
       try { 
-        $mail->send(); 
+        if ( $_ENV['APP_ENV'] === 'test' ) {
+          // disable emails on TEST
+        }
+        else {
+          $mail->send();
+        }
         $logger->info("Mail sent to: " .json_encode($to). ", Subject: $subject, Body: --\n\r\n\r" .$body. "\n\r--\n\r\n\r" );
+
         if ($_ENV['APP_ENV'] != 'prod') {
           // Save copy of the last email
           $savedir = __DIR__ . '/../_dev';
@@ -88,6 +94,8 @@
             }
           }
         }
+
+        return $mail;
       }
       catch( Exception $e ) { 
         $logger->error('Send mail failed: ' . $e->getMessage()); 

@@ -13,6 +13,8 @@
     ];
 
     const ATTORNEY_GROUP_ID = 3;
+    const SUPPORT_GROUP_ID  = 4;
+
     const GROUP_NAMES = [
       1 => 'Developer',
       2 => 'Administrator',
@@ -35,8 +37,6 @@
                                            FROM users_teams 
                                            WHERE users_teams.system_addressbook_id = :user_id
                                          ) AND u.fkgroupid = ' . self::ATTORNEY_GROUP_ID,
-
-                             
       ]);
     }
 
@@ -122,7 +122,7 @@
         'orignal_email'      => $fieldsMapping['email'], // email is required
         'accountid'          => '',
         'updated_at'         => date('Y-m-d H:i:s'),
-        'updated_by'         => $currentUser->id,
+        'updated_by'         => $currentUser ? $currentUser->id : 0,
         'masterhead'         => '',
       ], $fieldsMapping));
       return $this->getBy(self::TABLE, ['pkaddressbookid' => $id], 1);
@@ -185,7 +185,7 @@
     }
 
     function buildMasterHead($user) {
-      function implodeLine($line) { 
+      function implodeLine($line) {
         foreach($line as &$item) { $item = trim($item); }
         return trim(implode(' ', $line), ' ,'); 
       }

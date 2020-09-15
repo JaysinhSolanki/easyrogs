@@ -1,7 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-class MembershipWhitelistTest extends TestCase
+class MembershipWhitelistTest extends ERTestCase
 {
   protected $subject;
 

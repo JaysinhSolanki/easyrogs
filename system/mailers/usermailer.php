@@ -1,8 +1,9 @@
 <?php
 
   class UserMailer extends BaseMailer  {
-    const FORGOT_PASSWORD_SUBJECT = 'Forgot Password';
+    const FORGOT_PASSWORD_SUBJECT   = 'Forgot Password';
     const VERIFICATION_CODE_SUBJECT = 'Verification Code';
+    const SIGNUP_SUBJECT            = 'Welcome to EasyRogs!';
 
     static function forgotPassword($user) {
       global $usersModel, $logger, $smarty;
@@ -45,4 +46,25 @@
 
       parent::sendEmail($to, $subject, $body);
     }
+
+    static function signup($email, $token) {
+      global $logger, $smarty;
+
+      if (!($email && $token)) {
+        $logger->error("USER_MAILER_SIGNUP Wrong arguments. Email: $email, token: $token");
+        throw new Exception('Email and Token are required.');
+      }
+
+      $smarty->assign([
+        'ASSETS_URL' => ASSETS_URL,
+        'signupUrl'  => DOMAIN . "finish-signup.php?t=$token"
+      ]);
+
+      $body    = $smarty->fetch('emails/signup.tpl');
+      $subject = self::SIGNUP_SUBJECT;
+      $to      = $email;
+
+      parent::sendEmail($to, $subject, $body);
+    }
+
   }
