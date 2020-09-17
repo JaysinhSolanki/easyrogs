@@ -54,7 +54,7 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                aria-expanded="true" class="btn btn-primary pull-right"></a>
 <?php if( $viewonly && $currentUser->isAttorney() ) { ?>
                             <button type="button" id="btn-objections" class="btn btn-primary pull-right"
-                                    onclick="javascript:toggleObjectionTemplates(<?= $form_id ?>);"><!--frogs/e-->
+                                    onclick="javascript:toggleKBSidebar(<?= $form_id ?>, ObjectionPanel);"><!--frogs/e-->
                                 <i class="fa fa-book" /><span>Objections</span>
                             </button>
 <script>
@@ -421,8 +421,8 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
 else {
 ?>
         <div class="--row col-sm-12 col-md-12" style="padding:0">
-            <button type="button" id="btn-definitions" class="btn btn-primary pull-right" 
-                    onclick="javascript:toggleDefinitions(<?= $form_id ?>);">
+            <button type="button" id="btn-definitions" class="btn btn-primary pull-right"
+                    onclick="javascript:toggleKBSidebar(<?= $form_id ?>, DefinitionPanel);">
                 <i class="fa fa-book" /><span>Definitions</span>
             </button>
         </div>
@@ -601,7 +601,7 @@ else {
                                    class="btn btn-primary pull-right"></a>
 <?php if( $currentUser->isAttorney() ) { ?>
                                 <button type="button" id="btn-objections" class="btn btn-primary pull-right"
-                                        onclick="javascript:toggleObjectionTemplates(<?= $form_id ?>);"><!--rfas/rfps/rdps-->
+                                        onclick="javascript:toggleKBSidebar(<?= $form_id ?>, ObjectionPanel);"><!--rfas/rfps/rdps-->
                                     <i class="fa fa-book" /><span>Objections</span>
                                 </button>
 <script>

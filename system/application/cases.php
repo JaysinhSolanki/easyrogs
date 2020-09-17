@@ -173,7 +173,7 @@ if($res_attr_uid != "")
                                   <a href="javascript:;" class="btn btn-info" title="Edit case" id="newcase" onclick="javascript: selecttab('46_tab','get-case.php?id=<?= $case['id'];?>','46');"><i class="fa fa-edit"></i> Edit</a>
                                   <a href="javascript:;" class="btn btn-purple"  title="Click to view discoveries" onclick="javascript: selecttab('45_tab','discoveries.php?pid=<?=$case['id'];?>','45');"><i class="fa fa-eye"></i> Discovery</a></td>
                                 </tr>
-                              <?php endif; ?>                                
+                              <?php endif; ?>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
@@ -204,7 +204,7 @@ if($res_attr_uid != "")
 
 <?php
     global $currentUser;
-    $autoplayIntroVideo  = ( !empty($currentUser) && $currentUser->user['intro_seen'] != 1 );
+    $autoplayIntroVideo  = ( !empty($currentUser) && empty($currentUser->user['intro_seen']) );
     $linktoIntroVideo    = ( count($cases) == 0 );
     if( $autoplayIntroVideo || $linktoIntroVideo ) {
         if( $autoplayIntroVideo ) { echo "

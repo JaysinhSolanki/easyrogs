@@ -60,7 +60,7 @@ require_once __DIR__ .'/kb_common.php';
 #kb-modal {
 	z-index: 9999; position: absolute;
 }
-#kb-modal .modal-body { 
+#kb-modal .modal-body {
     padding: 0.5rem 2rem;
 }
 #placeholder_kb_modal_content {
@@ -80,7 +80,7 @@ require_once __DIR__ .'/kb_common.php';
             </div>
 
             <div class="modal-body" id="placeholder_kb_modal_content"> </div>
-            
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
@@ -88,7 +88,7 @@ require_once __DIR__ .'/kb_common.php';
     </div>
 </div><!-- kb-modal -->
 <script type="text/javascript">
-    function insertTemplate( target, text ) { 
+    function insertTemplate( target, text ) {
         const $target = $(target)
         console.assert($target.length, "ERROR: can't find the specified target!")
 
@@ -96,7 +96,7 @@ require_once __DIR__ .'/kb_common.php';
 
         $target.val( trim( _text + " " + text ) )
     }
-    function insertTemplateHere( text ) { 
+    function insertTemplateHere( text ) {
         const target = globalThis['focused_kb_target']
         if( !target ) {
             console.log( `target not specified!!`, {text} ); return;
@@ -122,48 +122,41 @@ require_once __DIR__ .'/kb_common.php';
             }
         }
     }
-    function toggleObjectionTemplates( form_id, target="" ) { 
-        const $sidebar = $(`.sidebar.<?= DOCK_SIDE ?>`).toggleClass("open"),
-              isOpen = $sidebar.hasClass("open")
-        $("#btn-objections").toggleClass( "open", isOpen )
-        if( isOpen ) {
-            $.post( `<?= ROOTURL ?>system/application/kb.php?area=<?= KB_AREA_OBJECTION_TEMPLATES ?>&section_filter=${form_id}` )
-                .done( data => { 
-                    $sidebar_items = $(`.sidebar.<?= DOCK_SIDE ?> > .fixed>*`)
-                    if( $sidebar_items.length < 1 || $sidebar_items.data('section') != form_id ) {
-                        $(`.sidebar.<?= DOCK_SIDE ?> > .fixed`).html(data).data('section', form_id)
 
-                        $('.btn-add-objection')
-                            .on('mouseenter', ev => _glowTarget( 'mouseenter' ) )
-                            .on('mouseleave', ev => _glowTarget( 'mouseleave', 'textarea.glowing[name*="objection["]' ) )
-                    }
-                    const $textboxes = $('textarea[name*="objection["]')
-                    globalThis['focused_kb_target'] = target || $textboxes.first()
-                    $textboxes.on('focus', ev => {
-                        const _target = `#${ev.target.id}`
-                        globalThis['focused_kb_target'] = _target;
-                        //console.log(`target = ${_target}`)
-                    } )
-                } )
-        }
+    DefinitionPanel = {
+        dockSide: `<?= DOCK_SIDE ?>`,
+        area_id: <?= KB_AREA_DEFINITIONS ?>,
+        toggler: `#btn-definitions`,
+        actions: `.btn-add-definition`,
+        targets: `textarea[name*="question_titles["]`,
     }
-    function toggleDefinitions( form_id, target="" ) { debugger;
-        const $sidebar = $(`.sidebar.<?= DOCK_SIDE ?>`).toggleClass("open"),
-              isOpen = $sidebar.hasClass("open")
-        $("#btn-definitions").toggleClass( "open", isOpen )
-        if( isOpen ) {
-            $.post( `<?= ROOTURL ?>system/application/kb.php?area=<?= KB_AREA_DEFINITIONS ?>&section_filter=${form_id}` )
-                .done( data => { 
-                    $sidebar_items = $(`.sidebar.<?= DOCK_SIDE ?> > .fixed>*`)
-                    if( $sidebar_items.length < 1 || $sidebar_items.data('section') != form_id ) {
-                        $(`.sidebar.<?= DOCK_SIDE ?> > .fixed`).html(data).data('section', form_id)
 
-                        $('.btn-add-definition')
+    ObjectionPanel = {
+        dockSide: `<?= DOCK_SIDE ?>`,
+        area_id: <?= KB_AREA_OBJECTION_TEMPLATES ?>,
+        toggler: `#btn-objections`,
+        actions: `.btn-add-objection`,
+        targets: `textarea[name*="objection["]`,
+    }
+
+    function toggleKBSidebar( form_id, panel ) { debugger;
+        console.assert( panel && panel.dockSide, 'This needs a SomePanel literal, see examples above...' )
+        const $sidebar = $(`.sidebar.${panel.dockSide}`).toggleClass("open"),
+            willOpen = $sidebar.hasClass("open")
+        $(panel.toggler).toggleClass( "open", willOpen )
+        if( willOpen ) {
+            $.post( `<?= ROOTURL ?>system/application/kb.php?area=${panel.area_id}&section_filter=${form_id}` )
+                .done( data => {
+                    $sidebar_items = $(`.sidebar.${panel.dockSide} > .fixed>*`)
+                    if( $sidebar_items.length < 1 || $sidebar_items.data('section') != form_id ) {
+                        $(`.sidebar.${panel.dockSide} > .fixed`).html(data).data('section', form_id)
+
+                        $(panel.actions)
                             .on('mouseenter', ev => _glowTarget( 'mouseenter' ) )
-                            .on('mouseleave', ev => _glowTarget( 'mouseleave', 'textarea.glowing[name*="question_titles["]' ) )
+                            .on('mouseleave', ev => _glowTarget( 'mouseleave', `${panel.targets}.glowing` ) )
                     }
-                    const $textboxes = $('textarea[name*="question_titles["]')
-                    globalThis['focused_kb_target'] = target || $textboxes.first()
+                    const $textboxes = $(panel.targets)
+                    globalThis['focused_kb_target'] = $textboxes.first()
                     $textboxes.on('focus', ev => {
                         const _target = `#${ev.target.id}`
                         globalThis['focused_kb_target'] = _target;
@@ -175,9 +168,9 @@ require_once __DIR__ .'/kb_common.php';
     function showKB( area_id, section_filter="", target="" ) {
         console.assert( area_id != <?= KB_AREA_OBJECTION_TEMPLATES ?>, `ERROR: wrong area_id value here`)
         $.post( `<?= ROOTURL ?>system/application/kb.php?area=${area_id}&section_filter=${section_filter}`, {target} )
-            .done( data => { 
+            .done( data => {
                 $("#placeholder_kb_modal_content").html(data);
                 $('#kb-modal').modal('show');
-            } ); 
+            } );
 	}
 </script>
