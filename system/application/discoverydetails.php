@@ -1070,6 +1070,7 @@ function formTitle_Save() { //debugger;
         }
         $(`[name='supp_form_name']`).val( value )
     } else { // revert value
+        toastr.warning(`Sorry, this field cannot be empty`)
         value = $(`[name='supp_form_name']`).val()
     }
     $(`#form_title`).val( value )
