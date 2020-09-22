@@ -147,8 +147,8 @@ Cal. Rules of Court, rule 2.257{/if}
         <a class="er-mc-cancel-button btn btn-danger buttonid"><i class="fa fa-close"></i> Cancel</a>
         <div class="pull-right">
           {if $editable}
-            <button type="button" class="btn btn-success er-mc-save-button"><i class="fa fa-save"></i> Save Draft</button>
-            <button type="button" class="btn btn-purple  er-mc-serve-button"><i class="fa fa-share"></i> Serve </button>
+            <button type="button" class="btn btn-success er-mc-save-button"><i class="fa fa-save"></i> Save</button>
+            <button type="button" class="btn btn-purple  er-mc-serve-button"><i class="fa fa-share"></i> Serve</button>
           {else}
             <a href="meet-confer-pdf.php?id={$mc.id}" class="btn btn-primary er-mc-download-button"><i class="fa fa-download"></i> Download PDF</a>
           {/if}
