@@ -24,6 +24,8 @@
       <div class="er-mc-date">{date('F d, Y')}</div>
     {/if}
     
+    <br/>
+    
     {if $editable}
       <textarea name="attorney_masterhead" class="er-mc-attorney-masterhead" placeholder="Recipient letterhead...">{$attorney_masterhead}</textarea>
     {else}
@@ -37,7 +39,7 @@
 <textarea name="intro" class="er-mc-intro">{if $mc}{trim($mc.intro)}{else}
 Dear {$opposingAttorney.firstname|default: 'counsel'},
 
-This letter shall serve as a good faith attempt to meet and confer, under the Code of Civil Procedure, regarding your client responses to our {$discoveryTitle}, served on {$discovery.served}.
+This letter shall serve as a good faith attempt to meet and confer, under the Code of Civil Procedure, regarding your client responses to our {$discoveryTitle}, served on {date('F d, Y', strtotime($discovery.served))}.
 {/if}
 </textarea>
     {else}
@@ -126,9 +128,7 @@ Sincerely,
 
 {$attorney.companyname}
 
-
 s/______________________
-
 {User::getFullName($attorney)}
 Signed Electronically
 Cal. Rules of Court, rule 2.257{/if}

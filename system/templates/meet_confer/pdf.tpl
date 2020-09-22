@@ -12,6 +12,8 @@
         <div class="er-mc-date">{date('F d, Y')}</div>
       {/if}
 
+      <br/>
+
       <div class="er-mc-attorney-masterhead">{$mc.attorney_masterhead|nl2br}</div>
       <div class="er-mc-subject">Re: {$mc.subject}</div>
 
