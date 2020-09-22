@@ -8,25 +8,26 @@
     <ul class="signup-fancy-bulletpoints text-left">
       <li>
         <strong>Makes Discovery Easy</strong> <br/>
-        <small>
+        {* <small>
           Lorem ipsum dolor sit amet
           Lorem ipsum dolor sit amet
-        </small>
+        </small> *}
       </li>
       <li>
         <strong>Saves Time & Money</strong> <br/>
-        <small>
+        {* <small>
           Lorem ipsum dolor sit amet
           Lorem ipsum dolor sit amet
-        </small>
+        </small> *}
       </li>
       <li>
         <strong>Protects our Health</strong> <br/>
-        <small>
+        {* <small>
           Lorem ipsum dolor sit amet
           Lorem ipsum dolor sit amet
-        </small>
+        </small> *}
       </li>
+      <br/>
     </ul>
   </div>  
 {/block}
