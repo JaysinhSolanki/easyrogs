@@ -3,8 +3,40 @@
 	require_once("adminsecurity.php");
 
 $discovery_id	= $_POST['id']; 
-$respond		  = $_POST['respond']; 
-$response_id	= $_POST['response_id'];  
+$respond		  = $_POST['respond'];
+$response_id	= $_POST['response_id'];
+
+// TODO: when this script is refactored we can probably produce a more generic solution than using a switch
+// handle payables with backward comp...
+
+$id       = $_POST['id'];
+$itemType = @$_POST['item_type'];
+
+$payableType = $itemType ?? ($respond ? Payable::ITEM_TYPE_RESPONSE : Payable::ITEM_TYPE_DISCOVERY);
+switch($payableType) {
+  case Payable::ITEM_TYPE_DISCOVERY:
+    $payable       = $discoveriesModel;
+    $payableItemId = $discovery_id;
+  break;
+
+  case Payable::ITEM_TYPE_RESPONSE:
+    $payable       = $responsesModel;
+    $payableItemId = $response_id;
+  break;
+
+  case Payable::ITEM_TYPE_MEET_CONFER:
+    $discovery_id = null;
+
+    $payable       = $meetConferModel;
+    $payableItemId = $id;
+
+    $mc = $meetConferModel->find($id);
+    $response  = $responsesModel->find($mc['response_id']);
+    $discovery = $discoveriesModel->find($response['fkdiscoveryid']);
+    $case_id   = $discovery['case_id'];
+  break;
+}
+
 if( $discovery_id ) {
 	$discoveryDetails = $AdminDAO->getrows(	'discoveries d, cases c, system_addressbook a, forms f',
 												'c.case_title 	as case_title,
@@ -78,7 +110,6 @@ if( $discovery_id ) {
 	$responding			  = $discovery_data['responding'];
 	$discovery_id		  = $discovery_data['discovery_id'];
 	$attr_id			    = $discovery_data['attr_id'];
-	
 }
 
 //Responding Party
@@ -107,10 +138,6 @@ $loggedin_email = $_SESSION['loggedin_email'];
 $currentSide     = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
 $serviceList     = $sidesModel->getServiceList( $currentSide );
 $primaryAttorney = $sidesModel->getPrimaryAttorney($currentSide['id']);
-
-$payableType   = $respond ? Payable::ITEM_TYPE_RESPONSE : Payable::ITEM_TYPE_DISCOVERY;
-$payable       = $respond ? $responsesModel             : $discoveriesModel;
-$payableItemId = $respond ? $response_id                : $discovery_id;
 
 ?>
 <!DOCTYPE html>
@@ -241,7 +268,7 @@ td, th {
 		<div class="col-md-12" style="text-align:right">
       <i id="POS_msgdiv" class="POS_msgdiv" style="color:red"></i>
       <i><?= $primaryAttorney['credits'] ?: 'No' ?> credits left.</i>
-			<button type="button" class="btn btn-purple" onclick="payAndServe()">
+			<button type="button" class="btn btn-purple" id="pos-pay-and-serve-btn" onclick="payAndServe()">
         <i class="fa fa-share"></i> Pay & Serve
       </button>
 			<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
@@ -317,12 +344,12 @@ td, th {
 
 <script src="<?= ROOTURL ?>system/assets/payments.js"></script>
 <script>
-  function payAndServe() {
+  function payAndServe(callback = servePOS) {
     if ( validate() ) {
       <?php if ($payable->isPaid($payableItemId) || User::hasCredits($primaryAttorney)): ?>
-        servePOS();
+        callback();
       <?php else: ?>
-        new ERPayment(itemId, itemType, caseId, servePOS);
+        new ERPayment(itemId, itemType, caseId, callback);
       <?php endif; ?>
     }
   }

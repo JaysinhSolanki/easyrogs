@@ -3,24 +3,15 @@
 
   abstract class Payable extends BaseModel implements PayableInterface {
 
-    const ITEM_TYPE_RESPONSE  = 'response';
-    const ITEM_TYPE_DISCOVERY = 'discovery';
+    const ITEM_TYPE_RESPONSE    = 'response';
+    const ITEM_TYPE_DISCOVERY   = 'discovery';
+    const ITEM_TYPE_MEET_CONFER = 'meet_confer';
 
     public function isPaid($payableId) {
-      global $logger, $currentUser, $membershipWhitelist;
+      global $currentUser, $membershipWhitelist;
       
-      try {
-        if($membershipWhitelist->isWhitelisted($currentUser->user)) {
-          return true;
-        }
-        
-        foreach(PAYMENT_WHITELIST as $whitelistedEmail) {
-          if (preg_match($whitelistedEmail, $currentUser->user['email'])) {
-            return true;
-          }
-        }
-      } catch( Exception $e ) {
-        $logger->error( ["Exception while processing PAYMENT_WHITELIST", $e] );
+      if($membershipWhitelist->isWhitelisted($currentUser->user)) {
+        return true;
       }
 
       $payableItem = $this->find($payableId);

@@ -124,22 +124,30 @@ require_once __DIR__ .'/kb_common.php';
     }
 
     DefinitionPanel = {
-        dockSide: `<?= DOCK_SIDE ?>`,
-        area_id: <?= KB_AREA_DEFINITIONS ?>,
-        toggler: `#btn-definitions`,
-        actions: `.btn-add-definition`,
-        targets: `textarea[name*="question_titles["]`,
+      dockSide: `<?= DOCK_SIDE ?>`,
+      area_id: <?= KB_AREA_DEFINITIONS ?>,
+      toggler: `#btn-definitions`,
+      actions: `.btn-add-definition`,
+      targets: `textarea[name*="question_titles["]`,
     }
 
     ObjectionPanel = {
-        dockSide: `<?= DOCK_SIDE ?>`,
-        area_id: <?= KB_AREA_OBJECTION_TEMPLATES ?>,
-        toggler: `#btn-objections`,
-        actions: `.btn-add-objection`,
-        targets: `textarea[name*="objection["]`,
+      dockSide: `<?= DOCK_SIDE ?>`,
+      area_id: <?= KB_AREA_OBJECTION_TEMPLATES ?>,
+      toggler: `#btn-objections`,
+      actions: `.btn-add-objection`,
+      targets: `textarea[name*="objection["]`,
     }
 
-    function toggleKBSidebar( form_id, panel ) { debugger;
+    ObjectionKillerPanel = {
+      dockSide: `<?= DOCK_SIDE ?>`,
+      area_id: <?= KB_AREA_OBJECTION_KILLERS ?>,
+      toggler: `#btn-objection-killers`,
+      actions: `.btn-add-objection-killer`,
+      targets: `textarea.er-mc-meet-confer-body`,
+    }
+
+    function toggleKBSidebar( form_id, panel ) { // debugger;
         console.assert( panel && panel.dockSide, 'This needs a SomePanel literal, see examples above...' )
         const $sidebar = $(`.sidebar.${panel.dockSide}`).toggleClass("open"),
             willOpen = $sidebar.hasClass("open")

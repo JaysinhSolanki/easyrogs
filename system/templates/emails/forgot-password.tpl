@@ -7,4 +7,5 @@
   <br/>
   <br/>
   Click the button below to set a new password.
+  <br/>
 {/block}

@@ -15,3 +15,6 @@
   require_once(__DIR__ . '/country.php');
   require_once(__DIR__ . '/response.php');
   require_once(__DIR__ . '/membership_whitelist.php');
+  require_once(__DIR__ . '/question_type.php');
+  require_once(__DIR__ . '/meet_confer.php');
+  require_once(__DIR__ . '/question.php');

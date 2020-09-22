@@ -42,10 +42,7 @@ $discoveries = $AdminDAO->getrows(	"discoveries,cases,forms,system_addressbook",
 
 $currentSide = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
 
-$logger->debug($discoveries);
 Side::legacyTranslateCaseData($case_id, $discoveries);
-$logger->debug('---------------');
-$logger->debug($discoveries);
 
 function getclientname($id)
 {
@@ -259,6 +256,9 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 
 										$response_ACL[] = 'response-pdf';
 										$response_ACL[] = 'view';
+										if ( !in_array( $currentUser->user['email'], $respondingPartyAttr )) {
+											$response_ACL[] = 'meet-confer';
+										}
 
 										if( $response_data['isserved'] ) {
 											$response_ACL[]	= "supp-amend";
@@ -320,6 +320,11 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 														<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttondeleteresponse('<?= $response_id ?>');"><i class="fa fa-trash"></i> Delete</a></li>
 <?php
 													}
+													if( in_array("meet-confer",$response_ACL) ) {
+?>
+														<li class="list-menu"><a href="#meet-and-confer/<?= $response_id ?>" class="meet-confer-button" data-response-id="<?= $response_id ?>"><i class="fa fa-comments-o"></i> Meet & Confer</a></li>
+<?php
+												  }
 ?>
 												</ul>
 											</div>
@@ -512,6 +517,9 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										}
 
 										$response_ACL[] = "response-pdf"; // always allow PDFing
+										if ( !in_array( $currentUser->user['email'], $respondingPartyAttr )) {
+											$response_ACL[] = 'meet-confer';
+										}
 
 										if( $isserved ) {
 											if( $response_creator_id == $_SESSION['addressbookid'] ) {
@@ -579,6 +587,11 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 													if( in_array("delete",$response_ACL) ) {
 ?>
 														<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttondeleteresponse('<?= $response_id ?>');"><i class="fa fa-trash"></i> Delete</a></li>
+<?php
+													}
+													if( in_array("meet-confer",$response_ACL) ) {
+?>
+														<li class="list-menu"><a href="#meet-and-confer/<?= $response_id ?>" class="meet-confer-button"  data-response-id="<?= $response_id ?>"><i class="fa fa-comments-o"></i> Meet & Confer</a></li>
 <?php
 													}
 ?>
@@ -826,6 +839,9 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 												}
 
 												$supp_response_ACL[] = "response-pdf"; // always allow PDFing
+												if ( !in_array( $currentUser->user['email'], $respondingPartyAttr )) {
+													$supp_response_ACL[] = 'meet-confer';
+												}
 
 												if( $supp_isserved ) {
 													if( $supp_response_creator_id == $_SESSION['addressbookid']) {
@@ -892,6 +908,11 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 															if( in_array("delete",$supp_response_ACL) ) {
 ?>
 																<li class="list-menu"><a href="javascript:;"   onclick="javascript: buttondeleteresponse('<?= $response_id ?>');"><i class="fa fa-trash"></i> Delete</a></li>
+<?php
+															}
+															if( in_array("meet-confer",$supp_response_ACL) ) {
+?>
+																<li class="list-menu"><a href="#meet-and-confer/<?= $response_id ?>" class="meet-confer-button" data-response-id="<?= $response_id ?>"><i class="fa fa-comments-o"></i> Meet & Confer</a></li>
 <?php
 															}
 ?>
@@ -1123,5 +1144,10 @@ $('#discovery-due-date-modal-btn').on('click', _ => {
 		(error)	=> showResponseMessage(error)
 	)
 });
+
+$('a.meet-confer-button').on('click', function() {
+	const responseId = $(this).data('response-id');
+	selecttab(`meet-confer-${responseId}`,`meet-confer.php?response_id=${responseId}`, `meet-confer`);
+})
 
 </script>

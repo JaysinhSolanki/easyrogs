@@ -55,7 +55,6 @@ jobs:
         envkey_STRIPE_API_KEY: sk_test_y9GxEH84MZXKzw95CLjXO85B00ftdQkI5W
         envkey_STRIPE_PUBLISHABLE_KEY: pk_test_WcvnhZHSShn1uFSSrYc0W10F00pQTJh6lP
         envkey_STRIPE_WEBHOOK_SIGNING_SECRET: whsec_axgLDqigmEMTklPuSu3u5cPnwBe5UtqW
-        envkey_PAYMENT_WHITELIST:
         envkey_SECRET_KEY: test
         file_name: .env.test
     - name: Create settings.php

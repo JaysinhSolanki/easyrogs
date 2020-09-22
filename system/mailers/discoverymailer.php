@@ -5,6 +5,7 @@
     const CLIENT_RESPONSE_SUBJECT     = '%s - Response Request';
     const CLIENT_RESPONDED_SUBJECT    = '%s - Client Response';
     const PROPOUND_SUBJECT            = '%s';
+    const MEET_CONFER_SUBJECT         = '%s - Meet & Confer';
 
     static function clientVerification($discovery) {
       global $smarty, $discoveriesModel, $usersModel, $clientsModel, $logger, $sidesModel;
@@ -165,5 +166,39 @@
       }
       
       self::sendEmail($to, $subject, $body, User::getFullName($actionUser), $actionUser['email'], $attachments);
+    }
+
+    static function meetConfer($mc, $attachments) { 
+      global $smarty, $logger, $responsesModel, $currentUser, 
+             $sidesModel, $discoveriesModel;
+
+      $actionUserId     = $currentUser->id;
+      $response         = $responsesModel->find($mc['response_id']);
+      $discovery        = $discoveriesModel->find($response['fkdiscoveryid']);
+      $caseId           = $discovery['case_id'];
+
+      $logContext = 'DISCOVERY_MAILER_MEET_CONFER';
+      $logParams  = json_encode([
+        'mc'           => $mc,
+        '$attachments' => $attachments
+      ]);
+
+      if ( !$side = $sidesModel->getByUserAndCase($actionUserId, $caseId) ) {
+        return $logger->error("$logContext Side (user_id: $actionUserId, case_id: $caseId) not found. Params: $logParams");
+      }
+      if ( !$serviceList = $sidesModel->getServiceList($side) ) {
+        return $logger->warn("$logContext No service list found for Case (id: $caseId). Params: $logParams");
+      }
+
+      $subject = sprintf(self::MEET_CONFER_SUBJECT, $side['case_title']);
+      $body = $smarty->fetch('emails/meet-confer.tpl');
+
+      $to = [];
+      foreach($serviceList as $user) {
+        if ($user['pkaddressbookid'] == $actionUserId) { continue; }
+        $to[] = $user['email'];
+      }
+      
+      self::sendEmail($to, $subject, $body, User::getFullName($currentUser->user), $currentUser->user['email'], $attachments);
     }
   }

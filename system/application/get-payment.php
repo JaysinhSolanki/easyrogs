@@ -24,6 +24,15 @@
       $discovery   = $discoveriesModel->find($item['fkdiscoveryid']);
       $currentSide = $sidesModel->getByUserAndCase($currentUser->id, $discovery['case_id']);
     break;
+    
+    case Payable::ITEM_TYPE_MEET_CONFER:
+      $itemModel   = $meetConferModel;
+      $item        = $itemModel->find($itemId);
+      $response    = $responsesModel->find($item['response_id']);
+      $discovery   = $discoveriesModel->find($response['fkdiscoveryid']);
+      $currentSide = $sidesModel->getByUserAndCase($currentUser->id, $discovery['case_id']);
+    break;
+
     default:
       HttpResponse::notFound(); 
     break;

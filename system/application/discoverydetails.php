@@ -812,11 +812,11 @@ body.modal-open
                                                 id="answer<?= $discovery_question_id ?>"
                                                 name="answer[<?= $discovery_question_id ?>]"
                                                 onChange="checkFunctionForm5('<?= $discovery_question_id ?>',this.value)">
-                                            <option <?= ($answer == "Select Your Response") ? "selected" : "" ?>>Select Your Response</option>
-                                            <option <?= ($answer == "I have responsive documents") ? "selected" : "" ?>>I have responsive documents</option>
-                                            <option <?= ($answer == "Responsive documents have never existed") ? "selected" : "" ?>>Responsive documents have never existed</option>
-                                            <option <?= ($answer == "Responsive documents were destroyed") ? "selected" : "" ?>>Responsive documents were destroyed</option>
-                                            <option <?= ($answer == "Responsive documents were lost, misplaced, stolen, or I lack access to them") ? "selected" : "" ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
+                                            <option <?= ($answer == Discovery::RPDS_ANSWER_NONE) ? "selected" : "" ?>>Select Your Response</option>
+                                            <option <?= ($answer == Discovery::RPDS_ANSWER_HAVE_DOCS) ? "selected" : "" ?>>I have responsive documents</option>
+                                            <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_NEVER_EXISTED) ? "selected" : "" ?>>Responsive documents have never existed</option>
+                                            <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_DESTROYED) ? "selected" : "" ?>>Responsive documents were destroyed</option>
+                                            <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_NO_ACCESS) ? "selected" : "" ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
                                         </select>
                                         <script>window.requestAnimationFrame( _ => checkFunctionForm5('<?= $discovery_question_id ?>',$('#answer<?= $discovery_question_id ?>').val()) )</script>
 <?php
@@ -833,7 +833,7 @@ body.modal-open
                                         }
                                         if( $form_id == Discovery::FORM_CA_RPDS ) {
 ?>
-                                            <ul class="list-group" id="note<?php echo $discovery_question_id;?>" <?php if ($answer != "I have responsive documents") {
+                                            <ul class="list-group" id="note<?php echo $discovery_question_id;?>" <?php if ($answer != Discovery::RPDS_ANSWER_HAVE_DOCS) {
 ?>style="display:none" <?php
 } ?>>
                                                 <li class="list-group-item">
@@ -847,7 +847,7 @@ body.modal-open
                                             </ul>
                                             <ul class="list-group"
                                                     id="subdiv<?= $discovery_question_id ?>"
-                                                    <?= ($answer == 'Select Your Response' || $answer == "I have responsive documents") ? " style='display:none' " : "" ?>>
+                                                    <?= ($answer == Discovery::RPDS_ANSWER_NONE || $answer == Discovery::RPDS_ANSWER_HAVE_DOCS) ? " style='display:none' " : "" ?>>
                                                 <li class="list-group-item">
                                                 <div class="form-group">
                                                     <p>
@@ -858,7 +858,7 @@ body.modal-open
                                                                 id="subanswer<?= $discovery_question_id ?>"
                                                                 class="form-control" <?= $css ?>
                                                                 name="subanswer[<?= $discovery_question_id ?>]"
-                                                                <?= ($answer == 'Select Your Response' || $answer == "I have responsive documents") ? " disabled " : "" ?>
+                                                                <?= ($answer == Discovery::RPDS_ANSWER_NONE || $answer == Discovery::RPDS_ANSWER_HAVE_DOCS) ? " disabled " : "" ?>
                                                                 placeholder="Your Answer"><?=
                                                         html_entity_decode($answer_detail)
                                                     ?></textarea>
@@ -1086,6 +1086,12 @@ include_once(SYSTEMPATH.'application/client_instructions_modal.php');
 <script src="../assets/vendors/jquery.uploadfile.min.js"></script>
 <script>
 
+const RPDS_ANSWER_NONE               = '<?= Discovery::RPDS_ANSWER_NONE ?>'
+const RPDS_ANSWER_HAVE_DOCS          = '<?= Discovery::RPDS_ANSWER_HAVE_DOCS ?>'
+const RPDS_ANSWER_DOCS_NEVER_EXISTED = '<?= Discovery::RPDS_ANSWER_DOCS_NEVER_EXISTED ?>'
+const RPDS_ANSWER_DOCS_DESTROYED     = '<?= Discovery::RPDS_ANSWER_DOCS_DESTROYED ?>'
+const RPDS_ANSWER_DOCS_NO_ACCESS     = '<?= Discovery::RPDS_ANSWER_DOCS_NO_ACCESS ?>'
+
 function sendtoclientfunction( discovery_id, actiontype, notesElement='' ) {
     const notes_for_client = notesElement && $(notesElement).val().trimEnd() || "";
     $.LoadingOverlay("show");
@@ -1181,8 +1187,8 @@ function checkFunction(subdivid, option)
 }
 function checkFunctionForm5(subdivid, option) { //debugger;
     option = String(option).trim();
-    if( option == 'I have responsive documents' || option == 'Select Your Response' || option == 'Responsive documents have never existed') {
-        if(option == 'I have responsive documents') {
+    if( option == RPDS_ANSWER_HAVE_DOCS || option == RPDS_ANSWER_NONE || option == RPDS_ANSWER_DOCS_NEVER_EXISTED) {
+        if(option == RPDS_ANSWER_HAVE_DOCS) {
             $("#note"+subdivid).show();
         }
         else {

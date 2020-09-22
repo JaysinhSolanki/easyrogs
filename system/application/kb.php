@@ -57,7 +57,12 @@ switch( $areaId ) {
         $body = $smarty->fetch('kb-sidebar.tpl');
         break;
     case KB_AREA_OBJECTION_KILLERS:
-        $body = $smarty->fetch('kb-modal.tpl');
+        $smarty->assign([
+            'dockSide'  => DOCK_SIDE,
+            'fn'        => 'insertTemplateHere',
+            'itemType'  => 'objection-killer',
+        ]);
+        $body = $smarty->fetch('kb-sidebar.tpl');
         break;
     default:
         // $logger->browser_log('', "UNKNOWN area=$areaId");

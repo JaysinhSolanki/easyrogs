@@ -88,6 +88,35 @@ getPaymentSetup = () => {
   return fetch(API_BASE + '/get-payment-setup.php');
 }
 
+postMeetConfer = (data, success, error) => {
+  $.post(API_BASE + '/post-meet-confer.php', data, success, FORMAT_JSON)
+	 .fail(error);
+}
+
+serveMeetConfer = (id, success, error) => {
+  $.post(API_BASE + '/post-meet-confer-serve.php', {id: id}, success, FORMAT_JSON)
+	 .fail(error);
+}
+
+serializeFormData = (formData) => {
+	return Array.from(formData.keys()).reduce(
+		(acc, key) => {acc[key] = formData.get(key); return acc; }, {}
+	)
+}
+
+posModal = (itemId, itemType, payCallback) => {
+	$("#load_general_modal_content").html('');
+	$.post( "loadpospopupcontent.php", {id: itemId, item_type: itemType} )
+			.done( data => {
+					$("#load_general_modal_content").html(data);
+					$('#pos-pay-and-serve-btn').attr('onclick', null);
+					$('#pos-pay-and-serve-btn').off('click').on('click', () => payAndServe(payCallback));
+			} );
+	$('#general_modal_title').html("PROOF OF ELECTRONIC SERVICE");
+	$('#general-width').addClass('w-900');
+	setTimeout( _ => $('#general_modal').modal('show'), 2000);
+}
+
 
 confirmAction = (options) => {
 	return swal({
@@ -337,6 +366,7 @@ const knownContexts = [
 		{id: "49_2@RFAs",       title: "Responding to Requests for Admission",               video: "responding_RFAS.mp4",       },
 		{id: "49_2@RPDs",       title: "Responding to Requests for Production of Documents", video: "responding_RPDS.mp4",       },
 		{id: "49",              title: "PDF Viewer",                                         video: "pdf_view.mp4",              }, // pdfviewer
+		{id: "meet-confer",     title: "Meet & Confer",                                      video: "",              						 },
 	];
 
 var previous = '';

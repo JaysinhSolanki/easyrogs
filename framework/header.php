@@ -64,11 +64,6 @@ navbar.navbar-static-top a, .nav.navbar-nav li a {
                         <a href="javascript:void(0);" onclick="selecttab('44_tab','get-cases.php','44');"><b>Cases</b></a> 
                     </h4>
                 </li>
-                <li class="dropdown"  id="nav-objection-killers-kb">
-                    <h4 style="color:#34495e !important; font-size:12px !important; font-weight:500 !important; padding-top:10px; margin-right:20px;">  
-                        <a onclick="javascript:showKB(1);" href="#"><b>Objection Killers</b></a>
-                    </h4>
-                </li>
                 <li class="dropdown"  id="nav-myprofile">
                     <h4 style="color:#34495e !important; font-size:12px !important; font-weight:500 !important; padding-top:10px; margin-right:20px;">  
                         <a href="javascript:;" onclick="javascript: selecttab('8_tab','<?= ROOTURL ?>system/application/get-profile.php','8');">

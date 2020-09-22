@@ -14,6 +14,8 @@ settings.php
 !.env.sample
 !.env.test.sample
 vendor
-/tmp/templates_c/*
+/tmp/*
 !/tmp/templates_c/.keep
 *.mp4
+/system/docs_cache/*
+!/system/docs_cache/.keep

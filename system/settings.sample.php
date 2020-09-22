@@ -16,6 +16,8 @@ define("FRAMEWORK_URL", ROOTURL."framework/");
 define("FRAMEWORK_PATH",ROOTPATH."framework/");
 define("UPLOAD_URL", 	ROOTURL."system/uploads/");
 define("LOGS_DIR", __DIR__ . '/../logs');
+define("DOCS_CACHE_DIR", 	ROOTPATH . "system/docs_cache/");
+define("TMP_DIR", ROOTPATH . 'tmp');
 
 // Payments
 define('STRIPE_API_KEY',                $_ENV['STRIPE_API_KEY']);
@@ -27,6 +29,3 @@ define("SECRET_KEY", $_ENV['SECRET_KEY']);
 define('SIGNUP_CREDITS', 3);
 define('SERVE_DISCOVERY_COST', 1000); // $10
 define('PAYMENTS_CURRENCY',    'usd');
-define('PAYMENT_WHITELIST', [ // add email regular expressions here, for users that do not require payment
-  '/jeff@jeffschwartzlaw\.com/i',
-]);

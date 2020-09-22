@@ -1,15 +1,5 @@
 <?php
   class Discovery extends Payable {
-
-    function __construct( $dbConfig = null )
-    {
-      parent::__construct( $dbConfig );
-
-      $this->queryTemplates = array_merge( $this->queryTemplates, [
-
-      ]);
-    }
-
     const FORM_FED_FROGS  = 11;
     const FORM_FED_FROGSE = 12;
     const FORM_FED_SROGS  = 13;
@@ -32,6 +22,17 @@
     const STYLE_WORDCAPS  = 'WordCaps';
     const STYLE_ALLCAPS   = 'ALLCAPS';
     const STYLE_LOWERCASE = 'lowercase';
+
+    // TODO: we need to figure this out, the whole forms engine won't hold...
+    // For this specifically I think we need a better handling of the `dropdown` question type.
+    const RPDS_ANSWER_NONE               = 'Select Your Response';
+    const RPDS_ANSWER_HAVE_DOCS          = 'I have responsive documents';
+    const RPDS_ANSWER_DOCS_NEVER_EXISTED = 'Responsive documents have never existed';
+    const RPDS_ANSWER_DOCS_DESTROYED     = 'Responsive documents were destroyed';
+    const RPDS_ANSWER_DOCS_NO_ACCESS     = 'Responsive documents were lost, misplaced, stolen, or I lack access to them';
+    const RPDS_DETAIL_QUESTION           = 'Enter the name and address of anyone you believe has the documents.';
+
+    const RPDS_FORMS = [self::FORM_CA_RPDS, self::FORM_FED_RPDS];
 
     function find($id) { return $this->getBy( 'discoveries', ['id' => $id], 1); }
     function findByUID($uid) { return $this->getBy( 'discoveries', ['uid' => $uid], 1); }
@@ -61,6 +62,10 @@
 
     static function statementDescriptor($discovery) {
       return "Served Discovery #$discovery[id]";
+    }
+
+    static function isRDPSForm($formId) {
+      return in_array($formId, self::RPDS_FORMS);
     }
 
   }
