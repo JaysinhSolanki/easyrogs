@@ -6,7 +6,12 @@
     <div class="er-mc-body" >
       <div class="er-mc-masterhead">{$mc.masterhead|nl2br}</div>
 
-      <div class="er-mc-date">{$mc.date}</div>
+      {if $mc.served_at}
+        <div class="er-mc-date">{date('F d, Y', strtotime($mc.served_at))}</div>
+      {else}
+        <div class="er-mc-date">{date('F d, Y')}</div>
+      {/if}
+
       <div class="er-mc-attorney-masterhead">{$mc.attorney_masterhead|nl2br}</div>
       <div class="er-mc-subject">Re: {$mc.subject}</div>
 
@@ -47,7 +52,7 @@
                 {/if}          
               </div>
               <div class="er-mc-meet-confer">
-                <div class="heading">M&C:</div>
+                <div class="heading">Reply:</div>
                 <div class="er-mc-meet-confer-body" id="er-mc-text-{$question.question_id}" >
                   {$mc.arguments[$question.question_id].body}
                 </div>

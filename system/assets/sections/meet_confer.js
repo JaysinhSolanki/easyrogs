@@ -20,12 +20,19 @@ function save(successCallback = null) {
 
 // reply toggle btn
 $('.er-mc-toggle-question').on('click', function() {
+  $(this).toggleClass('active')
+
   const $button  = $(this).siblings('a.er-mc-toggle-question')
   const target   = $(this).data('target');
-  const isActive = $(this).toggleClass('active').hasClass('active') // update UI, return active status
-
-  $button.toggleClass('active') // update button as well
-
+  const isActive = $(this).hasClass('active') // update UI, return active status
+  
+  if ( $(this) != $button) {
+    $button.toggleClass('active') // update button as well
+  }
+  
+  $('a.er-mc-toggle-question').html('Reply');
+  $('a.er-mc-toggle-question.active').html('No Reply');
+  
   $(`${target} textarea`).prop( "disabled", !isActive ); // make M&C textarea disabled when ianctive
 })
 

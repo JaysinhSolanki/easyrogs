@@ -128,11 +128,12 @@
 }
 
 a.er-mc-toggle-question.active,
-a.er-mc-toggle-question.focus{
-  background-color: #34495e !important;
-  border-color: #34495e !important;
-  color: #FFFFFF !important;
-}
+a.er-mc-toggle-question.focus,
+a.er-mc-toggle-question.active:hover{
+  background-color: #fff;
+  border-color: #e4e5e7;
+  color: #6a6c6f;
+}  
 
 .er-mc-action-bar{
   position: fixed;

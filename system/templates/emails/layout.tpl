@@ -40,7 +40,7 @@
                                     <tr>
                                       <td align="center" valign="middle" height="30" style="padding-top: 30px;">
                                         <a href="https://easyrogs.com" style="font-family: Authenia-Solid !important; font-weight: bold; font-size: 32px !important">
-                                          <img src="{$ASSETS_URL}images/logo.png" alt="EasyRogs Logo" />
+                                          <img src="{$ASSETS_URL}images/logo.png" alt="EasyRogs Logo" width="200"/>
                                         </a>
                                       </td>
                                     </tr>

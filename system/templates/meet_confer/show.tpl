@@ -49,10 +49,16 @@ This letter shall serve as a good faith attempt to meet and confer, under the Co
         <div class="er-mc-question-wrapper">
           {assign var="visible" value={!$mc || $mc.arguments[$question.question_id]}}
           {if $editable}
-            <a class="pull-right er-mc-toggle-question btn btn-xs btn-default {if $visible}active{/if}" data-toggle="collapse" data-question-id="{$question.question_id}" data-target="#question-{$question.question_id}">Reply</a>
+            <a class="pull-right er-mc-toggle-question btn btn-xs btn-primary {if $visible}active{/if}" data-toggle="collapse" data-question-id="{$question.question_id}" data-target="#question-{$question.question_id}">
+              {if $visible}
+                No Reply
+              {else}
+                Reply
+              {/if}
+            </a>
           {/if}
           {if $editable || $visible}
-            <div class="er-mc-response-question-number {if $editable}er-mc-toggle-question{/if}" {if $editable}data-target="#question-{$question.question_id}" data-toggle="collapse"{/if}>
+            <div class="er-mc-response-question-number {if $editable}er-mc-toggle-question{/if} {if $visible}active{/if}" {if $editable}data-target="#question-{$question.question_id}" data-toggle="collapse"{/if}>
               <div class="heading">No. {$questionNumber}</div>
             </div>
           {/if}
@@ -84,9 +90,9 @@ This letter shall serve as a good faith attempt to meet and confer, under the Co
               {/if}          
             </div>
             <div class="er-mc-meet-confer">
-              <div class="heading">M&C:</div>
+              <div class="heading">Reply:</div>
               {if $editable}
-                <textarea name="arguments[{$question.question_id}]" {if !$visible}disabled{/if} class="er-mc-meet-confer-body" id="er-mc-text-{$question.question_id}" placeholder="Enter your Argument...">{trim($mc.arguments[$question.question_id].body)}</textarea>
+                <textarea name="arguments[{$question.question_id}]" {if !$visible}disabled{/if} class="er-mc-meet-confer-body" id="er-mc-text-{$question.question_id}" placeholder="Reply here....">{trim($mc.arguments[$question.question_id].body)}</textarea>
               {else}  
                 <div class="er-mc-meet-confer-body" id="er-mc-text-{$question.question_id}" >
                   {trim($mc.arguments[$question.question_id].body)}
@@ -102,7 +108,11 @@ This letter shall serve as a good faith attempt to meet and confer, under the Co
       <div class="heading">Demand to Agree to Provide Complete Answers Without Further Objections</div>
       {if $editable}
 <textarea name="conclusion" class="er-mc-conclusion-body">{if $mc}{trim($mc.conclusion)}{else}
-Your unmeritorious objections and refusals to respond constitute a “misuse of the discovery process.” Code Civ. Proc., § 2023.010. This is grounds for monetary sanctions including reasonable expenses and attorney’s fees. Code Civ. Proc., § 2023.030(a).
+Your unmeritorious objections and refusals to produce responsive, unprivileged documents constitute a “misuse of the discovery process.” Code Civ. Proc., § 2023.010. This is grounds for monetary sanctions including reasonable expenses and attorney’s fees. Code Civ. Proc., § 2023.030(a).
+
+Please notify me by 5:00 p.m. on {date("l, F d, Y", strtotime("+1 week"))} if you will provide full and complete responses to these discovery requests. If so, we can discuss a reasonable time for your supplemental responses along with a commensurate extension of the deadline for a Motion to Compel, if necessary. Please note that you have waived any objections not made in your initial response to the subject discovery and therefore, no new objections may be interposed at this time. Weil & Brown, Cal. Practice Guide: Civil Procedure Before Trial (The Rutter Group 2019) ¶ 8:1476.1, citing Stadish v. Superior Court (1999) 71 Cal.App.4th 1130, 1141.
+ 
+If you do not timely agree to provide full and complete responses, I will be forced to file a Motion to Compel. I hope that will not be necessary.
 {/if}
 </textarea>  
       {else}
@@ -134,7 +144,7 @@ Cal. Rules of Court, rule 2.257{/if}
   <div class="row">
     <div class="col-lg-12 er-mc-action-bar">
       <div class="container">
-        <a class="er-mc-cancel-button btn btn-sm btn-default">&laquo; Back</a>
+        <a class="er-mc-cancel-button btn btn-danger buttonid"><i class="fa fa-close"></i> Cancel</a>
         <div class="pull-right">
           {if $editable}
             <button type="button" class="btn btn-success er-mc-save-button"><i class="fa fa-save"></i> Save Draft</button>
