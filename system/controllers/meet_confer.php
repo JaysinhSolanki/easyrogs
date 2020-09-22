@@ -7,7 +7,7 @@
       'arguments', 'conclusion', 'signature', 'response_id'
     ];
 
-    function show() {
+    function show() { global $clientsModel;
       global $smarty, $responsesModel, $discoveriesModel,
              $sidesModel, $currentUser, $usersModel, $meetConferModel;
       
@@ -21,14 +21,14 @@
       $mc               = $meetConferModel->findByResponseId($responseId);
       $discoveryId      = $response['fkdiscoveryid'];
       $discovery        = $discoveriesModel->find($discoveryId);
-      $respondingUserId = $discovery['responding'];
-      $caseId           = $discovery['case_id'];
+      $client           = $clientsModel->find($discovery['responding']);
+      $caseId           = $client['case_id'];
 
       $currentSide = $sidesModel->getByUserAndCase($currentUser->id, $caseId);
       if (!$currentSide) {
         return HttpResponse::unauthorized('User is not on this case.');
       }
-      $opposingSide = $sidesModel->getByUserAndCase($respondingUserId, $caseId);
+      $opposingSide = $sidesModel->getByClientAndCase($client['id'], $caseId);
       if ($currentSide == $opposingSide) {
         return HttpResponse::conflict('Opposing and current side are the same.');
       }
@@ -37,7 +37,7 @@
         $attorney = $currentUser->id;
       }
       if (!$opposingAttorney = $sidesModel->getPrimaryAttorney($opposingSide['id'])) {
-        $opposingAttorney = $usersModel->find($respondingUserId);
+        $opposingAttorney = $usersModel->find($response['created_by']);
       }
 
       $smarty->assign([
