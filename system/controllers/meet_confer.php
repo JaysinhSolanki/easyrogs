@@ -29,7 +29,7 @@
         return HttpResponse::unauthorized('User is not on this case.');
       }
       $opposingSide = $sidesModel->getByClientAndCase($client['id'], $caseId);
-      if ($currentSide == $opposingSide) {
+      if (!$mc['served'] && $currentSide == $opposingSide) {
         return HttpResponse::conflict('Opposing and current side are the same.');
       }
 
@@ -39,16 +39,18 @@
       if (!$opposingAttorney = $sidesModel->getPrimaryAttorney($opposingSide['id'])) {
         $opposingAttorney = $usersModel->find($response['created_by']);
       }
-
+      
+      $discoveryTitle = Discovery::getTitle($discovery['discovery_name'], $discovery['set_number']);
       $smarty->assign([
         'mc'                  => $mc,
         'attorney'            => $attorney,
         'opposingAttorney'    => $opposingAttorney,
         'currentUser'         => $currentUser->user,
-        'discoveryTitle'      => Discovery::getTitle($discovery['discovery_name'], $discovery['set_number']),
+        'discoveryTitle'      => $discoveryTitle,
         'discovery'           => $discovery,
         'questions'           => $response['questions'],
         'response'            => $response,
+        'responseName'        => $response['responsename'] ?? $discoveryTitle,
         'side'                => $currentSide,
         'masterhead'          => trim(($mc ? $mc['masterhead']          : $currentSide['masterhead'])),
         'attorney_masterhead' => trim(($mc ? $mc['attorney_masterhead'] : $opposingAttorney['masterhead'])),

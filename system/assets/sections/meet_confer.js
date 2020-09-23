@@ -1,6 +1,8 @@
 // automatically toggle definitions when present
 $(document).ready( _ => { 
-  toggleKBSidebar(mcFormId, ObjectionKillerPanel) 
+  if (!mcServed) {
+    toggleKBSidebar(mcFormId, ObjectionKillerPanel)
+  }
 })
 
 function save(successCallback = null) {

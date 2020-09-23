@@ -253,7 +253,8 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								if( !empty($responses) ) {
 									foreach($responses as $response_data) {
 										$response_id	= $response_data['id'];
-
+										$mc = $meetConferModel->findByResponseId($response_id, false);
+										
 										$response_ACL[] = 'response-pdf';
 										$response_ACL[] = 'view';
 										if ( !in_array( $currentUser->user['email'], $respondingPartyAttr )) {
@@ -273,7 +274,10 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 
 ?>
 										<tr class="group_<?= $d_id ?>" style="display:none">
-											<td></td>
+											<td>
+												<?php if($mc && $mc['served']): ?>
+													<a title="Meet & Confer Letter" href="#meet-and-confer/<?= $response_id ?>" class="meet-confer-button" data-response-id="<?= $response_id ?>"><i class="fa fa-comments-o"></i></a>
+												<?php endif; ?>
 											<td><?= $response_data['responsename'] ?></td>
 											<td><?= getclientname($discovery['propounding']) ?></td>
 											<td><?= getclientname($discovery['responding']) ?></td>
@@ -507,6 +511,8 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										$isserved				= $response_data['isserved'];
 										$response_id			= $response_data['id'];
 										$response_ACL			= array();
+										$mc = $meetConferModel->findByResponseId($response_id, false);
+
 										//if($response_creator_id == $_SESSION['addressbookid'])
 										{
 											//$RequestPDF_FileName	= "makepdf.php?id=".$discovery['d_uid']."&view=1";
@@ -538,7 +544,11 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										}
 ?>
 										<tr class="group_<?= $d_id ?>" style="display:none">
-											<td></td>
+											<td>
+												<?php if($mc && $mc['served']): ?>
+													<a  title="Meet & Confer Letter"  href="#meet-and-confer/<?= $response_id ?>" class="meet-confer-button" data-response-id="<?= $response_id ?>"><i class="fa fa-comments-o"></i></a>
+												<?php endif; ?>
+											</td>
 											<td><?= $response_data['responsename'] ?></td>
 											<td><?= getclientname($discovery['propounding']) ?></td>
 											<td><?= getclientname($discovery['responding']) ?></td>
@@ -830,6 +840,9 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 												$supp_response_creator_id	= $response_data['created_by'];
 												$supp_isserved				= $response_data['isserved'];
 												$supp_response_ACL			= array();
+
+												$mc = $meetConferModel->findByResponseId($response_id, false);
+		
 												//if($supp_response_creator_id == $_SESSION['addressbookid'])
 												{
 													$ResponsePDF_FileName	= "makepdf.php?id=".$suppdiscovery['d_uid']."&view=0&response_id=".$response_id;
@@ -859,8 +872,12 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 													}
 												}
 ?>
-												<tr class="group_<?= $d_id ?>" style="display:none">
-												<td></td>
+											<tr class="group_<?= $d_id ?>" style="display:none">
+												<td>
+													<?php if($mc && $mc['served']): ?>
+														<a  title="Meet & Confer Letter" href="#meet-and-confer/<?= $response_id ?>" class="meet-confer-button" data-response-id="<?= $response_id ?>"><i class="fa fa-comments-o"></i></a>
+													<?php endif; ?>
+												</td>
 												<td><?= $response_data['responsename'] ?></td>
 												<td><?= getclientname($suppdiscovery['propounding']) ?></td>
 												<td><?= getclientname($suppdiscovery['responding']) ?></td>

@@ -1634,6 +1634,15 @@ CREATE TABLE `users_teams` (
   CONSTRAINT `fk_users_has_teams_teams1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_users_has_teams_users1` FOREIGN KEY (`system_addressbook_id`) REFERENCES `system_addressbook` (`pkaddressbookid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Table structure for meet confer tables
+--
+
+DROP TABLE IF EXISTS `meet_confer_arguments`;
+DROP TABLE IF EXISTS `meet_confers`;
+
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
