@@ -2,7 +2,7 @@
 
 {assign var="editable"   value={!$mc.served}}
 {assign var="title"      value="Meet & Confer Letter"}
-{assign var="subtitle"   value={$responseName}}
+{assign var="subtitle"   value={$responseTitle}}
 {assign var="caseTitle"  value={$side.case_title}}
 {assign var="caseNumber" value={$side.case_number}}
 {assign var="subject"    value={$mc.subject|default: "$caseTitle, Case No. $caseNumber"}}
@@ -23,9 +23,9 @@
     {else}
       <div class="er-mc-date">{date('F d, Y')}</div>
     {/if}
-    
+
     <br/>
-    
+
     {if $editable}
       <textarea name="attorney_masterhead" class="er-mc-attorney-masterhead" placeholder="Recipient letterhead...">{$attorney_masterhead}</textarea>
     {else}
@@ -34,7 +34,7 @@
 
     <div class="er-mc-subject">Re: {$subject}</div>
     <input type="hidden" name="subject" value="{$subject}"/>
-    
+
     {if $editable}
 <textarea name="intro" class="er-mc-intro">{if $mc}{trim($mc.intro)}{else}
 Dear {$opposingAttorney.firstname|default: 'counsel'},
@@ -80,7 +80,7 @@ This letter shall serve as a good faith attempt to meet and confer, under the Co
               {else}
                 <p class="er-mc-answer">
                   {$question.answer|default: 'Not provided'}
-                </p>            
+                </p>
                 {foreach item=subQuestion from=$question.sub_questions}
                   <p class="er-mc-response-sub-question">
                     {$subQuestion.sub_part}) {$subQuestion.question_title}
@@ -89,13 +89,13 @@ This letter shall serve as a good faith attempt to meet and confer, under the Co
                     {$subQuestion.answer}
                   </p>
                 {/foreach}
-              {/if}          
+              {/if}
             </div>
             <div class="er-mc-meet-confer">
               <div class="heading">Reply:</div>
               {if $editable}
                 <textarea name="arguments[{$question.question_id}]" {if !$visible}disabled{/if} class="er-mc-meet-confer-body" id="er-mc-text-{$question.question_id}" placeholder="Reply here....">{trim($mc.arguments[$question.question_id].body)}</textarea>
-              {else}  
+              {else}
                 <div class="er-mc-meet-confer-body" id="er-mc-text-{$question.question_id}" >
                   {trim($mc.arguments[$question.question_id].body)}
                 </div>
@@ -116,12 +116,12 @@ Please notify me by 5:00 p.m. on {date("l, F d, Y", strtotime("+1 week"))} if yo
 
 If you do not timely agree to provide full and complete responses, I will be forced to file a Motion to Compel. I hope that will not be necessary.
 {/if}
-</textarea>  
+</textarea>
       {else}
         <div class="er-mc-conclusion-body">{trim($mc.conclusion)|nl2br}</div>
       {/if}
     </div>
-    
+
     {if $editable}
 <textarea name="signature" class="er-mc-signature">{if $mc}{trim($mc.signature)}{else}
 Sincerely,
@@ -129,7 +129,7 @@ Sincerely,
 {$attorney.companyname}
 
 s/______________________
-{User::getFullName($attorney)}
+{$attorneyName}
 Signed Electronically
 Cal. Rules of Court, rule 2.257{/if}
 </textarea>
@@ -142,7 +142,7 @@ Cal. Rules of Court, rule 2.257{/if}
 
 {block name=main_bottom}
   <div class="row">
-    <div class="col-lg-12 er-mc-action-bar">
+    <div class="er-mc-action-bar">
       <div class="container">
         <a class="er-mc-cancel-button btn btn-danger buttonid"><i class="fa fa-close"></i> Cancel</a>
         <div class="pull-right">
@@ -152,13 +152,14 @@ Cal. Rules of Court, rule 2.257{/if}
           {else}
             <a href="meet-confer-pdf.php?id={$mc.id}" class="btn btn-primary er-mc-download-button"><i class="fa fa-download"></i> Download PDF</a>
           {/if}
-        </div>  
+        </div>
       </div>
-    </div>  
-  </div>  
+    </div>
+  </div>
 {/block}
 
 {block name=css_dependencies}
+  <link rel="stylesheet" href="{$ASSETS_URL}sections/kb.css" />
   <link rel="stylesheet" href="{$ASSETS_URL}sections/meet_confer.css" />
 {/block}
 
@@ -167,7 +168,7 @@ Cal. Rules of Court, rule 2.257{/if}
     mcId     = {$mc.id|default: 'null'}
     mcFormId = {$discovery.form_id}
     mcCaseId = {$discovery.case_id}
-    mcServed = {if $mc.served}true{else}false{/if} 
+    mcServed = {if $mc.served}true{else}false{/if}
   </script>
   <script src="{$ASSETS_URL}sections/meet_confer.js"></script>
 {/block}

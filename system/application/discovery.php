@@ -2,29 +2,11 @@
 require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
-$id         = @$_GET['id'];
-$supp       = @$_GET['supp'];
 $case_id    = $_GET['pid'];
+$id         = @$_GET['id'];
+
+$is_supp    = @$_GET['supp'] ?: 0;
 $type       = $_GET['type'] ?: Discovery::TYPE_EXTERNAL;
-
-/**
-* Check that logged in user is the owner of case
-**/
-// $checkOwnerCase = $AdminDAO->getrows( "cases", "*",
-//                                       "attorney_id = :fkaddressbookid AND id = :case_id",
-//                                       array( "fkaddressbookid" => $_SESSION['addressbookid'], "case_id" => $case_id ) );
-
-/**
-* Check logged in user is case service list or not
-**/
-// $isServiceListMember = $AdminDAO->getrows(
-//     'attorney a, client_attorney ca',
-//     "*,ca.id as client_attorney_id",
-//     "a.attorney_email = :attorney_email AND
-//     a.id 				= ca.attorney_id AND
-//     ca.case_id 			= :case_id ",
-//     array( 'attorney_email'=>$_SESSION['loggedin_email'], 'case_id'=>$case_id )
-// );
 
 $forms = $AdminDAO->getrows('forms', "*");
 
@@ -64,9 +46,8 @@ $uid                = "addnew";
 $conjunction_with   = 0;
 $doctype            = 1;
 if( $id ) {
-    $discoveries            = $AdminDAO->getrows( 'discoveries', "*",
-                                                  "id = :id ", array('id'=>$id) );
-    $discovery              = $discoveries[0];
+    $discovery              = $discoveriesModel->find($id);
+    $discoveryName          = $discovery['discovery_name'];
     $type                   = $discovery['type'];
     $conjunction_setnumber  = $discovery['conjunction_setnumber'];
     $uid                    = $discovery['uid'];
@@ -90,92 +71,21 @@ $currentSide = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
 
 $ownClients   = $sidesModel->getClients($currentSide['id']);
 $otherClients = $sidesModel->getOtherClients($currentSide['id'], $case_id);
-
-// DEPRECATION ROW (sides) ---------------------------------------------------
-// if(empty($checkOwnerCase) && !empty($isServiceListMember))
-// {
-// 	$client_attorney_id	=	array();
-// 	if(!empty($isServiceListMember))
-// 	{
-// 		foreach($isServiceListMember as $isServiceListMemberData)
-// 		{
-// 			$client_attorney_id[]	=	$isServiceListMemberData['client_attorney_id'];
-// 		}
-// 	}
-
-// 	$sl_attorney_id	=	implode(",",$client_attorney_id);
-
-
-// 	$clientsData	=	$AdminDAO->getrows("clients c,client_attorney ca",
-// 													"c.*",
-// 													"c.id		=	ca.client_id AND
-// 													ca.id 		IN ($sl_attorney_id)",
-// 													array());
-
-// 	//dump($clientsData);
-// 	$myclients		=	array();
-// 	foreach($clientsData as $cdata)
-// 	{
-// 		$myclientIds[]	=	$cdata['id'];
-// 		$myclients[]	=	array("client_type"=>$cdata['client_type'],"client_name"=>$cdata['client_name']);
-// 		$myclientType	=	$cdata['client_type'];
-// 	}
-// 	if(!empty($myclientIds))
-// 	{
-// 		$myclientsIdsList	=	implode(",",$myclientIds);
-// 	}
-// 	/*if($myclientType == "Others")
-// 	{
-// 		$otherWhere	=	" client_type IN ('Us','Pro per') AND id NOT IN ($myclientsIdsList) ";
-// 	}
-// 	else
-// 	{
-// 		$otherWhere	=	" client_type IN ('Others') AND id NOT IN ($myclientsIdsList) ";
-// 	}*/
-// 	$otherWhere		=	" id NOT IN ($myclientsIdsList) ";
-// 	$ownclients		=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND id IN ($myclientsIdsList)", array(":case_id"=>$case_id), "client_name", "ASC");
-
-// 	$otherclients	=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND $otherWhere ", array(":case_id"=>$case_id), "client_name", "ASC");
-
-
-// 	if( $type == Discovery::TYPE_EXTERNAL )
-// 	{
-// 		$propondingClients	=	$ownclients;
-// 		$respondingClients	=	$otherclients;
-
-// 	}
-// 	else if( $type == Discovery::TYPE_INTERNAL )
-// 	{
-// 		$propondingClients	=	$otherclients;
-// 		$respondingClients	=	$ownclients;
-// 	}
-
-// }
-// else
-// {
-// 	$ownclients		=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND client_type IN ('Us','Pro per')", array(":case_id"=>$case_id), "client_name", "ASC");
-// 	$otherclients	=	$AdminDAO->getrows("clients","*", "case_id=:case_id AND client_type IN ('Others')", array(":case_id"=>$case_id), "client_name", "ASC");
-// ------------------------------------------------
-
-	if( $type == Discovery::TYPE_EXTERNAL ) {
-		$propondingClients	=	$ownClients;
-		$respondingClients	=	$otherClients;
-	}
-	else  {
-        assert( $type == Discovery::TYPE_INTERNAL );
-		$propondingClients	=	$otherClients;
-		$respondingClients	=	$ownClients;
-	}
-
-// DEPRECATION ROW (sides) ------------------------------------------------
-// }
-// ------------------------------------------------
+if( $type == Discovery::TYPE_EXTERNAL ) {
+    $propondingClients = &$ownClients;
+    $respondingClients = &$otherClients;
+}
+else {
+    assert( $type == Discovery::TYPE_INTERNAL );
+    $propondingClients = &$otherClients;
+    $respondingClients = &$ownClients;
+}
 
 /****************************************
 	Load Documents Array if FORM_RPDS case
 ****************************************/
 $_SESSION['documents']=array();
-if ($id > 0 && in_array($form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS))) {
+if( ($id > 0) && in_array($form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS)) ) {
     $olddocuments   = $AdminDAO->getrows('documents', "*", "discovery_id = '$id'");
     if( sizeof($olddocuments) ) {
         foreach ($olddocuments as $data) {
@@ -234,20 +144,20 @@ body.modal-open {
     <div class="container" style="">
         <div class="hpanel">
             <div class="panel-heading text-center">
-                <small>
+                <small><strong>
 <?php
                     if( $id ) {
-                        if( @$supp == 1 ) {
-                            echo "<strong>Supplemental-Amended Discovery</strong>";
-                            $discovery['discovery_name']  = "Supplemental/Amended ". $discovery['discovery_name'];
+                        if( $is_supp ) {
+                            echo Discovery::PREFIX_SUPP_AMENDED ."Discovery";
+                            $discoveryName  = Discovery::PREFIX_SUPP_AMENDED ."$discoveryName";
                         } else {
-                            echo "<strong>Edit Discovery for</strong>";
+                            echo "Edit Discovery for";
                         }
                     } else {
-                        echo "<strong>Create Discovery for</strong>";
+                        echo "Create Discovery for";
                     }
 ?>
-                    </small>
+                    </strong></small>
                 <h3 align="center"><strong><?= $case_title ?></strong></h3>
             </div>
             <div class="--panel-body">
@@ -256,7 +166,7 @@ body.modal-open {
                         <form  name="discoveriesform" id="discoveriesform" class="form form-horizontal" method="post">
                      <input type="hidden" name="type" value="<?= $type ?>" id="type"  />
                      <input type="hidden" name="uid" value="<?= $uid ?>">
-                     <input type="hidden" name="supp" value="<?= $supp ?>">
+                     <input type="hidden" name="supp" value="<?= $is_supp ?>">
 
                     <div class="form-group">
                         <label class=" col-sm-2 col-md-1 control-label">Form<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
@@ -275,10 +185,10 @@ body.modal-open {
 <?php
                                 foreach( $forms as $thisrow ) {
 ?>
-                                    <option <?php if ($thisrow['id']==$discovery['form_id']) {
-                                        echo "selected";
-}?>
-                                        value="<?= $thisrow['id'] ?>"><?= $thisrow['form_name'] ?></option>
+                                    <option <?= ($thisrow['id']==$discovery['form_id']) ? " selected " : "" ?>
+                                                value="<?= $thisrow['id'] ?>"><?=
+                                        $thisrow['form_name']
+                                    ?></option>
 <?php
                                 }
 ?>
@@ -289,7 +199,7 @@ body.modal-open {
                     <div class="form-group">
                         <label class=" col-sm-2 col-md-1 control-label">Name<span class="redstar" style="color:#F00" title="This field is compulsory">*</span> <?php  echo instruction(6) ?></label>
                         <div class="col-sm-4 col-md-5">
-                            <input type="text"  name="discovery_name" id="discovery_name" placeholder="Enter name" class="form-control m-b" value="<?php echo $discovery['discovery_name'];?>">
+                            <input type="text" name="discovery_name" id="discovery_name" placeholder="Enter name" class="form-control m-b" value="<?= $discoveryName ?>">
                         </div>
                         <label class=" col-sm-2 col-md-1 control-label">Set Number<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                         <div class="col-sm-4 col-md-5">
@@ -297,9 +207,9 @@ body.modal-open {
 <?php
                                 for( $d=1; $d<=100; $d++ ) {
 ?>
-                                <option <?php if ($discovery['set_number']==$d) {
-                                    echo " SELECTED ";
-}?> value="<?php echo $d;?>"><?php echo $d;?></option>
+                                    <option <?= ( $discovery['set_number'] == $d ) ? " selected " : "" ?>
+                                        value="<?= $d ?>"><?= $d ?>
+                                    </option>
 <?php
                                 }
 ?>
@@ -307,23 +217,23 @@ body.modal-open {
                         </div>
                     </div>
 <?php
-                    if (@$discovery['form_id'] == 4 || $id == '') {
+                    if( @$discovery['form_id'] == Discovery::FORM_CA_RFAS || $id == '' ) {
 ?>
-                    <div <?= $id ? '' : "style='display:none'" ?> id="in_conjunctionDiv">
+                    <div <?= $id ? '' : " style='display:none' " ?> id="in_conjunctionDiv">
                     <div class="row form-group">
                             <label class=" col-sm-2 col-md-1 control-label" style="">In Conjunction with <span class="redstar" style="color:#F00" title="This field is compulsory"></span></label>
                             <div class="col-sm-4 col-md-3" style="margin-top: 15px;">
-                                <input type="checkbox" onclick="inConjunctionForm()" <?= $discovery['in_conjunction'] ? "checked" : '' ?> value="1" name="in_conjunction" id="in_conjunction">
+                                <input type="checkbox" onclick="inConjunctionForm()" <?= $discovery['in_conjunction'] ? " checked " : '' ?> value="1" name="in_conjunction" id="in_conjunction">
                                 <label for="in_conjunction">Form Interrogatories</label>
                             </div>
 
-                            <div id="interogatoriesTypeDiv" class="row row-no-gutters col-sm-10 col-md-11" <?= (!$id || !$discovery['in_conjunction']) ? "style='display:none'" : '' ?>>
+                            <div id="interogatoriesTypeDiv" class="row row-no-gutters col-sm-10 col-md-11" <?= (!$id || !$discovery['in_conjunction']) ? " style='display:none' " : '' ?>>
                                 <div class="col-sm-6 col-md-6">
                                     <label class="control-label">Type<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                                     <div>
                                         <select  name="interogatory_type" id="interogatory_type"  class="form-control m-b">
-                                            <option value="1" <?= ($discovery['interogatory_type'] == 1) ? "selected" : '' ?>>GENERAL</option>
-                                            <option value="2" <?= ($discovery['interogatory_type'] == 2) ? "selected" : '' ?>>EMPLOYMENT</option>
+                                            <option value="1" <?= ($discovery['interogatory_type'] == 1) ? " selected " : '' ?>>GENERAL</option>
+                                            <option value="2" <?= ($discovery['interogatory_type'] == 2) ? " selected " : '' ?>>EMPLOYMENT</option>
                                         </select>
                                     </div>
                                 </div>
@@ -334,7 +244,7 @@ body.modal-open {
 <?php
                                             for( $i=1; $i<=50; $i++ ) {
 ?>
-                                            <option value="<?= $i ?>" <?= ($discovery['conjunction_setnumber'] == $i) ? "selected" : '' ?>><?= $i ?></option>
+                                                <option value="<?= $i ?>" <?= ($discovery['conjunction_setnumber'] == $i) ? " selected " : '' ?>><?= $i ?></option>
 <?php
                                             }
 ?>
@@ -412,13 +322,10 @@ body.modal-open {
 <?php
                 }
 ?>
-                <div class="form-group" id="start_questionid"
-<?php
-                    if( in_array(@$discovery['form_id'], array(Discovery::FORM_CA_FROGS,Discovery::FORM_CA_FROGSE)) && $id ) {
-                        echo "style='display:none'";
-                    }
-?>>
-                    <label class=" col-sm-2 col-md-1 control-label">First Question Number<span class="redstar" style="color:#F00" title="This field is compulsory"></span> <?php  echo instruction(7) ?></label>
+                <div class="form-group"
+                        <?= ( in_array(@$discovery['form_id'], array(Discovery::FORM_CA_FROGS,Discovery::FORM_CA_FROGSE)) && $id ) ? " style='display:none' " : "" ?>
+                        id="start_questionid">
+                    <label class=" col-sm-2 col-md-1 control-label">First Question Number<span class="redstar" style="color:#F00" title="This field is compulsory"></span> <?= instruction(7) ?></label>
                     <div class="col-sm-10 col-md-11">
                         <input type="text" onkeypress="return isNumberKey(event)"  name="question_number_start_from" id="question_number_start_from" onblur="arrangequestionnumber()" placeholder="First Question Number"  min="1" class="form-control m-b" value="<?php echo $discovery['question_number_start_from'];?>">
                     </div>
@@ -573,9 +480,7 @@ jQuery( $ => {
     if( !$('#question_number_start_from').val() ) {
         $('#question_number_start_from').val(1);
     }
-
 	autogrowTextareas();
-
 });
 function loadpropondingattorneys( case_id, client_id, selected ) {
     if( !client_id ) {
@@ -588,10 +493,10 @@ function loadinstructions(id,form_id) {
     const type = <?= $type ?>;
 
     $.get( `discoveryloadforminstruction.php?form_id=${form_id}&id=${id}&case_id=<?= $case_id ?>&viewonly=0&type=${type}` )
-        .done( resp => { 
+        .done( resp => {
             $("#loadinstructions").html( trim(resp) );
 
-            const { discoveryType, discoveryFormNames, discoveryForm,
+            const { discoveryFormNames, discoveryForm,
                     currentPage, } = globalThis,
                 suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
             ctxUpdate({ id: `47_${type}${suffix}`, pkscreenid: '47', url: 'discoveryfront.php', } );
@@ -617,6 +522,13 @@ function callFunction() {
     else  {
         $("#start_questionid").show();
     }
+
+    // Hide sidebar if nothing to show there
+    setTimeout( _ => {
+        if( $('.btn-sidebar-toggle:not(.hidden)').length == 0 ){
+            closeSidebar()
+        }
+    }, 1200 ); // [!] Use here slightly longer delay than the sidebar toggling in discoveryloadforminstruction.php to avoid closing and then opening again
 }
 function isNumberKey( evt ) {
     var charCode = (evt.which) ? evt.which : event.keyCode;

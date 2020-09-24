@@ -102,6 +102,12 @@ if ($signingSide){
     $masterhead = $sides->getMasterHead($signingSide);
 }
 $masterhead = $masterhead ? $masterhead : $users->getMasterHead($signingAttorney); // if the side doesnt have a masthead yet...
+
+$form_name = ($view == Discovery::VIEW_RESPONDING)
+                    ? $responsesModel->getTitle($response_id, $discovery_data)
+                    : $discoveriesModel->getTitle($discovery_data);
+$formNAME = strtoupper($form_name);
+
 // --------------------
 
 $plaintiff		= $discovery_data['plaintiff'];
@@ -121,9 +127,7 @@ $case_attorney	= $discovery_data['case_attorney'];
 
 $discovery_attorney_id = $discovery_data['discovery_attorney_id'];
 
-$form_name				= $discovery_data['form_name']." [SET ".$set_number."]";
 $short_form_name		= $discovery_data['short_form_name'];
-
 $send_date				= $discovery_data['send_date'];
 $instructions			= $discovery_data['instructions'];
 $introduction			= $discovery_data['introduction'];
@@ -190,8 +194,6 @@ if( $type == Discovery::TYPE_EXTERNAL) {
     $served_date	= date("F d, Y",strtotime($served));
 }
 
-$form_name = strtoupper( ($view == Discovery::VIEW_RESPONDING ? "RESPONSE TO " : "") . $discovery_name ." [SET ".numberTowords( $set_number )."]" ); // TODO Disc+Set
-
 $propondingdetails	= getRPDetails($propounding);
 $proponding_name	= $propondingdetails['client_name'];
 $proponding_email	= $propondingdetails['client_email'];
@@ -205,9 +207,9 @@ $responding_type	= $respondingdetails['client_type'];
 $responding_role	= $respondingdetails['client_role'];
 
 if( $type == Discovery::TYPE_EXTERNAL) {
-    if( $response_id > 0 ) {
+    if( $response_id ) {
         $whereAt	= "pkaddressbookid = '$res_created_by'";
-    } 
+    }
     else {
         $discovery_created_by = $case_attorney;//$discovery_data['attorney_id'];
         $whereAt			  = "pkaddressbookid = '$discovery_created_by'";
@@ -225,7 +227,7 @@ else {
         if( $proponding_attorney ) {
             $where_attorneyDetails = " AND a.id = $proponding_attorney";
         }
-    } 
+    }
     else {
         assert( $view == Discovery::VIEW_RESPONDING, "INVALID \$view=$view" );
         $c_client_id = $responding;
@@ -234,7 +236,7 @@ else {
     $getAttorneyDetail	= $attorneyDetails[0];
 }
 
-$atorny_name	= User::getFullName( $getAttorneyDetail );
+$atorny_name	= $usersModel->getFullName( $getAttorneyDetail );
 $atorny_email	= $getAttorneyDetail['email'];
 $atorny_address	= $getAttorneyDetail['address'];
 $atorny_city	= $getAttorneyDetail['cityname'];
@@ -276,7 +278,7 @@ $allotherattornies = $AdminDAO->getrows('clients', "other_attorney_name,other_at
 ****************************************/
 if( in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS, Discovery::FORM_CA_RPDS)) ) {
     $orderByMainQuestions = "  ORDER BY CAST(question_number as DECIMAL(10,2)), q.question_number ";
-} 
+}
 else{
     $orderByMainQuestions = "  ORDER BY display_order, q.id ";
 }
@@ -295,7 +297,7 @@ $mainQuestions = $AdminDAO->getrows(	'discovery_questions dq,questions q',
                                         has_extra_text,
                                         extra_text,
                                         extra_text_field_label',
-                                        
+
                                         "q.id = dq.question_id  AND
                                         dq.discovery_id = '$discovery_id' AND (
                                             q.sub_part = '' OR
@@ -431,7 +433,7 @@ ob_start();
                     $answer_time 	= $getAnswers[0]['answer_time'];
                     $objection 		= trim($getAnswers[0]['objection']);
                     $final_response	= trim($getAnswers[0]['final_response']);
-                } 
+                }
                 else {
                     $answer 			= "";
                     $answer_time 		= "";
@@ -450,7 +452,7 @@ ob_start();
                 }
 
                 if( $question_type_id ) { // change by Hassan for sub elements
-                    $subQuestions = $AdminDAO->getrows( 
+                    $subQuestions = $AdminDAO->getrows(
                                         'discovery_questions dq,questions q',
                                         'dq.id as discovery_question_id,
                                         q.id as question_id,
@@ -488,8 +490,8 @@ ob_start();
                 if( $view == Discovery::VIEW_RESPONDING && $question_type_id == 3 ) {
                 }
                 else {
-                    if( $view == Discovery::VIEW_RESPONDING ) { 
-                        echo "	<b><u>Interrogatory</u></b>"; 
+                    if( $view == Discovery::VIEW_RESPONDING ) {
+                        echo "	<b><u>Interrogatory</u></b>";
                     }
                     echo "	<p class='q-subquestion'> $question_title $subquestuions_string </p>";
                     if( $has_extra_text ) {
@@ -506,7 +508,7 @@ ob_start();
                                 <p class='q-objection'> $objection </p>
                         ";
                     }
-                } 
+                }
                 else {
                     if( $question_type_id == 1 || ( $question_type_id == 3 && !sizeof($subQuestions) ) ) {
                         echo "	<br/>
@@ -601,7 +603,7 @@ ob_start();
                                     $is_pre_defined 		= $data['is_pre_defined'];
                                     $discovery_question_id	= $data['discovery_question_id'];
 
-                                    if($response_id > 0) {
+                                    if( $response_id ) {
                                         $getAnswers = $AdminDAO->getrows(
                                                             "response_questions","*",
                                                             "fkresponse_id				= :fkresponse_id AND
@@ -743,7 +745,7 @@ ob_start();
                             if( $answer == "I have responsive documents" ) {
                                 $answer	= "Responsive documents have been provided.";
                             }
-                            
+
                             $str1	= "A diligent search and a reasonable inquiry have been made in an effort to comply with this demand, however, responding party is unable to comply because they do not have any responsive documents in their possession, custody, or control.";
                             $str2 = $answer_detail ? (" However, respondent believes that ".$answer_detail." may have responsive documents.") : "";
                             if( $answer  == "Responsive documents have never existed") {
@@ -785,7 +787,7 @@ ob_start();
         <tr>
             <td align="left" valign="top"><?php echo date('F j, Y'); ?></td>
             <td align="right">
-                By: <?= User::getFullName($signingAttorney) ?><br/>
+                By: <?= $usersModel->getFullName($signingAttorney) ?><br/>
                     Attorney for <?= $att_for_client_role ?><br/>
                     <?= $att_for_client_name ?><br/>
                     Signed electronically,<br/>
@@ -811,7 +813,7 @@ ob_start();
     </tr>
     <tr>
         <td  colspan="2" align="justify">
-            <p class='declaration'>I am the <?php echo $verification_by_name ?> in this action, and I have read the foregoing <b><?php echo $form_name; ?></b> and know its contents. The matters stated therein are true based on my own knowledge, except as to those matters stated on information and belief, and as to those matters I believe them to be true.
+            <p class='declaration'>I am the <?= $verification_by_name ?> in this action, and I have read the foregoing <b><?= $formNAME ?></b> and know its contents. The matters stated therein are true based on my own knowledge, except as to those matters stated on information and belief, and as to those matters I believe them to be true.
             </p>
             <br/>
             <p class='declaration'>I declare under penalty of perjury under the laws of the State of California that the foregoing is true and correct. Executed on <?php echo date("F j, Y",strtotime($verification_datetime)); ?> at <?php echo $verification_city.", ".$verification_state; ?>. <i>Electronically Signed at <?php echo date("n/j/Y",strtotime($verification_datetime))." ".str_replace(array('am','pm'),array('a.m','p.m'),date("g:i a",strtotime($verification_datetime))) ?>. Pacific Time.</i>
@@ -863,7 +865,7 @@ $footertext			= '<table width="100%" style="margin-top:30px;">
                         <tr>
                             <td width="5%" style="line-height:3px"></td>
                             <td style="line-height:18px" align="center">{PAGENO}<br/>
-                                <br/>' . $form_name . '<br/>
+                                <br/>' . $formNAME . '<br/>
                                 All rights reserved © ' . date("Y") . ' EasyRogs. U.S. Patent Pending
                             </td>
                             <td width="5%"  style="text-align: right; line-height:3px"></td>

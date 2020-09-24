@@ -1,7 +1,7 @@
 <?php
   class Side extends BaseModel {
     const CASE_DATA_FIELDS = [
-      'case_number', 'case_title', 'plaintiff', 'defendant', 'trial', 
+      'case_number', 'case_title', 'plaintiff', 'defendant', 'trial',
       'discovery_cutoff', 'county_name', 'masterhead', 'normalized_number'
     ];
 
@@ -19,26 +19,26 @@
                                FROM sides AS s
                                     LEFT JOIN sides_users AS su
                                       ON s.id = su.side_id
-                               WHERE s.case_id = :case_id 
-                                     AND ( s.primary_attorney_id = :user_id  
+                               WHERE s.case_id = :case_id
+                                     AND ( s.primary_attorney_id = :user_id
                                            OR su.system_addressbook_id = :user_id )',
-        
+
         'getByClientAndCase' => 'SELECT s.*
                                    FROM sides AS s
                                      LEFT JOIN sides_clients AS sc
                                        ON s.id = sc.side_id
-                                 WHERE s.case_id = :case_id 
+                                 WHERE s.case_id = :case_id
                                        AND sc.client_id = :client_id',
-        
+
         'getUsers' => 'SELECT u.*, su.active AS side_active
                        FROM system_addressbook AS u
-                            INNER JOIN sides_users AS su 
+                            INNER JOIN sides_users AS su
                               ON su.system_addressbook_id = u.pkaddressbookid
                             INNER JOIN sides AS s
                               ON s.id = su.side_id
                        WHERE s.id = :side_id',
 
-        'getClients' => 'SELECT c.* 
+        'getClients' => 'SELECT c.*
                          FROM clients as c
                              INNER JOIN sides_clients AS sc
                                ON sc.client_id = c.id
@@ -46,16 +46,16 @@
                                ON s.id = sc.side_id
                          WHERE s.id = :side_id',
 
-        'getOtherClients' => 'SELECT c.* 
+        'getOtherClients' => 'SELECT c.*
                               FROM clients as c
                                   INNER JOIN sides_clients AS sc
                                     ON sc.client_id = c.id
                                   INNER JOIN sides AS s
                                     ON s.id = sc.side_id
-                              WHERE s.id != :side_id 
+                              WHERE s.id != :side_id
                                     AND s.case_id = :case_id',
 
-        'getPrimaryAttorney' => 'SELECT u.* 
+        'getPrimaryAttorney' => 'SELECT u.*
                                  FROM system_addressbook as u
                                       INNER JOIN sides AS s
                                         ON s.primary_attorney_id = u.pkaddressbookid
@@ -74,19 +74,19 @@
                                      FROM sides AS s
                                        INNER JOIN sides_clients AS sc
                                          ON ( sc.side_id = s.id )
-                                     WHERE s.case_id = :case_id 
+                                     WHERE s.case_id = :case_id
                                            AND sc.client_id IN (%1$s)',
-        
-        'getServiceList' => 'SELECT a.id AS attorney_id, 
-                                    a.attorney_name, 
+
+        'getServiceList' => 'SELECT a.id AS attorney_id,
+                                    a.attorney_name,
                                     a.attorney_email,
                                     u.*
                              FROM system_addressbook AS u
-                               INNER JOIN attorney AS a 
-                                 ON (a.fkaddressbookid = u.pkaddressbookid) 
+                               INNER JOIN attorney AS a
+                                 ON (a.fkaddressbookid = u.pkaddressbookid)
                              WHERE a.side_id = :side_id
                              GROUP BY u.pkaddressbookid',
-        
+
         'getUserServiceListClients' => 'SELECT c.*
                                         FROM clients AS c
                                           INNER JOIN client_attorney AS ca
@@ -122,7 +122,7 @@
       }
       else {
         $data = $this->readQuery($query, [
-          'case_id' => $caseId, 
+          'case_id' => $caseId,
           'user_id' => $userId
         ])[0];
         return $data;
@@ -132,7 +132,7 @@
     function getByClientAndCase($clientId, $caseId) {
       $query = $this->queryTemplates['getByClientAndCase'];
       return $this->readQuery($query, [
-        'case_id' => $caseId, 
+        'case_id' => $caseId,
         'client_id' => $clientId
       ])[0];
     }
@@ -142,17 +142,17 @@
       $sides = $casesModel->getSides($newSide['case_id']);
       foreach($sides as $side) {
         if ($side['id'] == $newSide['id']) { continue; }
-        
+
         $primaryAttorney = $usersModel->find($side['primary_attorney_id']);
         if ($primaryAttorney) {
           $clients = $this->getClients($side['id']);
           $this->updateServiceListForAttorney($newSide, $primaryAttorney, $clients);
         }
       }
-    }    
-    
+    }
+
     // $attorney - an attorney id OR a hash with system_addressbook data
-    // $attorney can be NULL 
+    // $attorney can be NULL
     function create($clientRole, $caseId, $attorney) {
       global $casesModel;
 
@@ -169,7 +169,7 @@
         'role'                => $clientRole,
         'primary_attorney_id' => $attorneyId
       ]);
-      
+
       $side = $this->find($sideId);
 
       // update created side with initial case data
@@ -177,10 +177,10 @@
       $this->updateCaseData($sideId, $case);
 
       $this->createServiceList($side);
-      
+
       return $side;
     }
-    
+
     function find($id) {
       return $this->getBy('sides', ['id' => $id], 1);
     }
@@ -196,7 +196,7 @@
       }
       $this->insert('sides_clients', [
         'side_id'   => $sideId,
-        'client_id' => $clientId        
+        'client_id' => $clientId
       ], true);
 
       $this->updateServiceListForPrimaryAttorney($side);
@@ -226,7 +226,7 @@
         $this->updateServiceLists($side, $user);
         if ( !Side::hasPrimaryAttorney($side) ) {
           $casesModel->setSideAttorney($side, $user['pkaddressbookid'], false);
-        }        
+        }
       }
 
       return true;
@@ -316,9 +316,9 @@
       $teams = new Team();
       $team = $teams->byAddressBookId($attorneyId);
       $teamMembers = $teams->getMembers($team['id']);
-      
+
       $side = $this->find($sideId);
-      $this->cleanupUsers($sideId);      
+      $this->cleanupUsers($sideId);
 
       foreach($teamMembers as $teamMember) {
         $userId = $teamMember['pkaddressbookid'];
@@ -337,8 +337,8 @@
 
     function getBulkByCaseClientIds($caseId, $clientIds) {
       $query = $this->queryTemplates['getBulkByCaseClientIds'];
-      return $this->readQuery($query, 
-        ['case_id' => $caseId],  
+      return $this->readQuery($query,
+        ['case_id' => $caseId],
         ['client_ids' => implode(',', $clientIds)]
       );
     }
@@ -346,16 +346,16 @@
     function isMergeable($mainSide, $withSide) {
       $mainUserIds = self::pluck($this->getUsers($mainSide['id']), 'pkaddressbookid');
       $withUserIds = self::pluck($this->getUsers($withSide['id']), 'pkaddressbookid');
-      
+
       if ($mainSide['primary_attorney_id']) {
         $mainUserIds[] = $mainSide['primary_attorney_id'];
       }
 
       // Sides are role aggregable AND the second side doesnt have primary
       // attorney set AND (doesnt have users OR they are already on the main side)
-      return $mainSide['id'] === $withSide['id'] 
+      return $mainSide['id'] === $withSide['id']
              || ( self::isRoleAggregable($mainSide, $withSide) &&
-                  !$withSide['primary_attorney_id'] &&  
+                  !$withSide['primary_attorney_id'] &&
                   (count($withUserIds) === 0 ||
                    array_diff($withUserIds, $mainUserIds) === 0));
     }
@@ -385,7 +385,7 @@
         $sides = $carry[2];
         return [$carry[0], $carry[1] && $sides->isMergeable($carry[0], $item), $sides];
       }
-      
+
       $clientSides = $this->getBulkByCaseClientIds($caseId, $clientIds);
       if ($clientSides) {
         if ( !$mainSide ) {
@@ -396,7 +396,7 @@
         $mergeable = array_reduce(
           $clientSides, 'checkMergeable', [$mainSide, true, $this]
         )[1];
-        
+
         if ( $mergeable ) {
           foreach( $clientSides as $clientSide ) {
             $this->moveUsers($clientSide, $mainSide);
@@ -414,7 +414,7 @@
 
     function getMasterHead($side, $update = true) {
       global $usersModel, $logger;
-      
+
       if (!is_array($side)) { // assume ID
         $side = $this->find($side);
       }
@@ -425,7 +425,7 @@
         $logger->debug('SIDE_GET_MASTERHEAD Updating Side: ' . json_encode($side));
         $masterhead = $usersModel->getMasterHead($side['primary_attorney_id']);
       }
-      
+
       if (!$side['masterhead'] && $update && $masterhead) {
         $this->update('sides',
           ['masterhead' => $masterhead],
@@ -439,18 +439,18 @@
     function activateUser($sideId, $userId) {
       global $usersModel, $casesModel;
 
-      $this->update('sides_users', 
-        ['active' => true], 
+      $this->update('sides_users',
+        ['active' => true],
         [
           'side_id'               => $sideId,
           'system_addressbook_id' => $userId
         ],
         true
       );
-      
+
       $user = $usersModel->find($userId);
       $side = $this->find($sideId);
-      
+
       if (User::isAttorney($user)) {
         if ( !Side::hasPrimaryAttorney($side) ) {
           $casesModel->setSideAttorney($side, $user['pkaddressbookid'], false);
@@ -458,7 +458,7 @@
         $this->updateServiceLists($side, $user);
       }
       if (User::isAttorney($user)) {
-        
+
       }
     }
 
@@ -481,18 +481,18 @@
       $serviceList = $this->readQuery($query, ['side_id' => $side['id']]);
       foreach($serviceList as &$user) {
         $attorneyId = $user['attorney_id'];
-        
+
         $clientIds = self::pluck(
           $this->getBy('client_attorney', ['attorney_id' => $attorneyId]),
           'client_id'
         );
-        
+
         // TODO: maybe solve this with a join query.
         foreach( $clientIds as $clientId ) {
           $user['clients'][] = $this->getBy('clients', ['id' => $clientId], 1);
         }
       }
-      
+
       return $serviceList;
     }
 
@@ -500,7 +500,7 @@
       global $currentUser;
 
       $slAttorney = $this->getBy('attorney', [
-        'side_id'         => $side['id'], 
+        'side_id'         => $side['id'],
         'fkaddressbookid' => $user['pkaddressbookid']
       ], 1);
 
@@ -516,31 +516,31 @@
           'updated_by'      => $currentUser->id,
           'side_id'         => $side['id']
         ], true);
-        
+
         if ( (int)$slAttorneyId ) {
           $slAttorney = $this->getBy('attorney', ['id' => $slAttorneyId], 1);
-        }        
+        }
       }
-      
+
       return $slAttorney;
     }
 
     // $side:  side hash or id
-    // $attorney: user hash or id 
+    // $attorney: user hash or id
     // $clients: client hash array or ids array
     // TODO: this function is getting fat
     function updateServiceListForAttorney($side, $user, $clients, $name = '', $email = '', $overwrite = true) {
       global $currentUser, $usersModel, $clientsModel;
-      
+
       $side = is_array($side) ? $side : $this->find($side);
       $user = is_array($user) ? $user : $usersModel->find($user);
 
-      $name  = $name  ? $name  : User::getFullName($user);
-      $email = $email ? $email : $user['email'];
+      $name  = $name  ?: $usersModel->getFullName($user);
+      $email = $email ?: $user['email'];
 
       if ($slAttorney = $this->getServiceListAttorney($side, $user, $name, $email) ) {
         $this->update('attorney',
-          ['attorney_name' => $name, 'attorney_email' => $email], 
+          ['attorney_name' => $name, 'attorney_email' => $email],
           ['id' => $slAttorney['id']]
         );
 
@@ -583,14 +583,14 @@
       $user = is_array($user) ? $user : $usersModel->find($user);
 
       return $this->deleteBy('attorney', [
-        'fkaddressbookid' => $user['pkaddressbookid'], 
+        'fkaddressbookid' => $user['pkaddressbookid'],
         'side_id'         => $side['id']
       ]);
     }
 
     function getUserServiceListClients($side, $user) {
       global $usersModel;
-      
+
       $query = $this->queryTemplates['getUserServiceListClients'];
 
       $side = is_array($side) ? $side : $this->find($side);
@@ -631,7 +631,7 @@
       global $sidesModel;
 
       $side = is_array($side) ? $side : $sidesModel->find($side);
-     
+
       return !!$side['primary_attorney_id'];
     }
 
@@ -640,18 +640,18 @@
       foreach(self::CASE_DATA_FIELDS as $field) {
         $case[$field] = $side[$field];
       }
-      
+
       if ($updateId) {
         $case['id'] = $side['case_id'];
-      }      
-      
+      }
+
       return $case;
     }
-    
+
     // LEGACY COMPATIBILITY
     // this function will try to replace all case data fields on any structure
-    // to the side version of provided  or current user. 
-    // DESTRUCTIVE : modifies the data param 
+    // to the side version of provided  or current user.
+    // DESTRUCTIVE : modifies the data param
     static function legacyTranslateCaseData($caseId, &$data, $userId = null) {
       global $sidesModel, $currentUser;
 
@@ -662,9 +662,9 @@
       if (!$side) return $data;
 
       $isCollection = count(
-        array_diff( 
-          self::CASE_DATA_FIELDS, 
-          array_keys($data) 
+        array_diff(
+          self::CASE_DATA_FIELDS,
+          array_keys($data)
         )
       ) == count(self::CASE_DATA_FIELDS);
 

@@ -1,0 +1,61 @@
+.kb-item {
+	font-size:16px;
+}
+.kb-item hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.kb-item>a.collapsed {
+    display: block;
+    padding: 0 0 1rem;
+    margin: 0 0 1.2rem;
+    border-bottom: 1px solid lightgray;
+}
+.kb-item-content {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid lightgray;
+}
+.kb-item-content>*:last-child {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+#btn-objections {
+	margin: 0 0.5rem;
+}
+#btn-objections > span:before,
+#btn-definitions > span:before {
+    font: inherit;
+    content: " Show ";
+}
+#btn-objections.open > span:before,
+#btn-definitions.open > span:before {
+    font: inherit;
+    content: " Hide ";
+}
+.btn-add-objection {
+    margin: 0.5rem;
+}
+
+.sidebar .kb-item * {
+	font-size: 12px;
+    text-align: left;
+    line-height: 1.6em;
+}
+.sidebar .kb-item > h4,
+.sidebar .kb-item-content > p {
+    padding: 0 0.5em 0 0;
+}
+.sidebar .kb-item>h4 {
+    font-weight: 600;
+    padding: 0 0.5em 0 0;
+}
+
+#kb-modal {
+	z-index: 9999; position: absolute;
+}
+#kb-modal .modal-body {
+    padding: 0.5rem 2rem;
+}
+#placeholder_kb_modal_content {
+	overflow: hidden;
+}

@@ -3,7 +3,7 @@
     const TABLE = 'system_addressbook';
 
     const PUBLISHABLE_KEYS = [
-      'pkaddressbookid', 'firstname', 'middlename', 'lastname', 'email', 
+      'pkaddressbookid', 'firstname', 'middlename', 'lastname', 'email',
       'address', 'barnumber', 'masterhead', 'fkgroupid', 'side_active',
       'emailverified', 'credits'
     ];
@@ -27,14 +27,14 @@
       parent::__construct( $dbConfig );
 
       $this->queryTemplates = array_merge( $this->queryTemplates, [
-        // This query returns all owner attorneys from all the teams of an user, 
+        // This query returns all owner attorneys from all the teams of an user,
         'getTeamAttorneys' => 'SELECT u.*
                                  FROM teams AS t
-                                   INNER JOIN system_addressbook AS u 
+                                   INNER JOIN system_addressbook AS u
                                      ON t.system_addressbook_id = u.pkaddressbookid
-                                   WHERE t.id IN ( 
-                                           SELECT team_id 
-                                           FROM users_teams 
+                                   WHERE t.id IN (
+                                           SELECT team_id
+                                           FROM users_teams
                                            WHERE users_teams.system_addressbook_id = :user_id
                                          ) AND u.fkgroupid = ' . self::ATTORNEY_GROUP_ID,
       ]);
@@ -43,9 +43,9 @@
     static function publishable($users, $allowKeys = []) {
       $singleUser = isset($users['pkaddressbookid']);
       $users = $singleUser ? [$users] : $users;
-      
+
       if ( !$users ) { return false; }
-      
+
       $allowedKeys = array_merge(self::PUBLISHABLE_KEYS, $allowKeys);
       foreach($users as &$user) {
         if (is_array($user)) {
@@ -54,7 +54,7 @@
               unset($user[$key]);
             }
           }
-        
+
           $user['id'] = $user['pkaddressbookid'];
           $user['full_name'] = self::getFullName($user);
           $user['group_name'] = self::GROUP_NAMES[$user['fkgroupid']];
@@ -100,7 +100,7 @@
 
     function create($fieldsMapping) {
       global $currentUser;
-      
+
       $id = $this->insert(self::TABLE, array_merge([
         'uid'                => $this->generateUID('system_addressbook'),
         'username'           => '',
@@ -130,9 +130,9 @@
 
     function searchInGroups($groupIds, $term, $fields = self::SEARCH_FIELDS) {
       return $this->searchBy(
-        self::TABLE, 
-        $term, 
-        $fields, 
+        self::TABLE,
+        $term,
+        $fields,
         ['fkgroupid' => $groupIds]
       );
     }
@@ -156,7 +156,7 @@
       if (!$user) {
         self::parseFullName($name, $nameParts);
         $user = $this->create([
-          'firstname'  => $nameParts[1], 
+          'firstname'  => $nameParts[1],
           'middlename' => $nameParts[2],
           'lastname'   => $nameParts[3],
           'email'      => $email,
@@ -167,33 +167,32 @@
     }
 
     function getMasterHead($user, $update = true) {
-      if (!is_array($user)) { // assume ID
-        $user = $this->find($user);
-      }
-      $masterhead = $user['masterhead'] 
-                    ? $user['masterhead'] 
-                    : $this->buildMasterHead($user);
-      
+      $user = $this->asUser($user);
+
+      $masterhead = $user['masterhead'] ?: $this->buildMasterHead($user);
+
       if (!$user['masterhead'] && $update && $masterhead) {
-        $this->update('system_addressbook', 
-          ['masterhead' => $masterhead], 
+        $this->update('system_addressbook',
+          ['masterhead' => $masterhead],
           ['pkaddressbookid' => $user['pkaddressbookid']]
         );
       }
 
-      return $masterhead;      
+      return $masterhead;
     }
 
     function buildMasterHead($user) {
       function implodeLine($line) {
         foreach($line as &$item) { $item = trim($item); }
-        return trim(implode(' ', $line), ' ,'); 
+        return trim(implode(' ', $line), ' ,');
       }
 
-      $fullName = self::getFullName($user);
+      $user = $this->asUser($user);
+      $fullName = $this->getFullName($user);
+
       $state = $this->getBy('system_state', ['pkstateid' => $user['fkstateid']], 1);
       $stateShort	=	$state['statecode'];
-    
+
       $parts = [
         [$fullName, $user['barnumber'] ? "($user[barnumber])" : ''],
         [$user['companyname']],
@@ -202,7 +201,7 @@
         [$user['phone']],
         [$user['email']]
       ];
-      
+
       $lines = array_map('implodeLine', $parts);
       $masterHead = trim( implode( "\n", $lines) );
       return str_replace("\n\n", "\n", $masterHead);
@@ -219,12 +218,22 @@
       preg_match( '/(\S+)\s+(?:(\S+)\s+|)(.*)/', preg_replace('/\s+/', ' ', trim($fullname)), $nameParts );
       return $nameParts;
     }
-    static function getFullName($user) {
-      return trim("$user[firstname] $user[middlename] $user[lastname]");
+    public function asUser($user) {
+      if( !is_array($user) ) {
+        $user = ( strlen($user) >= 16 )
+                    ? $this->findByUID($user)
+                    : $this->find($user);
+      }
+      return $user;
     }
-    static function getFullAddress($user) {
+    public function getFullName($user) {
+      $user = $this->asUser($user);
+      return trim($user['firstname']) .' '. trim($user['middlename']) .' '. trim($user['lastname']);
+    }
+    public function getFullAddress($user) {
       global $statesModel;
-      
+
+      $user = $this->asUser($user);
       $state = $statesModel->find($user['fkstateid']);
 
       return trim("$user[address], $user[street], $user[cityname], $state[statecode], $user[zip]", ' ,');
@@ -257,7 +266,7 @@
           self::ATTORNEY_GROUP_ID
         );
       }
-    
+
       return $user;
     }
 
@@ -297,7 +306,7 @@
 
       if( !$customerId = $user['payment_customer_id'] ) {
         $customer = $stripe->customers->create([
-          'name'    => User::getFullName($user),
+          'name'    => $usersModel->getFullName($user),
           'address' => User::stripeAddressHash($user),
           'email'   => $user['email'],
           'phone'   => $user['phone']
@@ -315,4 +324,9 @@
 
   }
 
-  $usersModel = new User();
+$usersModel = new User();
+
+function getUserName($id) { global $usersModel;
+
+	return $usersModel->getFullName($id);
+}

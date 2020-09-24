@@ -32,9 +32,20 @@ class Response extends Payable {
                        INNER JOIN responses AS r ON (rq.fkresponse_id = r.id)
                        INNER JOIN discoveries AS d ON (r.fkdiscoveryid = d.id)
                      WHERE r.id = :response_id
-                     ORDER BY display_order ASC, question_number ASC, sub_part ASC'
+                     ORDER BY display_order ASC, question_number ASC, sub_part ASC',
+        'getByUID' => 'SELECT
+                          *
+                        FROM
+                          discoveries d, responses r
+                        WHERE
+                          d.uid = :uid AND
+                          d.id  = r.fkdiscoveryid
+                        ORDER BY r.id DESC
+                      '
       ]);
     }
+
+    const PREFIX_RESPONSE = 'Response to ';
 
     function find($id, $includeQAs = true) {
       $response = $this->getBy( 'responses', ['id' => $id], 1);
@@ -44,6 +55,14 @@ class Response extends Payable {
       }
 
       return $response;
+    }
+
+    function getByDiscovery($id) {
+      if( strlen($id) >= 16 ) { // is it an UID?
+        $query = $this->queryTemplates['getByUID'];
+        return $this->readQuery( $query, ['uid' => $id] );
+      }
+      return $this->getBy( 'responses', ['fkdiscoveryid' => $id] );
     }
 
     public function updateById($id, $fields, $ignore = false) {
@@ -199,6 +218,46 @@ class Response extends Payable {
         break;
       }
     }
+
+    public function isAnyServed($responses) {
+        foreach($responses as $response) {
+          if( $response['isserved'] ) {
+            return true;
+          }
+        }
+        return false;
+    }
+
+    private function asResponse($response) {
+      assert( !empty($response), "A proper response was expected here, \$response=$response" );
+        if( !is_array($response) ) {
+          $response = $this->find($response);
+        }
+        assert( !empty($response) && !empty($response['id']), "A proper response was expected here, \$response=$response" );
+      return $response;
+    }
+
+    public function getTitle($response, $discovery = null, $isSupplAmended = false) { global $logger, $discoveriesModel;
+
+      $result = '';
+      if( $response ) { // get from Response
+        $response = $this->asResponse($response);
+        $result = $response['responsename'];
+      }
+
+      if( !$result ) { // compose from Discovery
+        assert( !empty($discovery), "A discovery needs to be specified, \$discovery=$discovery" );
+        $result = self::PREFIX_RESPONSE. $discoveriesModel->getTitle($discovery);
+      }
+
+      if( $isSupplAmended ) {
+        $result = Discovery::PREFIX_SUPP_AMENDED. $result;
+      }
+
+      return $result;
+    }
+    // ? Discovery::composeTitle( $response['responsename'], null, Discovery::STYLE_WORDCAPS )
+    // : 'Response to '. $discovery['discovery_name'] .' [Set '. $discovery['set_number'] .']'; // failsafe, shouldn't be needed
 
   }
 

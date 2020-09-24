@@ -2,123 +2,72 @@
 require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
-$uid            = $_GET['id'];
-$view           = $_GET['view'];
-$respond        = $_GET['respond'];
-$response_id    = $_GET['response_id'];
-$supp           = @$_GET['supp'];
-if ($supp == "") {
-    $supp = 0;
-}
-if ($view == 1) {
+$view    = @$_GET['view'];
+$respond = @$_GET['respond'];
+$is_supp = @$_GET['supp'] ?: 0;
+
+$uid         = @$_GET['id'];
+$response_id = @$_GET['response_id'];
+
+if ($view == 1) { // TODO [!?]
     $css = "";
 } else {
-    $css ="";
+    $css = "";
 }
 
 
 /***************************************
 		Query For Header Data
 ****************************************/
-//$AdminDAO->displayquery=1;
-$discoveryDetails = $AdminDAO->getrows(
-    'discoveries d,cases c,system_addressbook a,forms f',
-    'c.case_title 	as case_title,
-											c.case_number 	as case_number,
-											c.jurisdiction 	as jurisdiction,
-											c.judge_name 	as judge_name,
-											c.county_name 	as county_name,
-											c.court_address as court_address,
-											c.department 	as department,
-											d.case_id 		as case_id,
-											d.id 			as discovery_id,
-											d.uid,
-											d.due,
-											d.served,
-											d.type,
-											/* d.discovery_instrunctions Fixed by JS 3/2/20 */
-											/* d.discovery_instructions, */
-											c.plaintiff,
-											c.defendant,
-											d.send_date,
-											d.propounding,
-											d.responding,
-											d.form_id 		as form_id,
-											d.set_number 	as set_number,
-											d.discovery_introduction as introduction,
-											f.form_name	 	as form_name,
-											f.short_form_name as short_form_name,
-											a.firstname 	as atorny_fname,
-											a.lastname 		as atorny_lname,
-											d.attorney_id	as attorney_id,
-											d.discovery_name,
-											d.conjunction_setnumber,
-											d.interogatory_type,
-											a.email,
-											f.form_instructions
-											 as instructions
-											',
-    /*(d.responding_uid 			= :uid OR d.propounding_uid = :uid) AND */
-                                            "d.uid 			= :uid AND
-
-											d.case_id 		= c.id AND
-											d.form_id		= f.id AND
-											d.attorney_id 	= a.pkaddressbookid",
-    array(":uid"=>$uid)
-);
-
-$discovery_data = $discoveryDetails[0];
+$discovery_data = $discoveriesModel->findDetails($uid);
 Side::legacyTranslateCaseData(
   $discovery_data['case_id'],
   $discovery_data
 );
 
-$case_title                     = $discovery_data['case_title'];//$discovery_data['plaintiff']." V ".$discovery_data['defendant'];
-$discovery_id                   = $discovery_data['discovery_id'];
-$case_number                    = $discovery_data['case_number'];
-$jurisdiction                   = $discovery_data['jurisdiction'];
-$judge_name                     = $discovery_data['judge_name'];
-$county_name                    = $discovery_data['county_name'];
-$court_address                  = $discovery_data['court_address'];
-$department                     = $discovery_data['department'];
-$case_id                        = $discovery_data['case_id'];
-$form_id                        = $discovery_data['form_id'];
-$set_number                     = $discovery_data['set_number'];
-$atorny_name                    = $discovery_data['atorny_fname']." ".$discovery_data['atorny_lname'];
-$attorney_id                    = $discovery_data['attorney_id'];
-$setSuffix                      = " [Set ".$set_number."]";
-$form_name                      = $discovery_data['form_name'].$setSuffix;
-$short_form_name                = $discovery_data['short_form_name'];
-$send_date                      = $discovery_data['send_date'];
-$email                          = $discovery_data['email'];
-$instructions                   = $discovery_data['discovery_instrunctions'];
-$type                           = $discovery_data['type'];
-$introduction                   = $discovery_data['introduction'];
-$propounding                    = $discovery_data['propounding'];
-$responding                     = $discovery_data['responding'];
-$discovery_name                 = $discovery_data['discovery_name'];
-$served                         = $discovery_data['served'];
-$due                            = $discovery_data['due'];
-if ($served  != "") {
-    $served                             = dateformat($discovery_data['served']);
+$case_title      = $discovery_data['case_title'];
+$discovery_id    = $discovery_data['discovery_id'];
+$case_number     = $discovery_data['case_number'];
+$jurisdiction    = $discovery_data['jurisdiction'];
+$judge_name      = $discovery_data['judge_name'];
+$county_name     = $discovery_data['county_name'];
+$court_address   = $discovery_data['court_address'];
+$department      = $discovery_data['department'];
+$case_id         = $discovery_data['case_id'];
+$form_id         = $discovery_data['form_id'];
+$set_number      = $discovery_data['set_number'];
+$atorny_name     = $discovery_data['attorney'];
+$attorney_id     = $discovery_data['attorney_id'];
+$short_form_name = $discovery_data['short_form_name'];
+$send_date       = $discovery_data['send_date'];
+$email           = $discovery_data['email'];
+$instructions    = $discovery_data['discovery_instrunctions'];
+$type            = $discovery_data['type'];
+$introduction    = $discovery_data['introduction'];
+$propounding     = $discovery_data['propounding'];
+$responding      = $discovery_data['responding'];
+$served          = $discovery_data['served'];
+$due             = $discovery_data['due'];
+if( $served ) {
+    $served = dateformat($served);
 }
-if ($due     != "") {
-    $due                            = dateformat($discovery_data['due']);
+if( $due != "" ) {
+    $due = dateformat($discovery_data['due']);
 }
-
-if ($view == 1) {
-    $form_name = strtoupper($discovery_name);
+if( ($view == Discovery::VIEW_RESPONDING) || $respond || $response_id ) { //!!
+  $form_name = $responsesModel->getTitle($response_id, $discovery_data);
 } else {
-    $form_name = strtoupper("RESPONSE TO ".$discovery_name);
+  $form_name = $discoveriesModel->getTitle($discovery_data);
 }
-$form_name = $form_name.$setSuffix;
+$setSuffix = $discoveriesModel->getSet($discovery_data);
+
 /***************************************
 Query For Forms 1,2,3,4,5 Questions
 ****************************************/
 if (in_array($form_id, array(Discovery::FORM_CA_SROGS,Discovery::FORM_CA_RFAS,Discovery::FORM_CA_RPDS))) {
-    $orderByMainQuestions   = "  ORDER BY CAST(question_number as DECIMAL(10,2)), q.question_number ";
+    $orderByMainQuestions = "  ORDER BY CAST(question_number as DECIMAL(10,2)), q.question_number ";
 } else {
-    $orderByMainQuestions   = "  ORDER BY display_order, q.id ";
+    $orderByMainQuestions = "  ORDER BY display_order, q.id ";
 }
 
 $mainQuestions  = $AdminDAO->getrows(
@@ -153,10 +102,10 @@ $mainQuestions  = $AdminDAO->getrows(
 /**
 * GET Response Details
 **/
-if ($response_id > 0) {
-    $getResponseDetails     = $AdminDAO->getrows('responses', "*", "id = '$response_id'");
-    $discovery_verification = $getResponseDetails[0]['discovery_verification'];
-    $served                 = $getResponseDetails[0]['servedate'];
+if( $response_id ) {
+    $getResponseDetails     = $responsesModel->find($response_id);
+    $discovery_verification = $getResponseDetails['discovery_verification'];
+    $served                 = $getResponseDetails['servedate'];
     if ($served == "0000-00-00 00:00:00") {
         $served = "";
     } else {
@@ -165,10 +114,12 @@ if ($response_id > 0) {
     /**
     * If going to create Supp/Amend of Response
     **/
-    if( $supp == 1 ) {
-        $getResponse    = $AdminDAO->getrows("responses", "*", "fkdiscoveryid = :fkdiscoveryid AND fkresponseid != 0", array(":fkdiscoveryid"=>$discovery_id));
-        $totalResponses = sizeof($getResponse)+1; // TODO This thing is actually only using the COUNT(*)
-        $form_name      = numToOrdinalWord($totalResponses) ." Supplemental/Amended Response to ". $discovery_name . $setSuffix;
+    if( $is_supp ) {
+        $responses = $AdminDAO->getrows("responses", "COUNT(*) as COUNT",
+                            "fkdiscoveryid = :fkdiscoveryid AND fkresponseid != 0",
+                            array(":fkdiscoveryid"=>$discovery_id))[0];
+        $totalResponses = $responses['COUNT'];
+        $form_name = numToOrdinalWord($totalResponses+1) ." ". $responsesModel->getTitle(0,$discovery_data, $is_supp);
     }
 } else {
     $discovery_verification = "";
@@ -232,10 +183,6 @@ if (in_array($form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE
         $isconwithdiscoveryid = $isConWithDiscovery[0]['id'];
     }
 }
-
-//$AdminDAO->displayquery=1;
-//dump($discoveryDetails);
-//exit;
 
 //Responding Party
 $respondingdetails      = $AdminDAO->getrows("clients", "*", "id = :id", array(":id"=>$responding));
@@ -316,7 +263,7 @@ body.modal-open
                   </tbody>
                 </table>
                     <form name="discoverydetailsform" action="#" method="post" id="discoverydetailsform">
-                <input type="hidden" name="supp" value="<?= $supp ?>">
+                <input type="hidden" name="supp" value="<?= $is_supp ?>">
                 <input type="hidden" name="supp_form_name" value="<?= $form_name ?>">
                 <input type="hidden" name="form_id" value="<?= $form_id ?>">
                 <input type="hidden" name="response_id" value="<?= $response_id ?>">
@@ -1161,7 +1108,7 @@ function loadinstructions( form_id, id ) {
             $("#loadinstructions").html( trim(resp) );
 
             const   type = <?= $respond ?: 0 ?> ? 2 : 1,
-                    { discoveryType, discoveryFormNames, discoveryForm, } = globalThis,
+                    { discoveryFormNames, discoveryForm, } = globalThis,
                     suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
             ctxUpdate({ id: `49_${type}${suffix}`, pkscreenid: '49', url: 'discoverydetails.php', } );
 

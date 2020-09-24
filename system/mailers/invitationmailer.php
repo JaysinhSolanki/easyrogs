@@ -29,8 +29,8 @@
       $invitation = $invitationsModel->create($invitee['pkaddressbookid']);
       $smarty->assign([
         'ASSETS_URL'  => ASSETS_URL,
-        'name'        => User::getFullName($invitee),
-        'senderName'  => User::getFullName($sender),
+        'name'        => $usersModel->getFullName($invitee),
+        'senderName'  => $usersModel->getFullName($sender),
         'senderEmail' => $sender['email'],
         'senderFirm'  => $primaryAttorney['companyname'],
         'caseName'    => $side['case_title'] ?: $case['case_title'],
@@ -57,8 +57,8 @@
       $invitation = $invitationsModel->create($invitee['pkaddressbookid']);
       $smarty->assign([
         'ASSETS_URL'  => ASSETS_URL,
-        'name'        => User::getFullName($invitee),
-        'senderName'  => User::getFullName($sender),
+        'name'        => $usersModel->getFullName($invitee),
+        'senderName'  => $usersModel->getFullName($sender),
         'senderEmail' => $sender['email'],
         'senderFirm'  => $sender['companyname'],
         'actionUrl'   => $invitation['link'],
@@ -66,7 +66,7 @@
       ]);
       $body    = $smarty->fetch('emails/team-invite.tpl');
       $to      = $invitee['email'];
-      $subject = sprintf(self::TEAM_INVITE_SUBJECT, User::getFullName($sender));
+      $subject = sprintf(self::TEAM_INVITE_SUBJECT, $usersModel->getFullName($sender));
 
       parent::sendEmail($to, $subject, $body);
     }

@@ -11,7 +11,7 @@
 
     private $files = [];
     private $logsDir;
-    
+
     public $stdOut = false;
 
     function __construct( $logsDir = LOGS_DIR, $stdOut = false )
@@ -28,12 +28,15 @@
       }
     }
 
-    protected function log_text($message, $level, $printBacktrace = false)
-    {
-      if ( is_array( $message ) || is_object( $message ) ) {
-        $message = json_encode($message,JSON_PRETTY_PRINT+JSON_UNESCAPED_LINE_TERMINATORS+JSON_UNESCAPED_SLASHES);
+    static function toString( $value ) {
+      if ( is_array( $value ) || is_object( $value ) ) {
+        return json_encode( $value, JSON_PRETTY_PRINT+JSON_UNESCAPED_LINE_TERMINATORS+JSON_UNESCAPED_SLASHES );
       }
+      return $value;
+    }
 
+    protected function log_text($message, $level, $printBacktrace = false) {
+      $message = Logger::toString($message);
 
       if ($printBacktrace) {
         $e = new Exception();
@@ -68,10 +71,10 @@
 
     public function info($message,  $printBacktrace = false) { $this->log($message, self::INFO,  $printBacktrace); }
     public function warn($message,  $printBacktrace = false) { $this->log($message, self::WARN,  $printBacktrace); }
-    public function error($message, $printBacktrace = false) { $this->log($message, self::ERROR, $printBacktrace); }    
-    public function debug($message, $printBacktrace = false) { 	
+    public function error($message, $printBacktrace = false) { $this->log($message, self::ERROR, $printBacktrace); }
+    public function debug($message, $printBacktrace = false) {
       if ($_ENV['APP_ENV'] != 'prod') {
-        $this->log($message, self::DEBUG, $printBacktrace); 
+        $this->log($message, self::DEBUG, $printBacktrace);
       }
     }
 
@@ -80,11 +83,11 @@
       $message = $this->log_text($message, $level, $printBacktrace);
       $code = '';
       if( $alert ) {
-        $code .= "window.alert(`$alert`);\n\r";
+        $code .= "window.alert(`". Logger::toString($alert) ."`);\n\r";
       }
       if( $message ) {
-        $code .= "console.log(`$message`);\n\r"; // TODO select console.?? by $level
+        $code .= "console.log(`". Logger::toString($message) ."`);\n\r"; // TODO select console.?? by $level
       }
-      echo "<script>$code</script>"; 
+      echo "<script>$code</script>";
     }
 }

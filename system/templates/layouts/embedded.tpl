@@ -19,14 +19,14 @@
               </h4>
             {/if}
           </div>
-          <div class="panel-body">
+          <div class="panel-body contents">
             {block name=panel_body}{/block}
           </div>
         </div>
       </div>
-    </div>  
+    </div>
     {block name=main_bottom}{/block}
-  </div>  
+  </div>
   <aside class="sidebar right">
     <div class="fixed"></div>
   </aside>

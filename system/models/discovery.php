@@ -1,5 +1,120 @@
 <?php
-  class Discovery extends Payable {
+
+class Discovery extends Payable {
+
+    function __construct( $dbConfig = null )
+    {
+      parent::__construct( $dbConfig );
+
+      $this->queryTemplates = array_merge( $this->queryTemplates, [
+        // TODO temporary measure, needed until the old code is refactored
+        'getDetails' => "
+                          SELECT
+                            d.uid as discovery_uid, d.id,
+                            (SELECT d.id) AS discovery_id,
+                            d.case_id, c.uid as case_uid,
+                            d.propounding,     d.responding,
+                            d.propounding_uid, d.responding_uid,
+                            c.case_title, c.case_number,
+                            c.plaintiff, c.defendant,
+                            c.judge_name, c.jurisdiction, c.court_address, a.cityname, c.county_name,
+                            c.department,
+                            d.is_served, d.served,
+                            d.is_send,   d.send_date,
+                            d.discovery_introduction as introduction,
+                            d.form_id,
+                            f.form_name, f.short_form_name,
+                            d.discovery_name, d.set_number,
+                            a.email,
+                            a.attorney_info,
+                            a.firstname, a.middlename, a.lastname,
+                            TRIM(
+                              REPLACE( CONCAT(
+                                COALESCE( a.firstname,  '' ), ' ',
+                                COALESCE( a.middlename, '' ), ' ',
+                                COALESCE( a.lastname,   '' )
+                              ), '  ', ' ' )
+                            ) AS attorney,
+                            a.address		  as atorny_address,
+                            a.companyname	as atorny_firm,
+                            d.attorney_id	as attorney_id
+                          FROM
+                            discoveries d, cases c, system_addressbook a, forms f
+                          WHERE
+                            d.id          = :id AND
+                            d.case_id     = c.id AND
+                            d.form_id     = f.id AND
+                            d.attorney_id = a.pkaddressbookid
+                        ",
+
+        'getSuppAmended' => "
+                          SELECT
+                            d.id, d.uid,
+                            d.propounding_uid, d.responding_uid,
+                            d.propounding,     d.responding,
+                            d.is_served, d.served,
+                            d.due,
+                            c.case_title,
+                            d.attorney_id as creator_id,
+                            TRIM(
+                              REPLACE( CONCAT(
+                                COALESCE( a.firstname,  '' ), ' ',
+                                COALESCE( a.middlename, '' ), ' ',
+                                COALESCE( a.lastname,   '' )
+                              ), '  ', ' ' )
+                            ) AS attorney,
+                            (SELECT attorney) AS creator,
+                            d.discovery_name, d.set_number,
+                            f.form_name, f.short_form_name,
+                            d.form_id,
+                            d.type,
+                            IF( send_date='0000-00-00 00:00:00', '-', send_date ) send_date
+                          FROM
+                            discoveries d, cases c, system_addressbook a, forms f
+                          WHERE
+                            d.grand_parent_id	= :id AND
+                            c.id              = d.case_id AND
+                            f.id              = d.form_id AND
+                            a.pkaddressbookid = d.attorney_id
+                          ",
+
+        'getByCase' => "
+                          SELECT
+                            d.id,
+                            d.uid,
+                            d.propounding, d.responding,
+                                      d.propounding_uid, d.responding_uid,
+                            is_served, d.served,
+                            d.due,
+                            c.case_title,
+                            d.attorney_id as creator_id,
+                            TRIM(
+                              REPLACE( CONCAT(
+                                COALESCE( a.firstname,  '' ), ' ',
+                                COALESCE( a.middlename, '' ), ' ',
+                                COALESCE( a.lastname,   '' )
+                              ), '  ', ' ' )
+                            ) AS attorney,
+                            (SELECT attorney) AS creator,
+                            d.discovery_name, d.set_number,
+                            form_name, short_form_name,
+                            form_id,
+                            d.type,
+                            IF(send_date='0000-00-00 00:00:00', '-', send_date) send_date
+                          FROM
+                            discoveries d, cases c, system_addressbook a, forms f
+                          WHERE
+                            c.id                  = d.case_id AND
+                            f.id                  = d.form_id AND
+                            pkaddressbookid       = d.attorney_id AND
+                            d.parentid	          = 0 AND
+                            d.is_work_in_progress	= 0 AND
+                            c.id 				          = :case_id
+                          ORDER BY discovery_name ASC
+                          ",
+      ]);
+    }
+
     const FORM_FED_FROGS  = 11;
     const FORM_FED_FROGSE = 12;
     const FORM_FED_SROGS  = 13;
@@ -23,6 +138,8 @@
     const STYLE_ALLCAPS   = 'ALLCAPS';
     const STYLE_LOWERCASE = 'lowercase';
 
+    const PREFIX_SUPP_AMENDED = 'Supplemental/Amended ';
+
     // TODO: we need to figure this out, the whole forms engine won't hold...
     // For this specifically I think we need a better handling of the `dropdown` question type.
     const RPDS_ANSWER_NONE               = 'Select Your Response';
@@ -36,25 +153,40 @@
 
     function find($id) { return $this->getBy( 'discoveries', ['id' => $id], 1); }
     function findByUID($uid) { return $this->getBy( 'discoveries', ['uid' => $uid], 1); }
+    function findDetails($id) { return $this->getDetails( $id, 1); }
+
+    function getDetails( $id, $limit = null ) { global $logger;
+
+      if( strlen($id) >= 16 ) {
+        $id = $this->findByUID($id)['id'];
+      }
+      $query = $this->queryTemplates['getDetails'] . ( $limit ? " LIMIT $limit" : '' );
+      $result = $this->readQuery( $query, ['id' => $id] );
+      if( $result && $limit && $limit == 1 ) {
+        $result = $result[0];
+      }
+      //$logger->browser_log(null, $result );
+      return $result;
+    }
 
     public function updateById($id, $fields, $ignore = false ) {
       return parent::update('discoveries', $fields, ['id' => $id], $ignore);
     }
 
-    static function getTitle($name, $set_number = null, $style = self::STYLE_WORDCAPS ) {
-      global $logger;
-      $logger->info("getTitle: \$name=$name, \$set=$set_number, \$style=$style" );
-      if(isset($set_number)) {
+    static function composeTitle($name, $set_number = null, $style = self::STYLE_WORDCAPS ) { global $logger;
+
+      // $logger->info("getTitle: \$name=$name, \$set=$set_number, \$style=$style" );
+      if( isset($set_number) ) {
         $name = $name . " [Set " .ucwords(strtolower( numberTowords( $set_number ) )). "]";
       }
       switch( $style ) {
-        case self::STYLE_LOWERCASE: 
+        case self::STYLE_LOWERCASE:
           $name = strtolower( $name ); break;
-        case self::STYLE_WORDCAPS: 
+        case self::STYLE_WORDCAPS:
           $name = ucwords(strtolower( $name )); break;
-        case self::STYLE_ALLCAPS: 
+        case self::STYLE_ALLCAPS:
           $name = strtoupper( $name ); break;
-        case self::STYLE_AS_IS: 
+        case self::STYLE_AS_IS:
       }
 
       return preg_replace( ["/\bset\b/u","/\bFor\b/u","/\bOf\b/u"], ["Set","for","of"], $name );
@@ -68,6 +200,54 @@
       return in_array($formId, self::RPDS_FORMS);
     }
 
-  }
+    private function asDiscovery($discovery) {
+      assert( !empty($discovery), "A proper discovery was expected here, \$discovery=$discovery" );
+      if( !is_array($discovery) ) {
+        $discovery = ( strlen($discovery) >= 16 ) ? $this->findByUID($discovery) : $this->find($discovery);
+      }
+      assert( !empty($discovery['id']) && !empty($discovery['uid']), "A proper discovery was expected here, \$discovery=$discovery" );
+      return $discovery;
+    }
 
-  $discoveriesModel = new Discovery();
+    public function getByUserAndCase($user, $case, $limit = null ) { global $logger;
+
+      $query = $this->queryTemplates['getByCase'] . ( $limit ? " LIMIT $limit" : '' );
+      $result = $this->readQuery( $query, ['case_id' => $case] );
+      if( $result && $limit && $limit == 1 ) {
+        $result = $result[0];
+      }
+      //$logger->browser_log(null, $result );
+      return $result;
+    }
+
+    public function getSuppAmended($discovery, $limit = null ) { global $logger;
+
+      $id = is_array($discovery) ?  $discovery['id'] : $discovery;
+
+      $query = $this->queryTemplates['getSuppAmended'] . ( $limit ? " LIMIT $limit" : '' );
+      $result = $this->readQuery( $query, ['id' => $id] );
+      if( $result && $limit && $limit == 1 ) {
+        $result = $result[0];
+      }
+      //$logger->browser_log(null, $result );
+      return $result;
+    }
+
+    public function getSet($discovery) {
+      $discovery = $this->asDiscovery($discovery);
+      return self::composeTitle( '', $discovery['set_number'] );
+    }
+
+    public function getTitle($discovery, $isSupplAmended = false) { global $logger;
+
+      $discovery = $this->asDiscovery($discovery);
+
+      $set  = $discovery['set_number'];
+      $name = $discovery['discovery_name'] ?: $discovery_data['form_name'];
+      $name = ($isSupplAmended ? self::PREFIX_SUPP_AMENDED : '') . $name;
+      //$logger->browser_log("getTitle: \$name=$name, \$set=$set" );
+      return self::composeTitle( $name, $set, self::STYLE_AS_IS );
+    }
+}
+
+$discoveriesModel = new Discovery();

@@ -11,11 +11,11 @@
     const CLIENT_TYPE_PRO_PER = 'Pro per';
 
     const CLIENT_TYPES = [
-      self::CLIENT_TYPE_US, 
+      self::CLIENT_TYPE_US,
       self::CLIENT_TYPE_OTHER,
       self::CLIENT_TYPE_PRO_PER
     ];
-    
+
     function __construct( $dbConfig = null )
     {
       parent::__construct( $dbConfig );
@@ -65,19 +65,25 @@
     function find($id) {
       return $this->getBy('clients', ['id' => $id], 1);
     }
-    
+
     function updateClient($clientId, $fields) {
       return $this->update('clients', $fields, ['id' => $clientId]);
     }
 
     static function roleGeneric($client) {
       return (
-  			$client['client_role'] == Client::ROLE_PLAINTIFF || 
-	  		$client['client_role'] == Client::ROLE_PLAINTIFF_X_DEFENDANT 
+  			$client['client_role'] == Client::ROLE_PLAINTIFF ||
+	  		$client['client_role'] == Client::ROLE_PLAINTIFF_X_DEFENDANT
           ? self::ROLE_PLAINTIFF : self::ROLE_DEFENDANT
       );
     }
 
   }
 
-  $clientsModel = new Client();
+$clientsModel = new Client();
+
+function getClientName($id) { global $clientsModel;
+
+	$client = $clientsModel->find($id);
+	return $client['client_name'];
+}

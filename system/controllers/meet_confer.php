@@ -8,11 +8,12 @@
     ];
 
     function show() { global $clientsModel;
-      global $smarty, $responsesModel, $discoveriesModel,
-             $sidesModel, $currentUser, $usersModel, $meetConferModel;
-      
+      global $smarty,
+             $discoveriesModel, $responsesModel, $meetConferModel,
+             $currentUser, $usersModel, $sidesModel;
+
       $responseId = @$_GET['response_id'];
-      
+
       if (!$responseId) { return HttpResponse::malformed(); }
       if (!$response = $responsesModel->find($responseId)) {
         return HttpResponse::notFound('Response not found');
@@ -39,18 +40,18 @@
       if (!$opposingAttorney = $sidesModel->getPrimaryAttorney($opposingSide['id'])) {
         $opposingAttorney = $usersModel->find($response['created_by']);
       }
-      
-      $discoveryTitle = Discovery::getTitle($discovery['discovery_name'], $discovery['set_number']);
+
       $smarty->assign([
         'mc'                  => $mc,
         'attorney'            => $attorney,
+        'attorneyName'        => $usersModel->getFullName($attorney),
         'opposingAttorney'    => $opposingAttorney,
         'currentUser'         => $currentUser->user,
-        'discoveryTitle'      => $discoveryTitle,
-        'discovery'           => $discovery,
         'questions'           => $response['questions'],
+        'discovery'           => $discovery,
         'response'            => $response,
-        'responseName'        => $response['responsename'] ?? $discoveryTitle,
+        'discoveryTitle'      => $discoveriesModel->getTitle($discovery),
+        'responseTitle'       => $responsesModel->getTitle($response, $discovery),
         'side'                => $currentSide,
         'masterhead'          => trim(($mc ? $mc['masterhead']          : $currentSide['masterhead'])),
         'attorney_masterhead' => trim(($mc ? $mc['attorney_masterhead'] : $opposingAttorney['masterhead'])),
@@ -79,39 +80,39 @@
     // PDF document download (USES CACHE)
     function pdf() { global $meetConferModel;
       if (!$id = @$_GET['id']) { return HttpResponse::malformed('ID is required'); }
-      
+
       if( !$pdfFilePath = $meetConferModel->generatePDF($id)) {
         return HttpResponse::notFound();
       }
-      
+
       header("Content-Type: application/octet-stream");
       header('Content-Disposition: attachment; filename="easyrogs-meet-and-confer-' . $id . '.pdf"');
       header("Content-Length: " . filesize($pdfFilePath));
       readfile($pdfFilePath);
     }
 
-    function serve() { 
-      global $currentUser, $meetConferModel, $responsesModel, 
+    function serve() {
+      global $currentUser, $meetConferModel, $responsesModel,
              $discoveriesModel, $sidesModel, $usersModel;
-      
+
       if (!$id = @$_POST['id']) { return HttpResponse::malformed('ID is required.'); }
       if (!$mc = $meetConferModel->find($id)) { return HttpResponse::notFound(); }
       if (!$pdfFilePath = $meetConferModel->generatePDF($id, false)) {
         return HttpResponse::unprocessable('Sorry, we were unable to find or create the PDF attachment. If the problem persist, please contact us.');
       }
-      
+
       $response        = $responsesModel->find($mc['response_id']);
       $discovery       = $discoveriesModel->find($response['fkdiscoveryid']);
       $currentSide     = $sidesModel->getByUserAndCase($currentUser->id, $discovery['case_id']);
       $primaryAttorney = $sidesModel->getPrimaryAttorney($currentSide['id']);
-          
+
       if ($meetConferModel->isPaid($mc['id']) || User::hasCredits($primaryAttorney)) {
         try {
           DiscoveryMailer::meetConfer($mc, [[
             'path'     => $pdfFilePath,
             'filename' => 'Meet & Confer Letter.pdf'
           ]]);
-         
+
           $meetConferModel->updateById($id, [
             'served'    => true,
             'served_at' => date('Y-m-d H:i:s')
@@ -120,7 +121,7 @@
           if ( User::hasCredits($primaryAttorney) ) {
             $usersModel->redeemCredits($primaryAttorney);
           }
-  
+
           return HttpResponse::success();
         }
         catch( Exception $e) {

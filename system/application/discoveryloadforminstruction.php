@@ -53,17 +53,18 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                             <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
                                aria-expanded="true" class="btn btn-primary pull-right"></a>
 <?php if( $viewonly && $currentUser->isAttorney() ) { ?>
-                            <button type="button" id="btn-objections" class="btn btn-primary pull-right"
+                            <button type="button" id="btn-objections" class="btn btn-primary btn-sidebar-toggle pull-right hidden"
                                     onclick="javascript:toggleKBSidebar(<?= $form_id ?>, ObjectionPanel);"><!--frogs/e-->
                                 <i class="fa fa-book" /><span>Objections</span>
                             </button>
 <script>
-    jQuery( $ => {
-        const $textboxes = $('textarea[name*="objection["]')
-        if( !$textboxes.length ) { // Hide button if there are no targets
-            $("#btn-objections").css("display","none")
+    setTimeout( _ => {
+        hasItems = $('textarea[name*="objection["]').length > 0;
+        if( hasItems ) {
+            $("#btn-objections").removeClass("hidden")
+            toggleKBSidebar( <?= $form_id ?>, ObjectionPanel, hasItems )
         }
-    } );
+    }, 1000 );
 </script>
 <?php } ?>
                         </div>
@@ -421,16 +422,17 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
 else {
 ?>
         <div class="--row col-sm-12 col-md-12" style="padding:0">
-            <button type="button" id="btn-definitions" class="btn btn-primary pull-right"
+            <button type="button" id="btn-definitions" class="btn btn-primary btn-sidebar-toggle pull-right hidden"
                     onclick="javascript:toggleKBSidebar(<?= $form_id ?>, DefinitionPanel);">
                 <i class="fa fa-book" /><span>Definitions</span>
             </button>
         </div>
 <script>
     setTimeout( _ => {
-        const $textboxes = $('textarea[name*="question_titles["]')
-        if( !$textboxes.length ) { // Hide button if there are no targets
-            $("#btn-definitions").css("display","none")
+        hasItems = $('textarea[name*="question_titles["]').length > 0
+        if( hasItems ) {
+            $("#btn-definitions").removeClass("hidden")
+            toggleKBSidebar( <?= $form_id ?>, DefinitionPanel, hasItems )
         }
     }, 1000 );
 </script>
@@ -600,17 +602,18 @@ else {
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"
                                    class="btn btn-primary pull-right"></a>
 <?php if( $currentUser->isAttorney() ) { ?>
-                                <button type="button" id="btn-objections" class="btn btn-primary pull-right"
+                                <button type="button" id="btn-objections" class="btn btn-primary btn-sidebar-toggle pull-right hidden"
                                         onclick="javascript:toggleKBSidebar(<?= $form_id ?>, ObjectionPanel);"><!--rfas/rfps/rdps-->
                                     <i class="fa fa-book" /><span>Objections</span>
                                 </button>
 <script>
-    jQuery( $ => {
-        const $textboxes = $('textarea[name*="objection["]')
-        if( !$textboxes.length ) { // Hide button if there are no targets
-            $("#btn-objections").css("display","none")
+    setTimeout( _ => {
+        hasItems = $('textarea[name*="objection["]').length > 0;
+        if( hasItems ) {
+            $("#btn-objections").removeClass("hidden")
+            toggleKBSidebar( <?= $form_id ?>, ObjectionPanel, hasItems )
         }
-    } );
+    }, 1000 );
 </script>
 <?php } ?>
                             </div>

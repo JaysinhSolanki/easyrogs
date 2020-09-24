@@ -7,26 +7,26 @@
       <div class="col-md-6 side-role">SIDE {$side.id}</div>
       <div class="col-md-6">
         <strong class="attorney-label">Lead Counsel:</strong>
-        <span class="attorney-name">{$side.attorney.full_name}</span>  
+        <span class="attorney-name">{$side.attorney.full_name}</span>
       </div>
-    </div>    
-  </div>  
+    </div>
+  </div>
   <div class="panel-body">
-  
+
     <h5>Clients</h5>
     <br/>
     <table class="table table-striped table-hover">
       <tr>
         <th>Name</th>
         <th>Role</th>
-        <th>Email</th>        
+        <th>Email</th>
         <!--<th></th>-->
-      </tr>  
-      {foreach item=client from=$side.clients}            
+      </tr>
+      {foreach item=client from=$side.clients}
       <tr>
         <td><strong>{$client.client_name}</strong></td>
         <td>{$client.client_role}</td>
-        <td><a href="mailto:{$client.client_email}">{$client.client_email}</a></td>        
+        <td><a href="mailto:{$client.client_email}">{$client.client_email}</a></td>
         <!--<td style="text-align: right">
           <a class="edit-client btn btn-sm btn-small" data-side-id="{$side.id}" data-client-id="{$client.id}" title="Edit"><i class="fa fa-edit fa-2x"></i></a>
           {if count($side.clients)}
@@ -94,7 +94,7 @@
         <th>SL Name</th>
         <th>SL Email</th>
         <th>Parties</th>
-      </tr>  
+      </tr>
       {foreach item=user from=$side.serviceList}
       <tr>
         <td>
@@ -103,7 +103,7 @@
             <i>(inactive)</i>
           {/if}
         </td>
-        <td><strong>{User::getFullName($user)}</strong></td>
+        <td><strong>{$usersModel->getFullName($user)}</strong></td>
         <td><strong>{$user.attorney_name}</strong></td>
         <td>{$user.attorney_email}</td>
         <td>

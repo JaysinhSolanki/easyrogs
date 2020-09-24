@@ -33,8 +33,8 @@ deleteServiceListUser = (userId, caseId, success, error) => {
 }
 
 addTeamMember = (memberId, name, email, success, error) => {
-	$.post(API_BASE + '/post-team-member.php', 
-		{memberId: memberId, name: name, email: email}, 
+	$.post(API_BASE + '/post-team-member.php',
+		{memberId: memberId, name: name, email: email},
 		success, FORMAT_JSON
 	).fail(error)
 }
@@ -150,14 +150,14 @@ const erInviteControl = (selector = '.er-invite') => {
 				<div style="float: right; margin-top: 3px" id="${ctaId}">
 					<span style="font-size: 11px;">Can't find the user?</span> <button  type="button" class="${btnClass} btn btn-xs btn-warning">Send Invite &raquo;</button>
 				</div>
-			</div>  
+			</div>
 			<div class="row invite-member-form" id="${formId}">
 				<div class="form-group col-md-6">
 					<input type="text" placeholder="Name" class="form-control" name="${fieldPrefix}_name" />
 				</div>
 				<div class="form-group col-md-6">
 					<input type="text" placeholder="Email" class="form-control"  name="${fieldPrefix}_email" />
-				</div>  
+				</div>
 			</div>
 		`);
 		$(`#${selectId}`).select2({
@@ -183,7 +183,7 @@ const erInviteControl = (selector = '.er-invite') => {
 			$(`#${ctaId}`).hide();
 			$(`#${formId}`).show();
 			$(`#${selectId}`).val(null).trigger('change.select2').select2('close');
-			$(`#${formId} .form-control:first`).focus();        
+			$(`#${formId} .form-control:first`).focus();
 		});
 		if ( inviteOnly ) {
 			$(`#${formId}`).show();
@@ -191,7 +191,7 @@ const erInviteControl = (selector = '.er-invite') => {
 		}
 	});
 };
-	
+
 // .er-team-attorney-select
 const erTeamAttorneySelectControl = (caseId, done = null, selector = '.er-team-attorney-select') => {
 	getTeamAttorneys(caseId,
@@ -227,7 +227,7 @@ const showResponseMessage = (response) => {
 // display server response as bootstrap alert
 const showResponseNotification = (response, containerSelector = '#notifications') => {
 	response = JSON.parse(response.responseText);
-	
+
 	let actionButton = ''
 	if(response._action) {
 		actionButton = `<a class="btn btn-sm btn-primary" href="${response._action.url}">${response._action.text}</a>`
@@ -248,7 +248,7 @@ const showResponseNotification = (response, containerSelector = '#notifications'
 function stringifyNumber(n) {
 	const special = ['zeroth','first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 'thirteenth', 'fourteenth', 'fifteenth', 'sixteenth', 'seventeenth', 'eighteenth', 'nineteenth'];
 	const deca 		= ['twent', 'thirt', 'fort', 'fift', 'sixt', 'sevent', 'eight', 'ninet'];
-	
+
 	if (n > 99) return n;
   if (n < 20) return special[n];
   if (n % 10 === 0) return deca[Math.floor(n/10)-2] + 'ieth';
@@ -271,11 +271,11 @@ function addAttorney(case_id,attorney_type)
 	var user_id				 =	$("#user_id").val();
 
 	$.post("post-service-list-user.php", {
-		attorney_email:  attorney_email, 
+		attorney_email:  attorney_email,
 		attorney_name: 	 attorney_name,
 		client_id:			 client_id,
 		case_id: 				 case_id,
-		user_id:				 user_id,	
+		user_id:				 user_id,
 		sl_attorney_id: sl_attorney_id
 	}).done(function( response ) {
 		showResponseMessage(response);
@@ -287,7 +287,7 @@ function addAttorney(case_id,attorney_type)
 			//attDropdownFunction();
 			loadCasePeople(case_id);
 		}
-	}).fail((response) => showResponseMessage(JSON.parse(response.responseText))); 
+	}).fail((response) => showResponseMessage(JSON.parse(response.responseText)));
 }
 
 function toggleAll(selector, self) {
@@ -329,8 +329,8 @@ function trackEvent( action, extra = {} ) {
 			const { page_path, page_title, } = extra;
 			gtag( 'config', APP_GOOGLE_ANALYTICS_ID, { page_path, page_title, } );
 		}
-	} 
-	console.log( {action, ...extra,} );
+	}
+	console.log( action, {action, ...extra,} );
 }
 
 const knownContexts = [
@@ -382,11 +382,11 @@ function ctxUpdate( aPage, fn ) {
 	previous = page.pkscreenid;
 
 	const idx = knownContexts.findIndex(item => item && item.id == currentPage.id);
-	if (idx < 0) { console.log("[!] TAB NOT FOUND:", currentPage ); debugger; exit; }
+	if (idx < 0) { console.log("[!] TAB NOT FOUND:", currentPage ); debugger; return; }
 	trackEvent( 'goto', { page_path:	`${page.url}#${page.id}`,
 						  page_title:	knownContexts[idx].title,
-						  event_category:	'navigation', 
-						  event_label: 		knownContexts[idx].title, 
+						  event_category:	'navigation',
+						  event_label: 		knownContexts[idx].title,
 						} );
 }
 

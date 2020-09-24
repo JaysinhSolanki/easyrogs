@@ -13,21 +13,21 @@ $personnames2		= $_POST['personnames2'];
 $personnames1		= $_POST['personnames1'];
 $discovery_name		= $_POST['discovery_name'];
 $client_notes		= $_POST['client_notes'];
-$supp				= $_POST['supp'];
+$is_supp			= @$_POST['supp'] ?: 0;
 
-if( $supp == 1 ) {
+if( $is_supp ) {
 	$parentid	= $id;
 	$id 		= 0;
 	$gParentid	=  getGrandParent($parentid);
 }
-$instruction		= html_entity_decode($_REQUEST['instruction']);
+$instruction = html_entity_decode($_REQUEST['instruction']);
 
 /**
 * GET GRAND PARENT ID
 **/
 function getGrandParent($id) {
 	global $AdminDAO;
-	$getDiscoveryDetails	= $AdminDAO->getrows("discoveries","parentid","id = '$id'");	
+	$getDiscoveryDetails	= $AdminDAO->getrows("discoveries","parentid","id = '$id'");
 	$parentid				= $getDiscoveryDetails[0]['parentid'];
 	if( !$parentid ) {
 		return $id;
@@ -59,8 +59,8 @@ else if($incidentoption == 2)
 	$incidenttext2		= "&nbsp;&nbsp;(2) $incidenttext";
 	$option1			= $uncheckedimg.$incidenttext1;
 	$option2			= $checkedimg.$incidenttext2;
-	
-	
+
+
 }
 
 $html 				= preg_replace('/<div class=\"checkbox_replace1\">.*<\/div>/',$option1,$instruction_html);
@@ -72,28 +72,28 @@ $instruction 		= preg_replace('/<div class=\"remove_incidenttext\">.*<\/div>/','
 *************************************************/
 
 if( !$case_id ) {
-	msg(295,2);	 
+	msg(295,2);
 }
 if( !$discovery_name) {
-	msg(326,2);	 
+	msg(326,2);
 }
 if( !$form_id && !$id) {
-	msg(296,2);	
+	msg(296,2);
 }
 if( !$set_number ) {
-	msg(298,2);	
+	msg(298,2);
 }
 if( !$propounding ) {
-	msg(314,2);	
+	msg(314,2);
 }
 elseif( $isemail ) {
 	$clients = $AdminDAO->getrows('clients',"*","id= :id",array('id'=>$responding));
 }
 if( !$responding) {
-	msg(315,2);	
+	msg(315,2);
 }
 if( $propounding == $responding ) {
-	msg(320,2);	
+	msg(320,2);
 }
 
 if( $in_conjunction ) {
@@ -116,7 +116,7 @@ if( $in_conjunction ) {
 													'propounding'			=>	$propounding
 												) );
 	if( sizeof($alreadyConjunction) ) {
-		msg(332,2);	
+		msg(332,2);
 	}
 }
 function responding_uid( $propounding_uid ) {
@@ -131,12 +131,12 @@ function responding_uid( $propounding_uid ) {
 }
 
 if( $form_id ) {
-	$formdetails = $AdminDAO->getrows("forms","*","id = '$form_id'");	
+	$formdetails = $AdminDAO->getrows("forms","*","id = '$form_id'");
 }
 
 $attorney_id	= $_SESSION['addressbookid'];
 $datetime		= date("Y-m-d H:i:s");
-if(@$_GET['serve'] == 1 && $type == Discovery::TYPE_EXTERNAL ) {
+if(@$_GET['serve'] && $type == Discovery::TYPE_EXTERNAL ) {
 	$served = $datetime;
 }
 /**
@@ -148,19 +148,19 @@ if( $served ) {
 	$served				= date("Y-m-d",strtotime($served));
 	$extensiondays		= 2;
 	$no_of_court_days	= 0;
-	
-	//Add default 30 days extension 
+
+	//Add default 30 days extension
 	$expected_duedate	= date('Y-m-d', strtotime($served. ' + 30 days'));
-	
+
 	if( $extensiondays == 2 ) {
 		$duedate = date('Y-m-d', strtotime($expected_duedate. ' + 1 days'));
 	}
-	
-	$holidays = $AdminDAO->getrows('holidays',"date");		
+
+	$holidays = $AdminDAO->getrows('holidays',"date");
 	foreach( $holidays as $holiday ) {
 		$holidaysArray[] = date( $dateformate, strtotime($holiday['date']) );
 	}
-	
+
 	ob_start();
 	findWorkingDay( $duedate,$extensiondays,$holidaysArray,$no_of_court_days );
 	$response_due_date = ob_get_clean();
@@ -217,16 +217,16 @@ if( $id ) {
 	}
 	$AdminDAO->updaterow("discoveries", $fields,               $values,    "id ='$id'");
 	$AdminDAO->updaterow('responses',   array('is_submitted'), array('0'), "fkdiscoveryid='$id'");
-	
+
 	$selectedids = array();
 	if( !empty($is_selected) && @count($is_selected) ) { // !?
 		foreach( $is_selected as $key=>$val ) {
 			if( $val==1 ) {
-				$selectedids[]	= $questions[$key];	
+				$selectedids[]	= $questions[$key];
 			}
 		}
 		$AdminDAO->deleterows('discovery_questions',"discovery_id ='$id' AND question_id NOT IN  ( '".implode("','",$selectedids)."')");
-	} 
+	}
 	if( !empty($selectedids) && $id ) {
 		foreach( $selectedids as $thisrow ) {
 			$isexist = $AdminDAO->getrows('discovery_questions',"*","discovery_id	= :discovery_id AND question_id	= :question_id",array('discovery_id'=>$id,'question_id'=>$thisrow));
@@ -247,7 +247,7 @@ if( $id ) {
 			}
 		}
 	}
-} 
+}
 else {
 	$uid		= $AdminDAO->generateuid('discoveries');
 	$fields		= array('uid','type','discovery_name','case_id','form_id','attorney_id','set_number','propounding','responding','question_number_start_from','incidenttext','incidentoption','personnames2','personnames1');
@@ -304,10 +304,10 @@ else {
 				}
 				$AdminDAO->insertrow("discovery_questions",$fields,$values);
 			}
-		}	
+		}
 	}
 }
- 
+
 //Upload documents here
 $doc_uid = $_POST['uid'];
 if( in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS)) ) {
@@ -316,7 +316,7 @@ if( in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS)) 
 	$attorney_id			= $getdescovery_details[0]['attorney_id'];
 	$discovery_id			= $getdescovery_details[0]['id'];
 	$AdminDAO->deleterows('documents',"discovery_id = '$discovery_id'");
-	
+
 	if( sizeof($olddocuments) ) {
 		foreach( $olddocuments as $data ) {
 			$doc_purpose	= $data['doc_purpose'];
@@ -344,11 +344,11 @@ if( !empty($new_questions) && @count($new_questions) ) {
 					$fields	= array('discovery_id','question_title','question_number','attorney_id','question_type_id');
 					$values	= array($id,$question_titles[$key],$question_numbers[$key],$attorney_id,2);
 					$q_id	= $AdminDAO->insertrow("questions",$fields,$values);
-					
+
 					$fields	= array('question_id','discovery_id');
 					$values	= array($q_id,$id);
 					$AdminDAO->insertrow("discovery_questions",$fields,$values);
-				}	
+				}
 			}
 			else {
 				if( !in_array($form_id,array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE)) ) { //FROGS AND FROGSE IN EXTERNAL CASE
@@ -361,7 +361,7 @@ if( !empty($new_questions) && @count($new_questions) ) {
 	}
 }
 
-if( $isemail ) {	
+if( $isemail ) {
 	//Update Send To client details
 	if( !$is_send )	{
 		$fields	= array("is_send",'send_date');

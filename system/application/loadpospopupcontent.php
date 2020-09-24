@@ -2,7 +2,7 @@
 	require_once __DIR__ . '/../bootstrap.php';
 	require_once("adminsecurity.php");
 
-$discovery_id	= $_POST['id']; 
+$discovery_id	= $_POST['id'];
 $respond		  = $_POST['respond'];
 $response_id	= $_POST['response_id'];
 
@@ -38,65 +38,10 @@ switch($payableType) {
 }
 
 if( $discovery_id ) {
-	$discoveryDetails = $AdminDAO->getrows(	'discoveries d, cases c, system_addressbook a, forms f',
-												'c.case_title 	as case_title,
-												c.plaintiff,
-												c.defendant,
-												c.case_number 	as case_number,
-												c.jurisdiction 	as jurisdiction,
-												c.judge_name 	as judge_name,
-												c.county_name 	as county_name,
-												c.court_address as court_address,
-												c.department 	as department, 
-												c.uid 	as case_uid, 
-												d.case_id 		as case_id,
-												d.id 			as discovery_id, 
-												d.uid,
-												d.type,
-												d.send_date,
-												d.propounding,
-												d.responding,
-												d.served,
-												d.discovery_name,
-												d.propounding_uid,
-												d.responding_uid,
-												d.attorney_id as attr_id,
-												d.form_id 		as form_id,
-												d.set_number 	as set_number,
-												d.discovery_introduction as introduction,
-												f.form_name	 	as form_name,
-												f.short_form_name as short_form_name,
-												a.firstname 	as atorny_fname,
-												a.lastname 		as atorny_lname,
-												a.address		as atorny_address,
-												a.cityname,
-												a.street,
-												a.companyname	as atorny_firm,
-												d.attorney_id	as attorney_id,
-												a.email,
-												a.phone,
-												a.attorney_info,
-												(CASE WHEN (form_id = '.Discovery::FORM_CA_FROGS.' OR form_id = '.Discovery::FORM_CA_FROGSE.') 
-												 THEN
-													  f.form_instructions 
-												 ELSE
-													  d.discovery_instrunctions 
-												 END)
-												 as instructions 
-												',
-												"d.id 			= :id AND 
-												d.case_id 		= c.id AND  
-												d.form_id		= f.id AND
-												d.attorney_id 	= a.pkaddressbookid",
-												array(":id" => $discovery_id) 
-											);
-	$discovery_data = $discoveryDetails[0]; 
-
+	$discovery_data = $discoveriesModel->findDetails($discovery_id);
   Side::legacyTranslateCaseData($discovery_data['case_id'], $discovery_data);
-  
 	$uid							= $discovery_data['uid'];
 	$case_uid					= $discovery_data['case_uid'];
-	$discovery_name		= $discovery_data['discovery_name'];
 	$discovery_type		= $discovery_data['type'];
 	$case_id			    = $discovery_data['case_id'];
 	$case_title			  = $discovery_data['case_title'];
@@ -110,24 +55,31 @@ if( $discovery_id ) {
 	$responding			  = $discovery_data['responding'];
 	$discovery_id		  = $discovery_data['discovery_id'];
 	$attr_id			    = $discovery_data['attr_id'];
+	$discovery_name		= $discoveriesModel->getTitle( $discovery_data );
 }
 
 //Responding Party
-$respondingdetails		= $AdminDAO->getrows("clients","*","id = :id",array(":id"=>$responding));
+$respondingdetails	= $AdminDAO->getrows("clients","*",
+                            "id = :id",
+                            array(":id"=>$responding));
 $responding_name		= $respondingdetails[0]['client_name'];
 $responding_email		= $respondingdetails[0]['client_email'];
 $responding_type		= $respondingdetails[0]['client_type'];
 $responding_role		= $respondingdetails[0]['client_role'];
 
 //Sender Details
-$attr_id 		= $_SESSION['addressbookid'];
-$senderDetails	= $AdminDAO->getrows("system_addressbook","*","pkaddressbookid = :id",array(":id"=>$attr_id));
+$attr_id = $_SESSION['addressbookid'];
+$senderDetails	= $AdminDAO->getrows("system_addressbook","*",
+                        "pkaddressbookid = :id",
+                        array(":id"=>$attr_id));
 
 $senderDetail	 = $senderDetails[0];
 $senderEmail	 = $senderDetail['email'];
 $senderPhone	 = $senderDetail['phone'];
 $senderName		 = $senderDetail['firstname']." ".$senderDetail['lastname'];
-$system_address  = $AdminDAO->getrows("system_addressbook,system_state", "*", "pkaddressbookid = :id AND fkstateid = pkstateid", array(":id"=>$attr_id));
+$system_address  = $AdminDAO->getrows("system_addressbook,system_state", "*",
+                      "pkaddressbookid = :id AND fkstateid = pkstateid",
+                      array(":id"=>$attr_id));
 $result_address  = $system_address[0];
 
 $senderAddress 	= makeaddress($attr_id);
@@ -162,7 +114,7 @@ $primaryAttorney = $sidesModel->getPrimaryAttorney($currentSide['id']);
    .tabela {
    border: 1px solid #A2A9B1;
    border-collapse: collapse;
-   line-height:25px; 
+   line-height:25px;
    }
 td, th {
     padding: 5px;
@@ -170,7 +122,7 @@ td, th {
    .tabela tbody tr td, .tabela tbody tr th {
    border: 1px solid #A2A9B1;
    border-collapse: collapse;
-    line-height:25px; 
+    line-height:25px;
    }
 </style>
 </head>
@@ -196,12 +148,12 @@ td, th {
             <tr>
                 <td align="justify">
 					<div id="pos_18info" style="width:100%;display:flex;flex-direction:row;align-items:stretch;">
-						<span id="_1" style="flex-shrink:0;align-self:center;">I am at least 18 years old and not a party to this action. My business address is </span> 
+						<span id="_1" style="flex-shrink:0;align-self:center;">I am at least 18 years old and not a party to this action. My business address is </span>
 						<input style="margin:5px;width:inherit;" type="text" name="pos_address" id="pos_address" placeholder="Enter your address" value="<?= $result_address['address'] .", ". $result_address['street'] .", ".  $result_address['cityname'] .", ". $result_address['statecode'] ." ". $result_address['zip']; ?>" size="180"/><span style="align-self: center;margin-left: -4px;">.</span>
 					</div>
 					<p id="_2">My electronic service address is <?= $senderEmail ?>.</p>
 					<br/>
-					On <?= date('F j, Y') ?>, I electronically served <?= Discovery::getTitle( $discovery_name, $set_number, Discovery::STYLE_AS_IS ) ?> upon the following:
+					On <?= date('F j, Y') ?>, I electronically served <?= $discovery_name ?> upon the following:
                 </td>
             </tr>
           </tbody>
@@ -263,7 +215,7 @@ td, th {
 	<input type="hidden" name="poscity" id="poscity" value="" />
 
 	<input type="hidden" name="respond" value="<?= $respond ?>" />
-  
+
   <div class="row">
 		<div class="col-md-12" style="text-align:right">
       <i id="POS_msgdiv" class="POS_msgdiv" style="color:red"></i>
@@ -358,7 +310,7 @@ td, th {
     pos_state   = $("#pos_state").val();
     pos_city    = $("#pos_city").val();
     pos_address = $("#pos_address").val();
-    
+
     var error = 0;
     var msg = "";
     if( !pos_address.trim() ) {
@@ -386,7 +338,7 @@ td, th {
     return 'This is your ' + stringifyNumber(serviceNumber) + ' complimentary service';
   }
 
-  function servePOS() { 
+  function servePOS() {
     $.LoadingOverlay("show");
 
     // we must do this (setAttribute[value]), to properly get their html

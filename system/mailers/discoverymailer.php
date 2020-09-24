@@ -8,7 +8,8 @@
     const MEET_CONFER_SUBJECT         = '%s - Meet & Confer';
 
     static function clientVerification($discovery) {
-      global $smarty, $discoveriesModel, $usersModel, $clientsModel, $logger, $sidesModel;
+      global $discoveriesModel, $responsesModel, $usersModel, $clientsModel, $sidesModel,
+             $smarty, $logger;
 
       $logContext = 'DISCOVERY_MAILER_CLIENT_VERIFICATION';
       $logParams  = json_encode(['discovery' => $discovery]);
@@ -26,18 +27,18 @@
       if( !$side = $sidesModel->getByClientAndCase($client['id'], $discovery['case_id']) ) {
         return $logger->error("$logContext Side Not Found (client: $client[id], case: $discovery[case_id]) not found. Params: $logParams");
       }
-      
+
       $smarty->assign([
         'ASSETS_URL' => ASSETS_URL,
         'name'       => $client['client_name'],
-        'actionUrl'  => DOMAIN . "discoveryfront.php?uid=$discovery[uid]",        
+        'actionUrl'  => DOMAIN . "discoveryfront.php?uid=$discovery[uid]",
         'actionText' => 'Verify'
       ]);
       $body = $smarty->fetch('emails/discovery-client-verification.tpl');
       $subject = sprintf(self::CLIENT_VERIFICATION_SUBJECT, $side['case_title']);
       $to = $client['client_email'];
 
-      self::sendEmail($to, $subject, $body, User::getFullName($attorney), $attorney['email']);
+      self::sendEmail($to, $subject, $body, $usersModel->getFullName($attorney), $attorney['email']);
     }
 
     static function clientResponse($discovery, $actionUser, $notes='') {
@@ -64,7 +65,7 @@
       $smarty->assign([
         'ASSETS_URL'    => ASSETS_URL,
         'name'          => $client['client_name'],
-        'discoveryName' => Discovery::getTitle($discovery['discovery_name'], $discovery['set_number'], Discovery::STYLE_WORDCAPS),
+        'discoveryName' => $discoveriesModel->getTitle($discovery),
         'senderEmail'   => $actionUser['email'],
         'senderPhone'   => $actionUser['phone'],
         'masterhead'    => $sidesModel->getMasterHead($side),
@@ -76,7 +77,7 @@
       $subject = sprintf(self::CLIENT_RESPONSE_SUBJECT, $side['case_title']);
       $to = $client['client_email'];
 
-      self::sendEmail($to, $subject, $body, User::getFullName($actionUser), $actionUser['email']);
+      self::sendEmail($to, $subject, $body, $usersModel->getFullName($actionUser), $actionUser['email']);
     }
 
     static function clientResponded($discovery,$response) {
@@ -95,23 +96,19 @@
       if( !$side = $sidesModel->getByClientAndCase($client['id'], $discovery['case_id']) ) {
         return $logger->error("$logContext Side Not Found (client: $client[id], case: $discovery[case_id]) not found. Params: $logParams");
       }
-      $responseName = ( $response && $response['responsename'] ) 
-                          ? Discovery::getTitle( $response['responsename'], null, Discovery::STYLE_WORDCAPS )
-                          : 'Response to '. $discovery['discovery_name'] .' [Set '. $discovery['set_number'] .']'; // failsafe, shouldn't be needed
 
       $smarty->assign([
         'ASSETS_URL'    => ASSETS_URL,
         'clientName'    => $client['client_name'],
-        //'discoveryName' => $discovery['discovery_name'],
-        'responseName' => $responseName
+        'responseName' => $responsesModel->getTitle( $response )
       ]);
       $subject = sprintf(self::CLIENT_RESPONDED_SUBJECT, $side['case_title']);
 
       $users = $sidesModel->getUsers($side['id']);
       foreach($users as $user) {
-        $smarty->assign('name', User::getFullName($user));
+        $smarty->assign('name', $usersModel->getFullName($user));
         $body    = $smarty->fetch('emails/discovery-client-responded.tpl');
-        
+
         $client['client_email']
           ? self::sendEmail($user['email'], $subject, $body, $client['client_name'], $client['client_email'])
           : self::sendEmail($user['email'], $subject, $body);
@@ -119,11 +116,11 @@
     }
 
     static function propound($discovery, $actionUser, $isResponse, $attachments) {
-      global $logger, $smarty, $discoveriesModel, $clientsModel, $usersModel, $sidesModel;
+      global $logger, $smarty, $discoveriesModel, $responsesModel, $clientsModel, $usersModel, $sidesModel;
 
       $logContext = 'DISCOVERY_MAILER_PROPOUND';
       $logParams  = json_encode([
-        'discovery'  => $discovery,  'actionUser' => $actionUser, 
+        'discovery'  => $discovery,  'actionUser' => $actionUser,
         'isResponse' => $isResponse, 'attachments' => $attachments
       ]);
 
@@ -146,15 +143,15 @@
       }
 
       $subject = sprintf(self::PROPOUND_SUBJECT, $side['case_title']);
-      $discoveryName = $isResponse 
-                        ? "RESPONSE TO $discovery[discovery_name]" 
-                        : $discovery['discovery_name'];
-      
+      $discoveryName = $isResponse
+                        ? $responsesModel->getTitle( 0, $discovery )
+                        : $discoveriesModel->getTitle( $discovery );
+
       $body = $smarty->assign([
         'ASSETS_URL'      => ASSETS_URL,
         'masterhead'      => $sidesModel->getMasterHead($side),
         'propoundingName' => $propounding['client_name'],
-        'discoveryName'   => Discovery::getTitle($discoveryName, $discovery['set_number'], Discovery::STYLE_WORDCAPS),
+        'discoveryName'   => $discoveryName,
         'actionUrl'       => DOMAIN,
         'actionText'      => 'Go to EasyRogs.com'
       ])->fetch('emails/discovery-propound.tpl');
@@ -164,12 +161,12 @@
         if ($user['pkaddressbookid'] == $actionUser['pkaddressbookid']) { continue; }
         $to[] = $user['email'];
       }
-      
-      self::sendEmail($to, $subject, $body, User::getFullName($actionUser), $actionUser['email'], $attachments);
+
+      self::sendEmail($to, $subject, $body, $usersModel->getFullName($actionUser), $actionUser['email'], $attachments);
     }
 
-    static function meetConfer($mc, $attachments) { 
-      global $smarty, $logger, $responsesModel, $currentUser, 
+    static function meetConfer($mc, $attachments) {
+      global $smarty, $logger, $responsesModel, $currentUser,
              $sidesModel, $discoveriesModel;
 
       $actionUserId     = $currentUser->id;
@@ -198,7 +195,7 @@
         if ($user['pkaddressbookid'] == $actionUserId) { continue; }
         $to[] = $user['email'];
       }
-      
-      self::sendEmail($to, $subject, $body, User::getFullName($currentUser->user), $currentUser->user['email'], $attachments);
+
+      self::sendEmail($to, $subject, $body, $usersModel->getFullName($currentUser->user), $currentUser->user['email'], $attachments);
     }
   }

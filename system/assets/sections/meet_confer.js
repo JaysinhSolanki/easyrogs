@@ -1,13 +1,15 @@
 // automatically toggle definitions when present
-$(document).ready( _ => { 
+jQuery( $ => {
   if (!mcServed) {
     toggleKBSidebar(mcFormId, ObjectionKillerPanel)
   }
+  autogrowTextareas();
+  document.documentElement.style.setProperty('--body-width', `${ $('body').innerWidth() }px`);
 })
 
 function save(successCallback = null) {
   const formData = new FormData($('form.er-mc-body')[0])
-  const data = serializeFormData(formData);  
+  const data = serializeFormData(formData);
 
   postMeetConfer(data, (mc) => {
     mcId = mc.id
@@ -27,14 +29,14 @@ $('.er-mc-toggle-question').on('click', function() {
   const $button  = $(this).siblings('a.er-mc-toggle-question')
   const target   = $(this).data('target');
   const isActive = $(this).hasClass('active') // update UI, return active status
-  
+
   if ( $(this) != $button) {
     $button.toggleClass('active') // update button as well
   }
-  
+
   $('a.er-mc-toggle-question').html('Reply');
   $('a.er-mc-toggle-question.active').html('No Reply');
-  
+
   $(`${target} textarea`).prop( "disabled", !isActive ); // make M&C textarea disabled when ianctive
 })
 

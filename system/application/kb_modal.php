@@ -3,70 +3,7 @@ require_once SYSTEMPATH .'body.php';
 require_once __DIR__ .'/kb_common.php';
 ?>
 
-<style>
-.kb-item {
-	font-size:16px;
-}
-.kb-item hr {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-.kb-item>a.collapsed {
-    display: block;
-    padding: 0 0 1rem;
-    margin: 0 0 1.2rem;
-    border-bottom: 1px solid lightgray;
-}
-.kb-item-content {
-    margin-bottom: 1rem;
-    border-bottom: 1px solid lightgray;
-}
-.kb-item-content>*:last-child {
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-}
-#btn-objections {
-	margin: 0 0.5rem;
-}
-#btn-objections > span:before,
-#btn-definitions > span:before {
-    font: inherit;
-    content: " Show ";
-}
-#btn-objections.open > span:before,
-#btn-definitions.open > span:before {
-    font: inherit;
-    content: " Hide ";
-}
-.btn-add-objection {
-    margin: 0.5rem;
-}
-
-.sidebar .kb-item * {
-	font-size: 12px;
-    text-align: left;
-    line-height: 1.6em;
-}
-.sidebar .kb-item > h4,
-.sidebar .kb-item-content > p {
-    padding: 0 0.5em 0 0;
-}
-.sidebar .kb-item>h4 {
-    font-weight: 600;
-    margin: 0 auto 0.3rem;
-    padding: 0 0.5em 0 0;
-}
-
-#kb-modal {
-	z-index: 9999; position: absolute;
-}
-#kb-modal .modal-body {
-    padding: 0.5rem 2rem;
-}
-#placeholder_kb_modal_content {
-	overflow: hidden;
-}
-</style>
+<link href="<?= ASSETS_URL ?>sections/kb.css" type="text/css" rel="stylesheet" />
 
 <div id="kb-modal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -147,30 +84,44 @@ require_once __DIR__ .'/kb_common.php';
       targets: `textarea.er-mc-meet-confer-body`,
     }
 
-    function toggleKBSidebar( form_id, panel ) { // debugger;
+    function updateKBSidebar( form_id, panel ) {
+        $.post( `<?= ROOTURL ?>system/application/kb.php?area=${panel.area_id}&section_filter=${form_id}` )
+            .done( data => {
+                $sidebar_items = $(`.sidebar.${panel.dockSide} > .fixed>*`)
+                if( $sidebar_items.length < 1 || $sidebar_items.data('section') != form_id ) {
+                    $(`.sidebar.${panel.dockSide} > .fixed`).html(data).data('section', form_id)
+                }
+                $(panel.actions)
+                    .on('mouseenter', ev => _glowTarget( 'mouseenter' ) )
+                    .on('mouseleave', ev => _glowTarget( 'mouseleave', `${panel.targets}.glowing` ) )
+            } )
+    }
+    function closeSidebar(aSide = `<?= DOCK_SIDE ?>`) {
+        $(`.sidebar.${aSide}`).removeClass("open")
+    }
+    function toggleKBSidebar( form_id, panel, value="auto" ) { //debugger;
         console.assert( panel && panel.dockSide, 'This needs a SomePanel literal, see examples above...' )
-        const $sidebar = $(`.sidebar.${panel.dockSide}`).toggleClass("open"),
-            willOpen = $sidebar.hasClass("open")
+        const $sidebar = $(`.sidebar.${panel.dockSide}`)
+        switch( value ) {
+            case "auto": case null: case undefined: // just toggle
+                $sidebar.toggleClass("open"); break
+            case "on": case true:
+                $sidebar.addClass("open"); break
+            case "off": case false:
+                $sidebar.removeClass("open")
+        }
+        const willOpen = $sidebar.hasClass("open")
         $(panel.toggler).toggleClass( "open", willOpen )
         if( willOpen ) {
-            $.post( `<?= ROOTURL ?>system/application/kb.php?area=${panel.area_id}&section_filter=${form_id}` )
-                .done( data => {
-                    $sidebar_items = $(`.sidebar.${panel.dockSide} > .fixed>*`)
-                    if( $sidebar_items.length < 1 || $sidebar_items.data('section') != form_id ) {
-                        $(`.sidebar.${panel.dockSide} > .fixed`).html(data).data('section', form_id)
+            updateKBSidebar( form_id, panel )
 
-                        $(panel.actions)
-                            .on('mouseenter', ev => _glowTarget( 'mouseenter' ) )
-                            .on('mouseleave', ev => _glowTarget( 'mouseleave', `${panel.targets}.glowing` ) )
-                    }
-                    const $textboxes = $(panel.targets)
-                    globalThis['focused_kb_target'] = $textboxes.first()
-                    $textboxes.on('focus', ev => {
-                        const _target = `#${ev.target.id}`
-                        globalThis['focused_kb_target'] = _target;
-                        console.log(`target = ${_target}`)
-                    } )
-                } )
+            const $textboxes = $(panel.targets)
+            globalThis['focused_kb_target'] = $textboxes.first()
+            $textboxes.on('focus', ev => {
+                const _target = `#${ev.target.id}`
+                globalThis['focused_kb_target'] = _target;
+                console.log(`target = ${_target}`)
+            } )
         }
     }
     function showKB( area_id, section_filter="", target="" ) {

@@ -1,71 +1,31 @@
 <?php
 @session_start();
-require_once("../bootstrap.php"); 
-require_once(SYSTEMPATH."application/ctxhelp_header.php"); 
-require_once(SYSTEMPATH."application/kb_modal.php"); 
+require_once("../bootstrap.php");
+require_once(SYSTEMPATH."application/ctxhelp_header.php");
+require_once(SYSTEMPATH."application/kb_modal.php");
 include_once("../library/classes/login.class.php");
 include_once("../library/classes/functions.php");
 
-global $logger; 
+$uid  = @$_GET['uid'];
+$view = @$_GET['view'];
 
-$uid  = $_GET['uid'];
-$view = $_GET['view'];
-if( $view == 1) {
-	$css = "disabled";
-}
-else {
-	$css = "";
-}
+$css = ( $view != Discovery::VIEW_RESPONDING) ? " disabled " : "";
 
 /***************************************
 		Query For Header Data
 ****************************************/
-$discoveryDetails	= $AdminDAO->getrows('discoveries d,cases c,system_addressbook a,forms f',
-											'c.case_title 	as case_title,
-											c.case_number 	as case_number,
-											c.jurisdiction 	as jurisdiction,
-											c.judge_name 	as judge_name,
-											c.county_name 	as county_name,
-											c.court_address as court_address,
-											c.department 	as department,
-											d.case_id 		as case_id,
-											d.id 			as discovery_id,
-											d.uid,
-											d.type,
-											d.propounding,
-											d.responding,
-											d.discovery_name,
-											d.form_id 		as form_id,
-											d.set_number 	as set_number,
-											d.discovery_introduction as introduction,
-											f.form_name	 	as form_name,
-											f.short_form_name as short_form_name,
-											a.firstname 	as atorny_fname,
-											a.lastname 		as atorny_lname,
-											d.attorney_id	as attorney_id,
-											a.email,
-											a.phone
-											',
-											/*(d.responding_uid 			= :uid OR d.propounding_uid = :uid) AND */
-											"
-											d.uid			= '$uid' AND
-											d.case_id 		= c.id AND
-											d.form_id		= f.id AND
-											d.attorney_id 	= a.pkaddressbookid",
-											array(":uid"=>$uid)
-										);
 
-
-$discovery_data = $discoveryDetails[0];
+$discovery_data = $discoveriesModel->findDetails($uid);
 Side::legacyTranslateCaseData(
 	$discovery_data['case_id'],
 	$discovery_data,
 	$discovery_data['attorney_id'] // !! will use this attorney's side data
 );
 
-$case_title			= $discovery_data['case_title'];
 $discovery_id		= $discovery_data['discovery_id'];
-$discovery_uid		= $discovery_data['uid'];
+//$discovery_uid		= $discovery_data['uid'];
+
+$case_title			= $discovery_data['case_title'];
 $case_number		= $discovery_data['case_number'];
 $jurisdiction		= $discovery_data['jurisdiction'];
 $judge_name			= $discovery_data['judge_name'];
@@ -75,7 +35,7 @@ $department			= $discovery_data['department'];
 $case_id			= $discovery_data['case_id'];
 $form_id			= $discovery_data['form_id'];
 $set_number			= $discovery_data['set_number'];
-$attorney_name		= $discovery_data['atorny_fname']." ".$discovery_data['atorny_lname'];
+$attorney_name		= $discovery_data['attorney'];
 $attorney_id		= $discovery_data['attorney_id'];
 $form_name			= $discovery_data['form_name'];
 $short_form_name	= $discovery_data['short_form_name'];
@@ -85,12 +45,9 @@ $email				= $discovery_data['email'];
 $instructions		= $discovery_data['discovery_instructions'];
 $introduction		= $discovery_data['introduction'];
 $responding			= $discovery_data['responding'];
-$type				= $discovery_data['type'];
-$discovery_name		= Discovery::getTitle( "Response to ". $discovery_data['discovery_name'] ?? $discovery_data['form_name'], $set_number, Discovery::STYLE_AS_IS );
+$type				= $discovery_data['type'] ?: Discovery::TYPE_INTERNAL;
 
-$logger->info([$discovery_data]);
-
-$getResponses = $AdminDAO->getrows('responses',"*","fkdiscoveryid = '$discovery_id' ORDER BY id DESC");
+//$logger->info([$discovery_data]);
 
 include_once(SYSTEMPATH.'body.php');
 include_once(SYSTEMPATH.'application/client_instructions_modal.php');
@@ -119,9 +76,8 @@ textarea#answer {
 		<div class="hpanel">
 			<div class="panel-body">
 <?php
-if(!empty($getResponses))
-{
-	$responseData					= $getResponses[0];
+$responseData = $responsesModel->getByDiscovery($uid);
+if( !empty($responseData) ) {
 	$response_id					= $responseData['id'];
 	$is_submitted					= $responseData['is_submitted'];
 	$submit_date					= $responseData['submit_date'];
@@ -142,25 +98,14 @@ if(!empty($getResponses))
 		</tr>
 		<tr>
 			<td>
-		<p>We're sorry, but the <?= $discovery_name ?> in the case of <?= "<i>$case_title</i>" ?> were already <?= $action ?> on <?= date('F j, Y', $submit_date ) ." at ". date('h:i A', $submit_date ) ?>.</p> 
+		<p>We're sorry, but the <?= $responsesModel->getTitle($responseData) ?> in the case of <?= "<i>$case_title</i>" ?> were already <?= $action ?> on <?= date('F j, Y', $submit_date ) ." at ". date('h:i A', $submit_date ) ?>.</p>
 		<p>If you believe this to be an error, please contact <?= $attorney_name ?> at <?= "<a href='mailto:$email'>$email</a>" ?> or <?= "<a href='tel:$phone'>$phone</a>" ?>.</p>
 		<br/>
 		<p>Thank you.</p>
 			</td>
 		</tr>
 	</table>
-	<!-- Smartsupp Live Chat script -->
-	<script type="text/javascript">
-		var _smartsupp = _smartsupp || {};
-		_smartsupp.key = 'ae242385584ca4d3fd78d74a04dbd806ef3957e0';
-		window.smartsupp||(function(d) {
-			var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-			s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-			c.type='text/javascript';c.charset='utf-8';c.async=true;
-			c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-		})(document);
-	</script>
-
+	<?= SNIPPET_SMARTSUPP ?>
 	</body>
 	</html>
 
@@ -169,8 +114,10 @@ if(!empty($getResponses))
 	}
 }
 else {
-	$response_id	= 0;
+	$response_id = 0;
 }
+$discovery_name	= $responsesModel->getTitle( $response_id, $discovery_data ); // "Response to.. ". $discovery_data['discovery_name'] ?? $discovery_data['form_name'], $set_number, Discovery::STYLE_AS_IS );
+
 if(! $verification_state) {
 	$verification_state = "California";
 }
@@ -335,10 +282,10 @@ function getRPDetails($rp_id) {
 													$dependent_answer = getAnswerOfDependentParentQuestion( $discovery_id, $depends_on_question, $response_id );
 												}
 ?>
-												<li class='list-group-item <?= 
-														!$depends_on_question 
-															? "'" 
-															: "row_$depends_on_question' " .( ( $dependent_answer == 'No' || $dependent_answer == '' ) ? " style='display:none;'" : '' ) 
+												<li class='list-group-item <?=
+														!$depends_on_question
+															? "'"
+															: "row_$depends_on_question' " .( ( $dependent_answer == 'No' || $dependent_answer == '' ) ? " style='display:none;'" : '' )
 													?>>
 <?php
 												if( $question_type_id != 1 ) {
@@ -356,11 +303,11 @@ function getRPDetails($rp_id) {
 																					"q.question_number 	= 	'$question_number' AND
 																					q.id 				= 	 dq.question_id  AND
 																					dq.discovery_id 	= 	:discovery_id AND
-																					q.sub_part 			!=   '' 
-																					GROUP BY question_id 
+																					q.sub_part 			!=   ''
+																					GROUP BY question_id
 																					ORDER BY display_order ",
 
-																					array( ":discovery_id" => $discovery_id ) 
+																					array( ":discovery_id" => $discovery_id )
 																			);
 												}
 ?>
@@ -386,8 +333,8 @@ function getRPDetails($rp_id) {
 																if( $question_type_id == 1 ) {
 ?>
 																	<input type="hidden" name="have_main_question[<?= $discovery_question_id; ?>]" value="<?= $have_main_question?>"/>
-																	<textarea id="answer<?= $discovery_question_id ?>" class="form-control" name="answer[<?= $discovery_question_id; ?>]" placeholder="Your Answer" required <?= $css ?>><?= 
-																		htmlentities($answer) 
+																	<textarea id="answer<?= $discovery_question_id ?>" class="form-control" name="answer[<?= $discovery_question_id; ?>]" placeholder="Your Answer" required <?= $css ?>><?=
+																		htmlentities($answer)
 																	?></textarea>
 <?php
 																}
@@ -396,18 +343,18 @@ function getRPDetails($rp_id) {
 ?>
 																		<div class="form-check form-check-inline">
 																			<label class="radio-inline">
-																			  <input type="radio" 
-																			  			name="answer[<?= $discovery_question_id ?>]" 
-																						value="Yes" 
+																			  <input type="radio"
+																			  			name="answer[<?= $discovery_question_id ?>]"
+																						value="Yes"
 																						onClick="checkFunction('<?= $question_no_makeid ?>','1'<?= ($is_depended_parent ==1 ) ? "),showhidequestions('$question_id',1" : '' ?>)"
 																						<?= ($answer == 'Yes') ? " checked" : '' ?> <?= $css ?>/>
 																			    Yes
 																			</label>
 																			<label class="radio-inline">
-																			  <input type="radio" 
-																			  			name="answer[<?= $discovery_question_id ?>]" 
-																						value="No"  
-																						onClick="checkFunction('<?= $question_no_makeid ?>','2'<?= ($is_depended_parent ==1 ) ? "),showhidequestions('$question_id',2" : '' ?>)" 
+																			  <input type="radio"
+																			  			name="answer[<?= $discovery_question_id ?>]"
+																						value="No"
+																						onClick="checkFunction('<?= $question_no_makeid ?>','2'<?= ($is_depended_parent ==1 ) ? "),showhidequestions('$question_id',2" : '' ?>)"
 																						<?= ($answer == 'No' ) ? " checked" : '' ?> <?= $css ?>/>
 																			  No
 																			</label>
@@ -433,7 +380,7 @@ function getRPDetails($rp_id) {
 																												"fkresponse_id			= :fkresponse_id AND
 																												fkdiscovery_question_id = :discovery_question_id",
 																												array(	"discovery_question_id"	=> $discovery_question_id,
-																														"fkresponse_id"			=> $response_id ) 
+																														"fkresponse_id"			=> $response_id )
 																											);
 																				$answer1 			= $getAnswers[0]['answer'];
 																				$answer_time		= $getAnswers[0]['answer_time'];
@@ -455,8 +402,8 @@ function getRPDetails($rp_id) {
 																						name="answer[<?= $discovery_question_id; ?>]"
 																						placeholder="Your Answer" required
 																						<?= $css ?>
-																						<?= (($answer == "No" || $answer == "") && $p_q_type_id != 3) ? "disabled" : "" ?>><?= 
-																					htmlentities($answer1) 
+																						<?= (($answer == "No" || $answer == "") && $p_q_type_id != 3) ? "disabled" : "" ?>><?=
+																					htmlentities($answer1)
 																				?></textarea>
 																			</div>
 																		</li>
@@ -534,7 +481,7 @@ function getRPDetails($rp_id) {
                                                                 <b><?= $generalQuestion['question_no'] ?>) </b>
                                                                 <?= $generalQuestion['question'] ?>
                                                             </p>
-                                                            <textarea <?php if($answer == "Admit" || $answer == ""){ ?> disabled <?php } ?> id="subanswer<?= $discovery_question_id.'_'.$question_admit_id ?>" class="form-control subanswer_<?= $discovery_question_id ?> " name="subanswer[<?= $discovery_question_id ?>][<?= $question_admit_id; ?>]" placeholder="Your Answer" required <?= $css ?>><?= 
+                                                            <textarea <?php if($answer == "Admit" || $answer == ""){ ?> disabled <?php } ?> id="subanswer<?= $discovery_question_id.'_'.$question_admit_id ?>" class="form-control subanswer_<?= $discovery_question_id ?> " name="subanswer[<?= $discovery_question_id ?>][<?= $question_admit_id; ?>]" placeholder="Your Answer" required <?= $css ?>><?=
 																$sub_answer_show
 															?></textarea>
                                                         </div>
@@ -589,8 +536,8 @@ function getRPDetails($rp_id) {
 															if( $form_id == Discovery::FORM_CA_RPDS ) {
 ?>
 															<select class="form-control" <?= $css ?>
-																	id="answer<?= $discovery_question_id ?>"  
-																	name="answer[<?= $discovery_question_id ?>]" 
+																	id="answer<?= $discovery_question_id ?>"
+																	name="answer[<?= $discovery_question_id ?>]"
 																	onChange="checkFunctionForm5('<?= $discovery_question_id ?>',this.value)">
                                                                 <option <?= ($answer == "Select Your Response") ? "selected" : "" ?>>Select Your Response</option>
                                                                 <option <?= ($answer == "I have responsive documents") ? "selected" : "" ?>>I have responsive documents</option>
@@ -603,8 +550,8 @@ function getRPDetails($rp_id) {
 															}
 															else if( $form_id == Discovery::FORM_CA_SROGS ) {
 ?>
-																<textarea id="answer<?= $discovery_question_id ?>" class="form-control " name="answer[<?= $discovery_question_id; ?>]" placeholder="Your Answer" required <?= $css ?>><?= 
-																	htmlentities($answer) 
+																<textarea id="answer<?= $discovery_question_id ?>" class="form-control " name="answer[<?= $discovery_question_id; ?>]" placeholder="Your Answer" required <?= $css ?>><?=
+																	htmlentities($answer)
 																?></textarea>
 <?php
 															}
@@ -627,13 +574,13 @@ function getRPDetails($rp_id) {
 																			<b>a) </b>
 																			Enter the name and address of anyone you believe has the documents.
 																		</p>
-																		<textarea <?= ($answer == 'Select Your Response' || $answer == "I have responsive documents") ? "disabled" : '' ?> 
-																				id="subanswer<?= $discovery_question_id ?>" 
-																				class="form-control" 
-																				name="subanswer[<?= $discovery_question_id; ?>]" 
-																				placeholder="Your Answer" 
-																				required <?= $css ?>><?= 
-																			htmlentities($answer_detail) 
+																		<textarea <?= ($answer == 'Select Your Response' || $answer == "I have responsive documents") ? "disabled" : '' ?>
+																				id="subanswer<?= $discovery_question_id ?>"
+																				class="form-control"
+																				name="subanswer[<?= $discovery_question_id; ?>]"
+																				placeholder="Your Answer"
+																				required <?= $css ?>><?=
+																			htmlentities($answer_detail)
 																		?></textarea>
 																	</div>
 																	</li>
@@ -651,7 +598,7 @@ function getRPDetails($rp_id) {
                                 </ul>
                             </div>
 <?php
-							if( in_array( $form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS) ) 
+							if( in_array( $form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS) )
 								&& !$view
 								&& !empty($_SESSION['documents'][$uid]) ) {
 ?>
@@ -733,9 +680,9 @@ function loadinstructions( form_id, id ) {
 		.done( resp => {
 			$("#loadinstructions").html( trim(resp) );
 
-			const { discoveryType, discoveryFormNames, discoveryForm, } = globalThis,
+			const { discoveryFormNames, discoveryForm, } = globalThis,
 					suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
-			ctxUpdate({ id: `47_${discoveryType}${suffix}`, pkscreenid: '47', url: 'discoveryfront.php', } );
+			ctxUpdate({ id: `47_${type}${suffix}`, pkscreenid: '47', url: 'discoveryfront.php', } );
 
 			CKEDITOR.replace( 'instruction' );
 		});
@@ -913,7 +860,9 @@ ob_start();
 		}
 ?>
         <div id="verification_text" style="line-height:23px !important; text-align:justify; font-size:13px">
-            <p>I am the <input type='text' name='verification_by_name' id='verification_by_name' value='<?= $verification_by_name ?>' placeholder='Role: Plaintiff, Defendant, etc.' required pattern="[A-Za-z]+" /> in this action, and I have read the foregoing <b><?= Discovery::getTitle($discovery_name) ?></b> and know its contents. The matters stated therein are true based on my own knowledge, except as to those matters stated on information and belief, and as to those matters I believe them to be true.
+            <p>I am the <input type='text' name='verification_by_name' id='verification_by_name'
+								value='<?= $verification_by_name ?>' required pattern="[A-Za-z]+"
+								placeholder='Role: Plaintiff, Defendant, etc.' /> in this action, and I have read the foregoing <b><?= $discovery_name ?></b> and know its contents. The matters stated therein are true based on my own knowledge, except as to those matters stated on information and belief, and as to those matters I believe them to be true.
             </p>
 			<p>I declare under penalty of perjury under the laws of the State of California that the foregoing is true and correct.<br>
 			Executed on <?= date("F j, Y") ?> at <input placeholder="City" type='text' name='verification_city' id='verification_city' value='<?= $verification_city; ?>' required pattern="[A-Za-z]+" />,
@@ -983,27 +932,16 @@ ob_start();
 </div>
 <!-- Verification Modal End -->
 
-<!-- Smartsupp Live Chat script -->
-<script type="text/javascript">
-	var _smartsupp = _smartsupp || {};
-	_smartsupp.key = 'ae242385584ca4d3fd78d74a04dbd806ef3957e0';
-	window.smartsupp||(function(d) {
-		var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-		s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-		c.type='text/javascript';c.charset='utf-8';c.async=true;
-		c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-	})(document);
-</script>
-
+<?= SNIPPET_SMARTSUPP ?>
 </body>
 </html>
 
 <script>
 globalThis['discoveryType'] = "<?= $type ?>";
 
-jQuery( $ => { 
+jQuery( $ => {
 	CKEDITOR.replace( 'email_body_popup' )
-	
+
 	autogrowTextareas()
 } );
 </script>

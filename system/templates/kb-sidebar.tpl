@@ -10,18 +10,18 @@
             <a class="btn btn-round btn-outline pull-right" data-toggle="collapse" data-parent=".kb-item-content#kb-issue-{$idx}-sidebar" href="#kb-issue-{$idx}-user-notes" aria-expanded="true">
               <span class='fa fa-chevron-down'></span>
             </a>
-            <div id="kb-issue-{$idx}-user-notes" class="collapse">
+            <div id="kb-issue-{$idx}-user-notes" class="collapse kb-sidebar-issue-user-notes">
               <p>
                 {render text=$item.explanation}
               </p>
             </div>
             {if $item.solution}
-              <button class='btn-add-{$itemType} {if $side == 'left' } pull-right {else} pull-left {/if}' 
+              <button class='btn-add-{$itemType} {if $side == 'left' } pull-right {else} pull-left {/if}'
                 onclick='javascript:{$fn}(`{{render text=$item.solution}|strip_tags}`);'>
                   {if $side == 'left' }
                       Insert &nbsp; <span class='fa fa-arrow-right'></span>
                   {else}
-                      <span class='fa fa-arrow-left'></span> &nbsp; Insert 
+                      <span class='fa fa-arrow-left'></span> &nbsp; Insert
                   {/if}
               </button>
               <br/>
