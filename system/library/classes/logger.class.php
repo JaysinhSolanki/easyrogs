@@ -1,6 +1,8 @@
 <?php
 
-  namespace EasyRogs;
+namespace EasyRogs;
+
+  use \Exception;
   class Logger
   {
     const DEBUG      = 'DEBUG';
@@ -28,9 +30,28 @@
       }
     }
 
+    static function getCallstack( $e ) {
+      return  "\n ---------------- \n" .
+              $e->getTraceAsString()   .
+              "\n ----------------";
+    }
+
     static function toString( $value ) {
+      if ( is_subclass_of($value,'Throwable') ) {
+        $result =                                          "\n\n".
+                  $value->getFile().":".$value->getLine() ."\n\n".
+                  $value->getCode()                         ."\n".
+                  $value->getMessage()                      ."\n".
+                  self::getCallstack($value);
+        return $result;
+      }
       if ( is_array( $value ) || is_object( $value ) ) {
-        return json_encode( $value, JSON_PRETTY_PRINT+JSON_UNESCAPED_LINE_TERMINATORS+JSON_UNESCAPED_SLASHES );
+        $result = json_encode( $value, JSON_PRETTY_PRINT+JSON_UNESCAPED_LINE_TERMINATORS+JSON_UNESCAPED_SLASHES );
+        if( !$result ) {
+          $result = "// using var_export due to Logger.JSON_Error:". \json_last_error() .":". \json_last_error_msg() .
+                    "\n". var_export($value, true);
+        }
+        return $result;
       }
       return $value;
     }
@@ -40,19 +61,15 @@
 
       if ($printBacktrace) {
         $e = new Exception();
-        $message .= "\n ---------------- \n" .
-                    $e->getTraceAsString()   .
-                    "\n ----------------";
+        $message .= self::getCallstack($e);
       }
       return $message;
     }
-
 
     protected function log($message, $level, $printBacktrace = false)
     {
       $time = date('Y-m-d H:i:s');
       $level = trim($level);
-
 
       if (in_array($level, self::LOG_LEVELS)) {
         $fp = $this->files[$level] = $this->files[$level]
@@ -62,9 +79,8 @@
 
 
       $message = $this->log_text( $message, $level, $printBacktrace );
-      if ($fp) { fwrite($fp, "$time $message \n"); }
-      fwrite( $this->files['ALL'], "$time [$level] $message \n" );
-
+      if( $fp ) { fwrite($fp, "$time $message \n"); }
+      if( $level != self::ERROR ) { fwrite( $this->files['ALL'], "$time [$level] $message \n" ); }
 
       if ($this->stdOut) { echo "$time [$level] $message \n"; }
     }
@@ -90,4 +106,28 @@
       }
       echo "<script>$code</script>";
     }
+
+}
+
+function exception_logger($e) { global $logger;
+  $logger->error( $e );
+  die();
+}
+function error_logger($errNo, $msg, $file, $line, $vars) { global $logger;
+  if( !(error_reporting() & $errNo) ) {
+      return false;
+  }
+
+  switch( $errNo ) {
+    case E_USER_ERROR:
+      $logger->error( [ "\n\n$file:$line", "$msg",
+                        ( $_ENV['APP_ENV'] == 'local' ) ? $vars : null ], true );
+      die();
+    case E_USER_WARNING:
+      $logger->warn( [ "$file:$line", "$msg"], true );
+      break;
+    case E_USER_NOTICE:
+    default:
+      $logger->info( [ "$file:$line", "$msg"], true );
+  }
 }

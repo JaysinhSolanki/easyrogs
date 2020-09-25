@@ -30,17 +30,17 @@ $cases = $AdminDAO->getrows(
                             array( 'case_id'=>$case_id )
                         );
 Side::legacyTranslateCaseData($case_id, $cases);
-
 $case               = $cases[0];
+
 $case_title         = $case['case_title'];
-$case_number        = $case['case_number'];
-$jurisdiction       = $case['jurisdiction'];
-$judge_name         = $case['judge_name'];
-$county_name        = $case['county_name'];
-$court_address      = $case['court_address'];
-$department         = $case['department'];
-$set_number         = $case['set_number'];
-$atorny_name        = $case['atorny_fname']." ".$case['atorny_lname'];
+//$case_number        = $case['case_number'];
+//$jurisdiction       = $case['jurisdiction'];
+//$judge_name         = $case['judge_name'];
+//$county_name        = $case['county_name'];
+//$court_address      = $case['court_address'];
+//$department         = $case['department'];
+//$set_number         = $case['set_number'];
+//$atorny_name        = $case['atorny_fname']." ".$case['atorny_lname'];
 $atorny_city        = $currentUser->user['cityname']; //$case['atorny_city'];
 $uid                = "addnew";
 $conjunction_with   = 0;
@@ -139,7 +139,7 @@ body.modal-open {
     padding: 0.5em 2em;
 }
 </style>
-<div id="screen-discovery" class="main">
+<div id="screenfrmdiv" class="main discovery">
     <aside class="sidebar left "><div class="fixed"></div></aside>
     <div class="container" style="">
         <div class="hpanel">

@@ -78,6 +78,7 @@ textarea#answer {
 <?php
 $responseData = $responsesModel->getByDiscovery($uid);
 if( !empty($responseData) ) {
+	$responseData = $responseData[0]; // get the first
 	$response_id					= $responseData['id'];
 	$is_submitted					= $responseData['is_submitted'];
 	$submit_date					= $responseData['submit_date'];

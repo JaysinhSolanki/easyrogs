@@ -10,7 +10,8 @@ class Discovery extends Payable {
         // TODO temporary measure, needed until the old code is refactored
         'getDetails' => "
                           SELECT
-                            d.uid as discovery_uid, d.id,
+                            d.uid, d.id,
+                            (SELECT d.uid) AS discovery_uid,
                             (SELECT d.id) AS discovery_id,
                             d.case_id, c.uid as case_uid,
                             d.propounding,     d.responding,
@@ -21,11 +22,12 @@ class Discovery extends Payable {
                             c.department,
                             d.is_served, d.served,
                             d.is_send,   d.send_date,
-                            d.discovery_introduction as introduction,
+                            d.type,
                             d.form_id,
                             f.form_name, f.short_form_name,
                             d.discovery_name, d.set_number,
-                            a.email,
+                            d.discovery_introduction as introduction,
+                            a.email, a.phone,
                             a.attorney_info,
                             a.firstname, a.middlename, a.lastname,
                             TRIM(
@@ -50,6 +52,8 @@ class Discovery extends Payable {
         'getSuppAmended' => "
                           SELECT
                             d.id, d.uid,
+                            (SELECT d.uid) AS discovery_uid,
+                            (SELECT d.id) AS discovery_id,
                             d.propounding_uid, d.responding_uid,
                             d.propounding,     d.responding,
                             d.is_served, d.served,
@@ -80,10 +84,11 @@ class Discovery extends Payable {
 
         'getByCase' => "
                           SELECT
-                            d.id,
-                            d.uid,
+                            d.id, d.uid,
+                            (SELECT d.uid) AS discovery_uid,
+                            (SELECT d.id) AS discovery_id,
                             d.propounding, d.responding,
-                                      d.propounding_uid, d.responding_uid,
+                            d.propounding_uid, d.responding_uid,
                             is_served, d.served,
                             d.due,
                             c.case_title,

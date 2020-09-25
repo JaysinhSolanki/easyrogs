@@ -3,12 +3,14 @@ require_once __DIR__ . '/../bootstrap.php';
 
 include_once("../library/classes/functions.php");
 
-$logger->info("MakePDF: starting");
+//$logger->info("MakePDF: starting");
 
-$respond			= 0;
-$uid				= @$_GET['id'];
 $view				= $_GET['view'] ?: 0;
 $downloadORwrite	= @$_GET['downloadORwrite'] ?: 0;
+
+$respond			= 0; //!!
+
+$uid				= @$_GET['id'];
 $response_id		= @$_GET['response_id'];
 
 /**************************************
@@ -101,7 +103,7 @@ Side::legacyTranslateCaseData(
 if ($signingSide){
     $masterhead = $sides->getMasterHead($signingSide);
 }
-$masterhead = $masterhead ? $masterhead : $users->getMasterHead($signingAttorney); // if the side doesnt have a masthead yet...
+$masterhead = $masterhead ?: $users->getMasterHead($signingAttorney); // if the side doesnt have a masthead yet...
 
 $form_name = ($view == Discovery::VIEW_RESPONDING)
                     ? $responsesModel->getTitle($response_id, $discovery_data)
@@ -685,7 +687,7 @@ ob_start();
                                 echo "	<p class='q-response'>". finalResponseGenerate($objection,$answer) ."</p>";
                             }
                         }
-                        else if( $respond == 1 ) {
+                        else if( $respond ) {
                             echo "	<b><u>Objection</u></b>
                                     <p class='q-objection'> $objection </p>";
                         }
@@ -765,7 +767,7 @@ ob_start();
                             echo "<p class='q-response'>". finalResponseGenerate( $objection, $answer ) ."</p>";
                         }
                     }
-                    else if( $respond == 1 ) {
+                    else if( $respond ) {
                         echo "	<b><u>Objection</u></b>
                                 <p class='q-objection'> $objection </p>";
                     }
@@ -888,7 +890,7 @@ $headerFooterConfiguration = [
   'even' => $oddEvenConfiguration
 ];
 
-$fileName = "{$form_name}.pdf";
+$fileName = sanitize_file_name($form_name).".pdf";
 if ($downloadORwrite == 1) {
     $folderPath	= $_SESSION['system_path']."uploads/documents/{$uid}";
     if (!is_dir($folderPath)) {

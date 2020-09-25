@@ -40,7 +40,7 @@
         'updateIgnoreBy'   => 'UPDATE IGNORE %1$s SET %2$s WHERE %3$s',
       ];
 
-      $this->connect($dbConfig ? $dbConfig : [
+      $this->connect($dbConfig ?: [
         'dsn'      => "mysql:dbname=" . DBNAME . ";host=" . DBHOST,
         'username' => DBUSER,
         'password' => DBPASS
@@ -60,7 +60,7 @@
       error_reporting($errorLevel);
       return $active;
     }
-  
+
     private function connect( $dbConfig )
     {
       $this->dbConfig = $dbConfig;
@@ -85,7 +85,7 @@
           usleep( 500 ); // Wait 0.5s between retries.
         }
       }
-  
+
       if ( !self::$db ) {
         throw new Exception( "Unable to connect to database: $lastError" );
       }
@@ -155,7 +155,7 @@
 
       return $tmpTable;
     }
-    
+
     public function createTables( $tablesMap )
     {
       $query = $this->queryTemplates['createTable'];
@@ -277,15 +277,15 @@
           $whereConditions[] = "$name = :$name";
         }
       }
-      
+
       $searchConditions = ['1 <> 1'];
       foreach( $fields as $field )  {
         $searchConditions[] = "$field LIKE '%$term%'";
       }
-      
+
       $modifiers = [
         'tableName'  => $tableName,
-        'whereQuery' => implode( ' AND ', $whereConditions ) . 
+        'whereQuery' => implode( ' AND ', $whereConditions ) .
                         ' AND (' . implode( ' OR ', $searchConditions) . ')'
       ];
       if ( $limit && $limit > 1 ) {

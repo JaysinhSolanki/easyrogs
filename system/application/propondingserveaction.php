@@ -2,16 +2,19 @@
 require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
+$respond        = $_POST['respond'];
+
 $discovery_id   = $_POST['discovery_id'];
-$pos_text       = $_POST['pos_text'];
+$response_id    = $_POST['response_id'];
+$loggedin_email	= $_SESSION['loggedin_email'];
+
+$discovery_type = $_POST['discovery_type'] ?: Discovery::TYPE_EXTERNAL;
 $posstate       = $_POST['posstate'];
 $poscity        = $_POST['poscity'];
 $posaddress     = $_POST['posaddress'];
-$respond        = $_POST['respond'];
-$discovery_type = $_POST['discovery_type'];
-$response_id    = $_POST['response_id'];
+$pos_text       = $_POST['pos_text'];
 
-$loggedin_email	= $_SESSION['loggedin_email'];
+assert( $respond ? $response_id : $discovery_id, "!!" );
 
 $payable = $respond ? $responsesModel : $discoveriesModel;
 $itemId  = $respond ? $response_id 	  : $discovery_id;
@@ -103,6 +106,8 @@ $atorny_email		= $discovery_data['email'];
 $propounding		= $discovery_data['propounding'];
 $responding			= $discovery_data['responding'];
 
+assert( $uid && $case_uid && case_id, "!!" );
+
 $respondingdetails		= $AdminDAO->getrows("clients","*",
 								"id = :id",
 								array(":id"=>$responding));
@@ -151,7 +156,7 @@ if( !empty($discoveryDocuments) ) {
 }
 
 //Attach discovery Document
-$filename	= "$discovery_name.pdf";
+$filename	= sanitize_file_name($discovery_name) .".pdf";
 $path		= $_SESSION['system_path']."uploads/documents/$uid/$filename";
 $docsArray[] = array("path" => $path, "filename" => $filename);
 
@@ -160,7 +165,7 @@ DiscoveryMailer::propound( $discovery_data, $currentUser->user, $respond, $docsA
 
 $jsonArray	= array(	"messagetype"	 	=> 	2,
 						"pkerrorid" 		=> 	7,
-						"loadpageurl" 		=> 	"discoveries.php?pid=$discovery[case_id]&pkscreenid=45",
+						"loadpageurl" 		=> 	"discoveries.php?pid=$case_id&pkscreenid=45",
 						"loaddivname" 		=> 	"screenfrmdiv",
 						"messagetext"		=>	"Data has been served successfully."
 					);

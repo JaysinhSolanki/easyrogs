@@ -9,8 +9,8 @@
 
     public function isPaid($payableId) {
       global $currentUser, $membershipWhitelist;
-      
-      if($membershipWhitelist->isWhitelisted($currentUser->user)) {
+
+      if( $_ENV['PAY_DISABLED'] || $membershipWhitelist->isWhitelisted($currentUser->user) ) {
         return true;
       }
 
@@ -26,6 +26,5 @@
     public function setPaymentIntent($itemId, $paymentIntentId) {
       return $this->updateById($itemId, ['payment_intent_id' => $paymentIntentId]);
     }
-    
+
   }
-  

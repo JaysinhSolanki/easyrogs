@@ -77,7 +77,7 @@ table.dataTable.no-footer {
 	color:#fff !important;
 }
 .btn-gray {
-	
+
 }
 .btn-round {
   border-radius: 50%;
@@ -108,9 +108,9 @@ table.dataTable.no-footer {
     transition: all 0.3s;
 }
 .sidebar>.fixed {
-    position: fixed; 
+    position: fixed;
     margin-top: 70px; /* skip the header */
-    height: 100vh; 
+    height: 100vh;
 	  width: 0;
     z-index: 5;
     overflow-x: hidden;
@@ -131,7 +131,7 @@ body .sidebar.open:not(#-_-) {
 	width: 280px;
 }
 @media screen and (min-width: 960px) {
-  #screen-discovery .sidebar {
+  #screenfrmdiv.discovery .sidebar {
       min-width: 32px;
       max-width: 32px;
   }

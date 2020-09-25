@@ -1,5 +1,5 @@
-<?php 
-  
+<?php
+
   class HttpResponse {
     static $die = true;
 
@@ -7,6 +7,13 @@
     const TYPE_WARNING = 'warning';
     const TYPE_INFO    = 'info';
     const TYPE_SUCCESS = 'success';
+
+    const ERROR_INTERNAL             = '500: Internal Error';
+    const ERROR_NOT_IMPLEMENTED      = '501: Not Implemented';
+    const ERROR_BAD_GATEWAY          = '502: Bad Gateway';
+    const ERROR_SERVICE_UNAVAILABLE  = '503: Service Unavailable';
+    const ERROR_GATEWAY_TIMEOUT      = '504: Gateway Timeout';
+    const ERROR_INSUFFICIENT_STORAGE = '507: Insufficient Storage';
 
     static function send($code, $type, $message, $extra) {
       header('Content-Type: application/json');
@@ -46,10 +53,15 @@
     static function success($message = 'Success!', $extra = []) {
       self::send(200, self::TYPE_SUCCESS, $message, $extra);
     }
-    
+
     // conflict sends type = warning by default
     static function conflict($message = 'Conflict Found', $type = self::TYPE_ERROR, $extra = []) {
-      self::send(409, $type, $message, $extra); 
+      self::send(409, $type, $message, $extra);
+    }
+
+    static function internalError($message, $errorType = self::ERROR_INTERNAL, $extra = []) {
+      [$errorCode, $defaultMessage] = explode(':', $errorType, 2);
+      self::send($errorCode, TYPE_ERROR, $message ?: trim($defaultMessage) ?: "Internal error", $extra);
     }
 
     static function successPayload($payload, $code = 200) {
@@ -70,5 +82,5 @@
       header("Location: $location");
       self::$die && die();
     }
-    
+
   }

@@ -4,6 +4,7 @@
 
 $uid				=	$_GET['id'];
 $response_id		=	$_GET['response_id'];
+
 $view				=	$_GET['view'];
 $respond			=	$_GET['respond'];
 $active_attr_email	=	$_SESSION['loggedin_email'];
@@ -25,13 +26,10 @@ $court_address		= $discovery_data['court_address'];
 $department			= $discovery_data['department'];
 $case_id			= $discovery_data['case_id'];
 $form_id			= $discovery_data['form_id'];
-$set_number			= $discovery_data['set_number'];
-$atorny_name		= $discovery_data['atorny_fname']." ".$discovery_data['atorny_lname'];
 $attorney_id		= $discovery_data['attorney_id'];
 $send_date			= $discovery_data['send_date'];
 $email				= $discovery_data['email'];
 $type				= $discovery_data['type'];
-$introduction		= $discovery_data['introduction'];
 $propounding		= $discovery_data['propounding'];
 $responding			= $discovery_data['responding'];
 if( ($view == Discovery::VIEW_RESPONDING) || $respond || $response_id ) { //!!
@@ -84,7 +82,7 @@ jQuery( $ => { //debugger;
 				$("#loadIFrame").attr("src",data);
 				setTimeout( _ => {
 					$.LoadingOverlay("hide");
-				}, 2000);
+				}, 1000);
 	} );
 } );
 </script>

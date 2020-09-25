@@ -8,8 +8,9 @@
     const MEET_CONFER_SUBJECT         = '%s - Meet & Confer';
 
     static function clientVerification($discovery) {
-      global $discoveriesModel, $responsesModel, $usersModel, $clientsModel, $sidesModel,
-             $smarty, $logger;
+      global $logger, $smarty,
+              $discoveriesModel, $responsesModel,
+              $usersModel, $clientsModel, $sidesModel;
 
       $logContext = 'DISCOVERY_MAILER_CLIENT_VERIFICATION';
       $logParams  = json_encode(['discovery' => $discovery]);
@@ -81,7 +82,9 @@
     }
 
     static function clientResponded($discovery,$response) {
-      global $smarty, $discoveriesModel, $clientsModel, $sidesModel, $logger;
+      global $logger, $smarty,
+              $discoveriesModel, $responsesModel,
+              $clientsModel, $sidesModel;
 
       $logContext = 'DISCOVERY_MAILER_CLIENT_RESPONDED';
       $logParams  = json_encode(['discovery' => $discovery]);
@@ -116,7 +119,9 @@
     }
 
     static function propound($discovery, $actionUser, $isResponse, $attachments) {
-      global $logger, $smarty, $discoveriesModel, $responsesModel, $clientsModel, $usersModel, $sidesModel;
+      global $logger, $smarty,
+              $discoveriesModel, $responsesModel,
+              $clientsModel, $usersModel, $sidesModel;
 
       $logContext = 'DISCOVERY_MAILER_PROPOUND';
       $logParams  = json_encode([
@@ -166,8 +171,9 @@
     }
 
     static function meetConfer($mc, $attachments) {
-      global $smarty, $logger, $responsesModel, $currentUser,
-             $sidesModel, $discoveriesModel;
+      global $smarty, $logger,
+             $discoveriesModel, $responsesModel,
+             $currentUser, $sidesModel;
 
       $actionUserId     = $currentUser->id;
       $response         = $responsesModel->find($mc['response_id']);

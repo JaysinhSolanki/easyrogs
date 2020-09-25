@@ -1,24 +1,24 @@
 <?php
 
   class BaseMailer {
-    
+
     const TESTING_DOMAIN         = 'ezrogs.com';
     const TESTING_DEV_RECIPIENTS = ['easyrogs@mailinator.com', 'easyrogs@gmail.com'];
     const TESTING_PROD_RECIPIENT = 'easyrogs@gmail.com';
-    
+
     const FROM_EMAIL = 'service@easyrogs.com';
     const FROM_NAME  = 'EasyRogs Service';
 
     static function sendEmail(
-      $to, $subject, $body, 
-      $fromName = self::FROM_NAME, $fromEmail = self::FROM_EMAIL, 
-      $attachments = [], 
-      $cc = [], $bcc = [] 
+      $to, $subject, $body,
+      $fromName = self::FROM_NAME, $fromEmail = self::FROM_EMAIL,
+      $attachments = [],
+      $cc = [], $bcc = []
     ) {
       global $logger;
 
       // validate params
-      if (!($to && $subject && $body)) { 
+      if (!($to && $subject && $body)) {
         return $logger->error("Trying to send email with missing parts: To: $to, Subject: $subject, Body Length: ". strlen($body));
       }
 
@@ -57,19 +57,17 @@
       foreach($to  as $email_addr) { $mail->addAddress($email_addr); }
       foreach($cc  as $email_addr) { $mail->AddCC($email_addr); }
       foreach($bcc as $email_addr) { $mail->AddBCC($email_addr); }
-      foreach($attachments as $attachment) { 
+      foreach($attachments as $attachment) {
         $mail->addAttachment($attachment['path'], $attachment['filename']);
       }
 
       // send email
-      try { 
-        if ( $_ENV['APP_ENV'] === 'test' ) {
-          // disable emails on TEST
-        }
-        else {
+      try {
+        $sendIt = $_ENV['APP_ENV'] === 'prod' || $_ENV['DEV_SEND_EMAILS'];
+        if( $sendIt ) {
           $mail->send();
         }
-        $logger->info("Mail sent to: " .json_encode($to). ", Subject: $subject, Body: --\n\r\n\r" .$body. "\n\r--\n\r\n\r" );
+        $logger->info("Mail ". ($sendIt ? "sent" : "skipped") ." to: ". json_encode($to) .", Subject: $subject, Body: --\n\r\n\r". $body ."\n\r--\n\r\n\r" );
 
         if ($_ENV['APP_ENV'] != 'prod') {
           // Save copy of the last email
@@ -77,28 +75,28 @@
           if(!is_dir($savedir)) { mkdir( $savedir, 0755, true ); }
 
           file_put_contents( $savedir. '/last-email.htm',             $body );
-          file_put_contents( $savedir. '/last-email-attachments.txt', json_encode($attachments) );
+          file_put_contents( $savedir. '/last-email-attachments.txt', json_encode($attachments, JSON_PRETTY_PRINT+JSON_UNESCAPED_LINE_TERMINATORS+JSON_UNESCAPED_SLASHES ) );
 
-          if (is_dir($savedir)) { 
+          if (is_dir($savedir)) {
             array_map( 'unlink', glob("$savedir/attach/*") );
           } else {
-            mkdir( $savedir. '/attach', 0755, true ); 
+            mkdir( $savedir. '/attach', 0755, true );
           }
-          foreach($attachments as $attachment) { 
+          foreach($attachments as $attachment) {
             if (is_file($attachment['path'])) {
               try {
                 @copy( $attachment['path'], $savedir .'/attach/'. $attachment['filename'] );
-              } catch( Exception $e ) { }
+              } catch( Throwable $e ) { }
             } else {
-              $logger->warn("Email attachment not found: " . $attachment['path']);
+              $logger->warn(["Email attachment not found", $attachment['path']]);
             }
           }
         }
 
         return $mail;
       }
-      catch( Exception $e ) { 
-        $logger->error('Send mail failed: ' . $e->getMessage()); 
+      catch( Throwable $e ) {
+        $logger->error( ['Send mail failed', $e] );
       }
     }
   }

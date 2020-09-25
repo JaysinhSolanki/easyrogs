@@ -1,7 +1,19 @@
 <?php
 /************************* Send Email *************************/
+
 require(__DIR__."/phpmailer/src/PHPMailer.php");
 require(__DIR__."/phpmailer/src/Exception.php");
+
+function sanitize_file_name( $str ) {
+    $filename = preg_replace( '/[\r\n\t ]+/', ' ', $str );
+    $filename = preg_replace( '/[-]+/', '-', $filename );
+    $filename = preg_replace( '/[\'"<>:;?\/=&\$#\*()|~`!{}%\+«»’”“\\\\]+/', '_', $filename );
+    $filename = preg_replace( '/_+/', '_', $filename );
+    $filename = trim( $filename, '.-_ ' );
+
+    return $filename;
+}
+
 function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $fromemail = "service@easyrogs.com", $fromname = "EasyRogs Service", $emailtype = 1, $cc = array(), $bcc = array(), $docsArray = array())
 {
     global $logger;
@@ -380,7 +392,7 @@ function numberTowords($num)
     "TRILLION",
     "QUARDRILLION"
     ); /*limit t quadrillion */
-    $num = number_format($num, 2, ".", ",");
+    $num = number_format(intval($num), 2, ".", ",");
     $num_arr = explode(".", $num);
     $wholenum = $num_arr[0];
     $decnum = $num_arr[1];

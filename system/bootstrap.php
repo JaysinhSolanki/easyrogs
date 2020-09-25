@@ -7,34 +7,6 @@
   $dotEnv->load();
   require_once(__DIR__ . "/settings.php");
 
-  // snippets
-
-  define( 'SNIPPET_ANALYTICS', @$_ENV['ANALYTICS_DISABLED'] ? '' : '
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id='. APP_GOOGLE_ANALYTICS_ID .'"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag("js", new Date());
-
-      gtag("config", "'. APP_GOOGLE_ANALYTICS_ID .'", { "transport_type": "beacon"});
-    </script>
-  ' );
-
-  define( 'SNIPPET_SMARTSUPP', @$_ENV['SMARTSUPP_DISABLED'] ? '' : <<<SNIPPET
-    <!-- Smartsupp Live Chat script -->
-    <script type="text/javascript">
-      var _smartsupp = _smartsupp || {};
-      _smartsupp.key = 'ae242385584ca4d3fd78d74a04dbd806ef3957e0';
-      window.smartsupp||(function(d) {
-        var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-        s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-        c.type='text/javascript';c.charset='utf-8';c.async=true;
-        c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-      })(document);
-    </script>
-  SNIPPET );
-
   // payments
   use Stripe\Stripe;
   use Stripe\StripeClient;
@@ -48,6 +20,8 @@
 
   require_once __DIR__ . '/library/classes/logger.class.php';
   $logger = new EasyRogs\Logger();
+  set_error_handler('EasyRogs\error_logger');
+  set_exception_handler('EasyRogs\exception_logger');
 
   // lib
   require_once __DIR__ . '/library/classes/httpresponse.php';
@@ -71,6 +45,9 @@
       // you can call smartyAssignGlobals() any time.
     ]);
   } smartyAssignGlobals($smarty);
+
+  // snippets
+  require_once(__DIR__ . "/snippets.php");
 
   // models
   require_once(__DIR__ . '/models/index.php');

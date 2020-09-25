@@ -1,18 +1,18 @@
-<!-- Vendor scripts --> 
+<!-- Vendor scripts -->
 <script src="<?= VENDOR_URL ?>jquery/dist/jquery.min.js"></script>
 
-<?/* 
+<?/*
 	!!!! WARNING !!!!
 	Changing the load order of this (jquery.uploadfile) plugin could break it !!!!
 	https://github.com/EasyRogs/easyrogs/pull/420
 */?>
 <script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
 
-<script src="<?= VENDOR_URL ?>jquery-ui/jquery-ui.min.js"></script> 
-<script src="<?= VENDOR_URL ?>toastr/build/toastr.min.js"></script> 
+<script src="<?= VENDOR_URL ?>jquery-ui/jquery-ui.min.js"></script>
+<script src="<?= VENDOR_URL ?>toastr/build/toastr.min.js"></script>
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
-<script src="<?= VENDOR_URL ?>metisMenu/dist/metisMenu.min.js"></script> 
-<script src="<?= VENDOR_URL ?>iCheck/icheck.min.js"></script> 
+<script src="<?= VENDOR_URL ?>metisMenu/dist/metisMenu.min.js"></script>
+<script src="<?= VENDOR_URL ?>iCheck/icheck.min.js"></script>
 
 <script src="<?= VENDOR_URL ?>jquery-validation/jquery.validate.min.js"></script>
 <script src="<?= VENDOR_URL ?>customjscss/jquery.numslider.js"></script>
@@ -25,7 +25,7 @@
 <script src="<?= VENDOR_URL ?>bootstrap-datetimepicker.js"></script>
 
 <!-- isInViewport jQuery plugin @ https://cdnjs.cloudflare.com/ajax/libs/is-in-viewport/3.0.4/isInViewport.js -->
-<script src="<?= VENDOR_URL ?>is-in-viewport/3.0.4/isInViewport.min.js"></script> 
+<script src="<?= VENDOR_URL ?>is-in-viewport/3.0.4/isInViewport.min.js"></script>
 
 <script src="<?= VENDOR_URL ?>jquery.initialize/jquery.initialize.min.js"></script>
 
@@ -43,9 +43,9 @@
 <script src="<?= VENDOR_URL ?>ckeditor/ckeditor.js"></script>
 
 <!-- easyrogs -->
-<!--script src="<?= VENDOR_URL ?>homer.js"></script--> 
-<script src="<?= VENDOR_URL ?>header.js"></script> 
-<script src="<?= VENDOR_URL ?>common.js"></script> 
+<!--script src="<?= VENDOR_URL ?>homer.js"></script-->
+<script src="<?= VENDOR_URL ?>header.js"></script>
+<script src="<?= VENDOR_URL ?>common.js"></script>
 
 <script type="text/javascript">
 	const APP_GOOGLE_ANALYTICS_ID = '<?= APP_GOOGLE_ANALYTICS_ID ?>';
@@ -54,8 +54,8 @@
 
 <script type="text/javascript">
 	function trackVideos() {
-		const videoTracker = jQuery.initialize( 'video', function() { 
-			function _logVideo(action, element) { 
+		const videoTracker = jQuery.initialize( 'video', function() {
+			function _logVideo(action, element) {
 				$this = $(element);
 				trackEvent( action, { event_category: 'video', event_label: $this.data('src') || $this.src, } );
 			}
@@ -81,6 +81,4 @@
 	});
 </script>
 
-<?php if( !@$_ENV['PAY_DISABLED'] ) { ?>
-	<script src="https://js.stripe.com/v3/"></script>
-<?php } ?>
+<?= SNIPPET_STRIPE ?>

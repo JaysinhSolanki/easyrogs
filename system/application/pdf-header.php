@@ -23,6 +23,7 @@ h5 {
 	footer: htmlpagefooter ;
 }
 </style>
+<?php // $logger->debug(['$discovery_data',$discovery_data]); ?>
 
 <table class="tabela1" style="border:none !important">
     <tr>

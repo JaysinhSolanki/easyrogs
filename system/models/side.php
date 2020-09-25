@@ -419,10 +419,10 @@
         $side = $this->find($side);
       }
 
-      $logger->debug('SIDE_GET_MASTERHEAD Side: ' . json_encode($side));
+      $logger->debug(['SIDE_GET_MASTERHEAD Side: ', $side]);
       $masterhead = $side['masterhead'];
       if ( !$masterhead && $side['primary_attorney_id'] ) {
-        $logger->debug('SIDE_GET_MASTERHEAD Updating Side: ' . json_encode($side));
+        $logger->debug(['SIDE_GET_MASTERHEAD Updating Side: ', json_encode($side)]);
         $masterhead = $usersModel->getMasterHead($side['primary_attorney_id']);
       }
 
