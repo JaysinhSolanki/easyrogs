@@ -40,7 +40,8 @@
       ]);
     }
 
-    static function publishable($users, $allowKeys = []) {
+    static function publishable($users, $allowKeys = []) { global $usersModel;
+
       $singleUser = isset($users['pkaddressbookid']);
       $users = $singleUser ? [$users] : $users;
 

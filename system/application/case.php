@@ -18,12 +18,12 @@
 	if(!$newCase && !$side) {
 	  HttpResponse::unauthorized();
 	}
-	
+
 	$canDeleteCase = $side && $casesModel->usersCount($caseId) === 1; // current user is the only one left... allow delete case.
 ?>
 
 <style type="text/css">
-	body.modal-open 
+	body.modal-open
 	{
 			position: static !important;
 	}
@@ -56,24 +56,24 @@
 			<form  name="clientform" id="clientform" class="form form-horizontal">
 				<div class="form-group row">
 					<div class="col-md-3"></div>
-						<div class="col-md-3" align="left"> 
+						<div class="col-md-3" align="left">
 							<button type="button" class="btn btn-success buttonid save-case-btn" data-style="zoom-in">
 							<i class="fa fa-save"></i>
 							<span class="ladda-label">Save</span><span class="ladda-spinner"></span></button>
 							<?php buttoncancel(44,'get-cases.php'); ?>
 						</div>
-						<div class="col-md-5" align="right"> 
+						<div class="col-md-5" align="right">
 							<?php if (!$isDraft): ?>
 								<?php if($canDeleteCase): ?>
 									<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
 								<?php else: ?>
 									<a href="javascript:;" class="btn btn-black" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-sign-out"></i> Leave Case</a>
-								<?php endif; ?>	
-							<?php endif; ?>	
+								<?php endif; ?>
+							<?php endif; ?>
 						</div>
             </div>
             <input type="hidden" name="jurisdiction" class="form-control" id="jurisdiction" value='CA'>
-            
+
             <div class="row">
           		<div class="col-md-1"></div>
               <div class="col-md-2">
@@ -84,7 +84,7 @@
               </div>
               <div class="col-md-6"></div>
 						</div>
-            
+
             <div class="row">
             	<div class="col-md-1"></div>
                 <div class="col-md-2">
@@ -106,7 +106,7 @@
                 </div>
                 <div class="col-md-1"></div>
             </div>
-            
+
             <div class="row">
             	<div class="col-md-1"></div>
                 <div class="col-md-2">
@@ -123,7 +123,7 @@
                 </div>
                 <div class="col-md-1"></div>
             </div>
-						
+
 						<div class="row" style="margin-bottom:10px">
 							<div class="col-md-1"></div>
 							<div class="col-md-2">
@@ -141,8 +141,8 @@
 							</div>
 							<div class="col-md-1"></div>
 						</div>
-					
-						
+
+
 						<div class="row">
 							<div class="col-md-1"></div>
 							<div class="col-md-2">
@@ -159,9 +159,9 @@
 							</div>
 							<div class="col-md-1"></div>
 						</div>
-						
+
 						<hr />
-						 
+
             <div class="row">
               <div class="col-md-11" style="text-align:right">
                 <a href="javascript:;"  class="pull-right btn btn-success btn-small" onclick="addparty('', <?= $caseId ?>)" style="margin-bottom:10px !important"><i class="fa fa-plus"></i> Add New</a>
@@ -169,17 +169,17 @@
             	<div class="col-md-1"></div>
             </div>
 
-						<div class="row">  
+						<div class="row">
 							<div class="col-md-1"></div>
 							<div class="col-md-2">
 								<label>Parties</label>
 							</div>
-							<div class="col-md-8" id="loadclients"></div>							
+							<div class="col-md-8" id="loadclients"></div>
 							<div class="col-md-1"></div>
             </div>
-						
+
 						<br />
-						
+
 						<div class="row">
             	<div class="col-md-11" style="text-align:right">
                 <a href="javascript:;"  class="pull-right btn btn-success btn-small" id="add-user-btn" style="margin-bottom:10px !important"><i class="fa fa-plus"></i> Add New</a>
@@ -187,7 +187,7 @@
             	<div class="col-md-1"></div>
             </div>
 
-            <div class="row">  
+            <div class="row">
 							<div class="col-md-1"></div>
 							<div class="col-md-2">
 								<label>Team</label>
@@ -195,25 +195,25 @@
 							<div class="col-md-8" id="loadusers"></div>
 							<div class="col-md-1"></div>
             </div>
-						
+
 						<br />
-						
+
 						<div id="service-list"></div>
-						
+
             <br />
-						
+
 						<div class="container"><div id="sides-container"></div>
-            
+
             <input type="hidden" name="id" value ="<?php echo $caseId;?>" />
             <input type="hidden" name="uid" value ="<?php echo $uid;?>" />
-            
+
             <div class="form-group">
             	<div class="col-sm-offset-3 col-sm-3" align="left">
 								<button type="button" class="btn btn-success buttonid save-case-btn" data-style="zoom-in" >
 									<i class="fa fa-save"></i>
 									<span class="ladda-label">Save</span><span class="ladda-spinner"></span>
 								</button>
-								<?php buttoncancel(44,'get-cases.php'); ?> 
+								<?php buttoncancel(44,'get-cases.php'); ?>
 							</div>
               <div class="col-md-5"  align="right">
 								<?php if (!$isDraft): ?>
@@ -221,10 +221,10 @@
 										<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
 									<?php else: ?>
 										<a href="javascript:;" class="btn btn-black" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-sign-out"></i> Leave Case</a>
-									<?php endif; ?>	
-								<?php endif; ?>	
+									<?php endif; ?>
+								<?php endif; ?>
 							</div>
-            </div>         
+            </div>
 					</form>
 			  </div>
     </div>
@@ -324,7 +324,7 @@
       <div class="modal-footer">
         <a class="btn btn-success" href="javascript:;" onclick="addCaseClient(<?= $caseId; ?>)"><i class="fa fa-save"></i> Save</a>
         <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
-        
+
         <i id="msgClient" style="color:red"></i>
       </div>
     </div>
@@ -386,7 +386,7 @@
         </ol>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button> 
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
       </div>
     </div>
 
@@ -411,20 +411,20 @@
   <div class="modal-dialog" role="document" style="width:450px !important">
     <div class="modal-content">
   		<div class="modal-body" id="deletemodalcotent">
-        
+
       </div>
     </div>
   </div>
 </div>
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
-<script src="<?= ROOTURL ?>system/application/custom.js"></script>
+<script src="<?= ASSETS_URL ?>custom.js"></script>
 
 <script type="text/javascript">
 // TODO: move all this to case.js
 // this whole JS code needs to get rid of PHP dependency...
 const setMastHead = (attorneyId = null) => {
   const id = attorneyId ? attorneyId : $('#case_attorney').val();
-  getAttorney(id, 
+  getAttorney(id,
     (attorney) => $('textarea[name=masterhead]').html(attorney.masterhead),
     (e) => console.error(e)
   );
@@ -479,7 +479,7 @@ function showCaseUser(ev) { debugger;
 		const data = $(ev.target).parents('td').data();
 		if( data && Object.keys(data).length ) {
 			$("#user_id").val(data.userId);
-			data.caseId 	&& $("#case_id").val(data.caseId); 
+			data.caseId 	&& $("#case_id").val(data.caseId);
 			data.userName 	&& $("#user_name").val(data.userName);
 			data.userEmail 	&& $("#user_email").val(data.userEmail);
 		}
@@ -499,7 +499,7 @@ function submitCaseUser(ev) {
 		showResponseMessage( JSON.parse(response.responseText) );
 	});
 }
-$( document ).ready(function() 
+$( document ).ready(function()
 {
 	$('#submit-user-form').on('submit', (e) => {
 		e.preventDefault();
@@ -518,11 +518,11 @@ $( document ).ready(function()
 	$('#add-user-btn').on('click', () => $('#userModal').modal('show') );
 	$(document).on('click', '.delete-user-btn', async (e) => {
 		const params = $(e.target).parent().data();
-		confirm = await confirmAction(); 
+		confirm = await confirmAction();
 		if ( confirm ) {
 			$.post('delete-case-user.php', params, (response) => {
 				loadCasePeople(params.case_id);
-				showResponseMessage(response);				
+				showResponseMessage(response);
 			}).fail((response) => showResponseMessage(response))
 		}
 	});
@@ -544,7 +544,7 @@ function deleteLeaveCases(case_id,delete_or_leave)
 		// confirmButtonColor: '#187204',
 		// cancelButtonColor: '#C2391B',
 	})
-	.then( result => { 
+	.then( result => {
 		if( result ) {
 			$.post( "deleteleavecase.php", { case_id: case_id, delete_or_leave: delete_or_leave })
 				.done( data => { selecttab('44_tab','get-cases.php','44'); });
@@ -572,7 +572,7 @@ function loadSides(caseId)
 function addCaseClient(case_id)
 {
 	var other_attorney_id	= 	{};
-	
+
 	var id					=	$("#party_client_id").val();
 	var client_name			=	$("#client_name").val();
 	var clientroles			=	$("#clientroles").val();
@@ -582,12 +582,12 @@ function addCaseClient(case_id)
 	var other_attorney_name		=	$("input[name=other_attorney_name]").val();
 	var other_attorney_email		=	$("input[name=other_attorney_email]").val();
 	var primary_attorney_id		=	$("select[name=primary_attorney_id]").val();
-	
+
 	$("#msgClient").html("");
 	$.post( "post-case-client.php", {
-		id:id, 
+		id:id,
 		case_id:case_id,
-		client_name: client_name, 
+		client_name: client_name,
 		clientroles: clientroles,
 		clienttypes:clienttypes,
 		client_email:client_email,
@@ -595,7 +595,7 @@ function addCaseClient(case_id)
 		other_attorney_name:  other_attorney_name,
 		other_attorney_email: other_attorney_email,
 		primary_attorney_id: primary_attorney_id
-	}, 'json').done(function( data ) 
+	}, 'json').done(function( data )
 	{
 		obj = data;
 		if(obj.type == "success")
@@ -628,7 +628,7 @@ function deleteCaseClient(id, case_id) {
 		// confirmButtonColor: '#187204',
 		// cancelButtonColor: '#C2391B',
 	})
-	.then( result => { 
+	.then( result => {
 		if( result ) {
 			$("#client_"+id).remove();
 			$.post( "delete-case-client.php", { id: id, case_id: case_id}, () => { loadCasePeople(case_id)} );
@@ -664,7 +664,7 @@ function addAttryFunction(type)
 
 function calculated_discovery_cutoff_date(trail_date)
 {
-	$.post( "calculatecutoffdateaction.php",{ trail_date: trail_date}).done(function( data ) 
+	$.post( "calculatecutoffdateaction.php",{ trail_date: trail_date}).done(function( data )
 	{
 		$("#discovery_cutoff").val(data);
 	});
@@ -684,7 +684,7 @@ function loadmasterhead()
 {
 	var case_attorney_email	=	$( "#case_attorney option:selected" ).text();
 	var case_attorney		=	$( "#case_attorney option:selected" ).val();
-	$.post( "loadmasterhead.php",{ case_attorney_email: case_attorney_email,case_attorney:case_attorney}).done(function( data ) 
+	$.post( "loadmasterhead.php",{ case_attorney_email: case_attorney_email,case_attorney:case_attorney}).done(function( data )
 	{
 		$("#masterheadDiv").html(data);
 	});
@@ -695,8 +695,8 @@ function loadmasterhead()
     erTeamAttorneySelectControl(<?= $caseId ?>);
   <?php else: ?>
     erTeamAttorneySelectControl(<?= $caseId ?>, setMastHead);
-	<?php endif; ?>  	
-	
+	<?php endif; ?>
+
 	isDraft = <?= $isDraft ? 'true' : 'false' ?>;
 </script>
 <script src="<?= ROOTURL ?>system/assets/sections/case.js"></script>

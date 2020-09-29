@@ -312,8 +312,8 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								$discovery_ACL[] = "request-pdf"; // always allow PDFing
 
 								if( $is_served == 1 ) {
-									$discovery_ACL[]	= "view";
-									$discovery_ACL[]	= "change-due-date";
+									$discovery_ACL[] = "view";
+									$discovery_ACL[] = "change-due-date";
 
 									if( $creator_id == $_SESSION['addressbookid'] ) {
 										$discovery_ACL[]	= "supp-amend";
