@@ -103,7 +103,7 @@
             <i>(inactive)</i>
           {/if}
         </td>
-        <td><strong>{$usersModel->getFullName($user)}</strong></td>
+      <td><strong>{getUserName($user)}</strong></td>
         <td><strong>{$user.attorney_name}</strong></td>
         <td>{$user.attorney_email}</td>
         <td>

@@ -5,7 +5,7 @@ require_once __DIR__ . "/../bootstrap.php";
 include_once("../library/classes/functions.php");
 
 $uid        = $_POST['uid'];
-$updated_by	= $_SESSION['addressbookid'];
+$updated_by	= $currentUser->id;
 
 $respond                          = @$_POST['respond'] ?: 0;
 $is_supp				          = @$_POST['supp'] ?: 0;
@@ -41,16 +41,16 @@ if( $response_id ) {
 		$AdminDAO->updaterow('responses',$fields,$values,"id='$response_id'");
 	}
 	else {
-		$fields_responses[]= "created_by";
-		$values_responses[]= $_SESSION['addressbookid'];
+		$fields[]= "created_by";
+		$values[]= $currentUser->id;
 		$response_id = $AdminDAO->insertrow("responses",$fields,$values);
 	}
 }
 else { // new response
-	$responsename		= $responsesModel->getTitle(0, $discovery_details);
-	$fields_responses	= array("responsename","fkdiscoveryid","created_by");
-	$values_responses	= array($responsename,$discovery_id,$_SESSION["addressbookid"]);
-	$response_id		= $AdminDAO->insertrow("responses",$fields_responses,$values_responses);
+	$responsename = $responsesModel->getTitle(0, $discovery_details);
+	$fields	= array("responsename","fkdiscoveryid","created_by");
+	$values	= array($responsename, $discovery_id,  $currentUser->id);
+	$response_id = $AdminDAO->insertrow("responses",$fields,$values);
 }
 if( $respond ) {
 	$objections	= $_POST['objection'];

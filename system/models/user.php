@@ -327,7 +327,7 @@
 
 $usersModel = new User();
 
-function getUserName($id) { global $usersModel;
+function getUserName($userOrId) { global $usersModel;
 
-	return $usersModel->getFullName($id);
+	return $usersModel->getFullName($userOrId);
 }
