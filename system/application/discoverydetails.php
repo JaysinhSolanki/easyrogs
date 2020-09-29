@@ -115,30 +115,12 @@ if( $response_id ) {
     * If going to create Supp/Amend of Response
     **/
     if( $is_supp ) {
-        $responses = $AdminDAO->getrows("responses", "COUNT(*) as COUNT",
-                            "fkdiscoveryid = :fkdiscoveryid AND fkresponseid != 0",
-                            array(":fkdiscoveryid"=>$discovery_id))[0];
-        $totalResponses = $responses['COUNT'];
-        $form_name = numToOrdinalWord($totalResponses+1) ." ". $responsesModel->getTitle(0,$discovery_data, $is_supp);
+        $form_name = $responsesModel->getTitle(0,$discovery_data,$is_supp);
     }
 } else {
     $discovery_verification = "";
 }
 
-function numToOrdinalWord($num)
-{
-    $first_word  = array('eth','First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth','Eleventh','Twelfth','Thirteenth','Fourteenth','Fifteenth','Sixteenth','Seventeenth','Eighteenth','Nineteenth','Twentieth');
-    $second_word = array('','','Twenty','Thirty','Forty','Fifty');
-
-    if ($num <= 20) {
-        return $first_word[$num];
-    }
-
-    $first_num  = substr($num, -1, 1);
-    $second_num = substr($num, -2, 1);
-
-    return $string = str_replace('y-eth', 'ieth', $second_word[$second_num].'-'.$first_word[$first_num]);
-}
 /***************************************
 Query For Sub Questions Use in Form 4
 ****************************************/

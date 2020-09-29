@@ -31,7 +31,9 @@ require_once __DIR__ .'/kb_common.php';
 
         const _text = trim( $target.val() )
 
-        $target.val( trim( _text + " " + text ) )
+        $target
+            .val( trim( _text + " " + text ) )
+            .trigger('input')
     }
     function insertTemplateHere( text ) {
         const target = globalThis['focused_kb_target']
@@ -49,7 +51,7 @@ require_once __DIR__ .'/kb_common.php';
             }
         } else {
             const target = globalThis['focused_kb_target'];
-            if( target ) { //debugger;
+            if( target ) {
                 const $target = $(target);
                 if( $target.length ) {
                     $target.addClass('glowing')
@@ -84,12 +86,29 @@ require_once __DIR__ .'/kb_common.php';
       targets: `textarea.er-mc-meet-confer-body`,
     }
 
+    function updateKBEvents() {
+        $(`.sidebar > .fixed`).each( (idx, el) => {
+            const $el = $(el),
+                  { panel, } = $el.data('kb') || {panel:null}
+            if( panel ) {
+                const $textboxes = $(panel.targets)
+                globalThis['focused_kb_target'] = $textboxes.first()
+                $textboxes.on('focus', ev => {
+                    const _target = `#${ev.target.id}`
+                    globalThis['focused_kb_target'] = _target;
+                    console.log(`target = ${_target}`)
+                } )
+            }
+        } )
+    }
     function updateKBSidebar( form_id, panel ) {
         $.post( `<?= ROOTURL ?>system/application/kb.php?area=${panel.area_id}&section_filter=${form_id}` )
             .done( data => {
-                $sidebar_items = $(`.sidebar.${panel.dockSide} > .fixed>*`)
-                if( $sidebar_items.length < 1 || $sidebar_items.data('section') != form_id ) {
-                    $(`.sidebar.${panel.dockSide} > .fixed`).html(data).data('section', form_id)
+                const $sidebar = $(`.sidebar.${panel.dockSide} > .fixed`),
+                      $sidebar_items = $sidebar.find(`> *`)
+                if( $sidebar_items.length < 1 || $sidebar.data('kb').section != form_id ) {
+                    $sidebar.html(data).data( 'kb', {panel, section: form_id} )
+                    updateKBEvents()
                 }
                 $(panel.actions)
                     .on('mouseenter', ev => _glowTarget( 'mouseenter' ) )
@@ -97,7 +116,8 @@ require_once __DIR__ .'/kb_common.php';
             } )
     }
     function closeSidebar(aSide = `<?= DOCK_SIDE ?>`) {
-        $(`.sidebar.${aSide}`).removeClass("open")
+        $(`.sidebar.${aSide}`).removeClass('open')
+        $(`.sidebar.${aSide} > .fixed`).removeData('kb')
     }
     function toggleKBSidebar( form_id, panel, value="auto" ) { //debugger;
         console.assert( panel && panel.dockSide, 'This needs a SomePanel literal, see examples above...' )
@@ -114,14 +134,6 @@ require_once __DIR__ .'/kb_common.php';
         $(panel.toggler).toggleClass( "open", willOpen )
         if( willOpen ) {
             updateKBSidebar( form_id, panel )
-
-            const $textboxes = $(panel.targets)
-            globalThis['focused_kb_target'] = $textboxes.first()
-            $textboxes.on('focus', ev => {
-                const _target = `#${ev.target.id}`
-                globalThis['focused_kb_target'] = _target;
-                console.log(`target = ${_target}`)
-            } )
         }
     }
     function showKB( area_id, section_filter="", target="" ) {

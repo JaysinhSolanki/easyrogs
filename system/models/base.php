@@ -381,16 +381,22 @@
         }
       }
     }
+    static function exec($command) { global $logger;
+
+      //$logger->info(['Executing ', $command])
+      exec( $command, $output, $exitCode );
+      $result = [
+        'output' => $output,
+        'exitCode' => $exitCode
+      ];
+      //$logger->info(['Result ', $result])
+      return $result;
+    }
 
     public function execSQLScript($filePath)
     {
       $command = "mysql --verbose -u " . $this->dbConfig['username'] . " --password=" . $this->dbConfig['password'] . " -h " . $this->dbConfig['host'] . " " . $this->dbConfig['name'] . " < $filePath 2>&1";
-
-      exec( $command, $output, $exitCode );
-      return [
-        'output' => $output,
-        'exitCode' => $exitCode
-      ];
+      self::exec($command);
     }
 
     public function generateUID($table, $column = 'uid') {

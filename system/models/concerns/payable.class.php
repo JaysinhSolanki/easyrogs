@@ -10,7 +10,7 @@
     public function isPaid($payableId) {
       global $currentUser, $membershipWhitelist;
 
-      if( $_ENV['PAY_DISABLED'] || $membershipWhitelist->isWhitelisted($currentUser->user) ) {
+      if( @$_ENV['PAY_DISABLED'] || $membershipWhitelist->isWhitelisted($currentUser->user) ) {
         return true;
       }
 

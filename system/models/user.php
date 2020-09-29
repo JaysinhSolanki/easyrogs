@@ -56,7 +56,7 @@
           }
 
           $user['id'] = $user['pkaddressbookid'];
-          $user['full_name'] = self::getFullName($user);
+          $user['full_name'] = $usersModel->getFullName($user);
           $user['group_name'] = self::GROUP_NAMES[$user['fkgroupid']];
         }
       }

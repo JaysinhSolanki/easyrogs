@@ -8,12 +8,11 @@ class Discovery extends Payable {
 
       $this->queryTemplates = array_merge( $this->queryTemplates, [
         // TODO temporary measure, needed until the old code is refactored
-        'getDetails' => "
-                          SELECT
+        'getDetails' => "SELECT
                             d.uid, d.id,
                             (SELECT d.uid) AS discovery_uid,
                             (SELECT d.id) AS discovery_id,
-                            d.case_id, c.uid as case_uid,
+                            d.case_id, c.uid AS case_uid,
                             d.propounding,     d.responding,
                             d.propounding_uid, d.responding_uid,
                             c.case_title, c.case_number,
@@ -49,8 +48,14 @@ class Discovery extends Payable {
                             d.attorney_id = a.pkaddressbookid
                         ",
 
-        'getSuppAmended' => "
-                          SELECT
+        'getSuppAmendedCountById' => "SELECT
+                            COUNT(*) AS COUNT
+                          FROM
+                            discoveries d
+                          WHERE
+                            d.grand_parent_id	= :id
+                          ",
+        'getSuppAmended' => "SELECT
                             d.id, d.uid,
                             (SELECT d.uid) AS discovery_uid,
                             (SELECT d.id) AS discovery_id,
@@ -82,8 +87,7 @@ class Discovery extends Payable {
                             a.pkaddressbookid = d.attorney_id
                           ",
 
-        'getByCase' => "
-                          SELECT
+        'getByCase' => "SELECT
                             d.id, d.uid,
                             (SELECT d.uid) AS discovery_uid,
                             (SELECT d.id) AS discovery_id,
@@ -205,12 +209,13 @@ class Discovery extends Payable {
       return in_array($formId, self::RPDS_FORMS);
     }
 
-    private function asDiscovery($discovery) {
+    public function asDiscovery($discovery) {
       assert( !empty($discovery), "A proper discovery was expected here, \$discovery=$discovery" );
       if( !is_array($discovery) ) {
         $discovery = ( strlen($discovery) >= 16 ) ? $this->findByUID($discovery) : $this->find($discovery);
       }
       assert( !empty($discovery['id']) && !empty($discovery['uid']), "A proper discovery was expected here, \$discovery=$discovery" );
+      assert( $discovery['id'], "A proper discovery was expected here, \$discovery=$discovery" );
       return $discovery;
     }
 
@@ -249,9 +254,17 @@ class Discovery extends Payable {
 
       $set  = $discovery['set_number'];
       $name = $discovery['discovery_name'] ?: $discovery_data['form_name'];
-      $name = ($isSupplAmended ? self::PREFIX_SUPP_AMENDED : '') . $name;
-      //$logger->browser_log("getTitle: \$name=$name, \$set=$set" );
-      return self::composeTitle( $name, $set, self::STYLE_AS_IS );
+      $result = self::composeTitle( $name, $set, self::STYLE_AS_IS );
+
+      if( $isSupplAmended ) {
+        assert( $discovery['id'], "!!" );
+        $query = $this->queryTemplates['getSuppAmendedCountById'];
+        $count = $this->readQuery( $query, ['id' => $discovery['id']] )[0]['COUNT'];
+
+        $result = numToOrdinalWord( $count +1 ) ." ". Discovery::PREFIX_SUPP_AMENDED . $result;
+      }
+      $logger->debug("Discovery->getTitle: \$name=$name, \$set=$set, \$count=$count, \$result=$result" );
+      return $result;
     }
 }
 

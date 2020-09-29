@@ -14,6 +14,20 @@ function sanitize_file_name( $str ) {
     return $filename;
 }
 
+function numToOrdinalWord($num) { // moved from discoverydetails.php
+    $first_word  = array('eth','First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth','Eleventh','Twelfth','Thirteenth','Fourteenth','Fifteenth','Sixteenth','Seventeenth','Eighteenth','Nineteenth','Twentieth');
+    $second_word = array('','','Twenty','Thirty','Forty','Fifty');
+
+    if ($num <= 20) {
+        return $first_word[$num];
+    }
+
+    $first_num  = substr($num, -1, 1);
+    $second_num = substr($num, -2, 1);
+
+    return $string = str_replace('y-eth', 'ieth', $second_word[$second_num].'-'.$first_word[$first_num]);
+}
+
 function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $fromemail = "service@easyrogs.com", $fromname = "EasyRogs Service", $emailtype = 1, $cc = array(), $bcc = array(), $docsArray = array())
 {
     global $logger;

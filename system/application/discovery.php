@@ -149,7 +149,7 @@ body.modal-open {
                     if( $id ) {
                         if( $is_supp ) {
                             echo Discovery::PREFIX_SUPP_AMENDED ."Discovery";
-                            $discoveryName  = Discovery::PREFIX_SUPP_AMENDED ."$discoveryName";
+                            $discoveryName  = $discoveriesModel->getTitle($discovery,$is_supp);
                         } else {
                             echo "Edit Discovery for";
                         }
@@ -426,6 +426,7 @@ body.modal-open {
 <?php
 include_once(SYSTEMPATH.'application/client-email-found_modal.php');
 include_once(SYSTEMPATH.'application/client_instructions_modal.php');
+include_once(SYSTEMPATH.'jsinclude.php');
 ?>
 <link href="<?= VENDOR_URL ?>uploadfile.css" rel="stylesheet">
 <script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
@@ -601,8 +602,10 @@ function setquestionnumber() {
                     $("#start_questionid").hide();
                 }
                 else {
-                    if(form_id > 2) {
-                        $("#start_questionid").show();
+                    if( form_id == <?= Discovery::FORM_CA_RFAS ?> ||
+                        form_id == <?= Discovery::FORM_CA_RPDS ?> ||
+                        form_id == <?= Discovery::FORM_CA_SROGS ?> ) {
+                        $("#start_questionid").show()
                     }
                     $('#question_number_start_from').val(msg);
                 }
@@ -613,13 +616,12 @@ function setquestionnumber() {
 }
 function arrangequestionnumber() {
     setTimeout( _ => {
-        $( ".questionscls" ).each( function(index) {
-            let question_number_start_from  = $('#question_number_start_from').val();
-            if(question_number_start_from == "") {
-                question_number_start_from = 1;
-                }
-            $(this).val( Number(index) + Number(question_number_start_from) );
-        })
+        $( ".questionscls" ).each( (idx, el) => {
+            let question_number_start_from = $('#question_number_start_from').val() || 1;
+            $(el).val( Number(idx) + Number(question_number_start_from) )
+        } )
+        autogrowTextareas();
+        if(typeof updateKBEvents === 'function') updateKBEvents();
     }, 200);
 }
 function loadnewquestion() {
