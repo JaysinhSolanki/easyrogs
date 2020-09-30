@@ -106,7 +106,7 @@ $atorny_email		= $discovery_data['email'];
 $propounding		= $discovery_data['propounding'];
 $responding			= $discovery_data['responding'];
 
-assert( $uid && $case_uid && case_id, HttpResponse::internalError("Missing ", [$uid && $case_uid && case_id]) );
+assert( $uid && $case_uid && $case_id, HttpResponse::internalError("Missing ", [$uid && $case_uid && $case_id]) );
 
 $respondingdetails		= $AdminDAO->getrows("clients","*",
 								"id = :id",

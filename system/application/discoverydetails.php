@@ -741,11 +741,11 @@ body.modal-open
                                                 id="answer<?= $discovery_question_id ?>"
                                                 name="answer[<?= $discovery_question_id ?>]"
                                                 onChange="checkFunctionForm5('<?= $discovery_question_id ?>',this.value)">
-                                            <option <?= ($answer == Discovery::RPDS_ANSWER_NONE) ? "selected" : "" ?>>Select Your Response</option>
-                                            <option <?= ($answer == Discovery::RPDS_ANSWER_HAVE_DOCS) ? "selected" : "" ?>>I have responsive documents</option>
+                                            <option <?= ($answer == Discovery::RPDS_ANSWER_NONE              ) ? "selected" : "" ?>>Select Your Response</option>
+                                            <option <?= ($answer == Discovery::RPDS_ANSWER_HAVE_DOCS         ) ? "selected" : "" ?>>I have responsive documents</option>
                                             <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_NEVER_EXISTED) ? "selected" : "" ?>>Responsive documents have never existed</option>
-                                            <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_DESTROYED) ? "selected" : "" ?>>Responsive documents were destroyed</option>
-                                            <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_NO_ACCESS) ? "selected" : "" ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
+                                            <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_DESTROYED    ) ? "selected" : "" ?>>Responsive documents were destroyed</option>
+                                            <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_NO_ACCESS    ) ? "selected" : "" ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
                                         </select>
                                         <script>window.requestAnimationFrame( _ => checkFunctionForm5('<?= $discovery_question_id ?>',$('#answer<?= $discovery_question_id ?>').val()) )</script>
 <?php
@@ -1117,7 +1117,7 @@ function checkFunction(subdivid, option)
 function checkFunctionForm5(subdivid, option) { //debugger;
     option = String(option).trim();
     if( option == RPDS_ANSWER_HAVE_DOCS || option == RPDS_ANSWER_NONE || option == RPDS_ANSWER_DOCS_NEVER_EXISTED) {
-        if(option == RPDS_ANSWER_HAVE_DOCS) {
+        if( option == RPDS_ANSWER_HAVE_DOCS ) {
             $("#note"+subdivid).show();
         }
         else {

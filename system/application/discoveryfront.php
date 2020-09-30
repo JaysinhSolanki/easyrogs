@@ -540,11 +540,11 @@ function getRPDetails($rp_id) {
 																	id="answer<?= $discovery_question_id ?>"
 																	name="answer[<?= $discovery_question_id ?>]"
 																	onChange="checkFunctionForm5('<?= $discovery_question_id ?>',this.value)">
-                                                                <option <?= ($answer == "Select Your Response") ? "selected" : "" ?>>Select Your Response</option>
-                                                                <option <?= ($answer == "I have responsive documents") ? "selected" : "" ?>>I have responsive documents</option>
-                                                                <option <?= ($answer == "Responsive documents have never existed") ? "selected" : "" ?>>Responsive documents have never existed</option>
-                                                                <option <?= ($answer == "Responsive documents were destroyed") ? "selected" : "" ?>>Responsive documents were destroyed</option>
-                                                                <option <?= ($answer == "Responsive documents were lost, misplaced, stolen, or I lack access to them") ? "selected" : "" ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
+                                                                <option <?= ($answer == Discovery::RPDS_ANSWER_NONE              ) ? "selected" : "" ?>>Select Your Response</option>
+                                                                <option <?= ($answer == Discovery::RPDS_HAVE_DOCS                ) ? "selected" : "" ?>>I have responsive documents</option>
+                                                                <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_NEVER_EXISTED) ? "selected" : "" ?>>Responsive documents have never existed</option>
+                                                                <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_DESTROYED    ) ? "selected" : "" ?>>Responsive documents were destroyed</option>
+                                                                <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_NO_ACCESS    ) ? "selected" : "" ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
 															</select>
                                         					<script>window.requestAnimationFrame( _ => checkFunctionForm5('<?= $discovery_question_id ?>',$('#answer<?= $discovery_question_id ?>').val()) )</script>
 <?php
@@ -568,14 +568,14 @@ function getRPDetails($rp_id) {
 																	</div>
 																	</li>
 																</ul>
-																<ul class="list-group" id="subdiv<?= $discovery_question_id ?>" <?php if($answer == 'Select Your Response' || $answer == "I have responsive documents"){ ?>style="display:none" <?php } ?>>
+																<ul class="list-group" id="subdiv<?= $discovery_question_id ?>" <?= ($answer == Discovery::RPDS_ANSWER_NONE || $answer == Discovery::RPDS_HAVE_DOCS ) ? ' style="display:none" ' : '' ?>>
 																	<li class="list-group-item">
 																	<div class="form-group">
 																		<p>
 																			<b>a) </b>
 																			Enter the name and address of anyone you believe has the documents.
 																		</p>
-																		<textarea <?= ($answer == 'Select Your Response' || $answer == "I have responsive documents") ? "disabled" : '' ?>
+																		<textarea <?= ($answer == Discovery::RPDS_ANSWER_NONE || $answer == Discovery::RPDS_HAVE_DOCS ) ? " disabled " : '' ?>
 																				id="subanswer<?= $discovery_question_id ?>"
 																				class="form-control"
 																				name="subanswer[<?= $discovery_question_id; ?>]"
@@ -707,8 +707,8 @@ function checkFunction( subdivid, option ) {
 }
 function checkFunctionForm5(subdivid, option) {
     option = String(option).trim();
-	if( option == 'I have responsive documents' || option == 'Select Your Response' || option == 'Responsive documents have never existed') {
-		if(option == 'I have responsive documents') {
+	if( option == `<?= RPDS_HAVE_DOCS ?>` || option == `<?= RPDS_ANSWER_NONE ?>` || option == `<?= RPDS_ANSWER_DOCS_NEVER_EXISTED ?>`) {
+		if(option == `<?= RPDS_HAVE_DOCS ?>`) {
 			$("#note"+subdivid).show();
 		}
 		else {

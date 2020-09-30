@@ -741,22 +741,22 @@ ob_start();
                                 <b><u>Response</u></b>";
                         if( $form_id == Discovery::FORM_CA_RPDS ) {
                             $reponse	= '';
-                            if( $answer == "Select Your Response" ){
+                            if( $answer == Discovery::RPDS_ANSWER_NONE ){
                                 //echo "";
                             }
-                            if( $answer == "I have responsive documents" ) {
+                            if( $answer == Discovery::RPDS_ANSWER_HAVE_DOCS ) {
                                 $answer	= "Responsive documents have been provided.";
                             }
 
                             $str1	= "A diligent search and a reasonable inquiry have been made in an effort to comply with this demand, however, responding party is unable to comply because they do not have any responsive documents in their possession, custody, or control.";
                             $str2 = $answer_detail ? (" However, respondent believes that ".$answer_detail." may have responsive documents.") : "";
-                            if( $answer  == "Responsive documents have never existed") {
+                            if( $answer  == Discovery::RPDS_ANSWER_DOCS_NEVER_EXISTED ) {
                                 $answer	=  $str1." Respondent does not believe that such documents have ever existed. ".$str2;
                             }
-                            if( $answer == "Responsive documents were destroyed" ) {
+                            if( $answer == Discovery::RPDS_ANSWER_DOCS_NEVER_EXISTED ) {
                                 $answer	=  $str1." Respondent does not believe that such documents have ever existed. ".$str2;
                             }
-                            if( $answer == "Responsive documents were lost, misplaced, stolen, or I lack access to them") {
+                            if( $answer == Discovery::RPDS_ANSWER_DOCS_NO_ACCESS ) {
                                 $answer	=  $str1." Respondent believes that such documents were lost, misplace, stolen, or respondent lacks access to them. ".$str2;
                             }
                         }
