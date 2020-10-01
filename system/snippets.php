@@ -12,9 +12,9 @@ define( 'SNIPPET_ANALYTICS', @$_ENV['ANALYTICS_DISABLED'] ? '' : '
     </script>
   ' );
 
-define( 'SNIPPET_SMARTSUPP', @$_ENV['SMARTSUPP_DISABLED'] ? '' : <<<SNIPPET
+define( 'SNIPPET_SMARTSUPP', @$_ENV['SMARTSUPP_DISABLED'] ? '' : "
 <!-- Smartsupp Live Chat script -->
-<script type="text/javascript">
+<script type='text/javascript'>
     var _smartsupp = _smartsupp || {};
     _smartsupp.key = 'ae242385584ca4d3fd78d74a04dbd806ef3957e0';
     window.smartsupp||(function(d) {
@@ -24,8 +24,6 @@ define( 'SNIPPET_SMARTSUPP', @$_ENV['SMARTSUPP_DISABLED'] ? '' : <<<SNIPPET
     c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
     })(document);
 </script>
-SNIPPET );
+");
 
-define( 'SNIPPET_STRIPE', @$_ENV['PAY_DISABLED'] ? '<script>function Stripe() {}</script>' : <<<SNIPPET
-<script src="https://js.stripe.com/v3/"></script>
-SNIPPET );
+define( 'SNIPPET_STRIPE', @$_ENV['PAY_DISABLED'] ? '<script>function Stripe() {}</script>' : '<script src="https://js.stripe.com/v3/"></script>' );

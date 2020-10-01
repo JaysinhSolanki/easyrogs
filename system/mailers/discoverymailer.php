@@ -9,7 +9,7 @@
 
     static function clientVerification($discovery) {
       global $logger, $smarty,
-              $discoveriesModel, $responsesModel,
+              $discoveriesModel,
               $usersModel, $clientsModel, $sidesModel;
 
       $logContext = 'DISCOVERY_MAILER_CLIENT_VERIFICATION';
@@ -77,12 +77,12 @@
       $body = $smarty->fetch('emails/discovery-client-response.tpl');
       $subject = sprintf(self::CLIENT_RESPONSE_SUBJECT, $side['case_title']);
       $to = $client['client_email'];
-
+      $logger->debug("$logContext Will send to <$to>. Params: $logParams");
       self::sendEmail($to, $subject, $body, $usersModel->getFullName($actionUser), $actionUser['email']);
     }
 
     static function clientResponded($discovery,$response) {
-      global $logger, $smarty,
+      global $logger, $smarty, $usersModel,
               $discoveriesModel, $responsesModel,
               $clientsModel, $sidesModel;
 
@@ -171,7 +171,7 @@
     }
 
     static function meetConfer($mc, $attachments) {
-      global $smarty, $logger,
+      global $smarty, $logger, $usersModel,
              $discoveriesModel, $responsesModel,
              $currentUser, $sidesModel;
 

@@ -72,8 +72,9 @@ namespace EasyRogs;
       $level = trim($level);
 
       if (in_array($level, self::LOG_LEVELS)) {
-        $fp = $this->files[$level] = @$this->files[$level] ?:
+        $fp = isset($this->files[$level]) ? $this->files[$level] :
                   fopen($this->logsDir . '/' . strtolower($level) . '.log', 'a+');
+        $this->files[$level] = $fp;
       }
 
 

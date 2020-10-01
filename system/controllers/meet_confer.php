@@ -30,7 +30,7 @@
         return HttpResponse::unauthorized('User is not on this case.');
       }
       $opposingSide = $sidesModel->getByClientAndCase($client['id'], $caseId);
-      if (!$mc['served'] && $currentSide == $opposingSide) {
+      if (!@$mc['served'] && $currentSide == $opposingSide) {
         return HttpResponse::conflict('Opposing and current side are the same.');
       }
 
