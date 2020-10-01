@@ -17,6 +17,8 @@
   error_reporting(E_ALL & ~E_NOTICE);
   ini_set("log_errors", 1);
   ini_set("error_log", LOGS_DIR . "/errors.log");
+  assert_options( ASSERT_ACTIVE, $_ENV['APP_ENV'] !== 'prod' );
+  assert_options( ASSERT_WARNING, 1 );
 
   require_once __DIR__ . '/library/classes/logger.class.php';
   $logger = new EasyRogs\Logger();

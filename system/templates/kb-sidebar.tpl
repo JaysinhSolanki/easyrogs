@@ -16,9 +16,9 @@
               </p>
             </div>
             {if $item.solution}
-              <button class='btn-add-{$itemType} {if $side == 'left' } pull-right {else} pull-left {/if}'
+              <button class='btn-add-{$itemType} {if $dockSide == 'left' } pull-right {else} pull-left {/if}'
                 onclick='javascript:{$fn}(`{{render text=$item.solution}|strip_tags}`);'>
-                  {if $side == 'left' }
+                  {if $dockSide == 'left' }
                       Insert &nbsp; <span class='fa fa-arrow-right'></span>
                   {else}
                       <span class='fa fa-arrow-left'></span> &nbsp; Insert

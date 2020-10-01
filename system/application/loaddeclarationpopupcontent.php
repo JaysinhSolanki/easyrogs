@@ -80,11 +80,11 @@ if( $user_group != 3 ) {
         </div>
         <div class="col-md-12" style="text-align:right">
             <a type="button"	class="btn btn-warning tooltipshow"
-								onclick="serveFunctionMain(0);" 
+								onclick="serveFunctionMain(0);"
 								data-placement="top"
-               					data-toggle="tooltip" 
+               					data-toggle="tooltip"
 								data-original-title="Serve without signing DAD.">
-				<i class="fa fa-fast-forward" aria-hidden="true" /> Skip 
+				<i class="fa fa-fast-forward" aria-hidden="true" /> Skip
 			</a>
             <button type="button" class="btn btn-danger" data-dismiss="modal">
 				<i class="fa fa-close" /> Cancel
@@ -93,7 +93,7 @@ if( $user_group != 3 ) {
     </div>
 
 <?php
-} 
+}
 else {
 ?>
     <form name="formdeclaration" id="formdeclaration">
@@ -147,10 +147,10 @@ else {
                         onclick="signdeclaration('<?= $_REQUEST['pos_or_save'] ?>')">
 					<i class="fa fa-pencil " /> Sign
                 </button>
-                <a type="button"	class="btn btn-warning tooltipshow" 
-									onclick="serveFunctionMain(0);" 
+                <a type="button"	class="btn btn-warning tooltipshow"
+									onclick="serveFunctionMain(0);"
 									data-placement="top"
-                   					data-toggle="tooltip" 
+                   					data-toggle="tooltip"
 									data-original-title="Serve without signing DAD.">
 				   <i class="fa fa-fast-forward"
                                                                                              aria-hidden="true"></i> Skip</a>
@@ -165,6 +165,6 @@ else {
 ?>
 <script>
 jQuery( $ => {
-    CKEDITOR.replace( "declaration_text", { height: 350 } );
+    enableCKEditor( "#declaration_text", { height: 350 } );
 } )
 </script>

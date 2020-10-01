@@ -9,7 +9,7 @@ $senderDetails			=	$AdminDAO->getrows("system_addressbook","*","pkaddressbookid 
 $senderDetail			=	$senderDetails[0];
 $senderEmail			=	$senderDetail['email'];
 $senderPhone			=	$senderDetail['phone'];
-$senderName				=	$senderDetail['firstname']." ".$senderDetail['lastname'];	
+$senderName				=	$senderDetail['firstname']." ".$senderDetail['lastname'];
 
 $fkstateid				=	$senderDetail['fkstateid'];
 $getState				=	$AdminDAO->getrows("system_state","*","pkstateid = :id",array(":id"=>$fkstateid));
@@ -25,7 +25,7 @@ $responding_email		=	$respondingdetails[0]['client_email'];
 $responding_type		=	$respondingdetails[0]['client_type'];
 $responding_role		=	$respondingdetails[0]['client_role'];
 
-//Email Salutation 
+//Email Salutation
 $emaildata				=	$AdminDAO->getrows("email_log","email_salutation","sender_type = 1 AND receiver_type = 2 ORDER BY id DESC LIMIT 1",array());
 $email_solicitation		=	$emaildata[0]['email_salutation'];
 
@@ -38,15 +38,15 @@ $casedetails = $AdminDAO->getrows("cases","*","id = :id",array(":id"=>$case_id))
 Side::legacyTranslateCaseData($case_id, $casedetails);
 
 $case_title = $casedetails[0]['case_title'];
-	
+
 $emailURL = "~LINK_HERE~"; // TODO I don't see this used anywhere? 🤔
 ob_start();
 ?>
-<h4>Please click on the following link to respond to discovery in your case: <a href='<?= $emailURL ?>'><?= $emailURL ?></a>.</h4> 
+<h4>Please click on the following link to respond to discovery in your case: <a href='<?= $emailURL ?>'><?= $emailURL ?></a>.</h4>
 <p>Feel free to email me at <a href="mailto:<?= $senderEmail ?>"><?= $senderEmail ?></a><?= $senderPhone ? " or call $senderPhone" : '' ?> if you have any questions.</p>
 <p>
-<b>___________________</b><br /> 
-<?php echo $senderName; ?><br /> 
+<b>___________________</b><br />
+<?php echo $senderName; ?><br />
 <?php echo $senderAddress; ?><br />
 <a href="mailto:<?php echo $senderEmail;?>"><?php echo $senderEmail;?></a><br />
 <?php echo $senderPhone; ?><br />
@@ -55,13 +55,13 @@ ob_start();
 <?php echo "&copy; ".date('Y')." EasyRogs.com"; ?>
 </p>
 <?php
-    $html = ob_get_contents(); 
+    $html = ob_get_contents();
     ob_clean();
 ?>
 
 <script>
 $(document).ready( _ => {
-	 CKEDITOR.replace( 'email_body_popup' );
+	 enableCKEditor( '#email_body_popup' );
 });
 </script>
 <form name="formduedatecalculation" id="formduedatecalculation">

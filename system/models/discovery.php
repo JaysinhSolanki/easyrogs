@@ -48,17 +48,10 @@ class Discovery extends Payable {
                             d.attorney_id = a.pkaddressbookid
                         ",
 
-        'getSuppAmendedCountById' => "SELECT
-                            COUNT(*) AS COUNT
-                          FROM
-                            discoveries d
-                          WHERE
-                            d.grand_parent_id	= :id
-                          ",
         'getSuppAmended' => "SELECT
                             d.id, d.uid,
                             (SELECT d.uid) AS discovery_uid,
-                            (SELECT d.id) AS discovery_id,
+                            (SELECT d.id ) AS discovery_id,
                             d.propounding_uid, d.responding_uid,
                             d.propounding,     d.responding,
                             d.is_served, d.served,
@@ -93,7 +86,7 @@ class Discovery extends Payable {
                             (SELECT d.id) AS discovery_id,
                             d.propounding, d.responding,
                             d.propounding_uid, d.responding_uid,
-                            is_served, d.served,
+                            d.is_served, d.served,
                             d.due,
                             c.case_title,
                             d.attorney_id as creator_id,
@@ -210,12 +203,12 @@ class Discovery extends Payable {
     }
 
     public function asDiscovery($discovery) {
-      assert( !empty($discovery), "A proper discovery was expected here, \$discovery=$discovery" );
+      assert( !empty($discovery), "A proper discovery was expected here, \$discovery=".json_encode($discovery) );
       if( !is_array($discovery) ) {
         $discovery = ( strlen($discovery) >= 16 ) ? $this->findByUID($discovery) : $this->find($discovery);
       }
-      assert( !empty($discovery['id']) && !empty($discovery['uid']), "A proper discovery was expected here, \$discovery=$discovery" );
-      assert( $discovery['id'], "A proper discovery was expected here, \$discovery=$discovery" );
+      assert( !empty($discovery['id']) && !empty($discovery['uid']), "A proper discovery was expected here, \$discovery=".json_encode($discovery) );
+      assert( !!$discovery['id'], "A proper discovery was expected here, \$discovery=".json_encode($discovery) );
       return $discovery;
     }
 
@@ -251,19 +244,28 @@ class Discovery extends Payable {
     public function getTitle($discovery, $isSupplAmended = false) { global $logger;
 
       $discovery = $this->asDiscovery($discovery);
+      $id = $discovery['id'];
 
       $set  = $discovery['set_number'];
       $name = $discovery['discovery_name'] ?: $discovery_data['form_name'];
+      $name = preg_replace( '/^(.*?)(?:\s*\[Set [0-9a-zA-Z]+\])*$/i', '$1', $name ); // Remove the ` [Set nn]` part if already present
       $result = self::composeTitle( $name, $set, self::STYLE_AS_IS );
+      $count = 0;
 
       if( $isSupplAmended ) {
-        assert( $discovery['id'], "!!" );
-        $query = $this->queryTemplates['getSuppAmendedCountById'];
-        $count = $this->readQuery( $query, ['id' => $discovery['id']] )[0]['COUNT'];
+        assert( $id, "!!" );
+        // $query = $this->queryTemplates['getSuppAmendedCountById'];
+        // $count = $this->readQuery( $query, ['id' => $discovery['id']] )[0]['COUNT'];
+        $count = $this->countBy('discoveries', ['parentid' => $id]);
 
+        $result = preg_replace( '/^(?:[A-Za-z]+\s+'.preg_quote(Discovery::PREFIX_SUPP_AMENDED,'/').'\s*)*(.*)$/i', '$1', $result );
+          // Remove the `Nth Supplemental/Amended ` part if already present
         $result = numToOrdinalWord( $count +1 ) ." ". Discovery::PREFIX_SUPP_AMENDED . $result;
       }
-      $logger->debug("Discovery->getTitle: \$name=$name, \$set=$set, \$count=$count, \$result=$result" );
+      $logger->debug("Discovery->getTitle: \$name=$name,
+                          \$set=$set,
+                          \$count=".@$count.",
+                          \$result=$result" );
       return $result;
     }
 }

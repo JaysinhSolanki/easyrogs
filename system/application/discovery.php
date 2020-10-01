@@ -426,10 +426,8 @@ body.modal-open {
 <?php
 include_once(SYSTEMPATH.'application/client-email-found_modal.php');
 include_once(SYSTEMPATH.'application/client_instructions_modal.php');
-include_once(SYSTEMPATH.'jsinclude.php');
+//include_once(SYSTEMPATH.'jsinclude.php');
 ?>
-<link href="<?= VENDOR_URL ?>uploadfile.css" rel="stylesheet">
-<script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
 
 <script>
 jQuery( $ => {
@@ -502,9 +500,7 @@ function loadinstructions(id,form_id) {
                 suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
             ctxUpdate({ id: `47_${type}${suffix}`, pkscreenid: '47', url: 'discoveryfront.php', } );
 
-            if( $('textarea#instruction').length ) {
-                CKEDITOR.replace( 'instruction' );
-            }
+            enableCKEditor('textarea#instruction');
         } );
 }
 function loadrespondings(case_id,client_id,responding_id) {
@@ -638,9 +634,9 @@ function loadformquestions( form_id, id ) {
     }
 
     $('#loadformquestion')
-      .html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='../assets/images/ownageLoader/loader4.gif'></div></div><br/>");
+      .html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='<?= ASSETS_URL ?>images/ownageLoader/loader4.gif'></div></div><br/>");
     $('#loadinstructions')
-      .html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='../assets/images/ownageLoader/loader4.gif'></div></div><br/>");
+      .html("<div class='row'><div class='col-md-2 col-md-offset-2'><img src='<?= ASSETS_URL ?>images/ownageLoader/loader4.gif'></div></div><br/>");
     if( form_id ) {
         if( form_id == 4 ) {
             $("#in_conjunctionDiv").show();

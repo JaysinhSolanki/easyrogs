@@ -17,8 +17,8 @@ for( $i = 1; $i<=$totalrows; $i++ ) {
 			<textarea name="question_titles[]"
 						id="question_titles<?= $rand_id ?>"
 						placeholder="Enter Text Here"
-						class="form-control m-b question_titlecls" ><?= "
-			" ?></textarea>
+						class="form-control m-b question_titlecls" ><?= ''
+			?></textarea>
 		</td>
 		<td style="vertical-align:middle;width:10%; text-align:center">
 			<a href="javascript:;" title="Add Row Above."

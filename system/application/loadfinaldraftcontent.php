@@ -536,7 +536,7 @@ $instructions = "This responding party has not completed its investigation or di
     </div>
 </div>
 <script>
-jQuery( $ = {
+jQuery( $ => {
     $("#finaldraft_modal_title").html("Final Draft");
     //CKEDITOR.replace('pos_text', { height: 500});
     //loadinstructions();
@@ -548,12 +548,7 @@ function loadinstructions() {
     $.get(`discoveryloadforminstruction.php?form_id=${form_id}&id=${id}&case_id=<?= $case_id ?>&viewonly=1&type=${type}`)
         .done( resp => {
             $("#instruction").val( trim(resp) );
-
-            // const { discoveryType, discoveryFormNames, discoveryForm, } = globalThis,
-			// 		suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
-			// ctxUpdate({ id: `4x_${discoveryType}${suffix}`, pkscreenid: '47', url: 'sloadfinaldraftcontent.php', } );
-
-            CKEDITOR.replace( 'instruction' );
+            enableCKEditor( '#instruction' );
         });
 }
 </script>

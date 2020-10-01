@@ -33,13 +33,6 @@ class Response extends Payable {
                        INNER JOIN discoveries AS d ON (r.fkdiscoveryid = d.id)
                      WHERE r.id = :response_id
                      ORDER BY display_order ASC, question_number ASC, sub_part ASC',
-        'getCountByDiscoveryId' => 'SELECT
-                          COUNT(*) AS COUNT
-                        FROM
-                          responses r
-                        WHERE
-                          r.fkdiscoveryid = :id
-                      ',
         'getByUID' => 'SELECT
                           *
                         FROM
@@ -236,11 +229,11 @@ class Response extends Payable {
     }
 
     public function asResponse($response) {
-      assert( !empty($response), "A proper response was expected here, \$response=$response" );
+      assert( !empty($response), "A proper response was expected here, \$response=".json_encode($response) );
         if( !is_array($response) ) {
           $response = $this->find($response);
         }
-        assert( !empty($response) && !empty($response['id']), "A proper response was expected here, \$response=$response" );
+        assert( !empty($response) && !empty($response['id']), "A proper response was expected here, \$response=".json_encode($response) );
       return $response;
     }
 
@@ -253,23 +246,23 @@ class Response extends Payable {
       }
 
       if( !$result || $isSupplAmended ) { // compose from Discovery
-        assert( !empty($discovery), "A discovery needs to be specified, \$discovery=$discovery" );
-        $discovery = $discoveriesModel::asDiscovery($discovery);
+        assert( !empty($discovery), "A discovery needs to be specified, \$discovery=".json_encode($discovery) );
+        $discovery = $discoveriesModel->asDiscovery($discovery);
         $result = self::PREFIX_RESPONSE. $discoveriesModel->getTitle($discovery);
       }
 
       if( $isSupplAmended ) {
-        $query = $this->queryTemplates['getCountByDiscoveryId'];
-        $count = $this->readQuery( $query, ['id' => $discovery['id']] )[0]['COUNT'];
+        $count = $this->countBy('responses', ['fkdiscoveryid' => $discovery['id']]);
 
         $result = numToOrdinalWord( $count +1 ) ." ". Discovery::PREFIX_SUPP_AMENDED." ". $result;
       }
 
-      $logger->debug("Response->getTitle: \$discovery={$discovery['discovery_name']}, \$response={$response['response_name']}, \$result=$result" );
+      $logger->debug("Response->getTitle:
+                        \$discovery=".(is_array($discovery)?$discovery['discovery_name']:@$discovery).",
+                        \$response=". (is_array($response)?$response['responsename']:@$response).",
+                        \$result=$result" );
       return $result;
     }
-    // ? Discovery::composeTitle( $response['responsename'], null, Discovery::STYLE_WORDCAPS )
-    // : 'Response to '. $discovery['discovery_name'] .' [Set '. $discovery['set_number'] .']'; // failsafe, shouldn't be needed
 
   }
 

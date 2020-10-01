@@ -72,9 +72,8 @@ namespace EasyRogs;
       $level = trim($level);
 
       if (in_array($level, self::LOG_LEVELS)) {
-        $fp = $this->files[$level] = $this->files[$level]
-              ? $this->files[$level]
-              : fopen($this->logsDir . '/' . strtolower($level) . '.log', 'a+');
+        $fp = $this->files[$level] = @$this->files[$level] ?:
+                  fopen($this->logsDir . '/' . strtolower($level) . '.log', 'a+');
       }
 
 
@@ -115,7 +114,14 @@ function exception_logger($e) { global $logger;
 }
 function error_logger($errNo, $msg, $file, $line, $vars) { global $logger;
   if( !(error_reporting() & $errNo) ) {
-      return false;
+      //return false;
+  }
+
+  if( in_array($msg, ["session_start(): A session had already been started - ignoring", ])) {
+    return false;
+  }
+  if( preg_match( '/.*'.preg_quote("/system/library/pdf/mpdf/7/vendor/mpdf/mpdf/src/Mpdf",'/').'/i', $file )) {
+    return false;
   }
 
   switch( $errNo ) {

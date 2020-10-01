@@ -8,12 +8,11 @@ $loggedin_email		=	$_SESSION['loggedin_email'];
 ***************************************************/
 $addressbookid	=	$_SESSION['addressbookid'];
 //Add user details to case_attorney and attorney table
-$case_uid		=	@$_SESSION['responded_case_uid'];
-$res_attr_uid	=	@$_SESSION['responded_attrorney_uid'];
-$discovery_uid	=	@$_SESSION['responded_discovery_uid'];
+$case_uid		    = @$_SESSION['responded_case_uid'];
+$res_attr_uid	  = @$_SESSION['responded_attrorney_uid'];
+$discovery_uid	= @$_SESSION['responded_discovery_uid'];
 
-if($res_attr_uid != "")
-{
+if( $res_attr_uid ) {
 	$attrfields		=	array('fkaddressbookid');
 	$attrvalues		=	array($addressbookid);
 	$AdminDAO->updaterow("attorney",$attrfields,$attrvalues,"uid = :uid",array("uid"=>$res_attr_uid));
@@ -23,9 +22,8 @@ if($res_attr_uid != "")
 	$case_id		=	$getCaseDetails[0]['id'];
 
 	//Check already attached with case or not
-	$checkAlreadyExists	=	$AdminDAO->getrows("attorneys_cases","id","case_id = '$case_id' AND attorney_id = '$addressbookid'");
-	if(sizeof($checkAlreadyExists) == 0)
-	{
+	$checkAlreadyExists	=	sizeof($AdminDAO->getrows("attorneys_cases","id","case_id = '$case_id' AND attorney_id = '$addressbookid'"));
+	if( !$checkAlreadyExists ) {
 		$attrcase_fields		=	array('case_id','attorney_id');
 		$attrcase_values		=	array($case_id,$_SESSION['addressbookid']);
 		$AdminDAO->insertrow("attorneys_cases",$attrcase_fields,$attrcase_values);
@@ -200,7 +198,7 @@ if($res_attr_uid != "")
     userIntroVideoSeen();
     //$('#new-user-video-modal').modal('hide');
   });
-  $().ready( _ => {
+  jQuery( $ => {
 
 <?php
     global $currentUser;

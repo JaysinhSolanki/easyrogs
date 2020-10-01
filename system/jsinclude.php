@@ -1,4 +1,32 @@
 <!-- Vendor scripts -->
+<?php
+if( $_ENV['APP_ENV'] !== 'prod' ) {
+?>
+
+<script>
+	const checks = [
+			/\/jquery(\.min)?\.js/,
+			/\/bootstrap(\.min)?\.js/,
+			/\/jquery\.uploadfile(\.min)?\.js/,
+			/\/ckeditor(\.min)?\.js/,
+		],
+		loadedScripts = document.getElementsByTagName("script"); //debugger;
+    for( script of loadedScripts ) {
+		src = script.getAttribute('src');
+		if( !src ) continue;
+
+		for( check of checks ) {
+			if( src.match(check)) {
+				console.error( `PROBLEM: ${src} already loaded, contains ${String(check)}!!` )
+			}
+		}
+	}
+</script>
+
+<?php
+}
+?>
+
 <script src="<?= VENDOR_URL ?>jquery/dist/jquery.min.js"></script>
 
 <?/*
@@ -6,6 +34,7 @@
 	Changing the load order of this (jquery.uploadfile) plugin could break it !!!!
 	https://github.com/EasyRogs/easyrogs/pull/420
 */?>
+<link  href="<?= VENDOR_URL ?>uploadfile.css" rel="stylesheet">
 <script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
 
 <script src="<?= VENDOR_URL ?>jquery-ui/jquery-ui.min.js"></script>

@@ -458,6 +458,12 @@ function autogrowTextareas(filter='') { //debugger;
 	}, 500 )
 }
 
+function enableCKEditor( $selector, options ) {
+	if( $($selector).length ) {
+		const id = $selector.split('#')[1]
+		CKEDITOR.replace( id, options );
+	}
+}
 
 jQuery( $ => {
 	autoPlayOrPauseVideos();

@@ -2,13 +2,13 @@
 require_once(__DIR__ . "/../system/bootstrap.php");
 include_once(__DIR__ . "/../system/library/classes/functions.php");
 include_once(__DIR__ . "/../system/library/classes/login.class.php");
-if($_GET['outside'] == 1) {
+if(@$_GET['outside']) {
 ?>
     <script type="text/javascript">
 		window.location.href =	"<?php echo FRAMEWORK_URL; ?>signout.php";
     </script>
 <?php
-} 
+}
 
 if(!empty($_SESSION['addressbookid'])) {
 ?>
@@ -16,7 +16,7 @@ if(!empty($_SESSION['addressbookid'])) {
 		window.location.href =	<?= ROOTURL; ?>"system/application/index.php";
     </script>
 <?php
-} 
+}
 //echo "cookies".$_COOKIE['rememberme'];
 $Login			=	new Login($AdminDAO);
 if(!empty($_POST))
@@ -39,7 +39,7 @@ if(isset($_COOKIE['rememberme']) && $_COOKIE['rememberme'] != '')
 	$row	=	$AdminDAO->getrows("system_addressbook","*","uid=:uid", array(":uid"=>$uid));
 	if(@count($row)>0)
 	{
-		
+
 		$password	=	$row[0]['password'];
 		$email		=	$row[0]['email'];
 		$result		=	$Login->loginprocess($email,$password,$type);
@@ -56,7 +56,7 @@ if(isset($_COOKIE['rememberme']) && $_COOKIE['rememberme'] != '')
 if(sizeof($_POST)>0)
 {
 	$result	=	$Login->loginprocess($email,$pass,1);
-	
+
 	if($result	== 1)
 	{
 		$_SESSION['module']		=	$module;
@@ -69,18 +69,18 @@ if(sizeof($_POST)>0)
 			setcookie("rememberme","", time()-3600);
 		}
 		header("Location: " .ROOTURL. "system/application/index.php");
-		// TODO Add analytics event login 
+		// TODO Add analytics event login
 		// trackEvent('login', { event_category: 'account', event_label: <?= $email ?->, });
 		exit;
 	}
 	else
 	{
 		//$error	=	$Error->display($result,1);
-		$errors	=	msg($result,1); 
+		$errors	=	msg($result,1);
 
 	}
 }
-require_once(SYSTEMPATH."application/ctxhelp_header.php"); 
+require_once(SYSTEMPATH."application/ctxhelp_header.php");
 ?>
 <link rel="stylesheet" href="<?= ROOTURL ?>system/assets/videopopup.css" />
 <script type="text/javascript" src="<?= ROOTURL ?>system/assets/videopopup.js"></script>
@@ -129,7 +129,7 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
                             <button class="ladda-button btn btn-info btn-block" data-style="zoom-in">
                             	<span class="ladda-label">Log In</span><span class="ladda-spinner"></span>
                             </button>
-                            
+
                             <a  href="<?php echo $_SESSION['framework_url'];?>forgotpassword.php" style="float:right; margin-top:5px;">Forgot Password?</a>
                         </form>
                 </div>
@@ -146,14 +146,14 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
 		}
 		#info-panel .actions {
 			display: flex; justify-content: space-around; align-items: stretch;
-			padding: 0.5em; 
+			padding: 0.5em;
 		}
 		#info-panel .actions>span {
 			flex-grow: 0; align-self: baseline; margin: auto 0.5em; font-
 		}
 		#info-panel a {
-			display: table-cell; width: 45%; padding: auto 1em; 
-			flex-grow: 1; align-self: baseline; 
+			display: table-cell; width: 45%; padding: auto 1em;
+			flex-grow: 1; align-self: baseline;
 		}
 		</style>
         <div class="">
@@ -163,7 +163,7 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
                     <a id="video_introduction" href="javascript:;" class="ladda-button btn btn-info col-md-6" style="">
 					  Watch our Demo
 					</a>
-					<span> or </span> 
+					<span> or </span>
                     <a id="faq" href="javascript:;" class="ladda-button btn btn-info" style="" onclick="showFAQ(); ">
 					  Peruse our FAQs
 					</a>
@@ -173,7 +173,7 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
                 		<video id="video-demo" preload="none" x-autoplay controls style="
 																				position: fixed;
 																				top: 0; left: 0;
-																				max-width: 100vw; max-height: 100vh; 
+																				max-width: 100vw; max-height: 100vh;
 																				height: auto;
 																			"
 								data-src="demo.mp4">

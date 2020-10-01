@@ -28,7 +28,7 @@ require_once($_SESSION['framework_path']."header.php");
 //require_once($_SESSION['framework_path']."leftmenu.php");
 include_once(SYSTEMPATH.'body.php');
 ?>
-<div id="overlay" style="display:none"><img src="images/ownageLoader/default5.gif" id="imageloaderid"></div>
+<div id="overlay" style="display:none"><img src="<?= ASSETS_URL ?>images/ownageLoader/loader4.gif" id="imageloaderid"></div>
 <!-- Main Wrapper -->
 <div id="wrapper" class="loading" style="background-color:#f7f9fa !important;">
 <?php

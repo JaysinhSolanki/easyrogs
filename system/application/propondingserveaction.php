@@ -14,7 +14,7 @@ $poscity        = $_POST['poscity'];
 $posaddress     = $_POST['posaddress'];
 $pos_text       = $_POST['pos_text'];
 
-assert( $respond ? $response_id : $discovery_id, HttpResponse::malformed("Missing ". ($respond ? 'response_id' : 'discovery_id')) );
+//!! assert( ($respond ? $response_id : $discovery_id), HttpResponse::malformed("Missing ". ($respond ? "\$response_id=$response_id" : "\$discovery_id=$discovery_id")) );
 
 $payable = $respond ? $responsesModel : $discoveriesModel;
 $itemId  = $respond ? $response_id 	  : $discovery_id;
@@ -106,7 +106,7 @@ $atorny_email		= $discovery_data['email'];
 $propounding		= $discovery_data['propounding'];
 $responding			= $discovery_data['responding'];
 
-assert( $uid && $case_uid && $case_id, HttpResponse::internalError("Missing ", [$uid && $case_uid && $case_id]) );
+//!! assert( $uid && $case_uid && $case_id, HttpResponse::internalError("Missing ", [$uid, $case_uid, $case_id]) );
 
 $respondingdetails		= $AdminDAO->getrows("clients","*",
 								"id = :id",

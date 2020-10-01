@@ -74,7 +74,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 							$totalChildsNotIncludes	= 0;
 							$id  			= $discovery['id'];
 							$creator_id		= $discovery['creator_id'];
-							$is_submitted	= $discovery['is_submitted'];
+							//$is_submitted	= $discovery['is_submitted'];
 							$is_served		= $discovery['is_served'];
 							$discoveryType	= $discovery['type'];
 							$discovery_ACL	= array();
@@ -528,7 +528,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 									foreach( $supp_discoveries as $suppdiscovery ) {
 										$supp_id			= $suppdiscovery['id'];
 										$supp_creator_id	= $suppdiscovery['creator_id'];
-										$supp_is_submitted	= $suppdiscovery['is_submitted'];
+										//$supp_is_submitted	= $suppdiscovery['is_submitted'];
 										$supp_is_served		= $suppdiscovery['is_served'];
 										$supp_discoveryType	= $suppdiscovery['type']; // Discovery::TYPE_EXTERNAL/TYPE_INTERNAL
 
@@ -699,7 +699,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 													}
 												}
 ?>
-											<tr class="group_<?= $d_id ?>" style="display:none">
+											<tr class="group_<?= $id ?>" style="display:none">
 												<!-- 6 (supp/amended responses) -->
 												<td>
 													<?php if($mc && $mc['served']): ?>
@@ -848,7 +848,7 @@ $(function () {
 ?>
 </script>
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
-<script src="<?= ASSETS_URL ?>custom.js"></script>
+<!--script src="<?= ASSETS_URL ?>custom.js"></script-->
 <script>
 
 function doAction( action = 'delete', type = 'discovery', id ) {

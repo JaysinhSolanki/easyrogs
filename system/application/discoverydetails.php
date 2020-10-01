@@ -131,7 +131,7 @@ $generalQuestions = $AdminDAO->getrows('question_admits', "*");
 if ($form_id == Discovery::FORM_CA_RPDS) {
     $where = " AND fkresponse_id = '$response_id' ";
 }
-$olddocuments = $AdminDAO->getrows('documents', "*", "discovery_id = '$discovery_id' $where");
+$olddocuments = $AdminDAO->getrows('documents', "*", "discovery_id = '$discovery_id' ".($where?:'') );
 $_SESSION['documents'] = array();
 if (sizeof($olddocuments) > 0) {
     foreach ($olddocuments as $data) {
@@ -1009,10 +1009,8 @@ function formTitle_Save() { //debugger;
 <?php
 include_once(SYSTEMPATH.'application/client-email-found_modal.php');
 include_once(SYSTEMPATH.'application/client_instructions_modal.php');
+//include_once(SYSTEMPATH.'jsinclude.php');
 ?>
-
-<link href="../assets/vendors/uploadfile.css" rel="stylesheet">
-<script src="../assets/vendors/jquery.uploadfile.min.js"></script>
 <script>
 
 const RPDS_ANSWER_NONE               = '<?= Discovery::RPDS_ANSWER_NONE ?>'
@@ -1094,9 +1092,7 @@ function loadinstructions( form_id, id ) {
                     suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
             ctxUpdate({ id: `49_${type}${suffix}`, pkscreenid: '49', url: 'discoverydetails.php', } );
 
-            if( $('#instruction').length ) {
-                CKEDITOR.replace( 'instruction' );
-            }
+            enableCKEditor('textarea#instruction');
         });
 }
 function checkFunction(subdivid, option)

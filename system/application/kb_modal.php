@@ -106,7 +106,7 @@ require_once __DIR__ .'/kb_common.php';
             .done( data => {
                 const $sidebar = $(`.sidebar.${panel.dockSide} > .fixed`),
                       $sidebar_items = $sidebar.find(`> *`)
-                if( $sidebar_items.length < 1 || $sidebar.data('kb').section != form_id ) {
+                if( $sidebar_items.length < 1 || !$sidebar.data('kb') || !$sidebar.data('kb').section != form_id ) {
                     $sidebar.html(data).data( 'kb', {panel, section: form_id} )
                     updateKBEvents()
                 }

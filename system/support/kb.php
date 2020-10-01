@@ -29,7 +29,7 @@ function asList($values) {
    if( is_array($values) ) {
       $values = implode( " ", $values );
    }
-   assert( $values, "Values expected here \$values=\$values" );
+   assert( !!$values, "Values expected here \$values=\$values" );
    return strval($values);
 }
 class DBx extends BaseModel {

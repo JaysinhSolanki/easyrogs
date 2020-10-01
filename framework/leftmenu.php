@@ -2,8 +2,8 @@
 //echo __LINE__;
 //require_once("{$_SESSION['includes_path']}/classes/adminsecurity.php");
 $addressbookid			=	$_SESSION['addressbookid'];
-$_SESSION['section']	=	@$_GET['sectionid'];
-$section				=	$_SESSION['section'];
+// $_SESSION['section']	=	@$_GET['sectionid'];
+// $section				=	$_SESSION['section'];
 //$AdminDAO->displayquery=1;
 //Warning: PDOStatement::execute() expects parameter 1 to be array, string given in D:\wamp\www\gumption\kamna\system\includes\classes\AdminDAO.php on line 116
 $sectionres	=	$AdminDAO->getrows("system_section","*","status=:status order by  sortorder", array(":status"=>1));
@@ -15,10 +15,10 @@ $users			=	$AdminDAO->getrows("system_addressbook","*","pkaddressbookid	=	:addre
 //dump($users);
 //exit;
 $user			=	$users[0];
-$userimage		=	$user['userimage'];	
+$userimage		=	$user['userimage'];
 if($userimage == "")
 {
-	$userimage	=	"../images/gumptech-logo.png";	
+	$userimage	=	"../images/gumptech-logo.png";
 }
 ?>
 <aside id="menu">
@@ -30,9 +30,9 @@ if($userimage == "")
             <?php echo $systemmaindescription; ?>
         </div>
         <ul class="nav" id="side-menu">
-		<?php 
+		<?php
         //dump($sectionres,1);
-		
+
         for($sec=0; $sec<sizeof($sectionres); $sec++)
         {
 			$sectionid		=	$sectionres[$sec]['pksectionid'];
@@ -43,21 +43,21 @@ if($userimage == "")
 			{
 				continue;
 			}
-		
+
 			$screens		= 	@implode(",", $screens);
 			//echo "<h1>-----------------</h1>";
 			//$AdminDAO->displayquery = 1;
 			$tabres		=	$AdminDAO->getrows("system_screen s","*",
-													"pkscreenid IN ($screens) AND 
-													showontop =1  AND 
-													fkmoduleid = (select pkmoduleid from system_module where modulename='System Access Permissions') AND 
+													"pkscreenid IN ($screens) AND
+													showontop =1  AND
+													fkmoduleid = (select pkmoduleid from system_module where modulename='System Access Permissions') AND
 													fksectionid='$sectionid' AND
-													showtoadmin <> 0 
+													showtoadmin <> 0
 													",array(),
 													"displayorder",
 													"ASC");
-			
-			
+
+
 			//dump($tabres);
 			//$AdminDAO->displayquery = 0;
 			if(sizeof($tabres) > 0)
@@ -67,7 +67,7 @@ if($userimage == "")
 					$icon	=	"<span class='fa arrow'></span>";
 	        	?>
                     <li id="<?php echo $sectionid;?>">
-    	               
+
                             <a href="javascript:;" >
                             <?php
 							if($sectionid=='26')
@@ -78,8 +78,8 @@ if($userimage == "")
                             	 <span class="nav-label"><?php echo ucwords($sectionname)." ".@$icons;?> </span>
                                  <span class="fa arrow"></span>
                             </a>
-                            
-                       
+
+
                     	<ul class="nav nav-second-level">
         		<?php
 				}
@@ -150,7 +150,7 @@ if($userimage == "")
 							{
 								$sentforapprovalpassports		=	$AdminDAO->getrows("tblorderpassport,tblpassport","*","fkpassportid = pkpassportid AND orderpassportstatus = :orderpassportstatus",array("orderpassportstatus"=> 2));
 							}
-							
+
 							$sentforapprovalpassport		=	sizeof($sentforapprovalpassports);
 							$extradata = '(<span id="sentforapproval_count">'.$sentforapprovalpassport.'</span>)';
 						}
@@ -164,7 +164,7 @@ if($userimage == "")
 							{
 								$mofareceivedpassports		=	$AdminDAO->getrows("tblorderpassport,tblpassport","*","fkpassportid = pkpassportid AND orderpassportstatus = :orderpassportstatus",array("orderpassportstatus"=> 3));
 							}
-							
+
 							$mofareceivedpassport		=	sizeof($mofareceivedpassports);
 							$extradata = '(<span id="mofareceived_count">'.$mofareceivedpassport.'</span>)';
 						}
@@ -178,7 +178,7 @@ if($userimage == "")
 							{
 								$sentforvisapassports		=	$AdminDAO->getrows("tblorderpassport,tblpassport","*","fkpassportid = pkpassportid AND orderpassportstatus = :orderpassportstatus",array("orderpassportstatus"=> 4));
 							}
-							
+
 							$sentforvisapassport		=	sizeof($sentforvisapassports);
 							$extradata = '(<span id="sentforvisa_count">'.$sentforvisapassport.'</span>)';
 						}
@@ -192,7 +192,7 @@ if($userimage == "")
 							{
 								$visareceivedpassports		=	$AdminDAO->getrows("tblorderpassport,tblpassport","*","fkpassportid = pkpassportid AND orderpassportstatus = :orderpassportstatus",array("orderpassportstatus"=> 5));
 							}
-							
+
 							$visareceivedpassport		=	sizeof($visareceivedpassports);
 							$extradata = '(<span id="visareceived_count">'.$visareceivedpassport.'</span>)';
 						}
@@ -206,7 +206,7 @@ if($userimage == "")
 							{
 								$hotelvotcherpassports		=	$AdminDAO->getrows("tblorderpassport,tblpassport","*","fkpassportid = pkpassportid AND orderpassportstatus = :orderpassportstatus",array("orderpassportstatus"=> 6));
 							}
-							
+
 							$hotelvotcherpassport		=	sizeof($hotelvotcherpassports);
 							$extradata = '(<span id="hotelvoucher_count">'.$hotelvotcherpassport.'</span>)';
 						}
@@ -223,11 +223,11 @@ if($userimage == "")
 					?>
 					</ul>
 					</li>
-					<?php 
+					<?php
 				}
 			}
 		}
-		
+
         ?>
         <!-- <li><a href="charts.php" > <i class="icon-bar-chart"></i> Charts </a> </li>-->
         <li><a href="<?php echo FRAMEWORK_URL; ?>signout.php"> Exit System </a> </li>

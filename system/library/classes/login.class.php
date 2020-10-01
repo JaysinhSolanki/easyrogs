@@ -15,13 +15,13 @@ class Login {
     const RETURN_CODE_NOT_VERIFIED      = 5;
 
     function userlogin( $email, $pass, $type ) {
-		$userdata = $this->loginDAO->getrows( "system_addressbook,system_groups", "*", 
-											  "pkgroupid = fkgroupid AND email = :email ", 
+		$userdata = $this->loginDAO->getrows( "system_addressbook,system_groups", "*",
+											  "pkgroupid = fkgroupid AND email = :email ",
 											  [":email" => $email] );
         if( sizeof( $userdata ) ) {
 			$userdata = $userdata[0];
-			
-			if( !password_verify( $pass, $userdata['password'] ) && 
+
+			if( !password_verify( $pass, $userdata['password'] ) &&
 				($pass != $userdata['password']) ) /* TODO Remove this once all users have properly hashed passwords instead of plain text */ {
                 $response = self::RETURN_CODE_INVALID_USER_PASS; //invalid username or password
             } elseif( !$userdata['emailverified'] ) {
@@ -33,15 +33,15 @@ class Login {
                 $_SESSION['groupid']          = $userdata['fkgroupid'];
                 $_SESSION['groupname']        = $userdata['groupname'];
                 $_SESSION['groupowner']       = $userdata['fkaddressbookid'];
-                $_SESSION['issuperadmin']     = $userdata['issuperadmin'];
-                $_SESSION['sessioncompanyid'] = $userdata['fkcompanyid'];
-                $_SESSION['language']         = $_POST['language'];
+                //$_SESSION['issuperadmin']     = $userdata['issuperadmin'];
+                // $_SESSION['sessioncompanyid'] = $userdata['fkcompanyid'];
+                // $_SESSION['language']         = $_POST['language'];
                 $_SESSION['uid']              = $userdata['uid'];
 
                 // TODO: WTF is this v
                 if( $userdata['fkgroupid'] == 20 ) { //if company owner is logging in
                     $_SESSION['fkcompanyid'] = $userdata['pkaddressbookid'];
-				} 
+				}
 				else { //if someone else is logging in
                     $_SESSION['fkcompanyid'] = $userdata['fkaddressbookid'];
                 }
@@ -83,18 +83,18 @@ class Login {
                 $screenid[] = $groupscreen['fkscreenid'];
             }
             return $screenid;
-		} 
+		}
 		else {
             return 0;
         }
     }
 
     function userRights( $screen, $groupid ) { // getting screen rights
-		$fields = $this->loginDAO->getrows( "system_groupfield gf, system_field f", "*", 
-											"f.fkscreenid = :screen AND 
-											gf.fkgroupid = :groupid AND 
-											f.pkfieldid = gf.fkfieldid", 
-											[":screen"  => $screen, ":groupid" => $groupid, ], 
+		$fields = $this->loginDAO->getrows( "system_groupfield gf, system_field f", "*",
+											"f.fkscreenid = :screen AND
+											gf.fkgroupid = :groupid AND
+											f.pkfieldid = gf.fkfieldid",
+											[":screen"  => $screen, ":groupid" => $groupid, ],
 											"sortorder", "ASC" );
         for( $i = 0; $i < sizeof( $fields ); $i++ ) {
             if( $_SESSION['language'] == 'hebrew' ) {
@@ -105,10 +105,10 @@ class Login {
 
             $field[] = $fields[$i]['fieldname'];
         }
-		$actions = $this->loginDAO->getrows( "system_groupaction ga, system_action a", "*", 
-											 "a.fkscreenid = :screen AND 
-											  ga.fkgroupid = :groupid AND 
-											  a.pkactionid = ga.fkactionid", 
+		$actions = $this->loginDAO->getrows( "system_groupaction ga, system_action a", "*",
+											 "a.fkscreenid = :screen AND
+											  ga.fkgroupid = :groupid AND
+											  a.pkactionid = ga.fkactionid",
 											 [ ":screen"  => $screen, ":groupid" => $groupid, ] );
         for( $i = 0; $i < sizeof( $actions ); $i++ ) {
             $action[] = $actions[$i]['fkactionid'];

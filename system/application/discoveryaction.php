@@ -256,7 +256,7 @@ else {
 		$fields[]	= "proponding_attorney";
 		$values[]	= $proponding_attorney;
 	}
-	if( $supp == 1 ) {
+	if( $is_supp ) {
 		$fields[]	= "grand_parent_id";
 		$values[]	= $gParentid;
 		$fields[]	= "parentid";
@@ -335,7 +335,7 @@ if( !empty($new_questions) && @count($new_questions) ) {
 	foreach( $new_questions  as $key=>$thisrow ) {
 		if( $id ) {
 			if( $question_titles[$key] != '') {
-				if( $new_questions[$key] > 0 && $supp != 1 ) {
+				if( $new_questions[$key] > 0 && !$is_supp ) {
 					$fields	= array('question_title','question_number');
 					$values	= array($question_titles[$key],$question_numbers[$key]);
 					$AdminDAO->updaterow("questions",$fields,$values,"id ='{$new_questions[$key]}'");

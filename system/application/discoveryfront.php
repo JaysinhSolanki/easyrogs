@@ -7,7 +7,9 @@ include_once("../library/classes/login.class.php");
 include_once("../library/classes/functions.php");
 
 $uid  = @$_GET['uid'];
-$view = @$_GET['view'];
+$view = @$_GET['view'] ?: Discovery::VIEW_RESPONDING;
+
+//!! assert( !!$uid, HttpResponse::malformed("Missing ", [$uid]) );
 
 $css = ( $view != Discovery::VIEW_RESPONDING) ? " disabled " : "";
 
@@ -22,8 +24,11 @@ Side::legacyTranslateCaseData(
 	$discovery_data['attorney_id'] // !! will use this attorney's side data
 );
 
-$discovery_id		= $discovery_data['discovery_id'];
-//$discovery_uid		= $discovery_data['uid'];
+$discovery_id = $discovery_data['discovery_id'];
+//$discovery_uid = $discovery_data['uid'];
+if( !$discovery_id ) {
+	//!! HttpResponse::malformed("Wrong ", [$uid]);
+}
 
 $case_title			= $discovery_data['case_title'];
 $case_number		= $discovery_data['case_number'];
@@ -175,7 +180,7 @@ $where	= "";
 if( $form_id == Discovery::FORM_CA_RPDS ) {
 	$where	= " AND fkresponse_id = '$response_id' ";
 }
-$olddocuments = $AdminDAO->getrows('documents',"*","discovery_id = '$discovery_id' $where");
+$olddocuments = $AdminDAO->getrows('documents',"*","discovery_id = '$discovery_id' ".($where?:''));
 if( sizeof($olddocuments) ) {
 	foreach($olddocuments as $data) {
 		$doc_purpose	= $data['document_notes'];
@@ -670,9 +675,9 @@ function getRPDetails($rp_id) {
     <aside class="sidebar right"><div class="fixed"></div></aside>
 </div>
 
-<link href="<?= VENDOR_URL ?>uploadfile.css" rel="stylesheet">
-<script src="<?= VENDOR_URL ?>jquery.uploadfile.min.js"></script>
-
+<?php
+//include_once(SYSTEMPATH.'jsinclude.php');
+?>
 <script>
 
 function loadinstructions( form_id, id ) {
@@ -685,7 +690,7 @@ function loadinstructions( form_id, id ) {
 					suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
 			ctxUpdate({ id: `47_${type}${suffix}`, pkscreenid: '47', url: 'discoveryfront.php', } );
 
-			CKEDITOR.replace( 'instruction' );
+            enableCKEditor('textarea#instruction');
 		});
 }
 function submitForm() {
@@ -941,7 +946,7 @@ ob_start();
 globalThis['discoveryType'] = "<?= $type ?>";
 
 jQuery( $ => {
-	CKEDITOR.replace( 'email_body_popup' )
+	enableCKEditor('textarea#email_body_popup');
 
 	autogrowTextareas()
 } );
