@@ -19,9 +19,9 @@
     {/if}
 
     {if $mc.served_at}
-      <div class="er-mc-date">{date('F d, Y', strtotime($mc.served_at))}</div>
+      <div class="er-mc-date">{date('F j, Y', strtotime($mc.served_at))}</div>
     {else}
-      <div class="er-mc-date">{date('F d, Y')}</div>
+      <div class="er-mc-date">{date('F j, Y')}</div>
     {/if}
 
     <br/>
