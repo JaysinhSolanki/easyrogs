@@ -26,15 +26,15 @@ $discovery_verification_signed_by = $_POST['discovery_verification_signed_by'];
 
 $verification_datetime = date("Y-m-d H:i:s");
 
-$case	= $AdminDAO->getrows("cases","*","id='$case_id'");
-$form	= $AdminDAO->getrows("forms","*","id='$form_id'");
+$case = $AdminDAO->getrows("cases","*","id='$case_id'");
+$form = $AdminDAO->getrows("forms","*","id='$form_id'");
 
 $discovery_details	= $discoveriesModel->findDetails($uid);
 $attorney_id	= $discovery_details['attorney_id'];
 $discovery_id	= $discovery_details['id'];
 
 if( $response_id ) {
-	$responsename = @$_POST['supp_form_name'];
+	$responsename = @$_POST['supp_form_name'] ?: @$_POST['response_name'] ?: $responsesModel->getTitle($response_id,$discovery_details);
 	$fields	      = array("responsename","fkdiscoveryid","fkresponseid");
 	$values       = array($responsename, $discovery_id,  $response_id);
 	if( !$is_supp ) {

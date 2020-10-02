@@ -800,17 +800,17 @@ function SaveVerificationText(flag) {
 		}
 		else if( !$("#verification_signed_by").val().trim() ) {
 			$("#msgVerification").html("Please enter your name.");
-			var checkerror	= 1;
+			var checkerror	= 1; //debugger;
 			//callModal();
 			//addform('discoveryfrontaction.php?q=1','discoverydetailsform',' ','discoveryfront-thanks.php');
 		}
 		else {
-			callModal();
+			callModal(); //debugger;
 			addform('discoveryfrontaction.php?q=1&redirect=1','discoverydetailsform','','discoveryfront-thanks.php');
 		}
 	}
 	else {
-		callModal();
+		callModal(); //debugger;
 		addform('discoveryfrontaction.php?q=1&redirect=1','discoverydetailsform','','discoveryfront-thanks.php');
 	}
 }
