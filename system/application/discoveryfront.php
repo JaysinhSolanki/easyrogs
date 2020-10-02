@@ -546,7 +546,7 @@ function getRPDetails($rp_id) {
 																	name="answer[<?= $discovery_question_id ?>]"
 																	onChange="checkFunctionForm5('<?= $discovery_question_id ?>',this.value)">
                                                                 <option <?= ($answer == Discovery::RPDS_ANSWER_NONE              ) ? "selected" : "" ?>>Select Your Response</option>
-                                                                <option <?= ($answer == Discovery::RPDS_HAVE_DOCS                ) ? "selected" : "" ?>>I have responsive documents</option>
+                                                                <option <?= ($answer == Discovery::RPDS_ANSWER_HAVE_DOCS         ) ? "selected" : "" ?>>I have responsive documents</option>
                                                                 <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_NEVER_EXISTED) ? "selected" : "" ?>>Responsive documents have never existed</option>
                                                                 <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_DESTROYED    ) ? "selected" : "" ?>>Responsive documents were destroyed</option>
                                                                 <option <?= ($answer == Discovery::RPDS_ANSWER_DOCS_NO_ACCESS    ) ? "selected" : "" ?>>Responsive documents were lost, misplaced, stolen, or I lack access to them</option>
@@ -573,14 +573,14 @@ function getRPDetails($rp_id) {
 																	</div>
 																	</li>
 																</ul>
-																<ul class="list-group" id="subdiv<?= $discovery_question_id ?>" <?= ($answer == Discovery::RPDS_ANSWER_NONE || $answer == Discovery::RPDS_HAVE_DOCS ) ? ' style="display:none" ' : '' ?>>
+																<ul class="list-group" id="subdiv<?= $discovery_question_id ?>" <?= ($answer == Discovery::RPDS_ANSWER_NONE || $answer == Discovery::RPDS_ANSWER_HAVE_DOCS ) ? ' style="display:none" ' : '' ?>>
 																	<li class="list-group-item">
 																	<div class="form-group">
 																		<p>
 																			<b>a) </b>
 																			Enter the name and address of anyone you believe has the documents.
 																		</p>
-																		<textarea <?= ($answer == Discovery::RPDS_ANSWER_NONE || $answer == Discovery::RPDS_HAVE_DOCS ) ? " disabled " : '' ?>
+																		<textarea <?= ($answer == Discovery::RPDS_ANSWER_NONE || $answer == Discovery::RPDS_ANSWER_HAVE_DOCS ) ? " disabled " : '' ?>
 																				id="subanswer<?= $discovery_question_id ?>"
 																				class="form-control"
 																				name="subanswer[<?= $discovery_question_id; ?>]"
@@ -712,8 +712,8 @@ function checkFunction( subdivid, option ) {
 }
 function checkFunctionForm5(subdivid, option) {
     option = String(option).trim();
-	if( option == `<?= RPDS_HAVE_DOCS ?>` || option == `<?= RPDS_ANSWER_NONE ?>` || option == `<?= RPDS_ANSWER_DOCS_NEVER_EXISTED ?>`) {
-		if(option == `<?= RPDS_HAVE_DOCS ?>`) {
+	if( option == `<?= RPDS_ANSWER_HAVE_DOCS ?>` || option == `<?= RPDS_ANSWER_NONE ?>` || option == `<?= RPDS_ANSWER_DOCS_NEVER_EXISTED ?>`) {
+		if(option == `<?= RPDS_ANSWER_HAVE_DOCS ?>`) {
 			$("#note"+subdivid).show();
 		}
 		else {
