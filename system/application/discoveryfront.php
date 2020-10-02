@@ -712,8 +712,8 @@ function checkFunction( subdivid, option ) {
 }
 function checkFunctionForm5(subdivid, option) {
     option = String(option).trim();
-	if( option == `<?= RPDS_ANSWER_HAVE_DOCS ?>` || option == `<?= RPDS_ANSWER_NONE ?>` || option == `<?= RPDS_ANSWER_DOCS_NEVER_EXISTED ?>`) {
-		if(option == `<?= RPDS_ANSWER_HAVE_DOCS ?>`) {
+	if( option == `<?= Discovery::RPDS_ANSWER_HAVE_DOCS ?>` || option == `<?= Discovery::RPDS_ANSWER_NONE ?>` || option == `<?= Discovery::RPDS_ANSWER_DOCS_NEVER_EXISTED ?>`) {
+		if(option == `<?= Discovery::RPDS_ANSWER_HAVE_DOCS ?>`) {
 			$("#note"+subdivid).show();
 		}
 		else {
