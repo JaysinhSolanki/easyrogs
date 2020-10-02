@@ -127,14 +127,14 @@ function error_logger($errNo, $msg, $file, $line, $vars) { global $logger;
 
   switch( $errNo ) {
     case E_USER_ERROR:
-      $logger->error( [ "\n\n$file:$line", "$msg",
+      $logger->error( [ "\n\n$file:$line", $msg,
                         ( $_ENV['APP_ENV'] == 'local' ) ? $vars : null ], true );
       die();
     case E_USER_WARNING:
-      $logger->warn( [ "$file:$line", "$msg"], true );
+      $logger->warn( [ "$file:$line", $msg], true );
       break;
     case E_USER_NOTICE:
     default:
-      $logger->info( [ "$file:$line", "$msg"], true );
+      $logger->info( [ "$file:$line", $msg], true );
   }
 }

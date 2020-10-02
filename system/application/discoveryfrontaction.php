@@ -153,11 +153,11 @@ if( in_array($form_id, array(Discovery::FORM_CA_RPDS)) ) {
 	}
 }
 if( $_GET['q'] ) {
-	$fields	= array("submit_date",'is_submitted','verification_signed_by','verification_by_name','discovery_verification','verification_state','verification_city','verification_datetime');
-	$values = array(date("Y-m-d H:i:s"),'1',$discovery_verification_signed_by,$discovery_verification_by_name,$discovery_verification,$discovery_verification_state,$discovery_verification_city,$verification_datetime);
+	$fields	= array("submit_date",       'is_submitted', 'submitted_by', 'verification_signed_by',          'verification_by_name',          'discovery_verification', 'verification_state',          'verification_city',          'verification_datetime');
+	$values = array(date("Y-m-d H:i:s"), '1',            $updated_by,    $discovery_verification_signed_by, $discovery_verification_by_name, $discovery_verification,  $discovery_verification_state, $discovery_verification_city, $verification_datetime );
 
 	$AdminDAO->updaterow('responses',$fields,$values,"id='$response_id'");
-	$response = $AdminDAO->getrows('responses','*',"id='$response_id'");
+	$response = $AdminDAO->getrows('responses','*',"id='$response_id'")[0];
 
 	$discovery = $discoveriesModel->findByUID($uid);
 	DiscoveryMailer::clientResponded($discovery,$response);

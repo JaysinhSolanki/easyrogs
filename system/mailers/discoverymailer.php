@@ -89,7 +89,7 @@
       $logContext = 'DISCOVERY_MAILER_CLIENT_RESPONDED';
       $logParams  = json_encode(['discovery' => $discovery]);
 
-      $discovery = is_array($discovery) ? $discovery : $discoveriesModel->find($discovery);
+      $discovery = $discoveriesModel->asDiscovery($discovery);
       if ( !$discovery ) {
         return $logger->error("$logContext Discovery not found. Params: $logParams");
       }
@@ -101,9 +101,9 @@
       }
 
       $smarty->assign([
-        'ASSETS_URL'    => ASSETS_URL,
-        'clientName'    => $client['client_name'],
-        'responseName' => $responsesModel->getTitle( $response )
+        'ASSETS_URL'   => ASSETS_URL,
+        'clientName'   => $client['client_name'],
+        'responseName' => $responsesModel->getTitle( $response, $discovery )
       ]);
       $subject = sprintf(self::CLIENT_RESPONDED_SUBJECT, $side['case_title']);
 
@@ -129,7 +129,7 @@
         'isResponse' => $isResponse, 'attachments' => $attachments
       ]);
 
-      $discovery = is_array($discovery) ? $discovery : $discoveriesModel->find($discovery);
+      $discovery = $discoveriesModel->asDiscovery($discovery);
       if ( !$discovery ) {
         return $logger->error("$logContext Discovery not found. Params: $logParams");
       }

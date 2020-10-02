@@ -106,7 +106,7 @@ if( !empty($responseData) ) {
 			<td>
 		<p>We're sorry, but the <?= $responsesModel->getTitle($responseData) ?> in the case of <?= "<i>$case_title</i>" ?> were already <?= $action ?> on <?= date('F j, Y', $submit_date ) ." at ". date('h:i A', $submit_date ) ?>.</p>
 		<p>If you believe this to be an error, please contact <?= $attorney_name ?> at <?= "<a href='mailto:$email'>$email</a>" ?> or <?= "<a href='tel:$phone'>$phone</a>" ?>.</p>
-		<br/>
+		<br/><!-- response:id= <?= $response_id ?>, discovery:id= <?= $discovery_id ?> discovery:uid= <?= $uid ?> -->
 		<p>Thank you.</p>
 			</td>
 		</tr>

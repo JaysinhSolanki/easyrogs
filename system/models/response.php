@@ -142,7 +142,7 @@ class Response extends Payable {
 
         if ($qaRow['sub_part']) { // is a sub question?
           if (!$parentQA = @$qaStruct[$questionNum]) {
-            $this->logger->debug(array_keys($qaStruct));
+            $this->logger->debug(['RESPONSE_GET_QA_STRUCT', array_keys($qaStruct)]);
             $this->logger->warn("RESPONSE_GET_QA_STRUCT Expected parent question not yet accessible in QA Struct. Question Number: $questionNum");
             continue;
           }
@@ -228,7 +228,7 @@ class Response extends Payable {
         return false;
     }
 
-    public function asResponse($response) {
+    public function asResponse($response, $includeQAs = true) {
       assert( !empty($response), "A proper response was expected here, \$response=".json_encode($response) );
         if( !is_array($response) ) {
           $response = $this->find($response);
@@ -241,7 +241,7 @@ class Response extends Payable {
 
       $result = '';
       if( $response ) { // get from Response
-        $response = $this->asResponse($response);
+        $response = $this->asResponse($response, false);
         $result = $response['responsename'];
       }
 
