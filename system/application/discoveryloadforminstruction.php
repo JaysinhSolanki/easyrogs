@@ -80,7 +80,6 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                 $uncheckedimg  = '<img src="../uploads/icons/checkbox_empty_small.png" width="15px">';
                                 $incidenttext1 = "&nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.";
 
-
                                 if( $incidentoption == 1 ) {
                                     $incidenttext2 = "&nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled 'Sec. 4(a)(2)'):";
                                     $option1       = $checkedimg . $incidenttext1;

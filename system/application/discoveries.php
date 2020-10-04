@@ -77,7 +77,6 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 							//$is_submitted	= $discovery['is_submitted'];
 							$is_served		= $discovery['is_served'];
 							$discoveryType	= $discovery['type'];
-							$discovery_ACL	= array();
 
 							if( $discoveryType == Discovery::TYPE_INTERNAL ) {
 								if( $creator_id != $_SESSION['addressbookid'] && empty($iscaseteammember) ) {
@@ -108,13 +107,15 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								/**
 								* SET UP ACL FOR DISCOVERIES
 								**/
+								$discovery_ACL = [];
+
 								$discovery_ACL[] = "request-pdf";
 								$discovery_ACL[] = "view";
 								$discovery_ACL[] = "edit";
 								$discovery_ACL[] = "delete";
 
 								if( !sizeof($responses) ) {
-									$discovery_ACL[] = "respond";
+									$discovery_ACL[] = "respond"; // see the `continue` a few lines before: there's no need to check anything else
 								}
 ?>
 								<tr style="background-color:#18fd4736">
@@ -177,6 +178,11 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									foreach($responses as $response_data) {
 										$response_id = $response_data['id'];
 										$mc = $meetConferModel->findByResponseId($response_id, false);
+
+										/**
+										* SET UP ACL FOR RESPONSES
+										**/
+										$response_ACL = [];
 
 										$response_ACL[] = 'response-pdf';
 										$response_ACL[] = 'view';
@@ -311,23 +317,23 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								**/
 								$discovery_ACL[] = "request-pdf"; // always allow PDFing
 
-								if( $is_served == 1 ) {
+								if( $is_served ) {
 									$discovery_ACL[] = "view";
 									$discovery_ACL[] = "change-due-date";
 
-									if( $creator_id == $_SESSION['addressbookid'] ) {
-										$discovery_ACL[]	= "supp-amend";
+									if( $creator_id == $_SESSION['addressbookid'] ) { //!! TODO if-same-side
+										$discovery_ACL[] = "supp-amend";
 									}
-									if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) { // ??
-										$discovery_ACL[]	= "unserve";
+									if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
+										$discovery_ACL[] = "unserve";
 									}
-									if( in_array( $_SESSION['loggedin_email'], $respondingPartyAttr ) && !sizeof($responses) ) {
-										$discovery_ACL[]	= "respond";
+									if( in_array( $_SESSION['loggedin_email'], $respondingPartyAttr ) && !sizeof($responses) ) { //!! TODO if-same-side?
+										$discovery_ACL[] = "respond";
 									}
 								}
 								else {
-									$discovery_ACL[]	= "edit";
-									$discovery_ACL[]	= "delete";
+									$discovery_ACL[] = "edit";
+									$discovery_ACL[] = "delete";
 								}
 ?>
 								<tr style="background-color:#18fd4736">
@@ -386,8 +392,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 													<!-- 3:pdf --> <li class="list-menu"><a href="<?= $RequestPDF_FileName ?>" target="_blank"   ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
 <?php
 												}
-												if(in_array("change-due-date",$discovery_ACL))
-												{
+												if( in_array("change-due-date",$discovery_ACL) ) {
 												?>
 													<!-- 3:redate --> <li class="list-menu"><a href="javascript:" class="discovery-change-due-date" data-discovery-id="<?= $discovery['id'] ?>" ><i class="fa fa-calendar-o"></i> Change Due Date</a></li>
 												<?php
@@ -415,7 +420,6 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										$response_creator_id	= $response_data['created_by'];
 										$isserved				= $response_data['isserved'];
 										$response_id			= $response_data['id'];
-										$response_ACL			= array();
 
 										$mc = $meetConferModel->findByResponseId($response_id, false);
 
@@ -424,13 +428,18 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 											$totalChildsNotIncludes++; continue;
 										}
 
+										/**
+										* SET UP ACL FOR RESPONSES
+										**/
+										$response_ACL = [];
+
 										$response_ACL[] = "response-pdf"; // always allow PDFing
 										if ( !in_array( $currentUser->user['email'], $respondingPartyAttr )) {
 											$response_ACL[] = 'meet-confer';
 										}
 
 										if( $isserved ) {
-											if( $response_creator_id == $_SESSION['addressbookid'] ) {
+											if( $response_creator_id == $_SESSION['addressbookid'] ) { //!! TODO if-same-side
 												$response_ACL[] = "supp-amend";
 											}
 											if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
@@ -439,7 +448,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 											$response_ACL[] = "view";
 										}
 										else {
-											if( $response_creator_id == $_SESSION['addressbookid'] ) {
+											if( $response_creator_id == $_SESSION['addressbookid'] ) { //!! TODO if-same-side?
 												$response_ACL[]	= "edit";
 												$response_ACL[]	= "delete";
 											}
@@ -534,7 +543,6 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 
 										$RequestPDF_FileName = "makepdf.php?id=".$suppdiscovery['uid']."&view=1";
 
-										$supp_discovery_ACL	= array();
 										if( $supp_discoveryType == Discovery::TYPE_INTERNAL) {
 											$totalChildsNotIncludes++; continue;
 										}
@@ -569,30 +577,31 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 										$showDueDateSupp = !$responsesModel->isAnyServed($suppresponses);
 
 										/**
-										* SET UP ACL FOR DISCOVERIES
+										* SET UP ACL FOR SUPP DISCOVERIES
 										**/
+										$supp_discovery_ACL	= [];
 										$supp_discovery_ACL[] = "request-pdf"; // always allow PDFing
 
 										if( $supp_is_served ) {
-											$supp_discovery_ACL[]	= "view";
-											$supp_discovery_ACL[]	= "change-due-date";
+											$supp_discovery_ACL[] = "view";
+											$supp_discovery_ACL[] = "change-due-date";
 
-											if( $supp_creator_id == $_SESSION['addressbookid'] ) {
-												$supp_discovery_ACL[]	= "supp-amend";
+											if( $supp_creator_id == $_SESSION['addressbookid'] ) { //!! TODO if-same-side
+												$supp_discovery_ACL[] = "supp-amend";
 											}
 											if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
-												$supp_discovery_ACL[]	= "unserve";
+												$supp_discovery_ACL[] = "unserve";
 											}
-											if( in_array($_SESSION['loggedin_email'],$supp_respondingPartyAttr) && !sizeof($suppresponses) ) {
-												$supp_discovery_ACL[]	= "respond";
+											if( in_array($_SESSION['loggedin_email'],$supp_respondingPartyAttr) && !sizeof($suppresponses) ) { //!! TODO if-same-side
+												$supp_discovery_ACL[] = "respond";
 											}
 										}
 										else {
-											$supp_discovery_ACL[]	= "edit";
-											$supp_discovery_ACL[]	= "delete";
+											$supp_discovery_ACL[] = "edit";
+											$supp_discovery_ACL[] = "delete";
 										}
 ?>
-										<tr class="group_<?=  $id ?>" style="display:none">
+										<tr class="group_<?= $id ?>" style="display:none">
 											<!-- 5 (supp) -->
 											<td></td>
 											<td><?= $discoveriesModel->getTitle($suppdiscovery)                       ?> </td>
@@ -640,8 +649,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 															<!-- 5:pdf --> <li class="list-menu"><a href="<?= $RequestPDF_FileName ?>" target="_blank"   ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
 <?php
 														}
-														if(in_array("change-due-date",$supp_discovery_ACL))
-														{
+														if( in_array("change-due-date",$supp_discovery_ACL) ) {
 														?>
 															<!-- 5:redate --> <li class="list-menu"><a href="javascript:" class="discovery-change-due-date" data-discovery-id="<?= $suppdiscovery['id'] ?>" ><i class="fa fa-calendar-o"></i>Change Due Date</a></li>
 														<?php
@@ -668,7 +676,6 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 												$response_id				= $response_data['id'];
 												$supp_response_creator_id	= $response_data['created_by'];
 												$supp_isserved				= $response_data['isserved'];
-												$supp_response_ACL			= array();
 
 												$mc = $meetConferModel->findByResponseId($response_id, false);
 
@@ -678,24 +685,29 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 													$totalChildsNotIncludes++; continue;
 												}
 
+												/**
+												* SET UP ACL FOR SUPP RESPONSES
+												**/
+												$supp_response_ACL = [];
 												$supp_response_ACL[] = "response-pdf"; // always allow PDFing
+
 												if ( !in_array( $currentUser->user['email'], $respondingPartyAttr )) {
 													$supp_response_ACL[] = 'meet-confer';
 												}
 
 												if( $supp_isserved ) {
-													if( $supp_response_creator_id == $_SESSION['addressbookid']) {
-														$supp_response_ACL[]		= "supp-amend";
+													if( $supp_response_creator_id == $_SESSION['addressbookid']) { //!! TODO if-same-side
+														$supp_response_ACL[] = "supp-amend";
 													}
 													if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
-														$supp_response_ACL[]		= "unserve";
+														$supp_response_ACL[] = "unserve";
 													}
-													$supp_response_ACL[]		= "view";
+													$supp_response_ACL[] = "view";
 												}
 												else {
-													if( $supp_response_creator_id == $_SESSION['addressbookid'] ) {
-														$supp_response_ACL[]	= "edit";
-														$supp_response_ACL[]	= "delete";
+													if( $supp_response_creator_id == $_SESSION['addressbookid'] ) { //!! TODO if-same-side
+														$supp_response_ACL[] = "edit";
+														$supp_response_ACL[] = "delete";
 													}
 												}
 ?>
