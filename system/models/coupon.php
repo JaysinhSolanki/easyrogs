@@ -15,7 +15,7 @@
 
       $this->update('coupons',
         ['uses' => $coupon['uses'] + 1],
-        ['code' => $code]
+        ['code' => "'$code'"]
       );
       
       return true;
