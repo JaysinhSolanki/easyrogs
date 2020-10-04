@@ -13,7 +13,7 @@ if ($context == KnowledgeBaseController::CONTEXT_INDEX) {
   $kbController->index();
 }
 
-require_once __DIR__ . "adminsecurity.php";
+require_once __DIR__ . "/adminsecurity.php";
 
 $kbSections = $AdminDAO->getrows(	"kb_section", "*",
                                     (@$sectionId ? "id = :section_id" : ''),

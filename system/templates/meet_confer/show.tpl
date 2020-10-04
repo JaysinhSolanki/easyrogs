@@ -142,7 +142,7 @@ Cal. Rules of Court, rule 2.257{/if}
 
 {block name=main_bottom}
   <div class="row">
-    <div class="er-mc-action-bar">
+    <div class="er-action-bar">
       <div class="container">
         <a class="er-mc-cancel-button btn btn-danger buttonid"><i class="fa fa-close"></i> Cancel</a>
         <div class="pull-right">
@@ -159,6 +159,7 @@ Cal. Rules of Court, rule 2.257{/if}
 {/block}
 
 {block name=css_dependencies}
+  <link rel="stylesheet" href="{$ASSETS_URL}/styles.css" />
   <link rel="stylesheet" href="{$ASSETS_URL}sections/kb.css" />
   <link rel="stylesheet" href="{$ASSETS_URL}sections/meet_confer.css" />
 {/block}
