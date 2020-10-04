@@ -100,7 +100,7 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
 //require_once("splashscreen.php");
 ?>
 </div><!-- 💣 In case there's some `<div>` without its closing tag somewhere -->
-<div style="width: 100vw;">
+<div style="width: 100vw; padding-top: 60px;" id="wrapper">
 <div class="login-container">
     <div class="row">
         <div class="col-md-12">
@@ -126,7 +126,7 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
 								<span style="vertical-align:middle;">Remember password</span>
                                 <p class="help-block small" style="margin-left:26px">Recommended only if this is your personal computer.</p>
                             </div>
-                            <button class="ladda-button btn btn-info btn-block" data-style="zoom-in">
+                            <button class="ladda-button btn btn-success btn-block" data-style="zoom-in">
                             	<span class="ladda-label">Log In</span><span class="ladda-spinner"></span>
                             </button>
 
@@ -136,13 +136,15 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
             </div>
         </div>
 		<style>
-		#info-panel {
-			padding: 12px 0 0 ; clear: both;
+		.cta-panel  {
+			/*padding: 12px 0 0 ;*/ 
+			clear: both;
 			text-align: center; font-size: 1.2em;
-			color: white; background-color: #3498db !important;
+			/*color: white; 
+			background-color: #3498db !important;*/
 		}
 		#info-panel:hover, #info-panel > .btn-info:hover {
-			background-color: #3498db !important;
+			/*background-color: #3498db !important;*/
 		}
 		#info-panel .actions {
 			display: flex; justify-content: space-around; align-items: stretch;
@@ -156,44 +158,44 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
 			flex-grow: 1; align-self: baseline;
 		}
 		</style>
-        <div class="">
-            <div id="info-panel" class="hpanel" style="">
-				<div style="/*margin-bottom:-0.4em;*/">New to EasyRogs?</div>
-                <div class="actions" style="width: 100%;">
-                    <a id="video_introduction" href="javascript:;" class="ladda-button btn btn-info col-md-6" style="">
-					  Watch our Demo
-					</a>
-					<span> or </span>
-                    <a id="faq" href="javascript:;" class="ladda-button btn btn-info" style="" onclick="showFAQ(); ">
-					  Peruse our FAQs
-					</a>
-                </div>
-                <div id="vidBox" style="display: none;">
-                    <div id="videCont">
-                		<video id="video-demo" preload="none" x-autoplay controls style="
-																				position: fixed;
-																				top: 0; left: 0;
-																				max-width: 100vw; max-height: 100vh;
-																				height: auto;
-																			"
+				<div class="cta-panel hpanel" style="text-align: center; ">
+					<h3>New to EasyRogs?</h3>
+					
+						<a href="<?php echo DOMAIN;?>signup.php" class="btn btn-lg btn-warning " style="width:80%;display:block; margin: auto">
+							<i class="fa fa-sign-in"></i> &nbsp;&nbsp;Join Now
+						</a> <small>*Membership is complimentary</small>
+					
+				</div>
+
+
+			<p style="font-weight: bold;clear: both; margin: -0.5em 0 0.8em; text-align: center; font-size:1.4em;"> - or - </p>
+
+			<div class="">
+				<div  class="cta-panel hpanel" style="width:80%;margin:auto">
+					<div class="actions" style="width: 100%;">
+						<a id="video_introduction" href="javascript:;" class="ladda-button btn btn-info col-md-6" style="">
+							<i class="fa fa-play"></i> &nbsp; &nbsp;Watch our Demo
+						</a>
+						
+						<a id="faq" href="javascript:;" class="ladda-button btn btn-info" style="" onclick="showFAQ(); ">
+							<i class="fa fa-question-circle"></i> &nbsp; &nbsp;Peruse our FAQs
+						</a>
+					</div>
+					<div id="vidBox" style="display: none;">
+						<div id="videCont">
+							<video id="video-demo" preload="none" x-autoplay controls style="
+								position: fixed;
+								top: 0; left: 0;
+								max-width: 100vw; max-height: 100vh;
+								height: auto;
+								"
 								data-src="demo.mp4">
-                            <source src="<?= ROOTURL ?>system/application/demo.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                </div>
-            </div>
-
-			<p style="clear: both; margin: -0.5em 0 0.5em; text-align: center; font-size:1.4em;"> or </p>
-
-            <div class="hpanel btn-success" style="text-align: center; ">
-				<button class="ladda-button btn btn-success btn-block" style="padding-bottom: 25px;">
-					<a  href="<?php echo DOMAIN;?>signup.php" style="color: white;">
-						<div style="font-size: 2.2em;">Join</div>
-						<div style="margin-top:0.5em">Membership is complimentary</div>
-					</a>
-				</button>
-            </div>
-        </div>
+									<source src="<?= ROOTURL ?>system/application/demo.mp4" type="video/mp4">
+							</video>
+						</div>
+					</div>
+				</div>
+			</div>
     </div>
 </div>
 </div>

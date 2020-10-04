@@ -98,6 +98,13 @@ serveMeetConfer = (id, success, error) => {
 	 .fail(error);
 }
 
+getCoupon = (code, success, error) => {
+  $.get(API_BASE + '/get-coupon.php', {code: code}, success, FORMAT_JSON)
+   .fail(error);
+}
+
+// HELPERS ----
+
 serializeFormData = (formData) => {
 	return Array.from(formData.keys()).reduce(
 		(acc, key) => {acc[key] = formData.get(key); return acc; }, {}
@@ -366,7 +373,8 @@ const knownContexts = [
 		{id: "49_2@RFAs",       title: "Responding to Requests for Admission",               video: "responding_RFAS.mp4",       },
 		{id: "49_2@RPDs",       title: "Responding to Requests for Production of Documents", video: "responding_RPDS.mp4",       },
 		{id: "49",              title: "PDF Viewer",                                         video: "pdf_view.mp4",              }, // pdfviewer
-		{id: "meet-confer",     title: "Meet & Confer",                                      video: "",              						 },
+		{id: "meet-confer",     title: "Meet & Confer",                                      video: "demo.mp4",									 },
+		{id: "knowledge-base",  title: "Knowledge Base",                                     video: "demo.mp4",              		 },
 	];
 
 var previous = '';
@@ -469,3 +477,21 @@ jQuery( $ => {
 	autoPlayOrPauseVideos();
 	addTooltips();
 });
+
+
+function showKnowledgeBase(requireCoupon = true) {
+	if (requireCoupon) {
+		swal({
+			title: 'Password',
+			content: "input",
+		}).then((code) => {
+			getCoupon(code, 
+				(coupon) => selecttab(`knowledge-base`,`kb.php?context=index&coupon=${coupon.code}`, `knowledge-base`),
+				(error)  => showResponseMessage(error)
+			)
+		});
+	}
+	else {
+		selecttab(`knowledge-base`,`kb.php?context=index`, `knowledge-base`);
+	}
+}

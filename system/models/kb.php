@@ -1,6 +1,9 @@
 <?php
   class KB extends BaseModel {
-
+    const AREA_OBJECTIONS        = 0;
+    const AREA_OBJECTION_KILLERS = 1;
+    const AREA_DEFINITIONS       = 2;
+    
     function __construct( $dbConfig = null )
     {
       parent::__construct( $dbConfig );
@@ -11,13 +14,8 @@
     }
     function find($id) { return $this->getBy('kb', ['id' => $id], 1); }
 
-    function getByForm($formId) {
-      $states = $this->getBy('system_state', [
-        'fkcountryid' => $countryId
-      ]);
-      return uasort($states, function($s1, $s2) {
-        return $s1['statename'] < $s2['statename'] ? -1 : 1;
-      });
+    function getByAreaId($areaId) {
+      return $this->getBy('kb', ['area_id' => $areaId] );
     }
   }
 

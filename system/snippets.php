@@ -1,16 +1,16 @@
 <?php
 
-define( 'SNIPPET_ANALYTICS', @$_ENV['ANALYTICS_DISABLED'] ? '' : '
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id='. APP_GOOGLE_ANALYTICS_ID .'"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag("js", new Date());
+define('SNIPPET_ANALYTICS', @$_ENV['ANALYTICS_DISABLED'] ? '' : '
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id='. APP_GOOGLE_ANALYTICS_ID .'"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
 
-      gtag("config", "'. APP_GOOGLE_ANALYTICS_ID .'", { "transport_type": "beacon"});
-    </script>
-  ' );
+    gtag("config", "'. APP_GOOGLE_ANALYTICS_ID .'", { "transport_type": "beacon"});
+  </script>
+');
 
 define( 'SNIPPET_SMARTSUPP', @$_ENV['SMARTSUPP_DISABLED'] ? '' : "
 <!-- Smartsupp Live Chat script -->

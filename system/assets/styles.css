@@ -1,0 +1,20 @@
+.er-action-bar {
+  position: fixed;
+  z-index: 1000;
+  bottom: 0px;
+  margin: 0;
+  width: 100%;
+  left: 0px;
+  background-color: white;
+  padding: 1rem 1rem 1rem 2.5rem;
+  border: 1px solid #e4e5e7;
+}
+
+/* .er-action-bar .container {
+  display: inline-block;
+    width: 100%;
+    margin: 0;
+    
+    background-color: white;
+    border: 1px solid #e4e5e7;
+} */

@@ -49,6 +49,12 @@ navbar.navbar-static-top a, .nav.navbar-nav li a {
                         Welcome <?= $_SESSION['name'] ?>
                     </h4>
                 </li>
+                <li class="dropdown"  id="nav-kb">
+                    <h4 style="color:#34495e !important; font-size:12px !important; font-weight:500 !important; padding-top:10px; margin-right:20px;">
+                      <a onclick="javascript:showKnowledgeBase(false);" href="#"><b>Knowledge Base</b></a>
+                    </h4>
+                </li>
+
                 <li id="nav-ctxhelp">
                     <h4 style="color:#34495e !important; font-size:12px !important; font-weight:500 !important; padding-top:10px; margin-right:20px;">
                         <a onclick="javascript:showCtxHelp();" href="javascript:;"><b>Help</b></a>

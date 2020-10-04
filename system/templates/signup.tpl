@@ -112,7 +112,7 @@
     <div class="step2 text-center">
       Didn't get the email? <button class="btn btn-warning btn-sm get-started resend-email" data-toggle="modal" data-target="#verification-modal">Re-send</button>
     </div>
-
+    <input type="hidden" name="coupon" value="{$coupon}" />
   </form>
 {/block}
 

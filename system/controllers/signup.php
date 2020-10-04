@@ -3,7 +3,8 @@
   class SignupController extends BaseController {
     
     function show() { global $smarty, $invitationsModel;
-      $uid = @$_GET['uid'];
+      $uid    = @$_GET['uid'];
+      $coupon = @$_GET['coupon'];
 
       if ($uid && $user = $invitationsModel->getInvitationUser($uid)) {
         if ($user['emailverified']) {
@@ -31,7 +32,8 @@
           ]
         ]);
       }
-    
+      
+      $smarty->assign('coupon', $coupon);
       $smarty->display('signup.tpl');
     }
 
@@ -44,6 +46,7 @@
       $password      = @trim($_POST['password']);
       $terms         = @trim($_POST['terms']);
       $invitationUID = @trim($_POST['invitation_uid']);
+      $coupon        = @trim($_POST['coupon']);
     
       $valid = (!$isAttorney || ($isAttorney && $barNumber)) && $firstName && 
                $lastName && $email && $password && $terms;
@@ -70,7 +73,8 @@
         'email'          => $email,
         'password'       => $password,
         'terms'          => $terms,
-        'invitation_uid' => $invitationUID
+        'invitation_uid' => $invitationUID,
+        'coupon'         => $coupon
       ]);
     
       UserMailer::signup($email, $token);
@@ -78,12 +82,14 @@
       return HttpResponse::success();
     }
 
-    function finish() { global $usersModel, $invitationsModel, $logger;
+    function finish() { global $usersModel, $invitationsModel, $logger, $couponsModel;
       $token = @$_GET['t'];
 
       try { $payload = $this->jwtDecodeToken($token); }
       catch(Exception $e){ return HttpResponse::redirect('signup.php'); } // the token is invalid, redirect to signup
       
+      $coupon = $payload->coupon ? $couponsModel->findActiveCoupon($payload->coupon) : null;
+
       $userData = [
         'fkgroupid'     => $payload->is_attorney ? User::ATTORNEY_GROUP_ID : User::SUPPORT_GROUP_ID,
         'barnumber'     => $payload->barnumber,
@@ -96,7 +102,7 @@
         'signupip'      => $_SERVER['REMOTE_ADDR'],
         'emailverified' => 1,
         'username'      => $payload->email,
-        'credits'       => SIGNUP_CREDITS
+        'credits'       => $coupon ? $coupon['credits'] : SIGNUP_CREDITS
       ];
       
       $user = $usersModel->getByEmail($payload->email);
@@ -114,6 +120,9 @@
 
       if ($payload->invitation_uid) {
         $invitationsModel->redeem($payload->invitation_uid);
+      }
+      if ( $coupon ) {
+        $couponsModel->redeem($coupon['code']);
       }
 
       return SessionUser::login($user, $payload->password);

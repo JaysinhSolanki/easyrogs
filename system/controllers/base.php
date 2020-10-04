@@ -4,6 +4,9 @@
   abstract class BaseController {
     protected $logger;
 
+    const FORMAT_JSON = 'json';
+    const FORMAT_HTML = 'html';
+
     function __construct() { global $logger;
       $this->logger = $logger;
     }

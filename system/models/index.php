@@ -18,3 +18,5 @@
   require_once(__DIR__ . '/question_type.php');
   require_once(__DIR__ . '/meet_confer.php');
   require_once(__DIR__ . '/question.php');
+  require_once(__DIR__ . '/kb.php');
+  require_once(__DIR__ . '/coupon.php');

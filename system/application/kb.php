@@ -4,8 +4,16 @@ require_once __DIR__ .'/kb_common.php';
 
 global $logger;
 
-$areaId    = @$_REQUEST['area'] ?: '0';
+$context   = @$_REQUEST['context'] ?: KnowledgeBaseController::CONTEXT_SIDEBAR; // default to sidebar, backward comp
+$areaId    = @$_REQUEST['area']   ?: '0';
 $sectionId = filter_var( @$_REQUEST['section_filter'] ?: "", FILTER_SANITIZE_STRING );
+
+if ($context == KnowledgeBaseController::CONTEXT_INDEX) {
+  $kbController = new KnowledgeBaseController();
+  $kbController->index();
+}
+
+require_once __DIR__ . "adminsecurity.php";
 
 $kbSections = $AdminDAO->getrows(	"kb_section", "*",
                                     (@$sectionId ? "id = :section_id" : ''),

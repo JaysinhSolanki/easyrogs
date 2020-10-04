@@ -34,7 +34,7 @@ require_once(SYSTEMPATH.'application/ctxhelp_modal.php');
             <a class="mylogo f32" href="index.php">
                 <?= $systemmaintitle ?>
                 <?php if ($_ENV['APP_ENV'] !== 'prod'): ?>
-                  <div style="font-family: Arial; color: white; font-size: 12px; display: inline-block; background-color: red; padding: 3px; text-transform: uppercase"><?= exec('git rev-parse --abbrev-ref HEAD') ?></div>
+                  <div style="position: absolute;top: 50px;left: 30px;font-family: Arial; color: white; font-size: 12px; display: inline-block; background-color: red; padding: 3px; text-transform: uppercase"><?= exec('git rev-parse --abbrev-ref HEAD') ?></div>
                 <?php endif; ?>
             </a>
         </h4>
@@ -44,6 +44,14 @@ require_once(SYSTEMPATH.'application/ctxhelp_modal.php');
     <nav role="navigation">
         <div class="navbar-right">
             <ul class="nav navbar-nav no-borders">
+            <li class="dropdown"  id="nav-kb">
+                <h4 style="font-size:12px !important; font-weight:500 !important; margin-right:20px;position: relative">  
+                    <a style="color: white !important;" class="btn btn-info" onclick="javascript:showKnowledgeBase();" href="javascript:;">
+                    <i class="fa fa-sign-in"></i> &nbsp;<strong>CELA</strong>
+                </a>
+                </h4>
+            </li>
+            
 <?php
     if( $username ) {
 ?>
