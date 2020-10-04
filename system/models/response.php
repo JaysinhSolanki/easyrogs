@@ -45,7 +45,7 @@ class Response extends Payable {
       ]);
     }
 
-    const PREFIX_RESPONSE = 'Response to ';
+    const PREFIX_RESPONSE = 'Response to';
 
     function find($id, $includeQAs = true) {
       $response = $this->getBy( 'responses', ['id' => $id], 1);
@@ -248,13 +248,13 @@ class Response extends Payable {
       if( !$result || $isSupplAmended ) { // compose from Discovery
         assert( !empty($discovery), "A discovery needs to be specified, \$discovery=".json_encode($discovery) );
         $discovery = $discoveriesModel->asDiscovery($discovery);
-        $result = self::PREFIX_RESPONSE. $discoveriesModel->getTitle($discovery);
+        $result = self::PREFIX_RESPONSE.' '. $discoveriesModel->getTitle($discovery);
       }
 
       if( $isSupplAmended ) {
         $count = $this->countBy('responses', ['fkdiscoveryid' => $discovery['id']]);
 
-        $result = numToOrdinalWord( $count +1 ) ." ". Discovery::PREFIX_SUPP_AMENDED." ". $result;
+        $result = numToOrdinalWord( $count +1 ) .' '.Discovery::PREFIX_SUPP_AMENDED.' '. $result;
       }
 
       $logger->debug("Response->getTitle:

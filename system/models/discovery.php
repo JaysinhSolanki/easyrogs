@@ -140,7 +140,7 @@ class Discovery extends Payable {
     const STYLE_ALLCAPS   = 'ALLCAPS';
     const STYLE_LOWERCASE = 'lowercase';
 
-    const PREFIX_SUPP_AMENDED = 'Supplemental/Amended ';
+    const PREFIX_SUPP_AMENDED = 'Supplemental/Amended';
 
     // TODO: we need to figure this out, the whole forms engine won't hold...
     // For this specifically I think we need a better handling of the `dropdown` question type.
@@ -248,7 +248,7 @@ class Discovery extends Payable {
 
       $set  = $discovery['set_number'];
       $name = $discovery['discovery_name'] ?: $discovery_data['form_name'];
-      $name = preg_replace( '/^(.*?)(?:\s*\[Set [0-9a-zA-Z]+\])*$/i', '$1', $name ); // Remove the ` [Set nn]` part if already present
+      $name = preg_replace( '/^(.*?)(?:\s*\[\s*Set [0-9a-zA-Z]+\])*$/i', '$1', $name ); // Remove the ` [Set nn]` part if already present
       $result = self::composeTitle( $name, $set, self::STYLE_AS_IS );
       $count = 0;
 
@@ -260,7 +260,7 @@ class Discovery extends Payable {
 
         $result = preg_replace( '/^(?:[A-Za-z]+\s+'.preg_quote(Discovery::PREFIX_SUPP_AMENDED,'/').'\s*)*(.*)$/i', '$1', $result );
           // Remove the `Nth Supplemental/Amended ` part if already present
-        $result = numToOrdinalWord( $count +1 ) ." ". Discovery::PREFIX_SUPP_AMENDED . $result;
+        $result = numToOrdinalWord( $count +1 ) .' '.Discovery::PREFIX_SUPP_AMENDED.' '. $result;
       }
       $logger->debug("Discovery->getTitle: \$name=$name,
                           \$set=$set,

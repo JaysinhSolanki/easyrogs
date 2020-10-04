@@ -148,7 +148,7 @@ body.modal-open {
 <?php
                     if( $id ) {
                         if( $is_supp ) {
-                            echo Discovery::PREFIX_SUPP_AMENDED ."Discovery";
+                            echo Discovery::PREFIX_SUPP_AMENDED ." Discovery";
                             $discoveryName  = $discoveriesModel->getTitle($discovery,$is_supp);
                         } else {
                             echo "Edit Discovery for";
