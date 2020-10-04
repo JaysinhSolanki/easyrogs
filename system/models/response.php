@@ -130,7 +130,7 @@ class Response extends Payable {
     function getQAStruct($responseId) {
       $query = $this->queryTemplates['getQAs'];
 
-      if ($this->qaStruct) return $this->qaStruct;
+      if( isset($this->qaStruct) ) return $this->qaStruct;
 
       $rows     = $this->readQuery($query, ['response_id' => $responseId]);
       $qaRows   = [];

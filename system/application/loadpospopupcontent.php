@@ -2,14 +2,15 @@
 	require_once __DIR__ . '/../bootstrap.php';
 	require_once("adminsecurity.php");
 
-$discovery_id	= $_POST['id'];
 $respond		  = $_POST['respond'];
+$discovery_id	= $_POST['id'];
 $response_id	= $_POST['response_id'];
+$loggedin_email = $_SESSION['loggedin_email'];
 
 // TODO: when this script is refactored we can probably produce a more generic solution than using a switch
 // handle payables with backward comp...
 
-$id       = $_POST['id'];
+$id       = $_POST['id']; //!! TODO why both $id and $discovery_id ??
 $itemType = @$_POST['item_type'];
 
 $payableType = $itemType ?? ($respond ? Payable::ITEM_TYPE_RESPONSE : Payable::ITEM_TYPE_DISCOVERY);
@@ -33,12 +34,14 @@ switch($payableType) {
     $mc = $meetConferModel->find($id);
     $response  = $responsesModel->find($mc['response_id']);
     $discovery = $discoveriesModel->find($response['fkdiscoveryid']);
+      //!! TODO so $id and $response['fkdiscoveryid'] should match, right?
     $case_id   = $discovery['case_id'];
   break;
 }
 
 if( $discovery_id ) {
-	$discovery_data = $discoveriesModel->findDetails($discovery_id);
+  $discovery_data = $discoveriesModel->findDetails($discovery_id);
+    //!! TODO $discovery_data & $discovery, something here should be consolidated!
   Side::legacyTranslateCaseData($discovery_data['case_id'], $discovery_data);
 	$uid							= $discovery_data['uid'];
 	$case_uid					= $discovery_data['case_uid'];
@@ -55,7 +58,6 @@ if( $discovery_id ) {
 	$responding			  = $discovery_data['responding'];
 	$discovery_id		  = $discovery_data['discovery_id'];
 	$attr_id			    = $discovery_data['attr_id'];
-	$discovery_name		= $discoveriesModel->getTitle( $discovery_data );
 }
 
 //Responding Party
@@ -80,16 +82,18 @@ $senderName		 = $senderDetail['firstname']." ".$senderDetail['lastname'];
 $system_address  = $AdminDAO->getrows("system_addressbook,system_state", "*",
                       "pkaddressbookid = :id AND fkstateid = pkstateid",
                       array(":id"=>$attr_id));
-$result_address  = $system_address[0];
+$result_address = $system_address[0];
 
-$senderAddress 	= makeaddress($attr_id);
-$getstate		= $result_address['statename'];
-
-$loggedin_email = $_SESSION['loggedin_email'];
+$senderAddress = makeaddress($attr_id);
+$getstate		   = $result_address['statename'];
 
 $currentSide     = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
 $serviceList     = $sidesModel->getServiceList( $currentSide );
 $primaryAttorney = $sidesModel->getPrimaryAttorney($currentSide['id']);
+
+$discovery_name = $respond
+                    ? $reponsesModel->getTitle( $response_id, $discovery_data )
+                    : $discoveriesModel->getTitle( $discovery_data );
 
 ?>
 <!DOCTYPE html>
