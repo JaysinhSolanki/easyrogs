@@ -784,6 +784,7 @@ body.modal-open
                                                 <div class="form-group">
                                                     <p>
                                                         <?= Discovery::RPDS_HAVE_DOCS_DETAIL_QUESTION ?>
+                                                        <?= SNIPPET_ER_LAW_TOOLTIP_2031_280_a ?>
                                                     </p>
                                                     <textarea required
                                                                 id="subanswer-have-docs<?= $discovery_question_id ?>"

@@ -27,3 +27,19 @@ define( 'SNIPPET_SMARTSUPP', @$_ENV['SMARTSUPP_DISABLED'] ? '' : "
 ");
 
 define( 'SNIPPET_STRIPE', @$_ENV['PAY_DISABLED'] ? '<script>function Stripe() {}</script>' : '<script src="https://js.stripe.com/v3/"></script>' );
+
+define( 'SNIPPET_ER_LAW_TOOLTIP_2031_280_a', '
+  <i class="fa fa-university" aria-hidden="true"></i>
+  Code Civ.Proc., § 2031.280.
+  <a href="#">
+    <i style="font-size:16px;"
+      data-placement="right"
+      data-toggle="tooltip"
+      title=""
+      class="fa fa-info-circle tooltipshow"
+      aria-hidden="true"
+      data-original-title="CODE OF CIVIL PROCEDURE SECTION 2031.280 (a)
+      Any documents or category of documents produced in response to a demand for inspection, copying, testing, or sampling shall be identified with the specific request number to which the documents respond."
+    ></i>
+  </a>
+');
