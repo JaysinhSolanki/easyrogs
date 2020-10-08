@@ -121,6 +121,7 @@ body {
 
 .er-mc-conclusion-body{
   width: 100%;
+  min-height: 260px !important;
 }
 
 .er-mc-signature{

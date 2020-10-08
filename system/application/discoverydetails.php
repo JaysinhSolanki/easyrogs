@@ -762,11 +762,37 @@ body.modal-open
                                         }
                                         if( $form_id == Discovery::FORM_CA_RPDS ) {
 ?>
-                                            <ul class="list-group" id="note<?php echo $discovery_question_id;?>" <?php if ($answer != Discovery::RPDS_ANSWER_HAVE_DOCS) {
-?>style="display:none" <?php
-} ?>>
+                                            <ul class="list-group" id="subdiv<?= $discovery_question_id ?>" <?= $answer != Discovery::RPDS_ANSWER_DOCS_NO_ACCESS ? " style='display:none' " : "" ?>>
                                                 <li class="list-group-item">
                                                 <div class="form-group">
+                                                    <p>
+                                                        <?= Discovery::RPDS_DETAIL_QUESTION ?>
+                                                    </p>
+                                                    <textarea required
+                                                                id="subanswer<?= $discovery_question_id ?>"
+                                                                class="form-control" <?= $css ?>
+                                                                name="subanswer[<?= $discovery_question_id ?>]"
+                                                                <?= $answer != Discovery::RPDS_ANSWER_DOCS_NO_ACCESS ? " disabled " : "" ?>
+                                                                placeholder="Your Answer"><?=
+                                                        html_entity_decode($answer_detail)
+                                                    ?></textarea>
+                                                </div>
+                                                </li>
+                                            </ul>
+                                            <ul class="list-group" id="subdiv-have-docs<?= $discovery_question_id ?>" <?= ($answer != Discovery::RPDS_ANSWER_HAVE_DOCS) ? " style='display:none' " : "" ?>>
+                                                <li class="list-group-item">
+                                                <div class="form-group">
+                                                    <p>
+                                                        <?= Discovery::RPDS_HAVE_DOCS_DETAIL_QUESTION ?>
+                                                    </p>
+                                                    <textarea required
+                                                                id="subanswer-have-docs<?= $discovery_question_id ?>"
+                                                                class="form-control" <?= $css ?>
+                                                                name="subanswer[<?= $discovery_question_id ?>]"
+                                                                <?= ($answer != Discovery::RPDS_ANSWER_HAVE_DOCS) ? " disabled " : "" ?>
+                                                                placeholder="Your Answer"><?=
+                                                        html_entity_decode($answer_detail)
+                                                    ?></textarea>
                                                     <p>
                                                         <b>Note: </b>
                                                         Upload your documents below.
@@ -774,26 +800,7 @@ body.modal-open
                                                 </div>
                                                 </li>
                                             </ul>
-                                            <ul class="list-group"
-                                                    id="subdiv<?= $discovery_question_id ?>"
-                                                    <?= ($answer == Discovery::RPDS_ANSWER_NONE || $answer == Discovery::RPDS_ANSWER_HAVE_DOCS) ? " style='display:none' " : "" ?>>
-                                                <li class="list-group-item">
-                                                <div class="form-group">
-                                                    <p>
-                                                        <b>a) </b>
-                                                        Enter the name and address of anyone you believe has the documents.
-                                                    </p>
-                                                    <textarea required
-                                                                id="subanswer<?= $discovery_question_id ?>"
-                                                                class="form-control" <?= $css ?>
-                                                                name="subanswer[<?= $discovery_question_id ?>]"
-                                                                <?= ($answer == Discovery::RPDS_ANSWER_NONE || $answer == Discovery::RPDS_ANSWER_HAVE_DOCS) ? " disabled " : "" ?>
-                                                                placeholder="Your Answer"><?=
-                                                        html_entity_decode($answer_detail)
-                                                    ?></textarea>
-                                                </div>
-                                                </li>
-                                            </ul>
+
 <?php
                                         }
                                     }
@@ -1110,23 +1117,23 @@ function checkFunction(subdivid, option)
         $(".subanswer_"+subdivid).prop('disabled',true);
     }
 }
-function checkFunctionForm5(subdivid, option) { //debugger;
-    option = String(option).trim();
-    if( option == RPDS_ANSWER_HAVE_DOCS || option == RPDS_ANSWER_NONE || option == RPDS_ANSWER_DOCS_NEVER_EXISTED) {
-        if( option == RPDS_ANSWER_HAVE_DOCS ) {
-            $("#note"+subdivid).show();
-        }
-        else {
-            $("#note"+subdivid).hide();
-        }
-        $("#subdiv"+subdivid).hide();
-        $("#subanswer"+subdivid).prop('disabled',true);
-    }
-    else {
-        $("#subdiv"+subdivid).show();
-        $("#subanswer"+subdivid).prop('disabled',false);
-        $("#note"+subdivid).hide();
-    }
+
+function checkFunctionForm5(subdivid, option) {
+	$(`#subdiv${subdivid}, #subdiv-have-docs${subdivid}`).hide();
+	$(`#subanswer${subdivid}, #subanswer-have-docs${subdivid}`).prop('disabled', true);
+
+	option = String(option).trim();
+
+	switch (option) {
+		case RPDS_ANSWER_HAVE_DOCS:
+			$("#subdiv-have-docs"+subdivid).show();
+			$("#subanswer-have-docs"+subdivid).prop('disabled',false);
+		break;
+		case RPDS_ANSWER_DOCS_NO_ACCESS:
+			$("#subdiv"+subdivid).show();
+			$("#subanswer"+subdivid).prop('disabled',false);
+		break;
+	}
 }
 
 jQuery( $ => {

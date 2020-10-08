@@ -740,12 +740,16 @@ ob_start();
                         echo "	<br/>
                                 <b><u>Response</u></b>";
                         if( $form_id == Discovery::FORM_CA_RPDS ) {
-                            $reponse	= '';
                             if( $answer == Discovery::RPDS_ANSWER_NONE ){
-                                //echo "";
+                                $answer = 'Not Provided.';
                             }
                             if( $answer == Discovery::RPDS_ANSWER_HAVE_DOCS ) {
-                                $answer	= "Responsive documents have been provided.";
+                                if (trim($answer_detail)) {
+                                    $answer = "These documents are responsive to this request: " . str_replace("\n",", ", $answer_detail );
+                                }
+                                else {
+                                    $answer = "Responsive documents have been provided.";
+                                }
                             }
 
                             $str1	= "A diligent search and a reasonable inquiry have been made in an effort to comply with this demand, however, responding party is unable to comply because they do not have any responsive documents in their possession, custody, or control.";
@@ -760,6 +764,7 @@ ob_start();
                                 $answer	=  $str1." Respondent believes that such documents were lost, misplace, stolen, or respondent lacks access to them. ".$str2;
                             }
                         }
+
                         if( $final_response ){
                             echo "<p class='q-response'> $final_response </p>";
                         }

@@ -150,6 +150,7 @@ class Discovery extends Payable {
     const RPDS_ANSWER_DOCS_DESTROYED     = 'Responsive documents were destroyed';
     const RPDS_ANSWER_DOCS_NO_ACCESS     = 'Responsive documents were lost, misplaced, stolen, or I lack access to them';
     const RPDS_DETAIL_QUESTION           = 'Enter the name and address of anyone you believe has the documents.';
+    const RPDS_HAVE_DOCS_DETAIL_QUESTION = 'Identify the documents responsive to this request.';
 
     const RPDS_FORMS = [self::FORM_CA_RPDS, self::FORM_FED_RPDS];
 

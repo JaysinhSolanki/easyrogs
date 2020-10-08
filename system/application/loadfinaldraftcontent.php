@@ -490,10 +490,15 @@ $instructions = "This responding party has not completed its investigation or di
                                     if( $form_id == Discovery::FORM_CA_RPDS ) {
                                         $response = '';
                                         if( $answer == Discovery::RPDS_ANSWER_NONE ) {
-                                            //
+                                            $response = 'Not provided.';
                                         }
                                         if( $answer == Discovery::RPDS_ANSWER_HAVE_DOCS )  {
-                                            $response = "Responsive documents have been provided.";
+                                            if (trim($answer_detail)) {
+                                                $response = "These documents are responsive to this request: " . str_replace("\n",", ", $answer_detail );
+                                            }
+                                            else {
+                                                $response = "Responsive documents have been provided.";
+                                            }
                                         }
                                         $str1 = "A diligent search and a reasonable inquiry have been made in an effort to comply with this demand, however, responding party is unable to comply because they do not have any responsive documents in their possession, custody, or control.";
                                         $str2 = $answer_detail ? (" However, respondent believes that ".$answer_detail." may have responsive documents.") : "";

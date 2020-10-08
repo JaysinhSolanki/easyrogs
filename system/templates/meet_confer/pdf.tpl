@@ -7,9 +7,9 @@
       <div class="er-mc-masterhead">{$mc.masterhead|nl2br}</div>
 
       {if $mc.served_at}
-        <div class="er-mc-date">{date('F d, Y', strtotime($mc.served_at))}</div>
+        <div class="er-mc-date">{date('F j, Y', strtotime($mc.served_at))}</div>
       {else}
-        <div class="er-mc-date">{date('F d, Y')}</div>
+        <div class="er-mc-date">{date('F j, Y')}</div>
       {/if}
 
       <br/>
@@ -30,33 +30,40 @@
               <div class="er-mc-response-main-question">
                 <div class="heading">Request:</div>
                 <p class="er-mc-question-title">
-                  {$question.question_title}
+                  {$question.question_title|nl2br}
                 </p>
               </div>
               <div class="er-mc-response-main-question-answer">
                 <div class="heading">Response:</div>
                 {if $question.objection}
                   <p class="er-mc-answer">
-                    {$question.objection}
+                    {$question.objection|nl2br}
                   </p>
                 {else}
                   <p class="er-mc-answer">
-                    {$question.answer|default: 'Not provided'}
-                  </p>            
-                  {foreach item=subQuestion from=$question.sub_questions}
-                    <p class="er-mc-response-sub-question">
-                      {$subQuestion.sub_part}) {$subQuestion.question_title}
-                    </p>
-                    <p class="er-mc-response-sub-question-answer">
-                      {$subQuestion.answer}
-                    </p>
-                  {/foreach}
+                    {if trim($question.final_response)}
+                      {$question.final_response|nl2br}
+                    {else}
+                      {$question.answer|default: 'Not provided'|nl2br}
+                    {/if}
+                  </p>
+                  {* DO NOT SHOW SUBQUESTIONS IF final_response IS SET *}
+                  {if not trim($question.final_response)}
+                    {foreach item=subQuestion from=$question.sub_questions}
+                      <p class="er-mc-response-sub-question">
+                        {if $subQuestion.sub_part}{$subQuestion.sub_part}) {/if}{$subQuestion.question_title}
+                      </p>
+                      <p class="er-mc-response-sub-question-answer">
+                        {$subQuestion.answer|nl2br}
+                      </p>
+                    {/foreach}
+                  {/if}
                 {/if}          
               </div>
               <div class="er-mc-meet-confer">
                 <div class="heading">Reply:</div>
                 <div class="er-mc-meet-confer-body" id="er-mc-text-{$question.question_id}" >
-                  {$mc.arguments[$question.question_id].body}
+                  {$mc.arguments[$question.question_id].body|nl2br}
                 </div>
               </div>
             </div>

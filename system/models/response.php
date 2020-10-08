@@ -202,18 +202,26 @@ class Response extends Payable {
     private function getRPDSQASubQuestion($qaRow) {
       switch( $qaRow['answer'] ) {
         case Discovery::RPDS_ANSWER_NONE:
-        case Discovery::RPDS_ANSWER_HAVE_DOCS:
         case Discovery::RPDS_ANSWER_DOCS_NEVER_EXISTED:
+        case Discovery::RPDS_ANSWER_DOCS_DESTROYED:
           return [];
         break;
 
-        case Discovery::RPDS_ANSWER_DOCS_DESTROYED:
+        case Discovery::RPDS_ANSWER_HAVE_DOCS:
+          return array_merge($qaRow, [
+            'sub_part'         => '',
+            'question_type_id' => QuestionType::TEXT,
+            'question_title'   => Discovery::RPDS_HAVE_DOCS_DETAIL_QUESTION,
+            'answer'           => $qaRow['final_response'] ?? $qaRow['answer_detail']
+          ]);
+        break;
+
         case Discovery::RPDS_ANSWER_DOCS_NO_ACCESS:
           return array_merge($qaRow, [
-            'sub_part'         => 'a',
+            'sub_part'         => '',
             'question_type_id' => QuestionType::TEXT,
             'question_title'   => Discovery::RPDS_DETAIL_QUESTION,
-            'answer'           => $qaRow['answer_detail']
+            'answer'           => $qaRow['final_response'] ?? $qaRow['answer_detail']
           ]);
         break;
       }

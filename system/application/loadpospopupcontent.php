@@ -92,7 +92,7 @@ $serviceList     = $sidesModel->getServiceList( $currentSide );
 $primaryAttorney = $sidesModel->getPrimaryAttorney($currentSide['id']);
 
 $discovery_name = $respond
-                    ? $reponsesModel->getTitle( $response_id, $discovery_data )
+                    ? $responsesModel->getTitle( $response_id, $discovery_data )
                     : $discoveriesModel->getTitle( $discovery_data );
 
 ?>

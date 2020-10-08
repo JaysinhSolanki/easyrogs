@@ -60,7 +60,8 @@
 
       return $mc;
     }
-
+    
+    // TODO: move this somewhere else
     function generatePDF($id, $useCache = true) { global $smarty, $responsesModel; 
       if (!$mc = $this->find($id)) {
         $this->logger->error("MEET_CONFER_GENERATE_PDF MC not found ($id)");
@@ -83,6 +84,14 @@
           $html = $smarty->fetch('meet_confer/pdf.tpl');
     
           $mpdf = new \Mpdf\Mpdf(['tempDir' => TMP_DIR]);
+          
+          $mpdf->SetHTMLFooter("
+            <div style='text-align:center'>
+              MEET & CONFER RE: " . strtoupper($mc['subject']) . "
+              <br/>
+              <small>All rights reserved © 2020 EasyRogs. U.S. Patent Pending</small>
+            </div>
+          ");
           $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::DEFAULT_MODE);
           $mpdf->output($pdfFilePath, \Mpdf\Output\Destination::FILE);
         }
