@@ -159,17 +159,16 @@ if( $res_attr_uid ) {
                         </thead>
                         <tbody>
                             <?php foreach($cases as $case): ?>
-                              <?php if (!$case['is_draft']): ?>
+                              <?php if (!@$case['is_draft']): ?>
                                 <tr>
-                                  <td><?= $case['case_title']  ?></td>
-                                  <td><?= $case['case_number'] ?></td>
-                                  <td><?= $case['county_name'] ?></td>
-                                  <td>
-                                  <?php if($case['trial'] != "0000-00-00") {echo dateformat($case['trial']);} else{echo "-";}?>
-                                  </td>
+                                  <td> <?= $case['case_title']  ?> </td>
+                                  <td> <?= $case['case_number'] ?> </td>
+                                  <td> <?= $case['county_name'] ?> </td>
+                                  <td> <?= ($case['trial'] != "0000-00-00") ? dateformat($case['trial']) : "-" ?> </td>
                                   <td style="text-align: right">
-                                  <a href="javascript:;" class="btn btn-info" title="Edit case" id="newcase" onclick="javascript: selecttab('46_tab','get-case.php?id=<?= $case['id'];?>','46');"><i class="fa fa-edit"></i> Edit</a>
-                                  <a href="javascript:;" class="btn btn-purple"  title="Click to view discoveries" onclick="javascript: selecttab('45_tab','discoveries.php?pid=<?=$case['id'];?>','45');"><i class="fa fa-eye"></i> Discovery</a></td>
+                                    <a href="javascript:;" class="btn btn-info" title="Edit case" id="newcase" onclick="javascript: selecttab('46_tab','get-case.php?id=<?= $case['id'];?>','46');"><i class="fa fa-edit"></i> Edit</a>
+                                    <a href="javascript:;" class="btn btn-purple"  title="Click to view discoveries" onclick="javascript: selecttab('45_tab','discoveries.php?pid=<?=$case['id'];?>','45');"><i class="fa fa-eye"></i> Discovery</a>
+                                  </td>
                                 </tr>
                               <?php endif; ?>
                             <?php endforeach; ?>

@@ -10,6 +10,7 @@ namespace EasyRogs;
     const WARN       = 'WARN';
     const ERROR      = 'ERROR';
     const LOG_LEVELS = [self::DEBUG, self::INFO, self::WARN, self::ERROR];
+    const PROBLEM_REPORTS = [self::WARN, self::ERROR];
 
     private $files = [];
     private $logsDir;
@@ -31,9 +32,12 @@ namespace EasyRogs;
     }
 
     static function getCallstack( $e ) {
-      return  "\n ---------------- \n" .
-              $e->getTraceAsString()   .
-              "\n ----------------";
+      $result = "\n ---------------- \n" .
+                $e->getTraceAsString()   .
+                "\n ----------------";
+      $result = \preg_replace( "/^#\d+ .*classes\/logger\.class\.php\(.*$/m", '', $result); // remove references to this library
+      $result = \str_replace( "\n\n", "\n", $result); // remove empty lines
+      return $result;
     }
 
     static function toString( $value ) {
@@ -60,7 +64,7 @@ namespace EasyRogs;
       $message = Logger::toString($message);
 
       if ($printBacktrace) {
-        $e = new Exception();
+        $e = new Exception();  //!! TODO could also use debug_backtrace() directly
         $message .= self::getCallstack($e);
       }
       return $message;
@@ -79,8 +83,10 @@ namespace EasyRogs;
 
 
       $message = $this->log_text( $message, $level, $printBacktrace );
+      if( in_array($level, self::PROBLEM_REPORTS ) ) $time = "\n\n* $time"; // or any separator
+
       if( $fp ) { fwrite($fp, "$time $message \n"); }
-      if( $level != self::ERROR ) { fwrite( $this->files['ALL'], "$time [$level] $message \n" ); }
+      if( $level != self::ERROR && $level != self::DEBUG ) { fwrite( $this->files['ALL'], "$time [$level] $message \n" ); }
 
       if ($this->stdOut) { echo "$time [$level] $message \n"; }
     }
@@ -111,30 +117,59 @@ namespace EasyRogs;
 
 function exception_logger($e) { global $logger;
   $logger->error( $e );
+  $text = Logger::toString($e);
+  if( $_ENV['APP_ENV'] == 'local' ) $logger->browser_log( $text, $text );
   die();
 }
 function error_logger($errNo, $msg, $file, $line, $vars) { global $logger;
-  if( !(error_reporting() & $errNo) ) {
+  if( !error_reporting() ) return false; // `@code` silenced by developer, respect that
+
+    if( !(error_reporting() & $errNo) ) {
       //return false;
   }
 
   if( in_array($msg, ["session_start(): A session had already been started - ignoring", ])) {
     return false;
   }
-  if( preg_match( '/.*'.preg_quote("/system/library/pdf/mpdf/7/vendor/mpdf/mpdf/src/Mpdf",'/').'/i', $file )) {
+  if( preg_match( '/.*'.preg_quote("/system/library/pdf/mpdf/7/vendor/mpdf/mpdf/src/Mpdf",'/').'/i', $file ) ||
+      preg_match( '/.*'.preg_quote("xdebug://"                                           ,'/').'/i', $file ) ) {
     return false;
   }
 
   switch( $errNo ) {
-    case E_USER_ERROR:
-      $logger->error( [ "\n\n$file:$line", $msg,
-                        ( $_ENV['APP_ENV'] == 'local' ) ? $vars : null ], true );
+    case E_CORE_ERROR: case E_ERROR: case E_USER_ERROR: case E_RECOVERABLE_ERROR:
+      $text = Logger::toString(["\n\n$file:$line", $msg,
+                              ( $_ENV['APP_ENV'] == 'local' ) ? $vars : null ]);
+      $logger->error( $text, true );
+      if( $_ENV['APP_ENV'] == 'local' ) $logger->browser_log( $text, $text );
       die();
-    case E_USER_WARNING:
-      $logger->warn( [ "$file:$line", $msg], true );
+    case E_NOTICE: case E_USER_NOTICE:
+    case E_CORE_WARNING: case E_WARNING: case E_USER_WARNING:
+    case E_DEPRECATED: case E_USER_DEPRECATED:
+      $logger->warn( [ "$file:$line($errNo)", $msg], true );
       break;
-    case E_USER_NOTICE:
     default:
-      $logger->info( [ "$file:$line", $msg], true );
+      $logger->info( [ "$file:$line($errNo)", $msg], true );
+  }
+}
+
+function _assert( $test, $etc = null ) { global $logger;
+
+  if( $_ENV['APP_ENV'] == 'local' ) {
+    $idx = 0;
+    if( \is_array($test) ) {
+      foreach( $test as $value ) {
+        if( !$value ) break;
+        $idx++;
+      }
+      if( $idx == sizeof($test) ) return;
+    } else {
+      if( !!$test ) return;
+    }
+
+    $caller = debug_backtrace()[1];
+    $info = ["assertion failed at ". $caller['file'].":".$caller['line'], $caller['args'] ];
+    $logger->error( $info, true );
+    $logger->browser_log( $info, $info );
   }
 }

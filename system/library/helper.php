@@ -4,6 +4,23 @@
 require(__DIR__."/phpmailer/src/PHPMailer.php");
 require(__DIR__."/phpmailer/src/Exception.php");
 
+function searchValue($haystack, $needle, $key = 'id') {
+   foreach($haystack as $k => $v) {
+       if( $v[$key] == $needle ) {
+           return $v;
+       }
+   }
+   return null;
+}
+function findIndex($haystack, $needle, $key = 'id') {
+   foreach($haystack as $k => $v) {
+       if( $v[$key] == $needle ) {
+           return $k;
+       }
+   }
+   return null;
+}
+
 function sanitize_file_name( $str ) {
     $filename = preg_replace( '/[\r\n\t ]+/', ' ', $str );
     $filename = preg_replace( '/[-]+/', '-', $filename );

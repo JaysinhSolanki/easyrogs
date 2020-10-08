@@ -2,20 +2,44 @@
 require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
+use function EasyRogs\_assert as _assert;
+
+$loggedin_email	= $currentUser->user['email'];//$_SESSION['loggedin_email'];
 $case_id = $_GET['pid'];
 
 $discoveries = $discoveriesModel->getByUserAndCase($currentUser->id, $case_id );
 $currentSide = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
 Side::legacyTranslateCaseData($case_id, $discoveries);
 
-$loggedin_email		= $_SESSION['loggedin_email'];
-$iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
-											"ct.id",
-											"a.id 				= ct.attorney_id 	AND
-											ct.is_deleted 		= 0 				AND
-											ct.fkcaseid 		= :fkcaseid 		AND
-											a.attorney_email 	= :email",
-											array("email"=>$loggedin_email,"fkcaseid"=>$case_id));
+function checkSides( $userId1, $userId2 = null ) {
+	global $sidesModel, $currentUser, $logger,
+			$case_id;
+	static $usersAndSides;
+
+	if( !isset($usersAndSides) ) $usersAndSides = $sidesModel->getSidesUsersByCase($case_id);
+	if( !isset($userId2) ) $userId2 = $currentUser->id;
+
+	_assert( [$userId1, $userId2] );
+	$user1 = searchValue($usersAndSides, $userId1, 'user_id' );
+	$user2 = searchValue($usersAndSides, $userId2, 'user_id' );
+	_assert( [$user1, $user2], "Something seems wrong with the DB.. corrupted?" );
+
+	return ($user1['side_id'] == $user2['side_id']) ? Side::SAME_SIDE : Side::OTHER_SIDE;
+}
+
+function respondingParty( $clientId ) { global $AdminDAO, $case_id;
+
+	_assert( [$case_id, $clientId] );
+	$rows = $AdminDAO->getrows('attorney a,client_attorney c_a',"*",
+									"c_a.client_id = :client_id AND a.id = c_a.attorney_id AND c_a.case_id = :case_id",
+									array('client_id'=>$clientId,'case_id'=>$case_id) );
+	$result = [];
+	foreach( $rows as $row ) {
+		$result[] = $row['attorney_email'];
+	}
+	return array_unique($result);
+}
+
 ?>
 <style>
 .list-menu {
@@ -28,6 +52,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
     <div class="hpanel">
         <div class="panel-heading" align="center">
             <h3 align="center"><small>Discovery for</small><br /><strong><?= $currentSide['case_title'] ?></strong></h3>
+			<!-- case:<?= $case_id ?>, <?= $currentSide['case_number'] ?> -->
         </div>
         <div class="panel-body">
             <div class="panel panel-primary">
@@ -73,35 +98,26 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 							$totalChilds			= 0;
 							$totalChildsNotIncludes	= 0;
 							$id  			= $discovery['id'];
+							_assert($discovery['id'] = $id);
 							$creator_id		= $discovery['creator_id'];
 							//$is_submitted	= $discovery['is_submitted'];
 							$is_served		= $discovery['is_served'];
 							$discoveryType	= $discovery['type'];
 
 							if( $discoveryType == Discovery::TYPE_INTERNAL ) {
-								if( $creator_id != $_SESSION['addressbookid'] && empty($iscaseteammember) ) {
-									// Internal Discovery should be shown to creator/team only
-									continue;
+								if( checkSides($creator_id) != Side::SAME_SIDE ) {
+									continue; // Internal Discovery should be shown to creator/team only
 								}
 
 								/**
 								* Check to see login user is responding party attorney or not
 								* If he is the attorney of responding party then we give him option to respond in external discovery.
 								**/
-								$client_responding	= $discovery['responding'];
-								$isResPartyAttorney	= $AdminDAO->getrows('attorney a,client_attorney ca',"*",
-																	"ca.client_id = :client_id AND a.id = ca.attorney_id AND ca.case_id = :case_id ",
-																	array('client_id'=>$client_responding,'case_id'=>$case_id) );
-								$respondingPartyAttr = array();
-								foreach( $isResPartyAttorney as $data_attr ) {
-									$respondingPartyAttr[]	= $data_attr['attorney_email'];
-								}
+								$respondingParty = respondingParty( $discovery['responding'] );
 								/**
 								* GET RESPONSES OF PARENT INTERNAL DISCOVERY
 								**/
-								$responses = $AdminDAO->getrows('responses',"*",
-																"fkdiscoveryid = :fkdiscovery_id ",
-																array('fkdiscovery_id'=>$id) );
+								$responses = $responsesModel->getByDiscovery($id);
 								$showDueDate = !$responsesModel->isAnyServed($responses);
 
 								/**
@@ -128,13 +144,13 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 											<img src="<?= ASSETS_URL."images/minus.png" ?>" width="15px" />
 										</a>
 									</td>
-									<td> <?= $discoveriesModel->getTitle($discovery)                              ?> </td>
-									<td> <?= getClientName($discovery['propounding'])                             ?> </td>
-									<td> <?= getClientName($discovery['responding'])                              ?> </td>
-									<td> <?= dateformat($discovery['served'])                                     ?> </td>
-									<td> <?= $showDueDate == 1 ? dateformat($discovery['due']) : "-"              ?> </td>
-									<td> <?= $discovery['creator']                                                ?> </td>
-                                    <td> <?=  ($discoveryType == Discovery::TYPE_EXTERNAL) ? "EasyRogs" : "Other" ?> </td>
+									<td> <?= ($_ENV['APP_ENV'] == 'local' ? $id.":" : "") .$discoveriesModel->getTitle($discovery) ?> </td>
+									<td> <?= getClientName($discovery['propounding'])                                              ?> </td>
+									<td> <?= getClientName($discovery['responding'])                                               ?> </td>
+									<td> <?= dateformat($discovery['served'])                                                      ?> </td>
+									<td> <?= $showDueDate == 1 ? dateformat($discovery['due']) : "-"                               ?> </td>
+									<td> <?= $discovery['creator']                                                                 ?> </td>
+                                    <td> <?=  ($discoveryType == Discovery::TYPE_EXTERNAL) ? "EasyRogs" : "Other"                  ?> </td>
 									<td align="center">
 										<div class="dropdown">
 											<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Action
@@ -186,7 +202,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 
 										$response_ACL[] = 'response-pdf';
 										$response_ACL[] = 'view';
-										if ( !in_array( $currentUser->user['email'], $respondingPartyAttr )) {
+										if ( !in_array( $loggedin_email, $respondingParty )) {
 											$response_ACL[] = 'meet-confer';
 										}
 
@@ -210,13 +226,13 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 													<a title="Meet & Confer Letter" href="#meet-and-confer/<?= $response_id ?>" class="meet-confer-button" data-response-id="<?= $response_id ?>"><i class="fa fa-comments-o"></i></a>
 												<?php endif; ?>
 											</td>
-											<td> <?= $responsesModel->getTitle($response_data)                                 ?> </td>
-											<td> <?= getClientName($discovery['propounding'])                                  ?> </td>
-											<td> <?= getClientName($discovery['responding'])                                   ?> </td>
-											<td> <?= $response_data['isserved'] ? dateformat($response_data['servedate']) : "" ?> </td>
-											<td> <?= !$response_data['isserved'] ? dateformat($discovery['due']) : "-"         ?> </td>
-											<td> <?= $discovery['creator'];                                                    ?> </td>
-											<td> <?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other"     ?> </td>
+											<td> <?= ($_ENV['APP_ENV'] == 'local' ? $response_data['id'].":" : "") .$responsesModel->getTitle($response_data) ?> </td>
+											<td> <?= getClientName($discovery['propounding'])                                                                 ?> </td>
+											<td> <?= getClientName($discovery['responding'])                                                                  ?> </td>
+											<td> <?= $response_data['isserved'] ? dateformat($response_data['servedate']) : ""                                ?> </td>
+											<td> <?= !$response_data['isserved'] ? dateformat($discovery['due']) : "-"                                        ?> </td>
+											<td> <?= $discovery['creator'];                                                                                   ?> </td>
+											<td> <?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other"                                    ?> </td>
 
 										<td align="center">
 											<div class="dropdown">
@@ -285,10 +301,8 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 									$RequestPDF_FileName	= "makepdf.php?id=".$discovery['uid']."&view=1";
 									//$ResponsePDF_FileName	= "makepdf.php?id=".$discovery['uid']."&view=0";
 								}
-								if( $creator_id == $_SESSION['addressbookid'] || !empty($iscaseteammember) ) {
-									//OWNER HERE
-								}
-								else {
+
+								if( checkSides($creator_id) != Side::SAME_SIDE ) {
 									if( !$is_served ) {
 										$totalChildsNotIncludes++;
 										continue;
@@ -298,36 +312,30 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 								* Check to see login user is responding party attorney or not
 								* If he is the attorney of responding party then we give him option to respond in external discovery.
 								**/
-								$client_responding	= $discovery['responding'];
-								$isResPartyAttorney	= $AdminDAO->getrows('attorney a,client_attorney ca',"*","ca.client_id = :client_id AND a.id = ca.attorney_id AND ca.case_id = :case_id ",array('client_id'=>$client_responding,'case_id'=>$case_id));
-								$respondingPartyAttr= array();
-								foreach( $isResPartyAttorney as $data_attr ) {
-									$respondingPartyAttr[]	= $data_attr['attorney_email'];
-								}
+								$respondingParty = respondingParty($discovery['responding']);
 								/**
 								* GET RESPONSES OF PARENT EXTERNAL DISCOVERY
 								**/
-								$responses   = $AdminDAO->getrows('responses',"*",
-																"fkdiscoveryid = :fkdiscovery_id ",
-																array('fkdiscovery_id'=>$id));
+								$responses = $responsesModel->getByDiscovery($id);
 								$showDueDate = !$responsesModel->isAnyServed($responses);
 
 								/**
-								* SET UP ACL FOR DISCOVERIES
+								* SETUP ACL FOR DISCOVERIES
 								**/
+								$discovery_ACL = [];
 								$discovery_ACL[] = "request-pdf"; // always allow PDFing
 
 								if( $is_served ) {
 									$discovery_ACL[] = "view";
-									$discovery_ACL[] = "change-due-date";
 
-									if( $creator_id == $_SESSION['addressbookid'] ) { //!! TODO if-same-side
+									if( checkSides( $creator_id ) == Side::SAME_SIDE ) {
 										$discovery_ACL[] = "supp-amend";
+										$discovery_ACL[] = "change-due-date";
 									}
 									if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
 										$discovery_ACL[] = "unserve";
 									}
-									if( in_array( $_SESSION['loggedin_email'], $respondingPartyAttr ) && !sizeof($responses) ) { //!! TODO if-same-side?
+									if( in_array( $loggedin_email, $respondingParty ) && !sizeof($responses) ) { //!! TODO if-same-side?
 										$discovery_ACL[] = "respond";
 									}
 								}
@@ -346,13 +354,13 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										<img src="<?= ASSETS_URL."images/minus.png" ?>" width="15px" />
 									</a>
 									</td>
-									<td> <?= $discoveriesModel->getTitle($discovery)                              ?> </td>
-									<td> <?= getClientName($discovery['propounding'])                             ?> </td>
-									<td> <?= getClientName($discovery['responding'])                              ?> </td>
-									<td> <?= dateformat($discovery['served'])                                     ?> </td>
-									<td> <?= $showDueDate == 1 ? dateformat($discovery['due']) : "-"              ?> </td>
-									<td> <?= $discovery['creator']                                                ?> </td>
-                                    <td><?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other" ?></td>
+									<td> <?= ($_ENV['APP_ENV'] == 'local' ? $id.":" : "") .$discoveriesModel->getTitle($discovery) ?> </td>
+									<td> <?= getClientName($discovery['propounding'])                                              ?> </td>
+									<td> <?= getClientName($discovery['responding'])                                               ?> </td>
+									<td> <?= dateformat($discovery['served'])                                                      ?> </td>
+									<td> <?= $showDueDate == 1 ? dateformat($discovery['due']) : "-"                               ?> </td>
+									<td> <?= $discovery['creator']                                                                 ?> </td>
+                                    <td><?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other"                  ?> </td>
 
 									<td align="center">
 										<div class="dropdown">
@@ -424,7 +432,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										$mc = $meetConferModel->findByResponseId($response_id, false);
 
 										$ResponsePDF_FileName = "makepdf.php?id=".$discovery['uid']."&view=0&response_id=".$response_id;
-										if( !$isserved && $response_creator_id != $_SESSION['addressbookid'] ) {
+										if( !$isserved && checkSides($response_creator_id) != Side::SAME_SIDE ) {
 											$totalChildsNotIncludes++; continue;
 										}
 
@@ -434,12 +442,12 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 										$response_ACL = [];
 
 										$response_ACL[] = "response-pdf"; // always allow PDFing
-										if ( !in_array( $currentUser->user['email'], $respondingPartyAttr )) {
+										if ( !in_array( $loggedin_email, $respondingParty )) {
 											$response_ACL[] = 'meet-confer';
 										}
 
 										if( $isserved ) {
-											if( $response_creator_id == $_SESSION['addressbookid'] ) { //!! TODO if-same-side
+											if( checkSides($response_creator_id) == Side::SAME_SIDE ) {
 												$response_ACL[] = "supp-amend";
 											}
 											if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
@@ -448,7 +456,7 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 											$response_ACL[] = "view";
 										}
 										else {
-											if( $response_creator_id == $_SESSION['addressbookid'] ) { //!! TODO if-same-side?
+											if( checkSides($response_creator_id) == Side::SAME_SIDE ) {
 												$response_ACL[]	= "edit";
 												$response_ACL[]	= "delete";
 											}
@@ -461,13 +469,13 @@ $iscaseteammember	= $AdminDAO->getrows("attorney a,case_team ct",
 													<a  title="Meet & Confer Letter"  href="#meet-and-confer/<?= $response_id ?>" class="meet-confer-button" data-response-id="<?= $response_id ?>"><i class="fa fa-comments-o"></i></a>
 												<?php endif; ?>
 											</td>
-											<td> <?= $responsesModel->getTitle($response_data)                             ?> </td>
-											<td> <?= getClientName($discovery['propounding'])                              ?> </td>
-											<td> <?= getClientName($discovery['responding'])                               ?> </td>
-											<td> <?= $isserved ? dateformat($response_data['servedate']) : ""              ?> </td>
-											<td> <?= $isserved ? "-" : dateformat($discovery['due'])                       ?> </td>
-											<td> <?= getUserName($response_data['created_by'])                  ?> </td>
-                                        	<td> <?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other" ?> </td>
+											<td> <?= ($_ENV['APP_ENV'] == 'local' ? $response_data['id'].":" : "") .$responsesModel->getTitle($response_data) ?> </td>
+											<td> <?= getClientName($discovery['propounding'])                              	                                  ?> </td>
+											<td> <?= getClientName($discovery['responding'])                               	                                  ?> </td>
+											<td> <?= $isserved ? dateformat($response_data['servedate']) : ""              	                                  ?> </td>
+											<td> <?= $isserved ? "-" : dateformat($discovery['due'])                       	                                  ?> </td>
+											<td> <?= getUserName($response_data['created_by'])                             	                                  ?> </td>
+                                        	<td> <?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other" 	                                  ?> </td>
 
 										<td align="center">
 											<div class="dropdown">
@@ -547,10 +555,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 											$totalChildsNotIncludes++; continue;
 										}
 
-										if( ($supp_creator_id == $_SESSION['addressbookid']) || !empty($iscaseteammember) ) {
-											//OWNER HERE
-										}
-										else {
+										if( checkSides($supp_creator_id) != Side::SAME_SIDE ) {
 											if( !$supp_is_served ) {
 												$totalChildsNotIncludes++; continue;
 											}
@@ -559,22 +564,13 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 										* Check to see login user is responding party attorney or not
 										* If he is the attorney of responding party then we give him option to respond in external discovery.
 										**/
-										$supp_client_responding  = $suppdiscovery['responding'];
-										$supp_isResPartyAttorney = $AdminDAO->getrows('attorney a,client_attorney ca',"*",
-																		"ca.client_id = :client_id AND a.id = ca.attorney_id AND ca.case_id = :case_id ",
-																		array('client_id'=>$supp_client_responding,'case_id'=>$case_id) );
-										$supp_respondingPartyAttr= array();
-										foreach( $supp_isResPartyAttorney as $supp_data_attr ) {
-											$supp_respondingPartyAttr[]	= $supp_data_attr['attorney_email'];
-										}
+										$supp_respondingParty = respondingParty($suppdiscovery['responding']);
 
 										/**
 										* GET RESPONSES OF SUPP/EMEND EXTERNAL DISCOVERY
 										**/
-										$suppresponses = $AdminDAO->getrows('responses',"*",
-																		"fkdiscoveryid = :fkdiscovery_id ",
-																		array('fkdiscovery_id'=>$supp_id) );
-										$showDueDateSupp = !$responsesModel->isAnyServed($suppresponses);
+										$supp_Responses = $responsesModel->getByDiscovery($supp_id);
+										$showDueDateSupp = !$responsesModel->isAnyServed($supp_Responses);
 
 										/**
 										* SET UP ACL FOR SUPP DISCOVERIES
@@ -584,15 +580,15 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 
 										if( $supp_is_served ) {
 											$supp_discovery_ACL[] = "view";
-											$supp_discovery_ACL[] = "change-due-date";
 
-											if( $supp_creator_id == $_SESSION['addressbookid'] ) { //!! TODO if-same-side
+											if( checkSides($supp_creator_id) == Side::SAME_SIDE ) {
 												$supp_discovery_ACL[] = "supp-amend";
+												$supp_discovery_ACL[] = "change-due-date";
 											}
 											if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
 												$supp_discovery_ACL[] = "unserve";
 											}
-											if( in_array($_SESSION['loggedin_email'],$supp_respondingPartyAttr) && !sizeof($suppresponses) ) { //!! TODO if-same-side
+											if( in_array($loggedin_email,$supp_respondingParty) && !sizeof($supp_Responses) ) { //!! TODO if-same-side
 												$supp_discovery_ACL[] = "respond";
 											}
 										}
@@ -604,13 +600,13 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 										<tr class="group_<?= $id ?>" style="display:none">
 											<!-- 5 (supp) -->
 											<td></td>
-											<td><?= $discoveriesModel->getTitle($suppdiscovery)                       ?> </td>
-											<td><?= getClientName($suppdiscovery['propounding'])                      ?> </td>
-											<td><?= getClientName($suppdiscovery['responding'])                       ?> </td>
-											<td><?= dateformat($suppdiscovery['served'])                              ?> </td>
-											<td><?= $showDueDateSupp ? dateformat($suppdiscovery['due']) : "-"        ?> </td>
-                                            <td><?= $suppdiscovery['creator']                                         ?> </td>
-                                            <td><?= $discoveryType == Discovery::TYPE_EXTERNAL ? "EasyRogs" : "Other" ?> </td>
+											<td><?= ($_ENV['APP_ENV'] == 'local' ? $suppdiscovery['id'].":" : "") .$discoveriesModel->getTitle($suppdiscovery) ?> </td>
+											<td><?= getClientName($suppdiscovery['propounding'])                                                               ?> </td>
+											<td><?= getClientName($suppdiscovery['responding'])                                                                ?> </td>
+											<td><?= dateformat($suppdiscovery['served'])                                                                       ?> </td>
+											<td><?= $showDueDateSupp ? dateformat($suppdiscovery['due']) : "-"                                                 ?> </td>
+                                            <td><?= $suppdiscovery['creator']                                                                                  ?> </td>
+                                            <td><?= $discoveryType == Discovery::TYPE_EXTERNAL ? "EasyRogs" : "Other"                                          ?> </td>
 											<td align="center">
 												<div class="dropdown">
 													<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Action
@@ -670,9 +666,9 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 											</td>
 										</tr>
 <?php
-										$totalChilds += sizeof($suppresponses);
-										if( !empty($suppresponses) ) {
-											foreach($suppresponses as $response_data) {
+										$totalChilds += sizeof($supp_Responses);
+										//if( !empty($supp_Responses) ) {
+											foreach($supp_Responses ?: [] as $response_data) {
 												$response_id				= $response_data['id'];
 												$supp_response_creator_id	= $response_data['created_by'];
 												$supp_isserved				= $response_data['isserved'];
@@ -681,7 +677,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 
 												$ResponsePDF_FileName	= "makepdf.php?id=".$suppdiscovery['uid']."&view=0&response_id=".$response_id;
 
-												if( $supp_isserved && ($supp_response_creator_id != $_SESSION['addressbookid']) ) {
+												if( $supp_isserved && checkSides($supp_response_creator_id) == Side::SAME_SIDE ) {
 													$totalChildsNotIncludes++; continue;
 												}
 
@@ -691,12 +687,12 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 												$supp_response_ACL = [];
 												$supp_response_ACL[] = "response-pdf"; // always allow PDFing
 
-												if ( !in_array( $currentUser->user['email'], $respondingPartyAttr )) {
+												if ( !in_array( $loggedin_email, $respondingParty )) {
 													$supp_response_ACL[] = 'meet-confer';
 												}
 
 												if( $supp_isserved ) {
-													if( $supp_response_creator_id == $_SESSION['addressbookid']) { //!! TODO if-same-side
+													if( checkSides($supp_response_creator_id) == Side::SAME_SIDE ) {
 														$supp_response_ACL[] = "supp-amend";
 													}
 													if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
@@ -705,7 +701,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 													$supp_response_ACL[] = "view";
 												}
 												else {
-													if( $supp_response_creator_id == $_SESSION['addressbookid'] ) { //!! TODO if-same-side
+													if( checkSides($supp_response_creator_id) == Side::SAME_SIDE ) {
 														$supp_response_ACL[] = "edit";
 														$supp_response_ACL[] = "delete";
 													}
@@ -718,13 +714,13 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 														<a  title="Meet & Confer Letter" href="#meet-and-confer/<?= $response_id ?>" class="meet-confer-button" data-response-id="<?= $response_id ?>"><i class="fa fa-comments-o"></i></a>
 													<?php endif; ?>
 												</td>
-												<td> <?= $responsesModel->getTitle($response_data)                             ?> </td>
-												<td> <?= getClientName($suppdiscovery['propounding'])                          ?> </td>
-												<td> <?= getClientName($suppdiscovery['responding'])                           ?> </td>
-												<td> <?= $supp_isserved ? dateformat($response_data['servedate']) : ""         ?> </td>
-                                                <td> <?= !$supp_isserved ? dateformat($suppdiscovery['due']) : "-"             ?> </td>
-												<td> <?=  getUserName($response_data['created_by'])                 ?> </td>
-												<td> <?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other" ?> </td>
+												<td> <?= ($_ENV['APP_ENV'] == 'local' ? $response_data['id'].":" : "") .$responsesModel->getTitle($response_data) ?> </td>
+												<td> <?= getClientName($suppdiscovery['propounding'])                                                             ?> </td>
+												<td> <?= getClientName($suppdiscovery['responding'])                                                              ?> </td>
+												<td> <?= $supp_isserved ? dateformat($response_data['servedate']) : ""                                            ?> </td>
+                                                <td> <?= !$supp_isserved ? dateformat($suppdiscovery['due']) : "-"                                                ?> </td>
+												<td> <?=  getUserName($response_data['created_by'])                                                               ?> </td>
+												<td> <?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other"                                    ?> </td>
 
 												<td align="center">
 													<div class="dropdown">
@@ -778,7 +774,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 												</tr>
 <?php
 											}
-										}
+										//}
 									}
 								}
 

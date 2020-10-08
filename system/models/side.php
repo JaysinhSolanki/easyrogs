@@ -1,4 +1,6 @@
 <?php
+  use function EasyRogs\_assert as _assert;
+
   class Side extends BaseModel {
     const CASE_DATA_FIELDS = [
       'case_number', 'case_title', 'plaintiff', 'defendant', 'trial',
@@ -10,7 +12,11 @@
       [Client::ROLE_DEFENDANT, Client::ROLE_DEFENDANT_X_PLAINTIFF],
     ];
 
-    function __construct( $dbConfig = null )
+    const SAME_SIDE  = "same-side";
+    const OTHER_SIDE = "other-side";
+    const NOT_FOUND_IN_SIDE = "not-found-in-side";
+
+  function __construct( $dbConfig = null )
     {
       parent::__construct( $dbConfig );
 
@@ -94,7 +100,17 @@
                                           INNER JOIN attorney AS a
                                             ON a.id = ca.attorney_id
                                         WHERE a.side_id = :side_id AND
-                                              a.fkaddressbookid = :user_id'
+                                              a.fkaddressbookid = :user_id',
+
+        'getSidesUsersByCase' => 'SELECT s.*, u.*,
+                                          u.pkaddressbookid as user_id, s.id as side_id
+                                    FROM system_addressbook AS u
+                                      INNER JOIN sides_users AS su
+                                        ON su.system_addressbook_id = u.pkaddressbookid
+                                      INNER JOIN sides AS s
+                                        ON s.id = su.side_id
+                                    WHERE s.case_id = :case_id AND
+                                          su.active = 1',
 
       ]);
     }
@@ -135,6 +151,15 @@
         'case_id' => $caseId,
         'client_id' => $clientId
       ])[0];
+    }
+
+    function getSidesUsersByCase($caseId) {
+      $query = $this->queryTemplates['getSidesUsersByCase'];
+      $result = $this->readQuery($query, [
+        'case_id' => $caseId,
+      ]);
+      _assert( sizeof($result), ['getSidesUsersByCase', $caseId] );
+      return $result;
     }
 
     function createServiceList($newSide) {

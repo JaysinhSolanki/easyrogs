@@ -137,10 +137,10 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
         </div>
 		<style>
 		.cta-panel  {
-			/*padding: 12px 0 0 ;*/ 
+			/*padding: 12px 0 0 ;*/
 			clear: both;
 			text-align: center; font-size: 1.2em;
-			/*color: white; 
+			/*color: white;
 			background-color: #3498db !important;*/
 		}
 		#info-panel:hover, #info-panel > .btn-info:hover {
@@ -160,11 +160,11 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
 		</style>
 				<div class="cta-panel hpanel" style="text-align: center; ">
 					<h3>New to EasyRogs?</h3>
-					
+
 						<a href="<?php echo DOMAIN;?>signup.php" class="btn btn-lg btn-warning " style="width:80%;display:block; margin: auto">
 							<i class="fa fa-sign-in"></i> &nbsp;&nbsp;Join Now
 						</a> <small>*Membership is complimentary</small>
-					
+
 				</div>
 
 
@@ -176,7 +176,7 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
 						<a id="video_introduction" href="javascript:;" class="ladda-button btn btn-info col-md-6" style="">
 							<i class="fa fa-play"></i> &nbsp; &nbsp;Watch our Demo
 						</a>
-						
+
 						<a id="faq" href="javascript:;" class="ladda-button btn btn-info" style="" onclick="showFAQ(); ">
 							<i class="fa fa-question-circle"></i> &nbsp; &nbsp;Peruse our FAQs
 						</a>
@@ -201,7 +201,7 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
 </div>
 </div>
 <?php
-	if( $errors && sizeof(json_decode($errors)) > 0 ) {
+	if( isset($errors) && strlen($errors) && sizeof(json_decode($errors)) ) {
 ?>
 		<script type="text/javascript">
         msg('<?= $errors ?>');

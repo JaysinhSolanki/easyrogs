@@ -90,9 +90,9 @@
 
   $_SESSION['upload_url']		  =	UPLOAD_URL;
   $_SESSION['admin_url']		  =	DOMAIN;
-  $_SESSION['admin_path']		  =	"{$_SESSION['system_path']}application/";
+  $_SESSION['admin_path']		  =	SYSTEMPATH ."application/"; //!! TODO This was failing, makes me think it's not used much
   $_SESSION['system_path']	  =	SYSTEMPATH;
-  $_SESSION['library_path']	  =	"{$_SESSION['system_path']}library/";
+  $_SESSION['library_path']	  =	SYSTEMPATH ."library/";
   $_SESSION['framework_path']	=	FRAMEWORK_PATH;
   $_SESSION['framework_url']	=	FRAMEWORK_URL;
 

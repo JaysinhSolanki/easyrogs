@@ -57,7 +57,7 @@ class Response extends Payable {
       return $response;
     }
 
-    function getByDiscovery($id) {
+    public function getByDiscovery($id) {
       if( strlen($id) >= 16 ) { // is it an UID?
         $query = $this->queryTemplates['getByUID'];
         return $this->readQuery( $query, ['uid' => $id] );
