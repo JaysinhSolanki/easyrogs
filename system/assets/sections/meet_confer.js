@@ -48,7 +48,7 @@ function goToDiscoveries() {
 $('.er-mc-cancel-button').on('click', goToDiscoveries);
 
 // save
-$('.er-mc-save-button').on('click', _ => save())
+$('.er-mc-save-button').on('click', _ => { save(goToDiscoveries) })
 
 // serve
 $('.er-mc-serve-button').on('click', _ => {
