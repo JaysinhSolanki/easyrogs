@@ -52,7 +52,7 @@
     // id can be null
     function upsert($id, $data) {
       if ($id) {
-        $mc = $this->updateById($id, $data);
+        $mc = $this->updateById($id, $data, true); // UPDATE IGNORE
       }
       else {
         $mc =  $this->create($data);
