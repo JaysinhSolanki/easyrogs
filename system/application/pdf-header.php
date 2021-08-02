@@ -94,7 +94,13 @@ h5 {
         <td colspan="2" align="center"><h3><u>PRELIMINARY STATEMENT</u></h3></td>
     </tr>
 </table>
-<p style="line-height:25px">This responding party has not completed its investigation or discovery of the facts of this case and is not yet prepared for trial. The answers contained herein are based upon the information presently available, and specifically known, to this responding party and disclose only those contentions that presently occur to such party. It is anticipated that further discovery, independent investigation, legal research, and analysis will supply additional facts, modify known facts, and establish entirely new factual or legal contentions that may lead to substantial additions and modifications to the contentions set forth herein.</p>
+<p style="line-height:25px">
+    <?php if ($finaldraft_instruction): ?>
+        <?= $finaldraft_instruction ?>
+    <?php else: ?>
+        This responding party has not completed its investigation or discovery of the facts of this case and is not yet prepared for trial. The answers contained herein are based upon the information presently available, and specifically known, to this responding party and disclose only those contentions that presently occur to such party. It is anticipated that further discovery, independent investigation, legal research, and analysis will supply additional facts, modify known facts, and establish entirely new factual or legal contentions that may lead to substantial additions and modifications to the contentions set forth herein.
+    <?php endif; ?>
+</p>
 <?php
     }
     else {

@@ -56,6 +56,7 @@ $discoveryDetails	= $AdminDAO->getrows('discoveries d,cases c,forms f',
                                             d.declaration_updated_at,
                                             d.attorney_id as discovery_attorney_id,
                                             d.incidenttext, d.incidentoption,d.personnames1,d.personnames2,d.in_conjunction,d.interogatory_type,d.conjunction_setnumber,
+                                            d.finaldraft_instruction,
                                             f.form_name	 	as form_name,
                                             f.short_form_name as short_form_name,
                                             d.attorney_id	as attorney_id,
@@ -132,6 +133,7 @@ $discovery_attorney_id = $discovery_data['discovery_attorney_id'];
 $short_form_name		= $discovery_data['short_form_name'];
 $send_date				= $discovery_data['send_date'];
 $instructions			= $discovery_data['instructions'];
+$finaldraft_instruction	= trim($discovery_data['finaldraft_instruction']);
 $introduction			= $discovery_data['introduction'];
 $propounding_uid		= $discovery_data['propounding_uid'];
 $responding_uid			= $discovery_data['responding_uid'];

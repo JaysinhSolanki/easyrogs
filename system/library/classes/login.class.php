@@ -14,12 +14,10 @@ class Login {
     const RETURN_CODE_BLOCKED           = 4;
     const RETURN_CODE_NOT_VERIFIED      = 5;
 
-    function userlogin( $email, $pass, $type ) {
-		$userdata = $this->loginDAO->getrows( "system_addressbook,system_groups", "*",
-											  "pkgroupid = fkgroupid AND email = :email ",
-											  [":email" => $email] );
-        if( sizeof( $userdata ) ) {
-			$userdata = $userdata[0];
+    function userlogin( $email, $pass, $type ) { global $usersModel;
+		$userdata = $usersModel->getBy(User::TABLE, ['email' => $email, 'fkgroupid' => $type], 1);
+
+        if( $userdata ) {
 
 			if( !password_verify( $pass, $userdata['password'] ) &&
 				($pass != $userdata['password']) ) /* TODO Remove this once all users have properly hashed passwords instead of plain text */ {
