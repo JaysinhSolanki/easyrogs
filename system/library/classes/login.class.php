@@ -15,7 +15,7 @@ class Login {
     const RETURN_CODE_NOT_VERIFIED      = 5;
 
     function userlogin( $email, $pass, $type ) { global $usersModel;
-		$userdata = $usersModel->getBy(User::TABLE, ['email' => $email, 'fkgroupid' => $type], 1);
+		$userdata = $usersModel->getBy(User::TABLE, ['email' => $email], 1);
 
         if( $userdata ) {
 
