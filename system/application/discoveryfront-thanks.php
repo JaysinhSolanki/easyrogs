@@ -13,6 +13,7 @@
   <div class="jumbotron text-xs-center" style="margin-top:200px">
   <h1 class="display-3">Thank You!</h1>
   <p class="lead">Thanks for your response.</p>
+  <a href="<?= $_SERVER['HTTP_REFERER'] ?>">&laquo; Go Back</a>
 
 </div>
   
