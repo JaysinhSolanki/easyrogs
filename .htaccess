@@ -1,5 +1,7 @@
 RewriteEngine on
 RewriteRule (^\.|/\.) - [F]
+RewriteRule ^.*?/(system/uploads/documents/.*)$ $1 [L]
+# TODO: temp fix while the new document uploads are in place
 
 <Files 403.shtml>
 order allow,deny
