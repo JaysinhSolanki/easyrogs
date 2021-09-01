@@ -1,5 +1,5 @@
 <?php 
-  if ($_ENV['APP_ENV'] != 'test') {
+  if (@$_ENV['APP_ENV'] != 'test') {
     require_once __DIR__ . '/../system/bootstrap.php';
   }  
 
@@ -43,3 +43,4 @@
     }
   }
 
+  if (@$_ENV['APP_ENV'] != 'test') { HashPasswordsTransientJob::run(); }
