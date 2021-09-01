@@ -19,8 +19,7 @@ class Login {
 
         if( $userdata ) {
 
-			if( !password_verify( $pass, $userdata['password'] ) &&
-				($pass != $userdata['password']) ) /* TODO Remove this once all users have properly hashed passwords instead of plain text */ {
+			if( !password_verify( $pass, $userdata['password'] ) ) {
                 $response = self::RETURN_CODE_INVALID_USER_PASS; //invalid username or password
             } elseif( !$userdata['emailverified'] ) {
                 $response = self::RETURN_CODE_NOT_VERIFIED;
