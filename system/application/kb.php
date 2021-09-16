@@ -15,22 +15,38 @@ if ($context == KnowledgeBaseController::CONTEXT_INDEX) {
 
 require_once __DIR__ . "/adminsecurity.php";
 
-$kbSections = $AdminDAO->getrows(	"kb_section", "*",
-                                    (@$sectionId ? "id = :section_id" : ''),
-                                    array( ":section_id" => $sectionId ) );
-if( empty($sectionId) ) {
-    $kbItems = $AdminDAO->getrows(	"kb", "kb.*",
-                                    "area_id = :area_id",
-                                    [":area_id" => $areaId] );
-} else {
-    $kbItems = $AdminDAO->getrows(	"kb, kb_section, kb_kb_section", "kb.*,kb_section.id as section_id",
-                                    "area_id = :area_id
-                                    AND kb.id = kb_id
-                                    AND section_id = :section_id
-                                    AND kb_section.id = section_id",
-                                    [":area_id" => $areaId,
-                                     ":section_id" => $sectionId] );
+$kbSections = [ 'Form Interrogatories - General',
+                'Form Interrogatories - Employment',
+                'Special Interrogatories',
+                'Requests for Admission',
+                'Requests for Production of Documents',
+                'Commonly used but invalid objections' ];
+
+switch( $sectionId ) {
+    case Discovery::FORM_FED_FROGS :
+    case Discovery::FORM_CA_FROGS :
+        $sectionFilter = "AND frogs > 0"; break;
+    case Discovery::FORM_FED_FROGSE :
+    case Discovery::FORM_CA_FROGSE :
+        $sectionFilter = "AND frogse > 0"; break;
+    case Discovery::FORM_FED_SROGS :
+    case Discovery::FORM_CA_SROGS :
+        $sectionFilter = "AND srogs > 0"; break;
+    case Discovery::FORM_FED_RFAS :
+    case Discovery::FORM_CA_RFAS :
+        $sectionFilter = "AND rfas > 0"; break;
+    case Discovery::FORM_FED_RPDS :
+    case Discovery::FORM_CA_RPDS :
+        $sectionFilter = "AND rpds > 0"; break;
+    default :
+        $sectionFilter = "";
 }
+//$logger->browser_log("areaId: $areaId, sectionId: $sectionId, filter: $sectionFilter");
+
+$kbItems = $AdminDAO->getrows(	"kb", "*",
+                                    "area_id = :area_id
+                                    $sectionFilter",
+                                    [":area_id" => $areaId] );
 
 array_walk( $kbItems, function(&$item,$key) {
     if( !$item['explanation'] ) {
@@ -43,7 +59,7 @@ array_walk( $kbItems, function(&$item,$key) {
 //$logger->browser_log($kbItems, "item.count:".count($kbItems).", section_id:".$sectionId );
 $smarty->assign([
     'items'      => $kbItems,
-    'section'    => $sectionId ? $kbSections[0] : "",
+    'section'    => $sectionId ? $kbSections[$sectionId-1] : "",
     'area_id'    => $areaId,
 ]);
 
