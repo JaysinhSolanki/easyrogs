@@ -45,7 +45,8 @@ switch( $sectionId ) {
 
 $kbItems = $AdminDAO->getrows(	"kb", "*",
                                     "area_id = :area_id
-                                    $sectionFilter",
+                                    $sectionFilter
+                                    ORDER BY issue ASC, solution ASC",
                                     [":area_id" => $areaId] );
 
 array_walk( $kbItems, function(&$item,$key) {

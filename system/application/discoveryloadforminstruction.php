@@ -636,4 +636,17 @@ $formNames = array_map( function( $item ) { return $item['short_form_name']; }, 
     globalThis['discoveryType'] = "<?= $type ?>";
     globalThis['discoveryForm'] = "<?= $form_id ?>";
     globalThis['discoveryFormNames'] = <?= json_encode($formNames, JSON_PRETTY_PRINT) ?>;
+
+jQuery( $ => {
+    const $instr = $('#loadinstructions'),
+          $form = $instr.parents('form'),
+          newFormName = "<?= $formNames[$form_id-1] ?>"
+
+    $form.removeClass( (idx,classes) => {
+        return ( classes.match(/(^|\s)[-][-]form[-]\S+/g) || []).join(' ')
+    } )
+    $form.addClass( `--form-${newFormName}` )
+
+    $instr.addClass('--loaded')
+});
 </script>

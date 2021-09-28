@@ -67,7 +67,8 @@ require_once __DIR__ .'/kb_common.php';
       area_id: <?= KB_AREA_DEFINITIONS ?>,
       toggler: `#btn-definitions`,
       actions: `.btn-add-definition`,
-      targets: `textarea[name*="question_titles["]`,
+      targets: `form.--form-RPDs #cke_instruction .cke_contents,
+                textarea[name*="question_titles["]`,
     }
 
     ObjectionPanel = {
