@@ -1190,35 +1190,38 @@ function serveFunction2(is_verified,discovery_id,response_id) {
 }
 function callFinalDraftModal(discovery_id,is_verified,response_id)
 {
-    $.post( "discoveryfrontaction.php",  $("#discoverydetailsform").serialize()).done(function( data )
-    {
-        var obj = JSON.parse(data);
-        response_id = obj.response_id;
-        $.post( "loadfinaldraftcontent.php", { discovery_id: discovery_id,response_id:response_id }).done(function( data )
-        {
-            $("#load_finaldraft_modal_content").html(data);
+    $.post( "discoveryfrontaction.php",  $("#discoverydetailsform").serialize())
+        .done( data => {
+            var obj = JSON.parse(data)
+            response_id = obj.response_id
+            $.post( "loadfinaldraftcontent.php", { discovery_id, response_id } )
+                .done( data => {
+                    $("#load_finaldraft_modal_content").html(data)
+                } );
+            $('#m-width').addClass('w-900')
+            if( is_verified == '' ) {
+                $('#serve_modal').modal('toggle')
+            }
+            setTimeout( _ => {
+                $('#finaldraft_modal').modal('toggle')
+                autogrowTextareas()
+                setTimeout( _ => {
+                    $('#load_finaldraft_modal_content #instruction').trigger('input')
+                }, 500 )
+            }, 1000 )
         });
-        $('#m-width').addClass('w-900');
-        if(is_verified == '')
-        {
-            $('#serve_modal').modal('toggle');
-        }
-        setTimeout(function(){ $('#finaldraft_modal').modal('toggle'); }, 1000);
-    });
 }
-function FunctionFinalDraftAction()
-{
-    $.post( "finaldraftaction.php",  $("#finaldraft").serialize()).done(function( data )
-    {
-        var obj = JSON.parse(data);
-        var response_id = obj.response_id;
-        var messagetype = obj.messagetype;
-        if(messagetype == "success")
-        {
-            $('#finaldraft_modal').modal('toggle');
-            PopupForPOS('<?= $discovery_id ?>',response_id);
-        }
-    });
+function FunctionFinalDraftAction() {
+    $.post( "finaldraftaction.php",  $("#finaldraft").serialize())
+        .done( data => {
+            var obj = JSON.parse(data);
+            var response_id = obj.response_id;
+            var messagetype = obj.messagetype;
+            if( messagetype == "success" ) {
+                $('#finaldraft_modal').modal('toggle');
+                PopupForPOS('<?= $discovery_id ?>',response_id);
+            }
+        });
 }
 function PopupForPOS(discovery_id,response_id) {
     $("#load_general_modal_content").html('');
