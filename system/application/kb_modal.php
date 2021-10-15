@@ -25,29 +25,67 @@ require_once __DIR__ .'/kb_common.php';
     </div>
 </div><!-- kb-modal -->
 <script type="text/javascript">
+
+    function ckeditCheck( $target ) {
+            console.assert( $target, "ERROR: didn't specify target to check!")
+            console.assert( $target.attr('id'), "ERROR: can't find target's id!")
+        return $target.attr('id').startsWith('cke_');
+    }
+    function ckeditRealEdit( $target ) {
+        if( $target.length > 1 ) { //;debugger;
+            $target.each( (idx,_target) => {
+                const $t = $(_target)
+                if( $t.hasClass('cke_contents') ) {
+                    $target = $t; return false;
+                }
+            } )
+        }
+        const $result = $target.parent().parent().siblings('textarea') // TODO figure a nicer way? This won't work in CKEdit v5
+            console.assert( $result, "ERROR: can't find the specified CKEDITOR target!")
+        const editor = CKEDITOR.instances[ $result.attr('id') ]
+            console.assert( editor, "ERROR: can't find the specified CKEDITOR instance!")
+        return { $edit: $result, instance: editor };
+    }
+
     function insertTemplate( target, text ) {
         const $target = $(target)
-        console.assert($target.length, "ERROR: can't find the specified target!")
+            console.assert($target && $target.length, "ERROR: can't find the specified target!")
 
         const _text = trim( $target.val() )
 
+        if( ckeditCheck($target) ) { // Special case: CKEditor rich controls
+            const {$edit:$real, instance:editor} = ckeditRealEdit( $target )
+
+            // const range = editor.createRange()
+            // range.moveToElementEditEnd( range.root )
+            // editor.getSelection().selectRanges( [range] )
+            // editor.insertText( `  ${text}`, null, range )
+
+            editor.insertText( ` ${text}` )
+            $target.trigger('input')
+            return;
+        }
         $target
             .val( trim( _text + " " + text ) )
             .trigger('input')
     }
-    function insertTemplateHere( text ) {
+    function insertTemplateHere( text ) { //debugger;
         const target = globalThis['focused_kb_target']
         if( !target ) {
-            console.log( `target not specified!!`, {text} ); return;
+            console.assert( target, `target not specified!!`, {text} ); return;
         }
         insertTemplate( target, text )
     }
-    function _glowTarget( event = "mouseleave", selector = 'textarea.glowing' ) {
+    function _glowTarget( event = "mouseleave", selector = 'textarea.glowing', ev ) {
+        //console.log('_event', event)
         if( event == "mouseleave" ) {
-            const $old = $(selector)
+            const $old = $(selector),
+                  $target = $(ev.target);
             if( $old.length ) {
                 $old.removeClass('glowing')
-                //console.log( $old.id, "unglowed" )
+                    // $old.each( (idx,el) => {
+                    //     console.log( $(el).attr('id'), "unglowed" )
+                    // } )
             }
         } else {
             const target = globalThis['focused_kb_target'];
@@ -55,8 +93,8 @@ require_once __DIR__ .'/kb_common.php';
                 const $target = $(target);
                 if( $target.length ) {
                     $target.addClass('glowing')
+                        //console.log( $target.attr('id'), "glowed" )
                     $target[0].scrollIntoView({behavior: "auto", block: "center", inline: "nearest"})
-                    //console.log($target.attr('id'), "glowed")
                 }
             }
         }
@@ -67,7 +105,9 @@ require_once __DIR__ .'/kb_common.php';
       area_id: <?= KB_AREA_DEFINITIONS ?>,
       toggler: `#btn-definitions`,
       actions: `.btn-add-definition`,
-      targets: `form.--form-RPDs #cke_instruction .cke_contents,
+      targets: `form.--form-SROGS #cke_instruction .cke_contents,
+                form.--form-RFAs  #cke_instruction .cke_contents,
+                form.--form-RPDs  #cke_instruction .cke_contents,
                 textarea[name*="question_titles["]`,
     }
 
@@ -94,11 +134,23 @@ require_once __DIR__ .'/kb_common.php';
             if( panel ) {
                 const $textboxes = $(panel.targets)
                 globalThis['focused_kb_target'] = $textboxes.first()
+                    //console.log(`target:first = ` + $textboxes.first().attr('id') )
+
                 $textboxes.on('focus', ev => {
                     const _target = `#${ev.target.id}`
                     globalThis['focused_kb_target'] = _target;
-                    console.log(`target = ${_target}`)
+                        //console.log(`target:focused = ${_target}`)
                 } )
+
+                // TODO this won't work if there's more than one CKEditor in the targets, if that day arrives, we'll need a more general solution
+                const {$edit:$real, instance:editor} = ckeditRealEdit( $textboxes )
+                if( editor ) {
+                    editor.on('focus', ev => { //;debugger;
+                        const _target = '#'+$(ev.sender.ui.contentsElement).attr('id')
+                        globalThis['focused_kb_target'] = _target;
+                            //console.log(`editor:focused = ${_target}`)
+                    } )
+                }
             }
         } )
     }
@@ -113,7 +165,7 @@ require_once __DIR__ .'/kb_common.php';
                 }
                 $(panel.actions)
                     .on('mouseenter', ev => _glowTarget( 'mouseenter' ) )
-                    .on('mouseleave', ev => _glowTarget( 'mouseleave', `${panel.targets}.glowing` ) )
+                    .on('mouseleave', ev => _glowTarget( 'mouseleave', `${panel.targets}.glowing`, ev ) )
             } )
     }
     function closeSidebar(aSide = `<?= DOCK_SIDE ?>`) {
