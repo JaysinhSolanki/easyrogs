@@ -157,16 +157,16 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
         require_once($path . '/vendor/autoload.php');
         $mpdfConfig = array(
                 'mode' => 'utf-8',
-                'format' => 'A4',    // format - A4, for example, default ''
+                'format' => 'A4',             // format - A4, for example, default ''
                 'default_font_size' => 0,     // font size - default 0
-                'default_font' => '',    // default font family
-                'margin_left' => 10,        // 15 margin_left
-                'margin_right' => 10,       // 15 margin right
-                'margin_top' => 15,     // 16 margin top
-                'margin_bottom' => 8,       // margin bottom
-                'margin_header' => 0,     // 9 margin header
-                'margin_footer' => 10,     // 9 margin footer
-                'orientation' => 'P'    // L - landscape, P - portrait
+                'default_font' => '',         // default font family
+                'margin_left' => 10,          // 15 margin_left
+                'margin_right' => 10,         // 15 margin right
+                'margin_top' => 15,           // 16 margin top
+                'margin_bottom' => 8,         // margin bottom
+                'margin_header' => 0,         // 9 margin header
+                'margin_footer' => 10,        // 9 margin footer
+                'orientation' => 'P'          // L - landscape, P - portrait
             );
         $mpdf = new \Mpdf\Mpdf($mpdfConfig);
     } else {
@@ -314,7 +314,7 @@ function instruction($id, $color="")
 function getAnswerOfDependentParentQuestion($discovery_id, $questoin_id, $response_id)
 {
     global $AdminDAO;
-    $mainQuestions  =   $AdminDAO->getrows(
+    $mainQuestions  =   $AdminDAO->getrows( //!! TODO move to model or see if there's something similar there or if this is being used, also standardize the queries, this is a mess!
         'discovery_questions dq,questions q,response_questions rq',
         'rq.answer			as 	answer,
 										rq.answer_detail	as 	answer_detail,

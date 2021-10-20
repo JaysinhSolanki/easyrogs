@@ -3,14 +3,13 @@ require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
 $isemail			= $_GET['isemail'];
-$notes				= $_GET['notes'];
+$notes				= @$_GET['notes'] ?: '';
 $form_id			= $_POST['form_id'];
 $proponding_attorney= $_POST['proponding_attorney'];
-$incidentoption		= $_POST['type'];
-$incidentoption		= $_POST['incidentoption'];
-$incidenttext		= $_POST['incidenttext'];
-$personnames2		= $_POST['personnames2'];
-$personnames1		= $_POST['personnames1'];
+$incidentoption		= @$_POST['incidentoption'];
+$incidenttext		= @$_POST['incidenttext'];
+$personnames2		= @$_POST['personnames2'];
+$personnames1		= @$_POST['personnames1'];
 $discovery_name		= $_POST['discovery_name'];
 $client_notes		= $_POST['client_notes'];
 $is_supp			= @$_POST['supp'] ?: 0;
@@ -48,19 +47,15 @@ $uncheckedimg		= '<img src="../uploads/icons/checkbox_empty_small.png" width="15
 $incidenttext1		= "&nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.";
 
 
-if($incidentoption == 1)
-{
+if( $incidentoption == Discovery::INCIDENT_STANDARD ) {
 	$incidenttext2		= "&nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled 'Sec. 4(a)(2)'):";
 	$option1			= $checkedimg.$incidenttext1;
 	$option2			= $uncheckedimg.$incidenttext2;
 }
-else if($incidentoption == 2)
-{
+else if( $incidentoption == Discovery::INCIDENT_CUSTOM ) {
 	$incidenttext2		= "&nbsp;&nbsp;(2) $incidenttext";
 	$option1			= $uncheckedimg.$incidenttext1;
 	$option2			= $checkedimg.$incidenttext2;
-
-
 }
 
 $html 				= preg_replace('/<div class=\"checkbox_replace1\">.*<\/div>/',$option1,$instruction_html);
@@ -309,9 +304,9 @@ else {
 }
 
 //Upload documents here
-$doc_uid = $_POST['uid'];
-if( in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS)) ) {
-	$olddocuments			= $_SESSION['documents'][$doc_uid] ?? [];
+$doc_uid = $_POST['uid']; //!! TODO I couldn't find a case calling discoveryaction with `uid=something`
+if( in_array($form_id, [Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS] ) ) {
+	$olddocuments			= ($_SESSION['documents'][$doc_uid]) ?? [];
 	$getdescovery_details	= $AdminDAO->getrows("discoveries","*","id='$id'");
 	$attorney_id			= $getdescovery_details[0]['attorney_id'];
 	$discovery_id			= $getdescovery_details[0]['id'];

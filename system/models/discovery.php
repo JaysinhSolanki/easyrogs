@@ -1,5 +1,7 @@
 <?php
 
+use function EasyRogs\_assert as _assert;
+
 class Discovery extends Payable {
 
     function __construct( $dbConfig = null )
@@ -129,11 +131,18 @@ class Discovery extends Payable {
     const FORM_CA_RFAS    = 04;
     const FORM_CA_RPDS    = 05;
 
-    const TYPE_EXTERNAL = 1;
-    const TYPE_INTERNAL = 2;
+    const TYPE_NOT_RESPONSE = 0;
+    const TYPE_EXTERNAL     = 1;
+    const TYPE_INTERNAL     = 2;
 
     const VIEW_RESPONDING  = 0;
     const VIEW_PROPOUNDING = 1;
+
+    const INTERROGATORY_GENERAL = 1;
+    const INTERROGATORY_EMPLOYMENT = 2;
+
+    const INCIDENT_STANDARD = 1;
+    const INCIDENT_CUSTOM   = 2;
 
     const STYLE_AS_IS     = 'as_IS';
     const STYLE_WORDCAPS  = 'WordCaps';
@@ -204,12 +213,15 @@ class Discovery extends Payable {
     }
 
     public function asDiscovery($discovery) {
-      assert( !empty($discovery), "A proper discovery was expected here, \$discovery=".json_encode($discovery) );
+      _assert( !empty($discovery), "A proper discovery was expected here, \$discovery=".json_encode(@$discovery) );
       if( !is_array($discovery) ) {
         $discovery = ( strlen($discovery) >= 16 ) ? $this->findByUID($discovery) : $this->find($discovery);
       }
-      assert( !empty($discovery['id']) && !empty($discovery['uid']), "A proper discovery was expected here, \$discovery=".json_encode($discovery) );
-      assert( !!$discovery['id'], "A proper discovery was expected here, \$discovery=".json_encode($discovery) );
+      if( empty($discovery['id']) && @$discovery['discovery_id'] ) {
+        $discovery['id'] = @$discovery['discovery_id']; // PROTIP: a good way to catch legacy queries is breakpointing here
+      }
+      _assert( !empty($discovery['id']) && !empty($discovery['uid']), "A proper discovery was expected here, \$discovery=".json_encode(@$discovery) );
+      _assert( !!@$discovery['id'], "A proper discovery was expected here, \$discovery=".json_encode(@$discovery) );
       return $discovery;
     }
 
@@ -254,7 +266,7 @@ class Discovery extends Payable {
       $count = 0;
 
       if( $isSupplAmended ) {
-        assert( $id, "!!" );
+        _assert( $id, "!!" );
         // $query = $this->queryTemplates['getSuppAmendedCountById'];
         // $count = $this->readQuery( $query, ['id' => $discovery['id']] )[0]['COUNT'];
         $count = $this->countBy('discoveries', ['parentid' => $id]);

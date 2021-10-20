@@ -2,14 +2,21 @@
 require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
-$view    = @$_GET['view'];
-$respond = @$_GET['respond'];
+use function EasyRogs\_assert as _assert;
+
+$view    = @$_GET['view'] ?: Discovery::VIEW_RESPONDING;
+$respond = @$_GET['respond'] ?: 0;
 $is_supp = @$_GET['supp'] ?: 0;
+
+_assert( in_array($respond, [ Discovery::TYPE_NOT_RESPONSE,
+                                Discovery::TYPE_EXTERNAL,
+                                Discovery::TYPE_INTERNAL] ),  @$_GET );
+$responseType = $respond; //!! I'm using a new variable because the legacy names are a mess (and we can't change the URLs)
 
 $uid         = @$_GET['id'];
 $response_id = @$_GET['response_id'];
 
-if ($view == 1) { // TODO [!?]
+if( $view == Discovery::VIEW_PROPOUNDING ) { // TODO [!?]
     $css = "";
 } else {
     $css = "";
@@ -54,7 +61,7 @@ if( $served ) {
 if( $due != "" ) {
     $due = dateformat($discovery_data['due']);
 }
-if( ($view == Discovery::VIEW_RESPONDING) || $respond || $response_id ) { //!!
+if( ($view == Discovery::VIEW_RESPONDING) || $responseType != Discovery::TYPE_NOT_RESPONSE || $response_id ) { //!!
   $form_name = $responsesModel->getTitle($response_id, $discovery_data);
 } else {
   $form_name = $discoveriesModel->getTitle($discovery_data);
@@ -62,7 +69,7 @@ if( ($view == Discovery::VIEW_RESPONDING) || $respond || $response_id ) { //!!
 $setSuffix = $discoveriesModel->getSet($discovery_data);
 
 /***************************************
-Query For Forms 1,2,3,4,5 Questions
+Query For Forms FROGS,FROGSE,SROGS,RFAS,RPDS Questions
 ****************************************/
 if (in_array($form_id, array(Discovery::FORM_CA_SROGS,Discovery::FORM_CA_RFAS,Discovery::FORM_CA_RPDS))) {
     $orderByMainQuestions = "  ORDER BY CAST(question_number as DECIMAL(10,2)), q.question_number ";
@@ -70,9 +77,8 @@ if (in_array($form_id, array(Discovery::FORM_CA_SROGS,Discovery::FORM_CA_RFAS,Di
     $orderByMainQuestions = "  ORDER BY display_order, q.id ";
 }
 
-$mainQuestions  = $AdminDAO->getrows(
-    'discovery_questions dq,questions q',
-    'dq.id 				as 	discovery_question_id,
+$mainQuestions  = $AdminDAO->getrows( 'discovery_questions dq,questions q',
+                                        'dq.id 				as 	discovery_question_id,
 										q.id 				as 	question_id,
 										q.question_type_id 	as 	question_type_id,
 										q.question_title 	as 	question_title,
@@ -122,24 +128,24 @@ if( $response_id ) {
 }
 
 /***************************************
-Query For Sub Questions Use in Form 4
+Query For Sub Questions Use in Form RFAS
 ****************************************/
 $generalQuestions = $AdminDAO->getrows('question_admits', "*");
 /****************************************
-	Load Documents Array if Form 3,4,5 case
+	Load Documents Array if Form SROGS,RFAS,RPDS case
 ****************************************/
-if ($form_id == Discovery::FORM_CA_RPDS) {
+if( $form_id == Discovery::FORM_CA_RPDS ) {
     $where = " AND fkresponse_id = '$response_id' ";
 }
 $olddocuments = $AdminDAO->getrows('documents', "*", "discovery_id = '$discovery_id' ".($where?:'') );
 $_SESSION['documents'] = array();
-if (sizeof($olddocuments) > 0) {
-    foreach ($olddocuments as $data) {
+if( sizeof($olddocuments) ) {
+    foreach( $olddocuments as $data ) {
         $doc_purpose = $data['document_notes'];
         $doc_name    = $data['document_file_name'];
-        $doc_path    = SYSTEMPATH."uploads/documents/".$data['document_file_name'];
-        if ($doc_name != "") {
-            $documents[$uid][] = array("doc_name"=>$doc_name,"doc_purpose" => $doc_purpose, "doc_path"=>$doc_path,"status"=>1);
+        $doc_path    = SYSTEMPATH."documents/".$data['document_file_name'];
+        if( $doc_name != "" ) {
+            $documents[$uid][] = ["doc_name"=>$doc_name,"doc_purpose" => $doc_purpose, "doc_path"=>$doc_path,"status"=>1];
         }
     }
     $_SESSION['documents'] = $documents;
@@ -149,19 +155,16 @@ if (sizeof($olddocuments) > 0) {
 	Discovery Conjunction with some RFA or not
 ************************************************/
 //$isConWithDiscovery = $AdminDAO->getrows('discoveries',"id","conjunction_with = '$discovery_id'");
-//$AdminDAO->displayquery=1;
 $isconwithdiscoveryid = 0;
-if (in_array($form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE))) {
-    $isConWithDiscovery = $AdminDAO->getrows(
-                                        'discoveries',
-                                        "*",
+if( in_array($form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE)) ) {
+    $isConWithDiscovery = $AdminDAO->getrows( 'discoveries', "*",
                                         "propounding	= '$propounding' AND
-                                        responding 				= '$responding' AND
-                                        case_id					= '$case_id' AND
-                                        interogatory_type		= '$form_id' AND
-                                        conjunction_setnumber 	= '$set_number'"
+                                         responding 			= '$responding' AND
+                                         case_id				= '$case_id' AND
+                                         interogatory_type		= '$form_id' AND
+                                         conjunction_setnumber 	= '$set_number'"
                                     );
-    if (sizeof($isConWithDiscovery) > 0) {
+    if( sizeof($isConWithDiscovery) ) {
         $isconwithdiscoveryid = $isConWithDiscovery[0]['id'];
     }
 }
@@ -260,8 +263,8 @@ body.modal-open
                 <div class="col-md-12">
                     <ul class="list-group">
 <?php
-                    if (in_array($form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE))) {
-                        foreach ($mainQuestions as $data) {
+                    if( in_array($form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE)) ) {
+                        foreach( $mainQuestions ?: [] as $data) {
                             $dependent_answer       = "";
                             $question_id            = $data['question_id'];
                             $question_type_id       = $data['question_type_id'];
@@ -280,17 +283,15 @@ body.modal-open
                             $extra_text             = $data['extra_text'];
                             $extra_text_field_label = $data['extra_text_field_label'];
 
-                            if ($response_id > 0) {
-                                $getAnswers = $AdminDAO->getrows(
-                                                            "response_questions",
-                                                            "*",
+                            if( $response_id ) {
+                                $getAnswers = $AdminDAO->getrows( "response_questions", "*",
                                                             "fkresponse_id				= :fkresponse_id AND
                                                             fkdiscovery_question_id 	= :discovery_question_id",
-                                                            array(  "discovery_question_id"     =>  $discovery_question_id,
-                                                            "fkresponse_id"             =>  $response_id)
+                                                            ["discovery_question_id" => $discovery_question_id,
+                                                            "fkresponse_id"          => $response_id]
                                                         );
                                 $answer       = $getAnswers[0]['answer'];
-                                $answer_time  = $getAnswers[0]['answer_time'];
+                                $answer_time  = $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
                                 $objection    = $getAnswers[0]['objection'];
                             } else {
                                 $answer       = "";
@@ -300,17 +301,16 @@ body.modal-open
                             /**
                             * IF Depends upon some question then we need that question answer
                             **/
-                            if ($depends_on_question > 0 && $response_id > 0) {
+                            if( $depends_on_question && $response_id ) {
                                 $dependent_answer = getAnswerOfDependentParentQuestion($discovery_id, $depends_on_question, $response_id);
                             }
 ?>
 							<li class='list-group-item <?= $depends_on_question ? "row_$depends_on_question" : "" ?>'
-								style='<?= $depends_on_question && ($view != 1) && ( $dependent_answer == 'No' || $dependent_answer == '' ) ? " display:none;" : "" ?>'>
+								style='<?= $depends_on_question && ( $view == Discovery::VIEW_RESPONDING ) && ( $dependent_answer == 'No' || $dependent_answer == '' ) ? " display:none;" : "" ?>'>
 <?php
-                                if ($question_type_id != 1) {
+                                if( $question_type_id != QuestionType::TEXT) {
                                     $subQuestions   = $AdminDAO->getrows(
                                                                     'discovery_questions dq,questions q',
-
                                                                     'dq.id as discovery_question_id,
                                                                     q.id as question_id,
                                                                     q.question_type_id as question_type_id,
@@ -329,22 +329,18 @@ body.modal-open
                                                                     array(":question_number"=>$question_number,":discovery_id"=>$discovery_id)
                                                                 );
 
-                                    if( sizeof($subQuestions) ) {
-                                        $subquestuions_string   = "";
-                                        foreach ($subQuestions as $sub) {
-                                            $sub_question_title         = $sub['question_title'];
-                                            $sub_question_number        = $sub['question_number'];
-                                            $sub_sub_part               = $sub['sub_part'];
-                                            $subquestuions_string       .= " ($sub_sub_part) $sub_question_title ";
-                                        }
-                                    } else {
-                                        $subquestuions_string = "";
+                                    $subquestuions_string = "";
+                                    foreach( $subQuestions ?: [] as $sub ) {
+                                        $sub_question_title   = $sub['question_title'];
+                                        $sub_question_number  = $sub['question_number'];
+                                        $sub_sub_part         = $sub['sub_part'];
+                                        $subquestuions_string .= " ($sub_sub_part) $sub_question_title ";
                                     }
                                 }
 ?>
                                 <div class="form-group">
 <?php
-                                    if ($view == 1) {
+                                    if( $view == Discovery::VIEW_PROPOUNDING ) {
 ?>
                                         <p>
                                             <b>Q No. <?= $question_number ?>: </b>
@@ -356,31 +352,30 @@ body.modal-open
                                             if( $isconwithdiscoveryid ) {
                                                 $con_mainQuestions  = $AdminDAO->getrows(
                                                                         'discovery_questions dq,questions q,response_questions rq',
-                                                                        'rq.answer			as 	answer,
-                                                                        rq.answer_detail	as 	answer_detail,
-                                                                        rq.answered_at		as 	answer_time,
-                                                                        dq.id 				as 	discovery_question_id,
-                                                                        rq.objection		as  objection,
-                                                                        q.id 				as 	question_id,
+                                                                        'rq.answer			as answer,
+                                                                        rq.answered_at		as answer_time,
+                                                                        rq.answer_detail	as answer_detail,
+                                                                        dq.id 				as discovery_question_id,
+                                                                        rq.objection		as objection,
+                                                                        q.id 				as question_id,
                                                                         rq.fkresponse_id,
-                                                                        q.question_type_id 	as 	question_type_id,
-                                                                        q.question_title 	as 	question_title,
-                                                                        q.question_number 	as 	question_number,
-                                                                        q.sub_part 			as 	sub_part,
-                                                                        q.is_pre_defined 	as 	is_pre_defined,
-                                                                        q.question_title 	as 	question_title,
+                                                                        q.question_type_id 	as question_type_id,
+                                                                        q.question_title 	as question_title,
+                                                                        q.question_number 	as question_number,
+                                                                        q.sub_part 			as sub_part,
+                                                                        q.is_pre_defined 	as is_pre_defined,
+                                                                        q.question_title 	as question_title,
                                                                         is_depended_parent,
                                                                         depends_on_question,
                                                                         have_main_question',
-                                                                        "q.id 				= dq.question_id  	AND
+                                                                        "q.id 				= dq.question_id 	AND
                                                                         rq.fkdiscovery_question_id	= dq.id		AND
-                                                                        rq.answer			= 'Deny' 				AND
+                                                                        rq.answer			= 'Deny' 			AND
                                                                         dq.discovery_id = '$isconwithdiscoveryid'
                                                                         ORDER BY q.question_number
-                                                                        "
-                                                );
+                                                                    ");
 ?>
-                                                <h5><u>FORM INTERROGATORY NO. <?=  $question_number ?></u></h5>
+                                                <h5><u>FORM INTERROGATORY NO. <?= $question_number ?></u></h5>
 <?php
                                                     if( sizeof($con_mainQuestions) ) {
 ?>
@@ -388,16 +383,16 @@ body.modal-open
                                                             <li class="list-group-item">
                                                                 <div class="form-group">
 <?php
-                                                                    foreach ($con_mainQuestions as $con_question) {
+                                                                    foreach( $con_mainQuestions as $con_question ) {
                                                                         $con_discovery_question_id  = $con_question['discovery_question_id'];
                                                                         $con_response_id            = $con_question['fkresponse_id'];
 
-                                                                        $query      = "SELECT * FROM question_admits qa
-                                                                                            LEFT JOIN question_admit_results qar
-                                                                                            ON  qar.discovery_question_id 	= '$con_discovery_question_id'  	AND
-                                                                                            qar.question_admit_id			= qa.id AND qar.fkresponse_id			= '$con_response_id'";
-
-                                                                        $con_SubQuestions   = $AdminDAO->executeQuery($query);
+                                                                        $query = "SELECT * FROM question_admits qa
+                                                                                    LEFT JOIN question_admit_results qar
+                                                                                    ON  qar.discovery_question_id  = '$con_discovery_question_id' AND
+                                                                                        qar.question_admit_id      = qa.id AND
+                                                                                        qar.fkresponse_id          = '$con_response_id'";
+                                                                        $con_SubQuestions = $AdminDAO->executeQuery($query);
 
                                                                         foreach ($con_SubQuestions as $con_SubQuestion) {
 ?>
@@ -424,38 +419,39 @@ body.modal-open
                                                                 name="objection[<?= $discovery_question_id ?>]"
                                                                 placeholder="Objection"><?=
                                                             html_entity_decode($objection)
-                                                        ?></textarea>
+                                                        ?></textarea><!-- 1 -->
 <?php
                                                     }
                                             }
                                         } else { //Hassan Editings
 ?>
                                             <p>
-                                                <b>Q No. <?= $question_number ?><?= $have_main_question==0 ? "&nbsp;($sub_part)" : "" ?>: </b>
+                                                <b>Q No. <?= $question_number ?><?= !$have_main_question ? "&nbsp;($sub_part)" : "" ?>: </b>
 <?php
-                                                echo $question_title;
-                                                if ($has_extra_text == 1) {
-                                                    echo "<p><b>$extra_text_field_label: </b>$extra_text</p>";
-                                                }
-                                                if (in_array($question_type_id, array(1,2)) && $respond == 1) {
+                                                echo $question_title .( $has_extra_text ? "
+                                                            <p>
+                                                                <b>$extra_text_field_label: </b>$extra_text
+                                                            </p>" : '' );
+                                                if( in_array($question_type_id, [QuestionType::TEXT,QuestionType::RADIO] )
+                                                    && $responseType == Discovery::TYPE_EXTERNAL ) {
 	                                                if( $objection == "" && $question_number == '12.2') {
 		                                               $objection = "Objection, this interrogatory seeks information protected by the attorney work product privilege because it reflects counsel's evaluation of the case by revealing which witnesses counsel deemed important enough to interview. Nacht & Lewis Architects, Inc. v. Superior Court (1996) 47 Cal.App.4th 214, 217.";
 	                                                }
 ?>
                                                     <textarea required
                                                             style="background-color: antiquewhite;"
-                                                            id="objection_<?= $discovery_question_id; ?>"
+                                                            id="objection_<?= $discovery_question_id ?>"
                                                             class="form-control"
                                                             name="objection[<?= $discovery_question_id ?>]"
                                                             placeholder="Objection"><?=
                                                         html_entity_decode($objection)
-                                                    ?></textarea>
+                                                    ?></textarea><!-- 2 -->
 <?php
                                                 }
 ?>
                                                 </p>
 <?php
-                                                if ($question_type_id == 1) {
+                                                if( $question_type_id == QuestionType::TEXT ) {
 ?>
                                                     <input type="hidden"
                                                             name="have_main_question[<?= $discovery_question_id ?>]"
@@ -466,35 +462,34 @@ body.modal-open
                                                             name="answer[<?= $discovery_question_id ?>]"
                                                             placeholder="Your Answer"><?=
                                                         html_entity_decode($answer)
-                                                    ?></textarea>
+                                                    ?></textarea><!-- 3 -->
 <?php
-                                                } elseif( $question_type_id == 2 ) {
+                                                } elseif( $question_type_id == QuestionType::RADIO ) {
 ?>
                                                         <div class="form-check form-check-inline">
                                                             <label class="radio-inline">
                                                                 <input type="radio" <?= ($answer == 'Yes') ? "checked" : "" ?>
                                                                        value="Yes" <?= $css ?>
                                                                        onClick="checkFunction('<?= $question_no_makeid ?>','1')<?=
-                                                                            ($is_depended_parent ==1) ? ",showhidequestions('$question_id',1)" : "" ?>"
+                                                                            $is_depended_parent ? ",showhidequestions('$question_id',1)" : "" ?>"
                                                                        name="answer[<?= $discovery_question_id ?>]">
                                                                 Yes
-                                                            </label>
+                                                            </label><!-- 1 -->
                                                             <label class="radio-inline">
                                                                 <input type="radio" <?= ($answer == 'No') ? "checked" : "" ?>
                                                                        value="No" <?= $css ?>
                                                                        onClick="checkFunction('<?= $question_no_makeid ?>','2')<?=
-                                                                            ($is_depended_parent ==1) ? ",showhidequestions('$question_id',2)" : "" ?>"
+                                                                            $is_depended_parent ? ",showhidequestions('$question_id',2)" : "" ?>"
                                                                        name="answer[<?= $discovery_question_id ?>]">
                                                                 No
-                                                            </label>
+                                                            </label><!-- 2 -->
                                                         </div>
 <?php
                                                 }
-                                                if( $question_type_id != 1 ) {
+                                                if( $question_type_id != QuestionType::TEXT ) {
 ?>
-
                                                     <ul class="list-group"
-                                                        <?= ($question_type_id == 2 && $answer != "Yes") ? ' style="display:none;" ' : '' ?>
+                                                        <?= ($question_type_id == QuestionType::RADIO && $answer != "Yes") ? ' style="display:none;" ' : '' ?>
                                                         id="subdiv<?= $question_no_makeid ?>">
 <?php
                                                         foreach( $subQuestions as $data ) {
@@ -514,7 +509,7 @@ body.modal-open
                                                                     							   array( "discovery_question_id" =>  $discovery_question_id,
                                                                     									   "fkresponse_id"        =>  $response_id ) );
                                                                 $answer1                = $getAnswers[0]['answer'];
-                                                                $answer_time            = $getAnswers[0]['answer_time'];
+                                                                $answer_time            = $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
                                                                 $objection              = $getAnswers[0]['objection'];
                                                             } else {
                                                                 $answer1                = "";
@@ -527,7 +522,7 @@ body.modal-open
                                                                 <p>
                                                                     <b><?= $sub_part ?>)</b>&nbsp;<?= $question_title ?>
 <?php
-                                                                    if( $respond == 1 ) {
+                                                                    if( $responseType == Discovery::TYPE_EXTERNAL ) {
 ?>
                                                                     <textarea   style="background-color: antiquewhite;"
                                                                                 id="objection_<?= $discovery_question_id ?>"
@@ -535,7 +530,7 @@ body.modal-open
                                                                                 name="objection[<?= $discovery_question_id ?>]"
                                                                                 placeholder="Objection" ><?=
                                                                         html_entity_decode($objection)
-                                                                    ?></textarea>
+                                                                    ?></textarea><!-- 4 -->
 <?php
                                                                     }
 ?>
@@ -544,15 +539,15 @@ body.modal-open
                                                                         class="subanswer_<?= $question_no_makeid?>"
                                                                         name="have_main_question[<?= $discovery_question_id ?>]"
                                                                         value="<?= $have_main_question ?>"
-                                                                        <?= ($answer == "No" || ($answer == "" && $p_q_type_id == 1) || ($answer == "" && $p_q_type_id == 2)) ? " disabled " : "" ?> />
+                                                                        <?= ($answer == "No" || ($answer == "" && $p_q_type_id == QuestionType::TEXT) || ($answer == "" && $p_q_type_id == QuestionType::RADIO)) ? " disabled " : "" ?> />
                                                                 <textarea required
                                                                             id="answer<?= $discovery_question_id ?>"
                                                                             class="form-control subanswer_<?= $question_no_makeid ?>" <?= $css ?>
                                                                             name="answer[<?= $discovery_question_id ?>]"
-                                                                            <?= (($answer == "No" || $answer == "") && $p_q_type_id != 3) ? " disabled " : "" ?>
+                                                                            <?= (($answer == "No" || $answer == "") && $p_q_type_id != QuestionType::NONE) ? " disabled " : "" ?>
                                                                             placeholder="Your Answer" ><?=
                                                                     html_entity_decode($answer1)
-                                                                ?></textarea>
+                                                                ?></textarea><!-- 5 -->
                                                             </div>
                                                         </li>
 <?php
@@ -569,8 +564,8 @@ body.modal-open
 
 <?php
                         }
-                    } elseif ($form_id == Discovery::FORM_CA_RFAS) {
-                        foreach ($mainQuestions as $data) {
+                    } elseif( $form_id == Discovery::FORM_CA_RFAS ) {
+                        foreach( $mainQuestions as $data ) {
 ?>
                             <li class="list-group-item">
 <?php
@@ -582,17 +577,15 @@ body.modal-open
                                 $is_pre_defined         = $data['is_pre_defined'];
                                 $discovery_question_id  = $data['discovery_question_id'];
 
-                                if ($response_id > 0) {
-                                    $getAnswers                 = $AdminDAO->getrows(
-                                        "response_questions",
-                                        "*",
-                                        "fkresponse_id				= :fkresponse_id AND
-                                                                    fkdiscovery_question_id 	= :discovery_question_id",
-                                        array(  "discovery_question_id"     =>  $discovery_question_id,
-                                        "fkresponse_id"             =>  $response_id)
+                                if( $response_id ) {
+                                    $getAnswers = $AdminDAO->getrows( "response_questions", "*",
+                                        "fkresponse_id = :fkresponse_id AND
+                                         fkdiscovery_question_id 	= :discovery_question_id",
+                                        array( "discovery_question_id" =>  $discovery_question_id,
+                                                "fkresponse_id" => $response_id)
                                     );
                                     $answer                 = $getAnswers[0]['answer'];
-                                    $answer_time            = $getAnswers[0]['answer_time'];
+                                    $answer_time            = $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
                                     $answer_detail          = $getAnswers[0]['answer_detail'];
                                     $objection              = $getAnswers[0]['objection'];
                                 } else {
@@ -606,7 +599,7 @@ body.modal-open
                                     <p>
                                         <b>Q No. <?= $question_number ?>: </b><?= $question_title ?>
 <?php
-                                        if ($respond == 1) {
+                                        if( $responseType == Discovery::TYPE_EXTERNAL ) {
 ?>
                                         <textarea required
                                                 style="background-color: antiquewhite;"
@@ -615,28 +608,34 @@ body.modal-open
                                                 name="objection[<?= $discovery_question_id ?>]"
                                                 placeholder="Objection"><?=
                                             html_entity_decode($objection)
-                                        ?></textarea>
+                                        ?></textarea><!-- 6 -->
 <?php
                                         }
 ?>
                                     </p>
 <?php
-                                    if ($view != 1) {
+                                    if( $view == Discovery::VIEW_RESPONDING ) {
 ?>
                                     <div class="form-check form-check-inline">
-                                        <label class="radio-inline"><input type="radio" name="answer[<?php echo $discovery_question_id ?>]" value="Admit" onClick="checkFunction('<?php echo $discovery_question_id ?>','2')" <?php if ($answer == 'Admit') {
-                                            echo "checked";
-} ?> <?php echo $css ?>>Admit</label>
-                                        <label class="radio-inline"><input type="radio" name="answer[<?php echo $discovery_question_id ?>]" value="Deny" onClick="checkFunction('<?php echo $discovery_question_id ?>','1')" <?php if ($answer == 'Deny') {
-                                            echo "checked";
-} ?> <?php echo $css ?>>Deny</label>
+                                        <label class="radio-inline">
+                                            <input type="radio" <?= $css ?>
+                                                    name="answer[<?= $discovery_question_id ?>]"
+                                                    value="Admit" <?= ($answer == 'Admit') ? " checked " : '' ?>
+                                                    onClick="checkFunction('<?= $discovery_question_id ?>','2')" >Admit
+                                        </label><!-- 3 -->
+                                        <label class="radio-inline">
+                                            <input type="radio" <?= $css ?>
+                                                    name="answer[<?= $discovery_question_id ?>]"
+                                                    value="Deny" <?= ($answer == 'Deny') ? " checked " : '' ?>
+                                                    onClick="checkFunction('<?= $discovery_question_id ?>','1')">Deny
+                                        </label><!-- 4 -->
                                     </div>
                                     <br />
-                                    <ul class="list-group" id="subdiv<?php echo $discovery_question_id;?>" <?php if ($answer == "Admit" || $answer == "") {
-?>style="display:none" <?php
-} ?>>
+                                    <ul class="list-group"
+                                        id="subdiv<?= $discovery_question_id ?>"
+                                        <?= ($answer == "Admit" || $answer == "") ? ' style="display:none" ' : '' ?>>
 <?php
-                                    foreach ($generalQuestions as $generalQuestion) {
+                                    foreach( $generalQuestions as $generalQuestion ) {
                                         $question_admit_id = $generalQuestion['id'];
                                         $subQuestionAnswers = $AdminDAO->getrows('question_admit_results', "*", ":discovery_question_id = discovery_question_id AND :question_admit_id = question_admit_id AND fkresponse_id = :fkresponse_id", array("discovery_question_id" => $discovery_question_id, "question_admit_id" => $question_admit_id,"fkresponse_id" => $response_id));
                                         $subQuestionAnswer = $subQuestionAnswers[0];
@@ -646,7 +645,7 @@ body.modal-open
                                         } else {
                                             $sub_answer_show    = trim(html_entity_decode($subQuestionAnswer['sub_answer']));
                                         }
-                                        $sub_objection              = trim(html_entity_decode($subQuestionAnswer['objection']));
+                                        $sub_objection = trim(html_entity_decode($subQuestionAnswer['objection']));
 ?>
                                     <li class="list-group-item">
                                     <div class="form-group">
@@ -659,7 +658,7 @@ body.modal-open
                                             name="rfa_objection[<?= $discovery_question_id ?>][<?= $question_admit_id ?>]"
                                             placeholder="Objection"><?=
                                                 $sub_objection
-                                        ?></textarea>
+                                        ?></textarea><!-- 7 -->
                                         <br />
                                         <textarea required
                                             <?= ($answer == "Admit" || $answer == "") ? "disabled" : "" ?>
@@ -669,7 +668,7 @@ body.modal-open
                                             name="subanswer[<?= $discovery_question_id ?>][<?= $question_admit_id; ?>]"
                                             placeholder="Your Answer" ><?=
                                                 $sub_answer_show
-                                        ?></textarea>
+                                        ?></textarea><!-- 8 -->
                                     </div>
                                     </li>
 <?php
@@ -696,16 +695,14 @@ body.modal-open
                                 $is_pre_defined     = $data['is_pre_defined'];
                                 $discovery_question_id  = $data['discovery_question_id'];
                                 if ($response_id > 0) {
-                                    $getAnswers                 = $AdminDAO->getrows(
-                                        "response_questions",
-                                        "*",
-                                        "fkresponse_id				= :fkresponse_id AND
-                                                                        fkdiscovery_question_id 	= :discovery_question_id",
-                                        array(  "discovery_question_id"     =>  $discovery_question_id,
-                                        "fkresponse_id"             =>  $response_id)
+                                    $getAnswers = $AdminDAO->getrows( "response_questions", "*",
+                                        "fkresponse_id = :fkresponse_id AND
+                                         fkdiscovery_question_id = :discovery_question_id",
+                                        array( "discovery_question_id" => $discovery_question_id,
+                                               "fkresponse_id" => $response_id)
                                     );
                                     $answer                 = $getAnswers[0]['answer'];
-                                    $answer_time            = $getAnswers[0]['answer_time'];
+                                    $answer_time            = $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
                                     $answer_detail          = $getAnswers[0]['answer_detail'];
                                     $objection              = $getAnswers[0]['objection'];
                                 } else {
@@ -719,7 +716,7 @@ body.modal-open
                                     <p>
                                         <b>Q No. <?= $question_number ?>: </b><?= $question_title ?>
 <?php
-                                        if ($respond == 1) {
+                                        if( $responseType == Discovery::TYPE_EXTERNAL ) {
 ?>
                                         <textarea required
                                                   style="background-color: antiquewhite;"
@@ -728,13 +725,13 @@ body.modal-open
                                                   name="objection[<?= $discovery_question_id ?>]"
                                                   placeholder="Objection" ><?=
                                             html_entity_decode($objection)
-                                        ?></textarea>
+                                        ?></textarea><!-- 9 -->
 <?php
                                         }
 ?>
                                     </p>
 <?php
-                                    if( !$view ) {
+                                    if( $view == Discovery::VIEW_RESPONDING ) {
                                         if($form_id == Discovery::FORM_CA_RPDS ) {
 ?>
                                         <select class="form-control" <?= $css ?>
@@ -757,7 +754,7 @@ body.modal-open
                                                         name="answer[<?= $discovery_question_id ?>]"
                                                         placeholder="Your Answer"  ><?=
                                                 html_entity_decode($answer)
-                                            ?></textarea>
+                                            ?></textarea><!-- 10 -->
 <?php
                                         }
                                         if( $form_id == Discovery::FORM_CA_RPDS ) {
@@ -775,7 +772,7 @@ body.modal-open
                                                                 <?= $answer != Discovery::RPDS_ANSWER_DOCS_NO_ACCESS ? " disabled " : "" ?>
                                                                 placeholder="Your Answer"><?=
                                                         html_entity_decode($answer_detail)
-                                                    ?></textarea>
+                                                    ?></textarea><!-- 11 -->
                                                 </div>
                                                 </li>
                                             </ul>
@@ -793,7 +790,7 @@ body.modal-open
                                                                 <?= ($answer != Discovery::RPDS_ANSWER_HAVE_DOCS) ? " disabled " : "" ?>
                                                                 placeholder="Your Answer"><?=
                                                         html_entity_decode($answer_detail)
-                                                    ?></textarea>
+                                                    ?></textarea><!-- 12 -->
                                                     <p>
                                                         <b>Note: </b>
                                                         Upload your documents below.
@@ -835,7 +832,7 @@ body.modal-open
 <?php
                 }
                 $formArray = array(Discovery::FORM_CA_RPDS);// Discovery::FORM_CA_SROGS,Discovery::FORM_CA_RFAS,Discovery::FORM_CA_RPDS
-                if( in_array($form_id, $formArray) && $view != 1 ) {
+                if( in_array($form_id, $formArray) && ($view == Discovery::VIEW_RESPONDING) ) {
 ?>
                 <div class="col-md-12">
                     <hr>
@@ -861,11 +858,11 @@ body.modal-open
             </div>
                 <div class="text-center">
 <?php
-                if ($view != 1) {
+                if( $view == Discovery::VIEW_RESPONDING ) {
                     buttonsave('discoveryfrontaction.php', 'discoverydetailsform', 'wrapper', 'discoveries.php?pkscreenid=45&pid='.$case_id, 0);
                 }
                 buttoncancel(45, 'discoveries.php?pid='.$case_id);
-                if ($view != 1) {
+                if( $view == Discovery::VIEW_RESPONDING && $responseType == Discovery::TYPE_EXTERNAL ) {
 ?>
                 <a href="javascript:;" class="btn btn-purple" onclick="serveFunction2('<?= $discovery_verification ?>','<?= $_GET['id'] ?>','<?= $response_id ?>')"  ><i class="fa fa-share"></i> Serve</a>
                 <button type="button" class="btn btn-info buttonid" data-style="zoom-in" onclick="checkClientEmailFound('<?= $discovery_id ?>',2);" title="" >
@@ -933,7 +930,7 @@ You have not verify the discovery SPECIAL INTERROGATORIES. Please click on the l
 
 ~LINK_HERE~."
 
-        ?></textarea>
+        ?></textarea><!-- 13 -->
         </div>
       </div>
       <div class="modal-footer">
@@ -1095,7 +1092,7 @@ function loadinstructions( form_id, id ) {
         .done( resp => {
             $("#loadinstructions").html( trim(resp) );
 
-            const   type = <?= $respond ?: 0 ?> ? 2 : 1,
+            const   type = <?= $respond ?: 0 ?> ? 2 : 1, //!!
                     { discoveryFormNames, discoveryForm, } = globalThis,
                     suffix = (discoveryForm ? '@' + discoveryFormNames[discoveryForm-1] : '');
             ctxUpdate({ id: `49_${type}${suffix}`, pkscreenid: '49', url: 'discoverydetails.php', } );
@@ -1247,7 +1244,7 @@ jQuery( $ => {
 <?php
     }
 ?>
-    loadinstructions('<?= $form_id ?>','<?= $discovery_id ?>');
+    <?= ( $responseType != Discovery::TYPE_INTERNAL )  ? "loadinstructions('$form_id','$discovery_id');" : "" ?>
     loaduploadeddocs();
     const extraObj = $("#extraupload")
         .uploadFile( {

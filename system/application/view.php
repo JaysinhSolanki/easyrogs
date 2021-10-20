@@ -5,7 +5,7 @@
 $uid				=	$_GET['id'];
 $response_id		=	$_GET['response_id'];
 
-$view				=	$_GET['view'];
+$view				=	$_GET['view'] ?: Discovery::VIEW_RESPONDING;
 $respond			=	$_GET['respond'];
 $active_attr_email	=	$_SESSION['loggedin_email'];
 

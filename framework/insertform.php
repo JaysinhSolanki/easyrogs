@@ -5,8 +5,8 @@ $Login		=	new Login($AdminDAO);
 $id = $_REQUEST['id'];
 //dump($_POST,1);
 //dump($_POST);
-//exit;  
-	 
+//exit;
+
 if(sizeof($_POST)>0)
 {
 	$formtitle 			= 	filter($_POST['formtitle']);
@@ -17,8 +17,8 @@ if(sizeof($_POST)>0)
 	$fieldlabelhebrew 	= 	$_POST['fieldlabelhebrew'];
 	$language			=	$_SESSION['language'];
 	$fieldnamearr		=	$_POST['fieldname'];
-	
-	
+
+
 	/*if($language=='english')
 	{
 		$fklanguageid	=	1;
@@ -26,7 +26,7 @@ if(sizeof($_POST)>0)
 	{
 		$fklanguageid	=	2;
 	}*/
-	 
+
 	$formurl			=	filter($_POST['formurl']);
 	$displayorder		=	filter($_POST['displayorder']);
 	$fkmoduleid			=	$_POST['fkmoduleid'];
@@ -36,11 +36,12 @@ if(sizeof($_POST)>0)
 	$showontop			=	$_POST['showontop'];
 	$query				=	addslashes($_POST['query']);
 	$deletefilename	=	filter($_POST['deletefilename']);
-	
+
 	if($formtitle=='')
 	{
 		msg(48,2);
 	}
+	// TODO: DEAD CODE
 	if($formtitlehebrew=='')
 	{
 		msg(49,2);
@@ -73,7 +74,7 @@ if(sizeof($_POST)>0)
 	{
 		$msg	.=	"<li>Please enter display order</li>";
 	}
-	
+
 	 */
 	/*******************************screen fields****************
 	for($screenfiled=0; $screenfield<sizeof($fieldname); $screenfield++)
@@ -81,7 +82,7 @@ if(sizeof($_POST)>0)
 		//$fieldname 		= 	filter($_POST['fieldname']);
 		//$fieldlabel	 	= 	filter($_POST['fieldlabel']);
 		//$sortorder		=	filter($_POST['sortorder']);
-		
+
 		if($fieldname[$screenfiled]=='')
 		{
 			$msg	.=	"<li>Field Name can not be left blank</li>";
@@ -95,12 +96,12 @@ if(sizeof($_POST)>0)
 			$msg	.=	"<li>Field Sort Order can not be left blank</li>";
 		}
 	}
-	
+
 	**************************form actions**********************/
-	
+
 	//exit;
 	//for($screenaction=0; $screenaction < sizeof($actionlabel); $screenaction++)
-	//{ 
+	//{
 		//$actionlabel 		= 	filter($_POST['actionlabel']);
 		//$fkactiontypeid	= 	filter($_POST['fkactiontypeid']);
 		//$actionsortorder	= 	filter($_POST['actionsortorder']);
@@ -123,31 +124,31 @@ if(sizeof($_POST)>0)
 		$unique = $AdminDAO->isunique('system_label', 'pklabelid', $id, 'screenname', $screenname);
 		if($unique=='1')
 		{
-				echo"Screen with this name <b><u>$screenname</u></b> already exists. Please choose another name.";	
+				echo"Screen with this name <b><u>$screenname</u></b> already exists. Please choose another name.";
 				exit;
 		}
 	}*/
-	
+
 	//To add  Form title
-	
+
 	$fields = array('formtitle','formtitlehebrew');
 	$values = array($formtitle, $formtitlehebrew);
-	if($id!='-1')//updates records 
+	if($id!='-1')//updates records
 	{
 		$AdminDAO->updaterow("system_form",$fields,$values," pkformid='$id' ");
 	}
 	else
 	{
-		// this is the add system_form	
+		// this is the add system_form
 		$id = $AdminDAO->insertrow("system_form",$fields,$values);
 	}//end of else
-	
+
 	/**************************************************************************************************************/
-	
+
 	//$AdminDAO->displayquery	=	1;
 	/*$fields = array('fklanguageid','fkformid','label','labelhebrew');
 	$values = array($fklanguageid, $fkformid,$label ,$labelhebrew);
-	if($id!='-1')//updates records 
+	if($id!='-1')//updates records
 	{
 		$AdminDAO->updaterow("system_label",$fields,$values," pklabelid='$id' ");
 	}
@@ -155,14 +156,14 @@ if(sizeof($_POST)>0)
 	{
 		$id = $AdminDAO->insertrow("system_label",$fields,$values);
 	}//end of else*/
-	
+
 	/*$screenrows			=	$AdminDAO->getrows("system_groupscreen","pkgroupscreenid", "fkgroupid='3' AND fkscreenid = '$id'");
 	$pkgroupscreenid	=	$screenrows[0]['pkgroupscreenid'];
 	if(!$pkgroupscreenid)
 	{
 		 $AdminDAO->insertrow("system_groupscreen",array('fkgroupid','fkscreenid'),array(3,$id));
 	}*/
-	
+
 	/*********************insert screen fields*****************************/
 	for($screenfield=0; $screenfield<sizeof($fieldlabel); $screenfield++)
 	{
@@ -173,7 +174,7 @@ if(sizeof($_POST)>0)
 			$fields 		=	array('fkformid','fieldname','label','labelhebrew','sortorder');
 			$values 		=	array($id,$fieldname,$fieldlabel[$screenfield] ,$fieldlabelhebrew[$screenfield],$sortorder[$screenfield]);
 			$pklabelids		=	$pklabelid[$screenfield];
-			if($pklabelids)//updates records 
+			if($pklabelids)//updates records
 			{
 				//$postedfields[]	=	$pkfieldid[$screenfield];
 				//$AdminDAO->updaterow("system_field",$fields,$values," pkfieldid='$pkfieldids' ");
@@ -181,13 +182,13 @@ if(sizeof($_POST)>0)
 			}
 			else
 			{
-				// this is the add section	
+				// this is the add section
 				//$postedfields[] = $AdminDAO->insertrow("system_field",$fields,$values);
-				 $AdminDAO->insertrow("system_label",$fields,$values);				
+				 $AdminDAO->insertrow("system_label",$fields,$values);
 			}//end of else
 		}
 	}
-	
+
 	/*******************insert actions*********************************/
 	//dump($fkactiontypeid);
 	//for($screenaction=0; $screenaction<sizeof($actionlabel); $screenaction++)
@@ -206,7 +207,7 @@ if(sizeof($_POST)>0)
 			$buttonclass		=	$buttonclasscustom[$screenaction];
 			$iconclass			=	$iconclasscustom[$screenaction];
 			$actionparam		=	$actionparamcustom[$screenaction];
-			
+
 			$fields				=	array('actionlabel','acttionlabelherbew','fkactiontypeid','actioncodecustom','fkscreenid','sortorder','selection','phpfile','title','childdiv','buttonclass','iconclass','actionparam');
 			if(($phpfile!="")&&($title!="")&&($childdiv!="")&&($buttonclass!="")&&($iconclass!=""))
 			{
@@ -216,14 +217,14 @@ if(sizeof($_POST)>0)
 			$values				=	array($actionlabel[$screenaction], $acttionlabelherbew[$screenaction],$fkactiontypeid[$screenaction],$actioncodecustom, $id, $actionsortorder[$screenaction], $selection, $phpfile, $title, $childdiv, $buttonclass, $iconclass, $actionparam);
 			$pkactionids		=	$pkactionid[$screenaction];
 			//dump($values);
-			if($pkactionids)//updates records 
+			if($pkactionids)//updates records
 			{
 				$postedactions[]	=	$pkactionid[$screenaction];
 				$AdminDAO->updaterow("system_action",$fields,$values," pkactionid='$pkactionids' ");
 			}
 			else
 			{
-				// this is the add section	
+				// this is the add section
 				$postedactions[]	=	$AdminDAO->insertrow("system_action",$fields,$values);
 			}//end of else
 		}

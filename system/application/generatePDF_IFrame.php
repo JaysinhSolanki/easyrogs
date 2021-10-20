@@ -6,7 +6,7 @@ $uid				=	$_GET['id'];
 $response_id		=	$_GET['response_id'];
 
 $view				=	$_GET['view'] ?: Discovery::VIEW_RESPONDING;
-$respond			=	$_GET['respond'] ?: 0;
+//$respond			=	$_GET['respond'] ?: 0;
 $downloadORwrite	=	$_GET['downloadORwrite'];
 $active_attr_email	=	$_GET['active_attr_email'];
 

@@ -4,8 +4,9 @@ require_once __DIR__ . '/../bootstrap.php';
 include_once("../library/classes/functions.php");
 
 //$logger->info("MakePDF: starting");
+$logger->clearLogs();
 
-$view				= $_GET['view'] ?: 0;
+$view				= $_GET['view'] ?: Discovery::VIEW_RESPONDING;
 $downloadORwrite	= @$_GET['downloadORwrite'] ?: 0;
 
 $respond			= 0; //!!
@@ -174,11 +175,11 @@ if( $response_id ) {
     $verification_signed_by	= $responseDetail['verification_signed_by'];
 }
 else {
-    $is_served			= $discovery_data['is_served'] || $discovery_data['served'];
-    $served				= $discovery_data['served'];
-    $submit_date		= $discovery_data['send_date'];
-    $is_submitted		= $discovery_data['is_send'];
-    $pos_text			= $discovery_data['pos_text'];
+    $is_served			= @$discovery_data['is_served'] || @$discovery_data['served'];
+    $served				= @$discovery_data['served'];
+    $submit_date		= @$discovery_data['send_date'];
+    $is_submitted		= @$discovery_data['is_send'];
+    $pos_text			= @$discovery_data['pos_text'];
     $served_date		= date("F d, Y",strtotime($served));
 
     $is_verified			= "";
@@ -212,11 +213,11 @@ $responding_role	= $respondingdetails['client_role'];
 
 if( $type == Discovery::TYPE_EXTERNAL) {
     if( $response_id ) {
-        $whereAt	= "pkaddressbookid = '$res_created_by'";
+        $whereAt = "pkaddressbookid = '$res_created_by'";
     }
     else {
         $discovery_created_by = $case_attorney;//$discovery_data['attorney_id'];
-        $whereAt			  = "pkaddressbookid = '$discovery_created_by'";
+        $whereAt = "pkaddressbookid = '$discovery_created_by'";
     }
 
     $getAttorneyDetails = $AdminDAO->getrows('system_addressbook',"*",$whereAt,array());
@@ -236,7 +237,13 @@ else {
         assert( $view == Discovery::VIEW_RESPONDING, "INVALID \$view=$view" );
         $c_client_id = $responding;
     }
-    $attorneyDetails	= $AdminDAO->getrows('attorney a,client_attorney ca,system_addressbook sa',"*","sa.email = a.attorney_email AND ca.client_id = :client_id AND a.id = ca.attorney_id AND ca.case_id = :case_id $where_attorneyDetails",array('client_id'=>$c_client_id,'case_id'=>$case_id));
+    $attorneyDetails	= $AdminDAO->getrows('attorney a,client_attorney ca,system_addressbook sa',"*",
+                                                "sa.email = a.attorney_email
+                                                AND ca.client_id = :client_id
+                                                AND a.id = ca.attorney_id
+                                                AND ca.case_id = :case_id
+                                                $where_attorneyDetails",
+                                                ['client_id'=>$c_client_id,'case_id'=>$case_id] );
     $getAttorneyDetail	= $attorneyDetails[0];
 }
 
@@ -324,27 +331,26 @@ if( in_array($form_id,array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE)
                                                 responding 			= '$responding' AND
                                                 case_id				= '$case_id' AND
                                                 interogatory_type	= '$form_id' AND
-                                                conjunction_setnumber 	= 	'$set_number'");
+                                                conjunction_setnumber = '$set_number'");
     if( sizeof($isConWithDiscovery) ) {
         $isconwithdiscoveryid 	= $isConWithDiscovery[0]['id'];
         $conjunction_setnumbers	= $isConWithDiscovery[0]['conjunction_setnumber'];
         if( $is_served ) {
-            $con_Details	= array("con_discovery_name" => "REQUESTS FOR ADMISSION", "con_setnumber" => $conjunction_setnumbers);
+            $con_Details = ["con_discovery_name" => "REQUESTS FOR ADMISSION",
+                            "con_setnumber"      => $conjunction_setnumbers];
         }
     }
 }
-if(in_array($form_id,array(Discovery::FORM_CA_RFAS))) {
-    if($interogatory_type == 1)
-    {
-        $con_discovery	= "FORM INTERROGATORIES - GENERAL";
+if( in_array( $form_id, [Discovery::FORM_CA_RFAS] )) {
+    if( $interogatory_type == Discovery::INTERROGATORY_GENERAL ) {
+        $con_discovery = "FORM INTERROGATORIES - GENERAL";
     }
-    else if($interogatory_type == 2)
-    {
-        $con_discovery	= "FORM INTERROGATORIES - EMPLOYMENT LAW";
+    else if( $interogatory_type == Discovery::INTERROGATORY_EMPLOYMENT ) {
+        $con_discovery = "FORM INTERROGATORIES - EMPLOYMENT LAW";
     }
-    if($in_conjunction == 1)
-    {
-        $con_Details	= array("con_discovery_name" => $con_discovery, "con_setnumber" => $conjunction_setnumber);
+    if( $in_conjunction ) {
+        $con_Details = ["con_discovery_name" => $con_discovery,
+                        "con_setnumber"      => $conjunction_setnumber];
     }
 }
 
@@ -359,41 +365,57 @@ ob_start();
     .tabela	{
         width:100% !important;
     }
-   .wikitable tbody tr th, table.jquery-tablesorter thead tr th.headerSort, .header-cell {
-   background: #ccc;
-   color: white;
-   font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
-   font-weight: bold;
-   font-size: 13pt;
-   }
-   .wikitable, table.jquery-tablesorter {
-   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-   }
-   .tabela, .wikitable {
-   border: 1px solid #A2A9B1;
-   border-collapse: collapse;
-   line-height:25px;
-   }
-   .tabela tbody tr td, .wikitable tbody tr td {
-   padding: 5px 10px 5px 10px;
-   border: 1px solid #A2A9B1;
-   border-collapse: collapse;
-    line-height:25px;
-   }
-   td {
+    .wikitable tbody tr th, table.jquery-tablesorter thead tr th.headerSort, .header-cell {
+        background: #ccc;
+        color: white;
+        font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+        font-weight: bold;
+        font-size: 13pt;
+    }
+    .wikitable, table.jquery-tablesorter {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
+    .tabela, .wikitable {
+        border: 1px solid #A2A9B1;
+        border-collapse: collapse;
+        line-height:25px;
+    }
+    .tabela tbody tr td, .wikitable tbody tr td {
+        padding: 5px 10px 5px 10px;
+        border: 1px solid #A2A9B1;
+        border-collapse: collapse;
+        line-height:25px;
+    }
+    td {
         line-height:25px !important;
-   }
-   .config-value {
-   font-family: Arial, Helvetica, sans-serif;
-   font-size:13pt;
-   background: white;
-   font-weight: bold;
-   }
+    }
+    .config-value {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size:13pt;
+        background: white;
+        font-weight: bold;
+    }
     .no-break {
-    page-break-inside: avoid;
+        page-break-inside: avoid;
     }
     .break-page {
-    page-break-before: always;
+        page-break-before: always;
+    }
+
+    .h-bu {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+    .h-request,
+    .h-interrogatory,
+    .h-objection,
+    .h-response {
+        page-break-after: avoid;
+    }
+    .q-subquestion,
+    .q-objection,
+    .q-response {
+        page-break-before: avoid;
     }
 </style>
 </head>
@@ -409,7 +431,7 @@ ob_start();
 <p class="break-page1"></p>
 <div class="wikitable1 tabela1">
 <?php
-        if( in_array( $form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE) ) ) {
+        if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) ) {
             foreach( $mainQuestions as $data ) {
                 $dependent_answer	= "";
                 $question_id 			= $data['question_id'];
@@ -424,17 +446,18 @@ ob_start();
                 $has_extra_text			= $data['has_extra_text'];
                 $extra_text				= $data['extra_text'];
                 $extra_text_field_label	= $data['extra_text_field_label'];
+                $logger->debug( ["mainQuestion", ++$_q_counter, $data] );
 
                 if( $response_id ) {
                     $getAnswers = $AdminDAO->getrows(	"response_questions", "*",
                                                         "fkresponse_id = :fkresponse_id AND
                                                         fkdiscovery_question_id = :discovery_question_id",
 
-                                                        array( 	"discovery_question_id" => $discovery_question_id,
-                                                                "fkresponse_id"			=> $response_id )
+                                                        ["discovery_question_id" => $discovery_question_id,
+                                                         "fkresponse_id"         => $response_id ]
                                                     );
                     $answer 		= trim($getAnswers[0]['answer']);
-                    $answer_time 	= $getAnswers[0]['answer_time'];
+                    $answer_time 	= $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
                     $objection 		= trim($getAnswers[0]['objection']);
                     $final_response	= trim($getAnswers[0]['final_response']);
                 }
@@ -455,49 +478,46 @@ ob_start();
                     continue;
                 }
 
-                if( $question_type_id ) { // change by Hassan for sub elements
-                    $subQuestions = $AdminDAO->getrows(
-                                        'discovery_questions dq,questions q',
-                                        'dq.id as discovery_question_id,
+                if( $question_type_id != QuestionType::TEXT ) { // change by Hassan for sub elements
+                    $subQuestions = $AdminDAO->getrows( 'discovery_questions dq,questions q',
+                                        'dq.discovery_id,
+                                        dq.id as discovery_question_id,
                                         q.id as question_id,
-                                        q.question_type_id as question_type_id,
-                                        q.form_id as form_id,
-                                        q.question_title as question_title,
-                                        q.question_number as question_number,
-                                        q.sub_part as sub_part,
-                                        q.is_pre_defined as is_pre_defined,
-                                        dq.discovery_id',
+                                        q.question_type_id,
+                                        q.form_id,
+                                        q.question_title,
+                                        q.question_number,
+                                        q.sub_part,
+                                        q.is_pre_defined',
 
-                                        "q.question_number 	= 	:question_number AND
-                                        dq.discovery_id 	= 	:discovery_id    AND
-                                        q.id 				= 	 dq.question_id  AND
-                                        q.sub_part 		   !=   ''  GROUP BY question_id ORDER BY question_number  ASC, sub_part ASC ",
+                                        "q.question_number = :question_number AND
+                                        dq.discovery_id    = :discovery_id    AND
+                                        q.id               = dq.question_id  AND
+                                        q.sub_part         != ''
+                                        GROUP BY question_id
+                                        ORDER BY question_number  ASC, sub_part ASC",
 
-                                        array(":question_number"=>$question_number,":discovery_id"=>$discovery_id));
+                                        [":question_number"=>$question_number,":discovery_id"=>$discovery_id] );
 
-                    if( sizeof($subQuestions) && $view == Discovery::VIEW_PROPOUNDING ) {
-                        $subquestuions_string = "";
-                        foreach($subQuestions as $sub) {
-                            $sub_question_title 		= $sub['question_title'];
-                            $sub_question_number 		= $sub['question_number'];
-                            $sub_sub_part 				= $sub['sub_part'];
-                            $subquestuions_string		.= " (".$sub_sub_part.") ".$sub_question_title." ";
+                    $subquestuions_string = "";
+                    if( $view == Discovery::VIEW_PROPOUNDING ) {
+                        foreach( $subQuestions ?: [] as $sub ) {
+                            $sub_question_title 	= $sub['question_title'];
+                            $sub_question_number 	= $sub['question_number'];
+                            $sub_sub_part 			= $sub['sub_part'];
+                            $subquestuions_string	.= " (".$sub_sub_part.") ".$sub_question_title." ";
                         }
-                        echo $subquestuions_string;
-                    }
-                    else {
-                        $subquestuions_string	= "";
                     }
                 }
                 echo "	<div class='q-row'>
-                            <h3>INTERROGATORY NO. $question_number:</h3>";
-                if( $view == Discovery::VIEW_RESPONDING && $question_type_id == 3 ) {
+                            <h3 class='h-interrogatory'>INTERROGATORY NO. $question_number:</h3>";
+                if( $view == Discovery::VIEW_RESPONDING && $question_type_id == QuestionType::NONE ) {
                 }
                 else {
                     if( $view == Discovery::VIEW_RESPONDING ) {
-                        echo "	<b><u>Interrogatory</u></b>";
+                        echo "	<h3 class='h-bu h-interrogatory'>Interrogatory</h3>";
                     }
-                    echo "	<p class='q-subquestion'> $question_title $subquestuions_string </p>";
+                    echo "<p class='q-subquestion'> $question_title $subquestuions_string </p>";
                     if( $has_extra_text ) {
                         echo "	<br/>
                                 <p class='q-extra'>
@@ -508,15 +528,15 @@ ob_start();
                 }
                 if( $view == Discovery::VIEW_PROPOUNDING ) {
                     if( $respond ) {
-                        echo "	<b><u>Objection</u></b>
+                        echo "	<h3 class='h-bu h-objection'>Objection</h>
                                 <p class='q-objection'> $objection </p>
                         ";
                     }
                 }
                 else {
-                    if( $question_type_id == 1 || ( $question_type_id == 3 && !sizeof($subQuestions) ) ) {
+                    if( $question_type_id == QuestionType::TEXT || ( $question_type_id == QuestionType::NONE && !sizeof($subQuestions) ) ) {
                         echo "	<br/>
-                                <b><u>Response</u></b>
+                                <h3 class='h-bu h-response'>Response</h3>
                             ";
                         if( $final_response ) {
                             echo "	<p class='q-response'> $final_response </p><br/>";
@@ -525,9 +545,9 @@ ob_start();
                             echo "	<p class='q-response'>". finalResponseGenerate( $objection, $answer ) ."</p><br/>";
                         }
                     }
-                    else if( $question_type_id == 2 ) {
+                    else if( $question_type_id == QuestionType::RADIO ) {
                         echo "	<br/>
-                                <b><u>Response</u></b>";
+                                <h3 class='h-bu h-response'>Response</h3>";
                                 if( $final_response ) {
                                     echo "<p class='q-response'> $final_response </p><br/>";
                                 }
@@ -536,7 +556,7 @@ ob_start();
                                     echo "	<p class='q-response'>". finalResponseGenerate( $objection, $answer ) ."</p><br/>";
                                 }
                     }
-                    if( $question_type_id != 1) {
+                    if( $question_type_id != QuestionType::TEXT ) {
                         if( in_array( $question_number,array('17.1','217.1') ) && $isconwithdiscoveryid ) {
                             $con_mainQuestions	= $AdminDAO->getrows(
                                                             'discovery_questions dq,questions q,response_questions rq',
@@ -548,20 +568,20 @@ ob_start();
                                                             rq.objection		as  objection,
                                                             q.id 				as 	question_id,
                                                             rq.fkresponse_id,
-                                                            q.question_type_id 	as 	question_type_id,
-                                                            q.question_title 	as 	question_title,
-                                                            q.question_number 	as 	question_number,
-                                                            q.sub_part 			as 	sub_part,
-                                                            q.is_pre_defined 	as 	is_pre_defined,
-                                                            q.question_title 	as 	question_title,
+                                                            q.question_type_id,
+                                                            q.question_title,
+                                                            q.question_number,
+                                                            q.sub_part,
+                                                            q.is_pre_defined,
+                                                            q.question_title,
                                                             is_depended_parent,
                                                             depends_on_question,
                                                             have_main_question',
 
-                                                            "q.id 				= 	dq.question_id  AND
-                                                            rq.fkdiscovery_question_id	= dq.id	AND
-                                                            rq.answer			= 'Deny' 			AND
-                                                            dq.discovery_id = '$isconwithdiscoveryid'
+                                                            "q.id 				= 	dq.question_id
+                                                            AND rq.fkdiscovery_question_id = dq.id
+                                                            AND rq.answer = 'Deny'
+                                                            AND dq.discovery_id = '$isconwithdiscoveryid'
                                                             ORDER BY q.question_number"
                                                             );
                             if( sizeof($con_mainQuestions) ) {
@@ -575,9 +595,8 @@ ob_start();
                                                         ON  qar.discovery_question_id 	= 	'$con_discovery_question_id'  	AND
                                                         qar.question_admit_id			= qa.id 							AND
                                                         qar.fkresponse_id				= '$con_response_id'";
-                                    $con_SubQuestions	= $AdminDAO->executeQuery($query);
-
-                                        if($count == 1) {
+                                    $con_SubQuestions = $AdminDAO->executeQuery($query);
+                                        if( $count == 1 ) {
                                             foreach( $con_SubQuestions as $con_SubQuestion ) {
                                                 echo "<p class='q-subquestion'>". $con_SubQuestion['question_no'] .") ". $con_SubQuestion['question'] ."</p>";
                                             }
@@ -586,17 +605,17 @@ ob_start();
                                     $count++;
                                 }
                                 echo "	<br/>
-                                        <b><u>Response</u></b>
+                                        <h3 class='h-bu h-response'>Response</h3>
                                         <p class='q-response'>". nl2br($final_response) ."</p>";
                             }
                             else {
                                 echo "	<br/>
-                                        <b><u>Response</u></b>
+                                        <h3 class='h-bu h-response'>Response</h3>
                                         <p class='q-response' />";
                             }
                         }
                         else {
-                            if( strtolower($answer) == 'yes' || ($question_type_id == 3 && sizeof($subQuestions) )) {
+                            if( strtolower($answer) == 'yes' || ($question_type_id == QuestionType::NONE && sizeof($subQuestions) )) {
                                 foreach( $subQuestions as $data ) {
                                     $question_id 			= $data['question_id'];
                                     $question_type_id 		= $data['question_type_id'];
@@ -615,7 +634,7 @@ ob_start();
                                                             array(	"discovery_question_id"	=>	$discovery_question_id,
                                                                     "fkresponse_id"			=>	$response_id));
                                         $answer 				= trim($getAnswers[0]['answer']);
-                                        $answer_time 			= $getAnswers[0]['answer_time'];
+                                        $answer_time 			= $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
                                         $objection 				= trim($getAnswers[0]['objection']);
                                         $final_response			= trim($getAnswers[0]['final_response']);
                                     }
@@ -626,7 +645,7 @@ ob_start();
                                         $final_response			= "";
                                     }
                                     echo "	<p class='q-question'>($sub_part) $question_title</p>
-                                            <b><u>Response</u></b> <br/>";
+                                            <h3 class='h-bu h-response'>Response</h3> <br/>";
                                     if( $final_response ) {
                                         echo "<p class='q-response'> $final_response </p><br/>";
                                     }
@@ -643,7 +662,7 @@ ob_start();
             }
         }
         else if( $form_id == Discovery::FORM_CA_RFAS ) {
-            foreach($mainQuestions as $data) {
+            foreach( $mainQuestions ?: [] as $data ) {
                 $question_id 			= $data['question_id'];
                 $question_type_id 		= $data['question_type_id'];
                 $question_title 		= $data['question_title'];
@@ -663,7 +682,7 @@ ob_start();
                                                 "fkresponse_id"			=>	$response_id));
 
                     $answer 				= trim($getAnswers[0]['answer']);
-                    $answer_time 			= $getAnswers[0]['answer_time'];
+                    $answer_time 			= $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
                     $answer_detail 			= trim($getAnswers[0]['answer_detail']);
                     $objection 				= trim($getAnswers[0]['objection']);
                     $final_response 		= trim($getAnswers[0]['final_response']);
@@ -677,11 +696,11 @@ ob_start();
                 }
 
                 echo "	<div class='q-row'>
-                            <h3>REQUEST NO. $question_number:</h3>
+                            <h3 class='h-request'>REQUEST NO. $question_number:</h3>
                             <p class='q-question'> $question_title </p>";
                         if( $view == Discovery::VIEW_RESPONDING ) {
                             echo "	<br/>
-                                    <b><u>Response</u></b>";
+                                    <h3 class='h-bu h-response'>Response</h3>";
                             if( $final_response ) {
                                 echo "	<p class='q-response'> $final_response </p>";
                             }
@@ -690,14 +709,14 @@ ob_start();
                             }
                         }
                         else if( $respond ) {
-                            echo "	<b><u>Objection</u></b>
+                            echo "	<h3 class='h-bu h-objection'>Objection</h3>
                                     <p class='q-objection'> $objection </p>";
                         }
                 echo "	<br/><br/>
                         </div>";
             }
         }
-        else if(in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RPDS))) {
+        else if( in_array( $form_id, [Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RPDS] )) {
             foreach( $mainQuestions as $data ) {
                 $question_id 		    = $data['question_id'];
                 $question_type_id 	    = $data['question_type_id'];
@@ -716,7 +735,7 @@ ob_start();
                                         array(	"discovery_question_id"	=>	$discovery_question_id,
                                                 "fkresponse_id"			=>	$response_id) );
                     $answer 				= trim($getAnswers[0]['answer']);
-                    $answer_time 			= $getAnswers[0]['answer_time'];
+                    $answer_time 			= $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
                     $answer_detail 			= trim($getAnswers[0]['answer_detail']);
                     $objection 				= trim($getAnswers[0]['objection']);
                     $final_response 		= trim($getAnswers[0]['final_response']);
@@ -730,17 +749,17 @@ ob_start();
                 }
                 echo "	<div class='q-row'>";
                 if( $form_id == Discovery::FORM_CA_RPDS ) {
-                    echo "	<h3>REQUEST NO. $question_number:</h3>";
+                    echo "	<h3 class='h-request'>REQUEST NO. $question_number:</h3>";
                 }
                 else {
-                    echo "	<h3>INTERROGATORY NO. $question_number :</h3>";
+                    echo "	<h3 class='h-interrogatory'>INTERROGATORY NO. $question_number :</h3>";
                 }
 
                 echo "	<p class='q-question'>$question_title</p>";
 
                 if( $view == Discovery::VIEW_RESPONDING ) {
                         echo "	<br/>
-                                <b><u>Response</u></b>";
+                                <h3 class='h-bu h-response'>Response</h3>";
                         if( $form_id == Discovery::FORM_CA_RPDS ) {
                             if( $answer == Discovery::RPDS_ANSWER_NONE ){
                                 $answer = 'Not Provided.';
@@ -775,7 +794,7 @@ ob_start();
                         }
                     }
                     else if( $respond ) {
-                        echo "	<b><u>Objection</u></b>
+                        echo "	<h3 class='h-bu h-objection'>Objection</h3>
                                 <p class='q-objection'> $objection </p>";
                     }
                     echo "	<br/><br/>
@@ -912,7 +931,7 @@ else {
 try {
     pdf( $filePath, $headerFooterConfiguration, @$downloadORwrite );
     if ($_ENV['APP_ENV'] != 'prod') {
-        $logger->debug("PDF created and ". ( $downloadORwrite == 1 ? "saved to" : "sent to browser as"). " '$filePath', generated from html:\n\r\n\r$html\n\r\n\r\n\r" );
+        //$logger->debug("PDF created and ". ( $downloadORwrite == 1 ? "saved to" : "sent to browser as"). " '$filePath', generated from html:\n\r\n\r$html\n\r\n\r\n\r" );
 
         // Save copy of the last PDF generated
         $savedir = __DIR__ . '/../_dev';

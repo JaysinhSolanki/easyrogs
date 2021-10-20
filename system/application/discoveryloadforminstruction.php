@@ -52,7 +52,7 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                         <div class="col-sm-2 col-md-4">
                             <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
                                aria-expanded="true" class="btn btn-primary pull-right"></a>
-<?php if( $viewonly && $currentUser->isAttorney() ) { ?>
+<?php if( $viewonly && @$currentUser && $currentUser->isAttorney() ) { ?>
                             <button type="button" id="btn-objections" class="btn btn-primary btn-sidebar-toggle pull-right hidden"
                                     onclick="javascript:toggleKBSidebar(<?= $form_id ?>, ObjectionPanel);"><!--frogs/e-->
                                 <i class="fa fa-book" /><span>Objections</span>
@@ -80,11 +80,11 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                 $uncheckedimg  = '<img src="../uploads/icons/checkbox_empty_small.png" width="15px">';
                                 $incidenttext1 = "&nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.";
 
-                                if( $incidentoption == 1 ) {
+                                if( $incidentoption == Discovery::INCIDENT_STANDARD ) {
                                     $incidenttext2 = "&nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled 'Sec. 4(a)(2)'):";
                                     $option1       = $checkedimg . $incidenttext1;
                                     $option2       = $uncheckedimg . $incidenttext2;
-                                } elseif( $incidentoption == 2 ) {
+                                } elseif( $incidentoption == Discovery::INCIDENT_CUSTOM ) {
                                     $incidenttext2 = "&nbsp;&nbsp;(2) $incidenttext";
                                     $option1       = $uncheckedimg . $incidenttext1;
                                     $option2       = $checkedimg . $incidenttext2;
@@ -181,7 +181,9 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
 ?>
                                                 <div class='checkbox_replace1'>
                                                     <input type="radio" name="incidentoption"
-                                                           value="1" <?= ( $discovery['incidentoption'] == 1 ) ? "checked" : '' ?> onclick="incidentmeans(1)" />
+                                                           value="<?= Discovery::INCIDENT_STANDARD ?>"
+                                                           <?= ( $discovery['incidentoption'] == Discovery::INCIDENT_STANDARD ) ? " checked " : '' ?>
+                                                           onclick="incidentmeans(<?= Discovery::INCIDENT_STANDARD ?>)" />
                                                     &nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding
                                                     the alleged accident, injury, or other occurrence or breach of contract
                                                     giving rise to this action or proceeding.
@@ -200,13 +202,14 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
 ?>
                                                 <div class='checkbox_replace2'>
                                                     <input type="radio" name="incidentoption"
-                                                                        value="2"
-                                                                        <?= ( $discovery['incidentoption'] == 2 ) ? "checked" : '' ?> onclick="incidentmeans(2)" />
+                                                                        value="<?= Discovery::INCIDENT_CUSTOM ?>"
+                                                                        <?= ( $discovery['incidentoption'] == Discovery::INCIDENT_CUSTOM ) ? " checked " : '' ?>
+                                                                        onclick="incidentmeans(<?= Discovery::INCIDENT_CUSTOM ?>)" />
                                                     &nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled "Sec. 4(a)(2)"):
                                                 </div>
                                                 <div class='remove_incidenttext'>
                                                     <div id="incidentDiv"
-                                                         <?= ( $discovery['incidentoption'] == 1 || $discovery['incidentoption'] == "" ) ? 'style="display:none" ' : '' ?>>
+                                                         <?= ( $discovery['incidentoption'] == Discovery::INCIDENT_STANDARD || $discovery['incidentoption'] == "" ) ? ' style="display:none" ' : '' ?>>
                                                         <textarea class="form-control" rows="5" name="incidenttext"
                                                                   id="incidenttext"><?=
                                                             $discovery['incidenttext']
@@ -600,7 +603,7 @@ else {
                             <div class="col-sm-2 col-md-4" style="margin-top: 8px;">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"
                                    class="btn btn-primary pull-right"></a>
-<?php if( $currentUser->isAttorney() ) { ?>
+<?php if( @$currentUser && $currentUser->isAttorney() ) { ?>
                                 <button type="button" id="btn-objections" class="btn btn-primary btn-sidebar-toggle pull-right hidden"
                                         onclick="javascript:toggleKBSidebar(<?= $form_id ?>, ObjectionPanel);"><!--rfas/rfps/rdps-->
                                     <i class="fa fa-book" /><span>Objections</span>

@@ -31,6 +31,26 @@ namespace EasyRogs;
       }
     }
 
+    function clearLogs() { // Reset logs, useful when debugging
+
+      // Safety checks:
+      $caller = debug_backtrace();
+      if( $_ENV['APP_ENV'] == 'prod' ) {
+        $logger->warn( ['Using clearLogs() in production? NO-NO-NO!!', $caller] );
+        return;
+      }
+      if( !$this->logsDir ) { // be safe!
+        $logger->warn( ['clearLogs() but $this->logsDir is not set', $this, $caller] );
+        return;
+      }
+
+      $files = glob( $this->logsDir ."/*.log" );
+      foreach( $files as $file ) {
+        if( is_file($file) )
+          unlink($file);
+      }
+    }
+
     static function getCallstack( $e ) {
       $result = "\n ---------------- \n" .
                 $e->getTraceAsString()   .
@@ -162,14 +182,19 @@ function _assert( $test, $etc = null ) { global $logger;
         if( !$value ) break;
         $idx++;
       }
-      if( $idx == sizeof($test) ) return;
+      if( $idx == sizeof($test) ) return true;
     } else {
-      if( !!$test ) return;
+      if( !!$test ) return true;
     }
 
     $caller = debug_backtrace()[1];
-    $info = ["assertion failed at ". $caller['file'].":".$caller['line'], $caller['args'] ];
+    $info = ["assertion failed at ". $caller['file'].":".$caller['line'], $caller['args'], $etc ];
     $logger->error( $info, true );
+    // Check if JSON or HTML, act accordingly
+    // getallheaders()['Accept] apache_response_headers()
     $logger->browser_log( $info, $info );
+    return false;
   }
+  return "NOT CHECKED"; // it's a truthy value anyways. TODO: think this
 }
+

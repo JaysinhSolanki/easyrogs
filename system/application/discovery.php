@@ -232,8 +232,11 @@ body.modal-open {
                                     <label class="control-label">Type<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                                     <div>
                                         <select  name="interogatory_type" id="interogatory_type"  class="form-control m-b">
-                                            <option value="1" <?= ($discovery['interogatory_type'] == 1) ? " selected " : '' ?>>GENERAL</option>
-                                            <option value="2" <?= ($discovery['interogatory_type'] == 2) ? " selected " : '' ?>>EMPLOYMENT</option>
+                                            <option value="<?= Discovery::FORM_CA_FROGS  ?>"
+                                                    <?= ($discovery['interogatory_type'] == Discovery::FORM_CA_FROGS  ) ? " selected " : '' ?> >
+                                                GENERAL</option>
+                                            <option value="<?= Discovery::FORM_CA_FROGSE ?>" <?= ($discovery['interogatory_type'] == Discovery::FORM_CA_FROGSE ) ? " selected " : '' ?> >
+                                                EMPLOYMENT</option>
                                         </select>
                                     </div>
                                 </div>
@@ -244,7 +247,10 @@ body.modal-open {
 <?php
                                             for( $i=1; $i<=50; $i++ ) {
 ?>
-                                                <option value="<?= $i ?>" <?= ($discovery['conjunction_setnumber'] == $i) ? " selected " : '' ?>><?= $i ?></option>
+                                                <option value="<?= $i ?>"
+                                                        <?= ($discovery['conjunction_setnumber'] == $i) ? " selected " : '' ?> >
+                                                    <?= $i ?>
+                                                </option>
 <?php
                                             }
 ?>
@@ -261,13 +267,18 @@ body.modal-open {
                     <div class="form-group">
                         <label class=" col-sm-2 col-md-1 control-label">Propounder<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                         <div class="col-sm-4 col-md-5">
-                            <select  name="propounding" id="propounding"  class="form-control m-b" onchange="<?php if( $type == Discovery::TYPE_INTERNAL ) {
-?> loadpropondingattorneys('<?= $case_id; ?>',this.value,'<?= @$discovery['proponding_attorney'] ?>'),<?php
-} ?>setquestionnumber(),loadrespondings('<?= $case_id; ?>',this.value,'<?= @$discovery['responding'] ?>')">
+                            <select  name="propounding" id="propounding"  class="form-control m-b" onchange="
+                              <?php if( $type == Discovery::TYPE_INTERNAL ) { ?>
+                                loadpropondingattorneys('<?= $case_id; ?>',this.value,'<?= @$discovery['proponding_attorney'] ?>'),
+                              <?php } ?>
+                                setquestionnumber(),loadrespondings('<?= $case_id; ?>',this.value,'<?= @$discovery['responding'] ?>')">
 <?php
                                 foreach( $propondingClients as $thisrow ) {
 ?>
-                                    <option <?= $thisrow['id'] == $discovery['propounding'] ? 'selected' : '' ?> value="<?= $thisrow['id'] ?>"><?= $thisrow['client_name'] ?></option>
+                                    <option <?= $thisrow['id'] == $discovery['propounding'] ? 'selected' : '' ?>
+                                            value="<?= $thisrow['id'] ?>" >
+                                        <?= $thisrow['client_name'] ?>
+                                    </option>
 <?php
                                 }
 ?>
@@ -279,7 +290,10 @@ body.modal-open {
 <?php
                                 foreach( $respondingClients as $thisrow ) {
 ?>
-                                    <option <?= ($thisrow['id']==$discovery['responding']) ? 'selected' : '' ?> value="<?= $thisrow['id'] ?>"><?= $thisrow['client_name'] ?></option>
+                                    <option <?= ($thisrow['id']==$discovery['responding']) ? 'selected' : '' ?>
+                                            value="<?= $thisrow['id'] ?>" >
+                                        <?= $thisrow['client_name'] ?>
+                                    </option>
 <?php
                                 }
 ?>
@@ -292,7 +306,8 @@ body.modal-open {
                     <div class="form-group">
                         <label class=" col-sm-2 col-md-1 control-label">Attorney<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
                         <div class="col-sm-4 col-md-5" id="loadpropondingattorneysDiv">
-                            <select name="proponding_attorney" id="proponding_attorney"  class="form-control m-b" /><!--Proponding Attorneys Here--->
+                            <select name="proponding_attorney" id="proponding_attorney"  class="form-control m-b" />
+                                <!--Proponding Attorneys Here--->
                             </select>
                         </div>
                     </div>
@@ -536,8 +551,8 @@ function isNumberKey( evt ) {
         return true;
     }
 }
-function incidentmeans( id ) {
-    if( id == 2 ) {
+function incidentmeans( definitionType ) {
+    if( definitionType == <?= Discovery::INCIDENT_CUSTOM ?> ) {
         $("#incidentDiv").show();
     }
     else {

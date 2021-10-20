@@ -4,30 +4,31 @@ require_once __DIR__ . "/../bootstrap.php";
 
 include_once("../library/classes/functions.php");
 
+use function EasyRogs\_assert as _assert;
+
 $uid        = $_POST['uid'];
 $updated_by	= $currentUser->id;
 
-$respond                          = @$_POST['respond'] ?: 0;
+$respond                          = @$_POST['respond'] ?: Discovery::TYPE_NOT_RESPONSE;
 $is_supp				          = @$_POST['supp'] ?: 0;
 $form_id 		                  = $_POST['form_id'];
 $case_id 		                  = $_POST['case_id'];
 $response_id                      = $_POST['response_id'];
-$subanswer                        = $_POST['subanswer'];
+$subanswers					      = $_POST['subanswer'];
 $have_main_question	              = $_POST['have_main_question'];
 $answers						  = @$_POST['answer'] ?: [];
-$subanswers					      = $_POST['subanswer'];
-$introduction				      = $_POST['introduction'];
+$introduction				      = @$_POST['introduction'] ?: "";
 $discovery_verification			  = $_POST['discovery_verification'];
 $discovery_verification_state	  = $_POST['discovery_verification_state'];
 $discovery_verification_city	  = $_POST['discovery_verification_city'];
-$discovery_sender_note			  = $_POST['discovery_sender_note'];
+$discovery_sender_note			  = $_POST['discovery_sender_note'] ?: "";
 $discovery_verification_by_name	  = $_POST['discovery_verification_by_name'];
 $discovery_verification_signed_by = $_POST['discovery_verification_signed_by'];
 
 $verification_datetime = date("Y-m-d H:i:s");
 
-$case = $AdminDAO->getrows("cases","*","id='$case_id'");
-$form = $AdminDAO->getrows("forms","*","id='$form_id'");
+// $case = $AdminDAO->getrows("cases","*","id='$case_id'");
+// $form = $AdminDAO->getrows("forms","*","id='$form_id'");
 
 $discovery_details	= $discoveriesModel->findDetails($uid);
 $attorney_id	= $discovery_details['attorney_id'];
@@ -54,7 +55,7 @@ else { // new response
 }
 if( $respond ) {
 	$objections	= $_POST['objection'];
-	foreach( $objections as $discovery_question_id => $objection ) { // TODO Move to models/response.php
+	foreach( $objections ?: [] as $discovery_question_id => $objection ) { // TODO Move to models/response.php
 		/**
 		* Check record already exists in response questions or not
 		**/
@@ -91,8 +92,8 @@ if( sizeof($answers) ) {
 		$values	= array($answer);
 
 		if( $form_id == Discovery::FORM_CA_RPDS ) {
-			$fields[]	= 'answer_detail';
-			$values[]	= $subanswer[$discovery_question_id];
+			$fields[] = 'answer_detail';
+			$values[] = $subanswers[$discovery_question_id];
 		}
 		if( !empty($getResponseQuestionData) ) {
 			$AdminDAO->updaterow('response_questions',$fields,$values,"fkdiscovery_question_id = '$discovery_question_id' AND fkresponse_id = '$response_id'");
@@ -107,10 +108,11 @@ if( sizeof($answers) ) {
 	}
 }
 
-if( $form_id == Discovery::FORM_CA_RFAS && !empty($subanswer) ) {
+if( $form_id == Discovery::FORM_CA_RFAS && !empty($subanswers) ) {
 	$rfa_objection = $_POST['rfa_objection'];
-	foreach( $subanswer as $discovery_question_id => $subanswerArray ) {
-		foreach( $subanswerArray as $question_admit_id => $sub_answer ) {
+	foreach( $subanswers as $discovery_question_id => $subanswerArray ) {
+		_assert( !empty($subanswerArray) );
+		foreach( $subanswerArray ?: [] as $question_admit_id => $sub_answer ) {
 			$fields1		= array("discovery_question_id","question_admit_id","fkresponse_id");
 			$values1		= array($discovery_question_id,$question_admit_id,$response_id);
 			$objection_data	= $rfa_objection[$discovery_question_id][$question_admit_id];
@@ -119,7 +121,7 @@ if( $form_id == Discovery::FORM_CA_RFAS && !empty($subanswer) ) {
 				$fields1[]	= 'sub_answer';
 				$values1[]	= $sub_answer;
 			}
-			if($respond == 1) {
+			if( $respond == Discovery::TYPE_EXTERNAL ) {
 				$fields1[]	= 'objection';
 				$values1[]	= $objection_data;
 			}
@@ -143,7 +145,7 @@ if( in_array($form_id, array(Discovery::FORM_CA_RPDS)) ) {
 		foreach( $olddocuments as $data ) {
 			$doc_purpose	= $data['doc_purpose'];
 			$doc_name		= $data['doc_name'];
-			$doc_path		= $data['doc_path'];
+			//$doc_path		= $data['doc_path'];
 			if( $doc_name ) {
 				$doc_fields		= array("form_id",'attorney_id','case_id','document_notes','document_file_name','discovery_id','fkresponse_id');
 				$doc_values		= array($form_id,$attorney_id,$case_id,$doc_purpose,$doc_name,$discovery_id,$response_id);

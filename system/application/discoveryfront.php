@@ -11,7 +11,7 @@ $view = @$_GET['view'] ?: Discovery::VIEW_RESPONDING;
 
 //!! assert( !!$uid, HttpResponse::malformed("Missing ", [$uid]) );
 
-$css = ( $view != Discovery::VIEW_RESPONDING) ? " disabled " : "";
+$css = ( $view == Discovery::VIEW_PROPOUNDING ) ? " disabled " : "";
 
 /***************************************
 		Query For Header Data
@@ -250,7 +250,7 @@ function getRPDetails($rp_id) {
 				<div class="col-md-12">
 					<ul class="list-group">
 <?php
-										if( in_array( $form_id, array(Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE) ) ) {
+										if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) ) {
 											foreach( $mainQuestions as $data ) {
 												$dependent_answer		= "";
 												$question_id 			= $data['question_id'];
@@ -275,7 +275,7 @@ function getRPDetails($rp_id) {
 																						array(	"discovery_question_id"	=>	$discovery_question_id,
 																								"fkresponse_id"			=>	$response_id));
 													$answer 		= $getAnswers[0]['answer'];
-													$answer_time 	= $getAnswers[0]['answer_time'];
+													$answer_time 	= $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
 												}
 												else {
 													$answer 		= "";
@@ -294,7 +294,7 @@ function getRPDetails($rp_id) {
 															: "row_$depends_on_question' " .( ( $dependent_answer == 'No' || $dependent_answer == '' ) ? " style='display:none;'" : '' )
 													?>>
 <?php
-												if( $question_type_id != 1 ) {
+												if( $question_type_id != QuestionType::TEXT ) {
 														$subQuestions	= $AdminDAO->getrows( 'discovery_questions dq, questions q',
 																					'dq.id as discovery_question_id,
 																					q.id as question_id,
@@ -335,8 +335,8 @@ function getRPDetails($rp_id) {
 <?php
 															if( ($question_number == "17.1" || $question_number == "217.1") ) {
 															}
-															else if( $view != 1 ) {
-																if( $question_type_id == 1 ) {
+															else if( $view == Discovery::VIEW_RESPONDING ) {
+																if( $question_type_id == QuestionType::TEXT ) {
 ?>
 																	<input type="hidden" name="have_main_question[<?= $discovery_question_id; ?>]" value="<?= $have_main_question?>"/>
 																	<textarea id="answer<?= $discovery_question_id ?>" class="form-control" name="answer[<?= $discovery_question_id; ?>]" placeholder="Your Answer" required <?= $css ?>><?=
@@ -344,7 +344,7 @@ function getRPDetails($rp_id) {
 																	?></textarea>
 <?php
 																}
-																else if( $question_type_id == 2 ) {
+																else if( $question_type_id == QuestionType::RADIO ) {
 																	$question_no_makeid	= str_replace('.','_',$question_number);
 ?>
 																		<div class="form-check form-check-inline">
@@ -367,9 +367,9 @@ function getRPDetails($rp_id) {
 																		</div>
 <?php
 																}
-																if( $question_type_id != 1 ) {
+																if( $question_type_id != QuestionType::TEXT ) {
 ?>
-																	<ul class="list-group" id="subdiv<?= $question_no_makeid ?>" <?= ( $question_type_id == 2 && $answer != "Yes" ) ? 'style="display:none"' : '' ?>
+																	<ul class="list-group" id="subdiv<?= $question_no_makeid ?>" <?= ( $question_type_id == QuestionType::RADIO && $answer != "Yes" ) ? 'style="display:none"' : '' ?>
 <?php
 																		foreach( $subQuestions as $data ) {
 																			$question_id 			= $data['question_id'];
@@ -389,7 +389,7 @@ function getRPDetails($rp_id) {
 																														"fkresponse_id"			=> $response_id )
 																											);
 																				$answer1 			= $getAnswers[0]['answer'];
-																				$answer_time		= $getAnswers[0]['answer_time'];
+																				$answer_time		= $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
 																			}
 																			else {
 																				$answer1 				= "";
@@ -445,7 +445,7 @@ function getRPDetails($rp_id) {
 																						array(	"discovery_question_id"	=>	$discovery_question_id,
 																								"fkresponse_id"			=>	$response_id));
 														$answer 				= $getAnswers[0]['answer'];
-														$answer_time 			= $getAnswers[0]['answer_time'];
+														$answer_time 			= $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
 														$answer_detail 			= trim($getAnswers[0]['answer_detail']);
 													}
 													else
@@ -461,7 +461,7 @@ function getRPDetails($rp_id) {
 															<?= $question_title; ?>
 														</p>
 <?php
-													if( $view != 1 ) {
+													if( $view == Discovery::VIEW_RESPONDING ) {
 ?>
                                                         <div class="form-check form-check-inline">
                                                             <label class="radio-inline"><input type="radio" name="answer[<?= $discovery_question_id ?>]" value="Admit" onClick="checkFunction('<?= $discovery_question_id ?>','2')" <?php if($answer == 'Admit'){echo "checked";} ?> <?= $css ?>>Admit</label>
@@ -474,7 +474,7 @@ function getRPDetails($rp_id) {
 															$subQuestionAnswers	= $AdminDAO->getrows('question_admit_results',"*",":discovery_question_id = discovery_question_id AND :question_admit_id = question_admit_id AND fkresponse_id = :fkresponse_id",array("discovery_question_id" => $discovery_question_id, "question_admit_id" => $question_admit_id,"fkresponse_id" => $response_id));
 															$subQuestionAnswer	= $subQuestionAnswers[0];
 
-															if($question_admit_id == 1) {
+															if( $question_admit_id == 1 ) { // TODO question_admits[1] = "State the number of the request".. why is this fixed?
 																$sub_answer_show	= $question_number;
 															}
 															else {
@@ -523,7 +523,7 @@ function getRPDetails($rp_id) {
 																							array(	"discovery_question_id"	=>	$discovery_question_id,
 																									"fkresponse_id"			=>	$response_id));
 														$answer 				= $getAnswers[0]['answer'];
-														$answer_time 			= $getAnswers[0]['answer_time'];
+														$answer_time 			= $getAnswers[0]['answer_time']; //!! TODO There is no answer_time in the DB, some queries are creating the alias and some aren't!!
 														$answer_detail 			= trim($getAnswers[0]['answer_detail']);
 													}
 													else {
@@ -538,7 +538,7 @@ function getRPDetails($rp_id) {
 															<?= $question_title; ?>
 														</p>
 <?php
-														if( !$view ) {
+														if( $view == Discovery::VIEW_RESPONDING ) {
 															if( $form_id == Discovery::FORM_CA_RPDS ) {
 ?>
 															<select class="form-control" <?= $css ?>
@@ -612,7 +612,7 @@ function getRPDetails($rp_id) {
                             </div>
 <?php
 							if( in_array( $form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS) )
-								&& !$view
+								&& ( $view == Discovery::VIEW_RESPONDING )
 								&& !empty($_SESSION['documents'][$uid]) ) {
 ?>
                             <div class="col-md-12">
@@ -632,7 +632,7 @@ function getRPDetails($rp_id) {
                             </div>
 <?php
 							}
-							if( in_array( $form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RPDS) ) && !$view ) {
+							if( in_array( $form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RPDS) ) && ( $view == Discovery::VIEW_RESPONDING ) ) {
 ?>
                             <div class="col-md-12">
                             	<hr>
@@ -656,7 +656,7 @@ function getRPDetails($rp_id) {
                         </div>
 
 <?php
-                      if( $view != 1 ) {
+                      if( $view == Discovery::VIEW_RESPONDING ) {
 ?>
                             <div class="text-center">
                             <button type="button" class="btn btn-success" onClick="addform('discoveryfrontaction.php?q=0','discoverydetailsform',' ','discoveryfront-thanks.php');">

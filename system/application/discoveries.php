@@ -27,12 +27,14 @@ function checkSides( $userId1, $userId2 = null ) {
 	return ($user1['side_id'] == $user2['side_id']) ? Side::SAME_SIDE : Side::OTHER_SIDE;
 }
 
-function respondingParty( $clientId ) { global $AdminDAO, $case_id;
+function partyEmailAddrs( $clientId ) { global $AdminDAO, $case_id;
 
 	_assert( [$case_id, $clientId] );
-	$rows = $AdminDAO->getrows('attorney a,client_attorney c_a',"*",
-									"c_a.client_id = :client_id AND a.id = c_a.attorney_id AND c_a.case_id = :case_id",
-									array('client_id'=>$clientId,'case_id'=>$case_id) );
+	$rows = $AdminDAO->getrows( 'attorney a,client_attorney c_a',"*",
+									"c_a.client_id = :client_id AND
+									 a.id = c_a.attorney_id AND
+									 c_a.case_id = :case_id",
+									[ 'client_id'=>$clientId, 'case_id'=>$case_id ] );
 	$result = [];
 	foreach( $rows as $row ) {
 		$result[] = $row['attorney_email'];
@@ -59,15 +61,18 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
             <div class="panel-heading">
             <div class="row">
             	<div class="col-md-8">
+					<?php if( $_ENV['APP_ENV'] == 'local' ) { ?>
+					<a href="#" class="btn btn-info" title="Edit case" onclick="selecttab('46_tab','get-case.php?id=<?= $case_id ?>','46');"><i class="fa fa-edit"></i> Edit</a>
+					<?php } ?>
                 </div>
                 <div class="col-md-4" align="right">
                 	<p style="text-align: center;width: 290px;"> Create Discovery as the:</p>
 
-					<button  class="btn btn-success" onclick="selecttab('47_tab','discovery.php?pid=<?= $case_id ?>&type=1','47');"> Propounder <?= instruction(4, '#fff') ?></button>
+					<button  class="btn btn-success" onclick="selecttab('47_tab','discovery.php?pid=<?= $case_id ?>&type=<?= Discovery::TYPE_EXTERNAL ?>','47');"> Propounder <?= instruction(4, '#fff') ?></button>
 
                 	<span style="padding-left:3px;padding-right:3px">or</span>
 
-                    <button  class="btn btn-success" onclick="selecttab('47_tab','discovery.php?pid=<?= $case_id ?>&type=2','47');"> Respondent <?= instruction(5, '#fff') ?></button>
+                    <button  class="btn btn-success" onclick="selecttab('47_tab','discovery.php?pid=<?= $case_id ?>&type=<?= Discovery::TYPE_INTERNAL ?>','47');"> Respondent <?= instruction(5, '#fff') ?></button>
                 </div>
             </div>
             </div>
@@ -90,19 +95,33 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
                 </thead>
                 <tbody>
 <?php
-					if( sizeof($discoveries) ) {
+					if( !sizeof($discoveries) ) {
+?>
+                        <tr>
+                        	<td align="center" colspan="9">
+                                <!--<div class="alert alert-danger text-center" role="alert">
+                                Sorry no discovery found.
+                                </div>-->
+                            </td>
+                        </tr>
+<?php
+					}
+					else {
 						foreach( $discoveries as $discovery ) {
+							$id  = $discovery['id'];
 							$uid = $discovery['uid'];
+							$propoundingClient = $discovery['propounding'];
+							$propoundingAttorney = $discovery['propounding_attorney'] ?: -1;
+							$respondingClient = $discovery['responding'];
+							$creator_id  = $discovery['creator_id'];
+							//$is_submitted	= $discovery['is_submitted'];
+							$is_served		= $discovery['is_served'];
+							$discoveryType	= $discovery['type'];
+
 							$RequestPDF_FileName  = UPLOAD_URL ."documents/". $uid ."/". $discoveriesModel->getTitle($discovery) .".pdf";
 							$ResponsePDF_FileName = UPLOAD_URL ."documents/". $uid ."/". $responsesModel->getTitle(0,$discovery) .".pdf";
 							$totalChilds			= 0;
 							$totalChildsNotIncludes	= 0;
-							$id  			= $discovery['id'];
-							_assert($discovery['id'] = $id);
-							$creator_id		= $discovery['creator_id'];
-							//$is_submitted	= $discovery['is_submitted'];
-							$is_served		= $discovery['is_served'];
-							$discoveryType	= $discovery['type'];
 
 							if( $discoveryType == Discovery::TYPE_INTERNAL ) {
 								if( checkSides($creator_id) != Side::SAME_SIDE ) {
@@ -113,7 +132,7 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 								* Check to see login user is responding party attorney or not
 								* If he is the attorney of responding party then we give him option to respond in external discovery.
 								**/
-								$respondingParty = respondingParty( $discovery['responding'] );
+								$respondingParty = partyEmailAddrs( $discovery['responding'] );
 								/**
 								* GET RESPONSES OF PARENT INTERNAL DISCOVERY
 								**/
@@ -127,7 +146,8 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 
 								$discovery_ACL[] = "request-pdf";
 								$discovery_ACL[] = "view";
-								$discovery_ACL[] = "edit";
+
+								$discovery_ACL[] = "edit"; // same side, so we can edit/delete
 								$discovery_ACL[] = "delete";
 
 								if( !sizeof($responses) ) {
@@ -160,12 +180,12 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 <?php
 												if( in_array("view",$discovery_ACL) ) {
 ?>
-													<!-- 1:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=1&response_id=0','49');"><i class="fa fa-eye"></i> View</a></li>
+													<!-- 1:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=<?= Discovery::VIEW_PROPOUNDING ?>&response_id=0','49');"><i class="fa fa-eye"></i> View</a></li>
 <?php
 												}
 												if( in_array("respond",$discovery_ACL) ) {
 ?>
-													<!-- 1:respond --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=0&respond=1&response_id=0','49');"><i class="fa fa-edit"></i> Respond</a></li>
+													<!-- 1:respond --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=<?= Discovery::VIEW_RESPONDING ?>&respond=<?= Discovery::TYPE_EXTERNAL ?>&response_id=0','49');"><i class="fa fa-edit"></i> Respond</a></li>
 <?php
 												}
 												if( in_array("edit",$discovery_ACL) ) {
@@ -175,7 +195,7 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 												}
 												if( in_array("request-pdf",$discovery_ACL) ) {
 ?>
-													<!-- 1:pdf --> <li class="list-menu"><a href="makepdf.php?id=<?= $discovery['uid'] ?>&view=1" target="_blank"   ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
+													<!-- 1:pdf --> <li class="list-menu"><a href="makepdf.php?id=<?= $discovery['uid'] ?>&view=<?= Discovery::VIEW_PROPOUNDING ?>" target="_blank"   ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
 <?php
 												}
 												if( in_array("delete",$discovery_ACL) ) {
@@ -190,8 +210,8 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 								</tr>
 <?php
 								$totalChilds += sizeof($responses);
-								if( !empty($responses) ) {
-									foreach($responses as $response_data) {
+								//if( !empty($responses) ) {
+									foreach( $responses ?: [] as $response_data ) {
 										$response_id = $response_data['id'];
 										$mc = $meetConferModel->findByResponseId($response_id, false);
 
@@ -202,7 +222,7 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 
 										$response_ACL[] = 'response-pdf';
 										$response_ACL[] = 'view';
-										if ( !in_array( $loggedin_email, $respondingParty )) {
+										if( checkSides( $response_id ) == Side::OTHER_SIDE ) {
 											$response_ACL[] = 'meet-confer';
 										}
 
@@ -211,7 +231,6 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 											if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) { // ??
 												$response_ACL[]	= "unserve";
 											}
-											$response_ACL[]	= "add-response";
 										}
 										else {
 											$response_ACL[]	= "edit";
@@ -244,23 +263,23 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 
 													if( in_array("view",$response_ACL) ) {
 ?>
-														<!-- 2:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=0&response_id=<?= $response_id ?>','49');"><i class="fa fa-eye"></i> View</a></li>
+														<!-- 2:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=<?= Discovery::VIEW_RESPONDING ?>&response_id=<?= $response_id ?>','49');"><i class="fa fa-eye"></i> View</a></li>
 <?php
 													}
 													if( in_array("edit",$response_ACL) ) {
 ?>
-														<!-- 2:edit --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-edit"></i> Edit</a></li>
+														<!-- 2:edit --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=<?= Discovery::VIEW_RESPONDING ?>&respond=<?= Discovery::TYPE_EXTERNAL ?>&response_id=<?= $response_id ?>','49');"><i class="fa fa-edit"></i> Edit</a></li>
 <?php
 													}
 													if( in_array("supp-amend",$response_ACL) ) {
 ?>
-														<!-- 2:supp --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&supp=1&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-refresh"></i> Supp/Amend</a></li>
+														<!-- 2:supp --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&supp=1&view=<?= Discovery::VIEW_RESPONDING ?>&respond=<?= Discovery::TYPE_EXTERNAL ?>&response_id=<?= $response_id ?>','49');"><i class="fa fa-refresh"></i> Supp/Amend</a></li>
 <?php
 													}
 
 													if( in_array("response-pdf",$response_ACL) ) {
 ?>
-														<!-- 2:pdf/response --> <li class="list-menu"><a href="makepdf.php?id=<?= $discovery['uid'] ?>&view=0&response_id=<?= $response_id ?>" target="_blank" ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
+														<!-- 2:pdf/response --> <li class="list-menu"><a href="makepdf.php?id=<?= $discovery['uid'] ?>&view=<?= Discovery::VIEW_RESPONDING ?>&response_id=<?= $response_id ?>" target="_blank" ><i class="fa fa-file-pdf-o"></i> PDF</a></li>
 <?php
 													}
 													if( in_array("unserve",$response_ACL) ) {
@@ -285,7 +304,7 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 										</tr>
 <?php
 									}
-								}
+								//}
 								if( !$totalChilds ) {
 ?>
 								<script>
@@ -295,11 +314,13 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 								<?php
 								}
 							}
-							else if( $discoveryType == Discovery::TYPE_EXTERNAL ) {
+							else { // Discovery::TYPE_EXTERNAL
+								_assert( $discoveryType == Discovery::TYPE_EXTERNAL, $discovery );
+
 								//if($creator_id == $_SESSION['addressbookid'])
 								{
-									$RequestPDF_FileName	= "makepdf.php?id=".$discovery['uid']."&view=1";
-									//$ResponsePDF_FileName	= "makepdf.php?id=".$discovery['uid']."&view=0";
+									$RequestPDF_FileName	= "makepdf.php?id=$uid&view=". Discovery::VIEW_PROPOUNDING;
+									//$ResponsePDF_FileName	= "makepdf.php?id=$uid&view=". Discovery::VIEW_RESPONDING;
 								}
 
 								if( checkSides($creator_id) != Side::SAME_SIDE ) {
@@ -312,11 +333,11 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 								* Check to see login user is responding party attorney or not
 								* If he is the attorney of responding party then we give him option to respond in external discovery.
 								**/
-								$respondingParty = respondingParty($discovery['responding']);
+								$respondingParty = partyEmailAddrs( $discovery['responding'] );
 								/**
 								* GET RESPONSES OF PARENT EXTERNAL DISCOVERY
 								**/
-								$responses = $responsesModel->getByDiscovery($id);
+								$responses   = $responsesModel->getByDiscovery($id);
 								$showDueDate = !$responsesModel->isAnyServed($responses);
 
 								/**
@@ -331,6 +352,10 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 									if( checkSides( $creator_id ) == Side::SAME_SIDE ) {
 										$discovery_ACL[] = "supp-amend";
 										$discovery_ACL[] = "change-due-date";
+
+										if( !sizeof($responses) ) {
+											$discovery_ACL[] = "add-response";
+										}
 									}
 									if( $loggedin_email == 'jeff@jeffschwartzlaw.com' ) {
 										$discovery_ACL[] = "unserve";
@@ -371,7 +396,7 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 <?php
 												if( in_array("view",$discovery_ACL) ) {
 ?>
-													<!-- 3:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=1&response_id=0','49');"><i class="fa fa-eye"></i> View</a></li>
+													<!-- 3:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=<?= Discovery::VIEW_PROPOUNDING ?>&response_id=0','49');"><i class="fa fa-eye"></i> View</a></li>
 <?php
 												}
 												if( in_array("edit",$discovery_ACL) ) {
@@ -381,7 +406,12 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 												}
 												if( in_array("respond",$discovery_ACL) ) {
 ?>
-													<!-- 3:respond --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=0&respond=1&response_id=0','49');"><i class="fa fa-edit"></i> Respond</a></li>
+													<!-- 3:respond --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=<?= Discovery::VIEW_RESPONDING ?>&respond=<?= Discovery::TYPE_EXTERNAL ?>&response_id=0','49');"><i class="fa fa-edit"></i> Respond</a></li>
+<?php
+												}
+												if( in_array("add-response",$discovery_ACL) ) {
+?>
+													<!-- 3:add-response --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=<?= Discovery::VIEW_RESPONDING ?>&respond=<?= Discovery::TYPE_INTERNAL ?>&response_id=0','49');"><i class="fa fa-edit"></i> Add response</a></li>
 <?php
 												}
 												if( in_array("supp-amend",$discovery_ACL) ) {
@@ -423,15 +453,15 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 <?php
 								$totalChilds += sizeof($responses);
 
-								if( !empty($responses) ) {
-									foreach($responses as $response_data) {
+								//if( !empty($responses) ) {
+									foreach( $responses ?: [] as $response_data ) {
 										$response_creator_id	= $response_data['created_by'];
 										$isserved				= $response_data['isserved'];
 										$response_id			= $response_data['id'];
 
 										$mc = $meetConferModel->findByResponseId($response_id, false);
 
-										$ResponsePDF_FileName = "makepdf.php?id=".$discovery['uid']."&view=0&response_id=".$response_id;
+										$ResponsePDF_FileName = "makepdf.php?id=".$discovery['uid']."&view=<?= Discovery::VIEW_RESPONDING ?>&response_id=".$response_id;
 										if( !$isserved && checkSides($response_creator_id) != Side::SAME_SIDE ) {
 											$totalChildsNotIncludes++; continue;
 										}
@@ -486,17 +516,17 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 <?php
 													if( in_array("view",$response_ACL) ) {
 ?>
-														<!-- 4:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=0&response_id=<?= $response_id ?>','49');"><i class="fa fa-eye"></i> View</a></li>
+														<!-- 4:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=<?= Discovery::VIEW_RESPONDING ?>&response_id=<?= $response_id ?>','49');"><i class="fa fa-eye"></i> View</a></li>
 <?php
 													}
 													if( in_array("edit",$response_ACL) ) {
 ?>
-														<!-- 4:edit --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-edit"></i> Edit</a></li>
+														<!-- 4:edit --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&view=<?= Discovery::VIEW_RESPONDING ?>&respond=<?= Discovery::TYPE_EXTERNAL ?>&response_id=<?= $response_id ?>','49');"><i class="fa fa-edit"></i> Edit</a></li>
 <?php
 													}
 													if( in_array("supp-amend",$response_ACL) ) {
 ?>
-                                                    	<!-- 4:supp --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&supp=1&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-refresh"></i> Supp/Amend</a></li>
+                                                    	<!-- 4:supp --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $discovery['uid'] ?>&supp=1&view=<?= Discovery::VIEW_RESPONDING ?>&respond=<?= Discovery::TYPE_EXTERNAL ?>&response_id=<?= $response_id ?>','49');"><i class="fa fa-refresh"></i> Supp/Amend</a></li>
 <?php
 													}
 
@@ -532,7 +562,7 @@ function respondingParty( $clientId ) { global $AdminDAO, $case_id;
 										</tr>
 <?php
 									}
-								}
+								//}
 								if( $id ) {
 								/*******************************************
 								* 		Supplement Amending Discoveries
@@ -549,7 +579,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 										$supp_is_served		= $suppdiscovery['is_served'];
 										$supp_discoveryType	= $suppdiscovery['type']; // Discovery::TYPE_EXTERNAL/TYPE_INTERNAL
 
-										$RequestPDF_FileName = "makepdf.php?id=".$suppdiscovery['uid']."&view=1";
+										$RequestPDF_FileName = "makepdf.php?id=".$suppdiscovery['uid']."&view=". Discovery::VIEW_PROPOUNDING;
 
 										if( $supp_discoveryType == Discovery::TYPE_INTERNAL) {
 											$totalChildsNotIncludes++; continue;
@@ -564,7 +594,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 										* Check to see login user is responding party attorney or not
 										* If he is the attorney of responding party then we give him option to respond in external discovery.
 										**/
-										$supp_respondingParty = respondingParty($suppdiscovery['responding']);
+										$supp_respondingParty = partyEmailAddrs( $suppdiscovery['responding'] );
 
 										/**
 										* GET RESPONSES OF SUPP/EMEND EXTERNAL DISCOVERY
@@ -616,7 +646,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 <?php
 														if( in_array("view",$supp_discovery_ACL) ) {
 ?>
-															<!-- 5:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $suppdiscovery['uid'] ?>&view=1&response_id=0','49');"><i class="fa fa-eye"></i> View</a></li>
+															<!-- 5:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $suppdiscovery['uid'] ?>&view=<?= Discovery::VIEW_PROPOUNDING ?>&response_id=0','49');"><i class="fa fa-eye"></i> View</a></li>
 <?php
 														}
 														if( in_array("edit",$supp_discovery_ACL) ) {
@@ -627,7 +657,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 														if( in_array("respond",$supp_discovery_ACL) )
 														{
 ?>
-															<!-- 5:respond --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $suppdiscovery['uid'] ?>&view=0&respond=1&response_id=0','49');"><i class="fa fa-edit"></i> Respond</a></li>
+															<!-- 5:respond --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $suppdiscovery['uid'] ?>&view=<?= Discovery::VIEW_RESPONDING ?>&respond=<?= Discovery::TYPE_EXTERNAL ?>&response_id=0','49');"><i class="fa fa-edit"></i> Respond</a></li>
 <?php
 														}
 														if( in_array("supp-amend",$supp_discovery_ACL) ) {
@@ -675,7 +705,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 
 												$mc = $meetConferModel->findByResponseId($response_id, false);
 
-												$ResponsePDF_FileName	= "makepdf.php?id=".$suppdiscovery['uid']."&view=0&response_id=".$response_id;
+												$ResponsePDF_FileName	= "makepdf.php?id=".$suppdiscovery['uid']."&". Discovery::VIEW_RESPONDING ."&response_id=".$response_id;
 
 												if( $supp_isserved && checkSides($supp_response_creator_id) == Side::SAME_SIDE ) {
 													$totalChildsNotIncludes++; continue;
@@ -732,17 +762,17 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 
 															if( in_array("view",$supp_response_ACL) ) {
 ?>
-																<!-- 6:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $suppdiscovery['uid'] ?>&view=0&response_id=<?= $response_id ?>','49');"><i class="fa fa-eye"></i> View</a></li>
+																<!-- 6:view --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','view.php?pid=<?= $case_id ?>&id=<?= $suppdiscovery['uid'] ?>&view=<?= Discovery::VIEW_RESPONDING ?>&response_id=<?= $response_id ?>','49');"><i class="fa fa-eye"></i> View</a></li>
 <?php
 															}
 															if( in_array("edit",$supp_response_ACL) ) {
 ?>
-																<!-- 6:edit --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $suppdiscovery['uid'] ?>&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-edit"></i> Edit</a></li>
+																<!-- 6:edit --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $suppdiscovery['uid'] ?>&view=<?= Discovery::VIEW_RESPONDING ?>&respond=<?= Discovery::TYPE_EXTERNAL ?>&response_id=<?= $response_id ?>','49');"><i class="fa fa-edit"></i> Edit</a></li>
 <?php
 															}
 															if( in_array("supp-amend",$supp_response_ACL) ) {
 ?>
-                                                            	<!-- 6:supp --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $suppdiscovery['uid'] ?>&supp=1&view=0&respond=1&response_id=<?= $response_id ?>','49');"><i class="fa fa-refresh"></i> Supp/Amend</a></li>
+                                                            	<!-- 6:supp --> <li class="list-menu"><a href="javascript:" onclick="selecttab('49_tab','discoverydetails.php?pid=<?= $case_id ?>&id=<?= $suppdiscovery['uid'] ?>&supp=1&view=<?= Discovery::VIEW_RESPONDING ?>&respond=<?= Discovery::TYPE_EXTERNAL ?>&response_id=<?= $response_id ?>','49');"><i class="fa fa-refresh"></i> Supp/Amend</a></li>
 <?php
 															}
 
@@ -788,18 +818,7 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 <?php
 								}
 							}
-						}
-					}
-                    else {
-?>
-                        <tr>
-                        	<td align="center" colspan="9">
-                                <!--<div class="alert alert-danger text-center" role="alert">
-                                Sorry no discovery found.
-                                </div>-->
-                            </td>
-                        </tr>
-<?php
+						}/*foreach*/
 					}
 ?>
                 </tbody>

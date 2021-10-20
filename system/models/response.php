@@ -15,6 +15,7 @@ class Response extends Payable {
                        d.form_id             AS form_id,
                        dq.discovery_id       AS discovery_id,
                        rq.answer 		         AS answer,
+                       rq.answered_at	       AS answer_time,
                        rq.answer_detail      AS answer_detail,
                        rq.objection          AS objection,
                        rq.final_response     AS final_response,

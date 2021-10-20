@@ -81,7 +81,7 @@ h5 {
     </tr>
 </table>
 <?php
-    if( $view != 1 ) {
+    if( $view == Discovery::VIEW_RESPONDING ) {
 ?>
 <table class="tabela1" style="border:none !important;overflow: wrap">
     <tr>
@@ -113,7 +113,7 @@ h5 {
     </table>
 <?php
         }
-	if( in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS, Discovery::FORM_CA_RPDS)) ) {
+	if( in_array( $form_id, [Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS, Discovery::FORM_CA_RPDS] ) ) {
 ?>
     <div> <?= html_entity_decode($instructions) ?> </div>
 <?php
@@ -124,12 +124,12 @@ h5 {
 			$uncheckedimg		=	'<img src="../uploads/icons/checkbox_empty_small.png" width="15px">';
 			$incidenttext1		=	"&nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.";
 
-			if( $incidentoption == 1 ) {
+			if( $incidentoption == Discovery::INCIDENT_STANDARD ) {
 				$incidenttext2		=	"&nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled 'Sec. 4(a)(2)'):";
 				$option1			=	$checkedimg.$incidenttext1;
 				$option2			=	$uncheckedimg.$incidenttext2;
 			}
-			else if( $incidentoption == 2 ) {
+			else if( $incidentoption == Discovery::INCIDENT_CUSTOM ) {
 				$incidenttext2		=	"&nbsp;&nbsp;(2) $incidenttext";
 				$option1			=	$uncheckedimg.$incidenttext1;
 				$option2			=	$checkedimg.$incidenttext2;
@@ -166,8 +166,8 @@ h5 {
             <h4 class="text-center">Sec. 4. Definitions</h4>
             <p>Words in BOLDFACE CAPITALS in these interrogatories are defined as follows:</p>
             <p>(a) (Check one of the following):</p>
-            <p><?= $option1 ?></p>
-            <p><?= $option2 ?></p>
+            <p><?= @$option1 ?: '' ?></p>
+            <p><?= @$option2 ?: '' ?></p>
 
             <p>(b) YOU OR ANYONE ACTING ON YOUR BEHALF includes you, your agents, your employees, your insurance companies, their agents, their employees, your attorneys, your accountants, your investigators, and anyone else acting on your behalf.</p>
             <p>(c) PERSON includes a natural person, firm, association, organization, partnership, business, trust, limited liability company, corporation, or public entity.</p>

@@ -1,4 +1,7 @@
 <?php
+
+use function EasyRogs\_assert as _assert;
+
   class User extends BaseModel {
     const TABLE = 'system_addressbook';
 
@@ -228,8 +231,16 @@
       return $user;
     }
     public function getFullName($user) {
+
+      if(!@$user) {
+        _assert( $user, 'Invalid $user' );
+        return; // there's no point
+      }
       $user = $this->asUser($user);
-      return trim($user['firstname']) .' '. trim($user['middlename']) .' '. trim($user['lastname']);
+      _assert( @$user['firstname'] || @$user['middlename'] || @$user['lastname'] );
+
+      $result = trim(@$user['firstname']) .' '. trim(@$user['middlename']) .' '. trim(@$user['lastname']);
+      return $result;
     }
     public function getFullAddress($user) {
       global $statesModel;
@@ -296,9 +307,9 @@
       return $user['fkgroupid'] == self::ATTORNEY_GROUP_ID;
     }
 
-    static function isActive($user) {
-      global $logger;
-      $logger->debug( "USER: " . json_encode([$user['pkaddressbookid'], $user['email'], $user['emailverified']]) );
+    static function isActive($user) { global $logger;
+
+      $logger->debug( [ "USER: ", $user['pkaddressbookid'], $user['email'], $user['emailverified']] );
       return $user['emailverified'] == 1;
     }
 
