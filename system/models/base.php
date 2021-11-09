@@ -77,6 +77,7 @@
           self::$db = new PDO( $dsn, $username, $password/*, [PDO::ATTR_PERSISTENT => true]*/ );
           self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
           self::$db->exec("SET NAMES 'utf8'");
+          self::$db->exec("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
           $retries = 0;
         } catch ( PDOException $exception ) {
           // TODO: log exception
@@ -408,6 +409,8 @@
     }
 
     static function pluck($items, $key) {
+      if (!$items) return [];
+      
       return array_map(function($item) use ($key) {
         return $item[$key];
       }, $items);

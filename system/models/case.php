@@ -137,12 +137,12 @@
     }
     
     // TODO: solve with query
-    function usersCount($case) {
+    function usersCount($case, $role = null) {
       $caseId = is_array($case) ? $case['id'] : $case;
       $sides = $this->sides->byCaseId($caseId);
       $count = 0;
       foreach($sides as $side) {
-        $count += $this->sides->usersCount($side);
+        $count += $this->sides->usersCount($side, $role);
       }
       return $count;
     }

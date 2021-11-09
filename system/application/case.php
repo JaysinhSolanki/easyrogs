@@ -5,10 +5,10 @@
 	$caseId	  =	$_GET['id'];
 	$newCase  = !$caseId;
 	$case 	  = $newCase ? $casesModel->getDraft() : $casesModel->find($caseId);
-	$caseId		= $case['id'];
+	$caseId	  = $case['id'];
 	$isDraft  = $case['is_draft'];
-	$uid		  = $case['uid'];
-	$states 	= $statesModel->getByCountry(Country::UNITED_STATES);
+	$uid	    = $case['uid'];
+	$states   = $statesModel->getByCountry(Country::UNITED_STATES);
 	$counties = $countiesModel->getAll();
 	$parties  = $casesModel->getClients($caseId);
 
@@ -19,7 +19,15 @@
 	  HttpResponse::unauthorized();
 	}
 
-	$canDeleteCase = $side && $casesModel->usersCount($caseId) === 1; // current user is the only one left... allow delete case.
+  // current user is the only attorney left... allow delete case.
+  $attorneysLeft = $casesModel->usersCount($caseId, User::ATTORNEY_GROUP_ID);
+	$canDeleteCase = $side && # side exists and..
+                   (
+                     $attorneysLeft === 0 || # there are no attorneys left in the case or...
+                     ( # there is only one attorney left and is the current user v
+                       $attorneysLeft === 1 && $currentUser->user['fkgroupid'] == User::ATTORNEY_GROUP_ID
+                     )
+                   );
 ?>
 
 <style type="text/css">
@@ -64,7 +72,7 @@
 						</div>
 						<div class="col-md-5" align="right">
 							<?php if (!$isDraft): ?>
-								<?php if($canDeleteCase): ?>
+                <?php if($canDeleteCase): ?>
 									<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
 								<?php else: ?>
 									<a href="javascript:;" class="btn btn-black" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-sign-out"></i> Leave Case</a>

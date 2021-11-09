@@ -141,7 +141,7 @@ function exception_logger($e) { global $logger;
   if( $_ENV['APP_ENV'] == 'local' ) $logger->browser_log( $text, $text );
   die();
 }
-function error_logger($errNo, $msg, $file, $line, $vars) { global $logger;
+function error_logger($errNo, $msg, $file, $line, $vars = []) { global $logger;
   if( !error_reporting() ) return false; // `@code` silenced by developer, respect that
 
     if( !(error_reporting() & $errNo) ) {

@@ -283,8 +283,9 @@
     function getAllUsers($sideId) {
       $query = $this->queryTemplates['getUsers'];
       $users = $this->readQuery($query, ['side_id' => $sideId]);
+
       $primaryAttorney = $this->getPrimaryAttorney($sideId);
-      if ($primaryAttorney) {
+      if ($primaryAttorney && !self::inCollection($primaryAttorney, $users, 'systemaddressbookid')) {
         $users[] = $primaryAttorney;
       }
       return $users;
@@ -305,7 +306,7 @@
 
     function getPrimaryAttorney($sideId) {
       $query = $this->queryTemplates['getPrimaryAttorney'];
-      return $this->readQuery($query, ['side_id' => $sideId], 1)[0];
+      return $this->readQuery($query, ['side_id' => $sideId])[0];
     }
 
     function cleanupUsers($sideId) {
@@ -627,10 +628,16 @@
       ]);
     }
 
-    function usersCount($side) {
+    function usersCount($side, $role = null) {
       $side = is_array($side) ? $side : $this->find($side);
-      $count = $this->countBy('sides_users', ['side_id' => $side['id']]);
-      $count = $side['primary_attorney_id'] ? $count + 1 : $count;
+
+      $users = $this->getAllUsers($side['id']);
+
+      $count = 0;
+      foreach($users as $user) {
+        $count += $role === null || $user['fkgroupid'] == $role ? 1 : 0;
+      }
+
       return $count;
     }
 
