@@ -23,14 +23,14 @@ class ERPayment {
         iconColor: '#fa755a'
       }
     };
-  
+
     this.start();
   }
-  
+
   hidePaymentForm() {
     $('#payment-form').hide();
     $('input#save_to_profile').prop('checked', true);
-  } 
+  }
 
   async showPaymentForm() {
     if(!this.card) {
@@ -45,7 +45,7 @@ class ERPayment {
 
     $('#payment-form').show();
 	}
-  
+
   hookPaymentSubmit()  {
     const self = this;
     $('button#submit-payment').on('click', async function(ev) {
@@ -92,7 +92,7 @@ class ERPayment {
 
   hookFutureUsageUX() {
     const self = this;
-    
+
     $('input[name=payment_method_id]').on('change', function() {
       $(this).val() ? self.hidePaymentForm() : self.showPaymentForm();
       if ($(this).data('type') == 'side') {
@@ -105,7 +105,7 @@ class ERPayment {
       }
     });
     $('input[name=payment_method_id]:checked').trigger('change');
-    
+
     $('input#save_to_profile').on('change', function() {
       const checked = $(this).is(":checked");
       $('input#save_to_side').prop('disabled', !checked);
@@ -130,14 +130,15 @@ class ERPayment {
 						</div>
 					`);
         }
-        
+
         self.hookFutureUsageUX();
         self.hookPaymentSubmit();
 
         $('#payment-modal').modal('show');
+        $('#payment-modal').data('instance', self);
 			},
 			(error) => showResponseMessage(error)
-    );    
+    );
   }
 
 }

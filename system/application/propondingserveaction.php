@@ -18,16 +18,19 @@ $pos_text       = $_POST['pos_text'];
 
 $payable = $respond ? $responsesModel : $discoveriesModel;
 $itemId  = $respond ? $response_id 	  : $discovery_id;
-if ( ! $payable->isPaid($itemId) ) {
-  $discovery       = $discoveriesModel->find($discovery_id);
-  $currentSide     = $sidesModel->getByUserAndCase($currentUser->id, $discovery['case_id']);
-  $primaryAttorney = $sidesModel->getPrimaryAttorney($currentSide['id']);
-  if ( ! User::hasCredits($primaryAttorney) ) {
-    HttpResponse::paymentRequired();
-  }
-  else {
-    $usersModel->redeemCredits($primaryAttorney);
-  }
+
+if( !@$_ENV['PAY_DEMO'] ) { // WARN: beware this line 👀
+	if( ! $payable->isPaid($itemId) ) {
+	$discovery       = $discoveriesModel->find($discovery_id);
+	$currentSide     = $sidesModel->getByUserAndCase($currentUser->id, $discovery['case_id']);
+	$primaryAttorney = $sidesModel->getPrimaryAttorney($currentSide['id']);
+	if ( ! User::hasCredits($primaryAttorney) ) {
+		HttpResponse::paymentRequired();
+	}
+	else {
+		$usersModel->redeemCredits($primaryAttorney);
+	}
+	}
 }
 
 $pos_updated_by			= $_SESSION['addressbookid'];

@@ -299,6 +299,9 @@ td, th {
 </script>
 
 <script src="<?= ROOTURL ?>system/assets/payments.js"></script>
+<?php if( @$_ENV['PAY_DEMO'] ) { ?>
+<script src="<?= ROOTURL ?>system/assets/paymentsDemo.js"></script>
+<?php } ?>
 <script>
   function payAndServe(callback = servePOS) {
     if ( validate() ) {
