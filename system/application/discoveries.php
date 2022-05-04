@@ -170,7 +170,8 @@ function partyEmailAddrs( $clientId ) { global $AdminDAO, $case_id;
 									<td> <?= dateformat($discovery['served'])                                                      ?> </td>
 									<td> <?= $showDueDate == 1 ? dateformat($discovery['due']) : "-"                               ?> </td>
 									<td> <?= $discovery['creator']                                                                 ?> </td>
-                                    <td> <?=  ($discoveryType == Discovery::TYPE_EXTERNAL) ? "EasyRogs" : "Other"                  ?> </td>
+                                    <td> <?=  ($discoveryType == Discovery::TYPE_EXTERNAL) ? "AI4Discovery" : "Other"                  ?> 
+</td>
 									<td align="center">
 										<div class="dropdown">
 											<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Action
@@ -251,7 +252,8 @@ function partyEmailAddrs( $clientId ) { global $AdminDAO, $case_id;
 											<td> <?= $response_data['isserved'] ? dateformat($response_data['servedate']) : ""                                ?> </td>
 											<td> <?= !$response_data['isserved'] ? dateformat($discovery['due']) : "-"                                        ?> </td>
 											<td> <?= $discovery['creator'];                                                                                   ?> </td>
-											<td> <?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other"                                    ?> </td>
+											<td> <?= ( $discoveryType == 
+Discovery::TYPE_EXTERNAL ) ? "AI4Discovery" : "Other"                                    ?> </td>
 
 										<td align="center">
 											<div class="dropdown">
@@ -385,7 +387,8 @@ function partyEmailAddrs( $clientId ) { global $AdminDAO, $case_id;
 									<td> <?= dateformat($discovery['served'])                                                      ?> </td>
 									<td> <?= $showDueDate == 1 ? dateformat($discovery['due']) : "-"                               ?> </td>
 									<td> <?= $discovery['creator']                                                                 ?> </td>
-                                    <td><?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other"                  ?> </td>
+                                    <td><?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "AI4Discovery" : "Other"                  ?> 
+</td>
 
 									<td align="center">
 										<div class="dropdown">
@@ -505,7 +508,8 @@ function partyEmailAddrs( $clientId ) { global $AdminDAO, $case_id;
 											<td> <?= $isserved ? dateformat($response_data['servedate']) : ""              	                                  ?> </td>
 											<td> <?= $isserved ? "-" : dateformat($discovery['due'])                       	                                  ?> </td>
 											<td> <?= getUserName($response_data['created_by'])                             	                                  ?> </td>
-                                        	<td> <?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other" 	                                  ?> </td>
+                                        	<td> <?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "AI4Discovery" : "Other" 	                                  
+?> </td>
 
 										<td align="center">
 											<div class="dropdown">
@@ -636,7 +640,8 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 											<td><?= dateformat($suppdiscovery['served'])                                                                       ?> </td>
 											<td><?= $showDueDateSupp ? dateformat($suppdiscovery['due']) : "-"                                                 ?> </td>
                                             <td><?= $suppdiscovery['creator']                                                                                  ?> </td>
-                                            <td><?= $discoveryType == Discovery::TYPE_EXTERNAL ? "EasyRogs" : "Other"                                          ?> </td>
+                                            <td><?= $discoveryType == Discovery::TYPE_EXTERNAL ? "AI4Discovery" : "Other"                                          
+?> </td>
 											<td align="center">
 												<div class="dropdown">
 													<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Action
@@ -750,7 +755,8 @@ Side::legacyTranslateCaseData($case_id, $supp_discoveries);
 												<td> <?= $supp_isserved ? dateformat($response_data['servedate']) : ""                                            ?> </td>
                                                 <td> <?= !$supp_isserved ? dateformat($suppdiscovery['due']) : "-"                                                ?> </td>
 												<td> <?=  getUserName($response_data['created_by'])                                                               ?> </td>
-												<td> <?= ( $discoveryType == Discovery::TYPE_EXTERNAL ) ? "EasyRogs" : "Other"                                    ?> </td>
+												<td> <?= ( $discoveryType == 
+Discovery::TYPE_EXTERNAL ) ? "AI4Discovery" : "Other"                                    ?> </td>
 
 												<td align="center">
 													<div class="dropdown">

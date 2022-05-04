@@ -894,7 +894,7 @@ $footertext			= '<table width="100%" style="margin-top:30px;">
                             <td width="5%" style="line-height:3px"></td>
                             <td style="line-height:18px" align="center">{PAGENO}<br/>
                                 <br/>' . $formNAME . '<br/>
-                                All rights reserved © ' . date("Y") . ' EasyRogs. U.S. Patent Pending
+                                All rights reserved © ' . date("Y") . ' AI4Discovery. U.S. Patent Pending
                             </td>
                             <td width="5%"  style="text-align: right; line-height:3px"></td>
                         </tr>

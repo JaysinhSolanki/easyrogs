@@ -387,7 +387,7 @@
         </button>
       </div>
       <div class="modal-body">
-       <label for="caseteam_attr_email">EasyRogs sends the following reminders:</label>
+       <label for="caseteam_attr_email">AI4Discovery sends the following reminders:</label>
         <ol>
         	<li><b>To the Attorney:</b> a week before the Response is due.</li>
             <li><b>To the Responding Party:</b> 5 days before their answers are due back to the Attorney. And 5 days after the Attorney sent it, if the Party hasn't at least looked at it.</li>

@@ -89,7 +89,7 @@
             <div style='text-align:center'>
               MEET & CONFER RE: " . strtoupper($mc['subject']) . "
               <br/>
-              <small>All rights reserved © 2020 EasyRogs. U.S. Patent Pending</small>
+              <small>All rights reserved © 2020AI4Discoverys. U.S. Patent Pending</small>
             </div>
           ");
           $mpdf->WriteHTML($html, \Mpdf\HTMLParserMode::DEFAULT_MODE);

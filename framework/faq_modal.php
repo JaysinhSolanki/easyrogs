@@ -25,7 +25,7 @@ p {
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header" style="padding:10px">
-                <h5 class="modal-title text-center">EasyRogs FAQs
+                <h5 class="modal-title text-center">AI4Discovery FAQs
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"
                                                                                                       style="font-size: 36px;">&times;</span>
                     </button>

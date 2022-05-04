@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>{$title} | EasyRogs</title>
+    <title>{$title} | AI4Discovery</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" href="{$ASSETS_URL}/layouts/two-panels-full-height.css" />
     {include file="assets/global-styles.tpl"}
@@ -15,7 +15,7 @@
         </div>
         <div class="col-md-6 er-panel-right">
           <div class="d-block d-md-none text-center">
-            <img src="{$ASSETS_URL}images/logo.png" alt="EasyRogs Logo" width="200"/>
+            <img src="{$ASSETS_URL}images/logo.png" alt="AI4Discovery Logo" width="200"/>
             <br/>
             <br/>
           </div>

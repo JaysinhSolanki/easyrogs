@@ -7,7 +7,7 @@
       </div>
       <div class="modal-body">
         <div style="font-size: 11pt;">
-        <p>EasyRogs will email <span id="responding-client-name" /> asking them to respond to this discovery. Add instructions below, if you’d like, then click Send.</p>
+        <p>AI4Discovery will email <span id="responding-client-name" /> asking them to respond to this discovery. Add instructions below, if you’d like, then click Send.</p>
         <textarea type="text" rows="20" name="notes_for_client" style="height:15em;" class="form-control" id="notes_for_client"><?= ""
         ?></textarea>
         </div>

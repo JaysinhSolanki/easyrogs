@@ -18,8 +18,8 @@
   <br/>
   <br/>
   <p> You are hereby served with {$propoundingName}'s {$discoveryName} (attached).</p>
-	<p> If you're not already using <i>EasyRogs</i>, click the button below for a complimentary membership.</p>
-  <p><i>EasyRogs</i> makes Discovery Easy, Saves Time & Money, and Protects our Health.</p>
+	<p> If you're not already using <i>AI4Discovery</i>, click the button below for a complimentary membership.</p>
+  <p><i>AI4Discovery</i> makes Discovery Easy, Saves Time & Money, and Protects our Health.</p>
   <br />
 	<b>___________</b>
   <br />

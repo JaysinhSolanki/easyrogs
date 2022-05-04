@@ -63,8 +63,10 @@
   // globals (LEGACY)
   date_default_timezone_set("America/Los_Angeles");
   $dateformate				    =	'n/j/Y';
-  $systemmaintitle			  =	"EasyRogs";
-  $systemmaindescription	=	"EasyRogs is an electronic discovery system. It allows attorneys and their support staff to create and Serve Discovery instantly, easily, and inexpensively. No paper, toner, envelopes, or postage. It also allows attorneys and their clients to collaborate on Discovery Responses. ";
+  $systemmaintitle			  =	"AI4Discovery";
+  $systemmaindescription	=	"AI4Discovery is an electronic discovery system. It allows attorneys and their support staff to 
+create and 
+Serve Discovery instantly, easily, and inexpensively. No paper, toner, envelopes, or postage. It also allows attorneys and their clients to collaborate on Discovery Responses. ";
   $screensnotincludes			=	"";
   $AdminDAO 	            = new AdminDAO;
 

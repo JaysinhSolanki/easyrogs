@@ -52,7 +52,7 @@ ob_start();
 <?php echo $senderPhone; ?><br />
 <br />
 <br />
-<?php echo "&copy; ".date('Y')." EasyRogs.com"; ?>
+<?php echo "&copy; ".date('Y')." AI4Discovery.com"; ?>
 </p>
 <?php
     $html = ob_get_contents();

@@ -159,7 +159,7 @@ require_once(SYSTEMPATH."application/ctxhelp_header.php");
 		}
 		</style>
 				<div class="cta-panel hpanel" style="text-align: center; ">
-					<h3>New to EasyRogs?</h3>
+					<h3>New to AI4Discovery?</h3>
 
 						<a href="<?php echo DOMAIN;?>signup.php" class="btn btn-lg btn-warning " style="width:80%;display:block; margin: auto">
 							<i class="fa fa-sign-in"></i> &nbsp;&nbsp;Join Now

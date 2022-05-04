@@ -15,7 +15,8 @@
 {block name=body}
   <p>Dear {$name},</p>
   <br/>
-  <p>{$senderName} &lt;<a href="mailto:{$senderEmail}">{$senderEmail}</a>&gt; from {$senderFirm} has invited you to join its team in EasyRogs.
+  <p>{$senderName} &lt;<a href="mailto:{$senderEmail}">{$senderEmail}</a>&gt; from {$senderFirm} has invited you to join its team in 
+AI4Discovery.
   Click the button below to do so. Membership is complimentary.</p>
-  <p><i>EasyRogs</i> makes Discovery Easy, Saves Time & Money, and Protects our Health.</p>
+  <p><i>AI4Discovery</i> makes Discovery Easy, Saves Time & Money, and Protects our Health.</p>
 {/block}

@@ -1,8 +1,8 @@
 {assign var='actionUrl' value=$actionUrl|default:'https://easyrogs.com'}
-{assign var='actionText' value=$actionText|default:'Go to EasyRogs.com'}
+{assign var='actionText' value=$actionText|default:'Go to AI4Discovery.com'}
 <html>
   <head>
-    <title>EasyRogs</title>
+    <title>AI4Discovery</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="x-apple-disable-message-reformatting">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,7 +40,7 @@
                                     <tr>
                                       <td align="center" valign="middle" height="30" style="padding-top: 30px;">
                                         <a href="https://easyrogs.com" style="font-family: Authenia-Solid !important; font-weight: bold; font-size: 32px !important">
-                                          <img src="{$ASSETS_URL}images/logo.png" alt="EasyRogs Logo" width="200"/>
+                                          <img src="{$ASSETS_URL}images/logo.png" alt="AI4Discovery Logo" width="200"/>
                                         </a>
                                       </td>
                                     </tr>
@@ -73,7 +73,7 @@
                                           <br/>
                                           Regards,
                                           <br/>
-                                          <i>The EasyRogs Team</i>
+                                          <i>The AI4Discovery Team</i>
                                           {/if}
                                         </div>
                                       </td>
@@ -110,7 +110,8 @@
                   </tr>
                   <tr>
                     <td align="center" valign="top">
-                      <p style="color: #7f7f7f; font-size: 12px; padding: 20px 0;">All rights reserved &copy; {$smarty.now|date_format:"%Y"} EasyRogs. U.S. Patent Pending.</p>
+                      <p style="color: #7f7f7f; font-size: 12px; padding: 20px 0;">All rights reserved &copy; 
+{$smarty.now|date_format:"%Y"} AI4Discovery. U.S. Patent Pending.</p>
                     </td>
                   </tr>
                 </tbody>

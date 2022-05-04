@@ -3,7 +3,7 @@
 
 {extends file="layouts/embedded.tpl"}
 
-{assign var="title" value="EasyRogs Knowledge Base"}
+{assign var="title" value="AI4Discovery Knowledge Base"}
 
 {block name=panel_body}
   <ul class="nav nav-tabs" id="kb-index-tabs" role="tablist">

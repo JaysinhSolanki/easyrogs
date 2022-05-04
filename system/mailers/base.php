@@ -7,7 +7,7 @@
     const TESTING_PROD_RECIPIENT = 'easyrogs@gmail.com';
 
     const FROM_EMAIL = 'service@easyrogs.com';
-    const FROM_NAME  = 'EasyRogs Service';
+    const FROM_NAME  = 'AI4Discovery Service';
 
     static function sendEmail(
       $to, $subject, $body,

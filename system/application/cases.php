@@ -107,7 +107,7 @@ if( $res_attr_uid ) {
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header" style="padding: 15px;">
-        <h5 class="modal-title" style="text-align:center; font-size: 22px;">Get Started Using EasyRogs</h5>
+        <h5 class="modal-title" style="text-align:center; font-size: 22px;">Get Started Using AI4Discovery</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Cancel" style="margin-top: -40px !important;font-size: 25px !important;">
           <span aria-hidden="true">&times;</span>
         </button>

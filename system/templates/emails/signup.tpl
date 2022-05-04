@@ -4,7 +4,7 @@
 {block name=body}
   <p>Greetings,</p>
   <br/>
-  <strong>Welcome to EasyRogs!</strong>
+  <strong>Welcome to AI4Discovery!</strong>
   <br/>
   <br/>
   Please click the button below to complete the signup process and login to your account.

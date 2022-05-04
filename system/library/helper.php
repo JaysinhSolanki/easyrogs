@@ -45,10 +45,11 @@ function numToOrdinalWord($num) { // moved from discoverydetails.php
     return $string = str_replace('y-eth', 'ieth', $second_word[$second_num].'-'.$first_word[$first_num]);
 }
 
-function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $fromemail = "service@easyrogs.com", $fromname = "EasyRogs Service", $emailtype = 1, $cc = array(), $bcc = array(), $docsArray = array())
+function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $fromemail = "service@easyrogs.com", $fromname = "AI4Discovery 
+Service", $emailtype = 1, $cc = array(), $bcc = array(), $docsArray = array())
 {
     global $logger;
-    $fromname  = "EasyRogs Service";
+    $fromname  = "AI4Discovery Service";
     $fromemail = "service@easyrogs.com";
 
     if ( $_ENV['APP_ENV'] != 'prod') {

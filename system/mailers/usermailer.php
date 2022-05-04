@@ -3,7 +3,7 @@
   class UserMailer extends BaseMailer  {
     const FORGOT_PASSWORD_SUBJECT   = 'Forgot Password';
     const VERIFICATION_CODE_SUBJECT = 'Verification Code';
-    const SIGNUP_SUBJECT            = 'Welcome to EasyRogs!';
+    const SIGNUP_SUBJECT            = 'Welcome to AI4Discovery!';
 
     static function forgotPassword($user) {
       global $usersModel, $logger, $smarty;

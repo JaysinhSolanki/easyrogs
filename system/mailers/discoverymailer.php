@@ -158,7 +158,7 @@
         'propoundingName' => $propounding['client_name'],
         'discoveryName'   => $discoveryName,
         'actionUrl'       => DOMAIN,
-        'actionText'      => 'Go to EasyRogs.com'
+        'actionText'      => 'Go to AI4Discovery.com'
       ])->fetch('emails/discovery-propound.tpl');
 
       $to = [];

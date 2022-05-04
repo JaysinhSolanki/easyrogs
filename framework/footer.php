@@ -5,7 +5,8 @@
 </div>
 
 <div class="col-md-12" style="margin-top:20px !important">
-	<div class="footer text-center" style="background-color:#f7f9fa"> <span> All rights reserved &copy; <?php echo date('Y');?> EasyRogs. U.S. Patent Pending</span>  </div>
+	<div class="footer text-center" style="background-color:#f7f9fa"> <span> All rights reserved &copy; <?php echo date('Y');?> 
+AI4Discovery. U.S. Patent Pending</span>  </div>
 </div>
 
 
