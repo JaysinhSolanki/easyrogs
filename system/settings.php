@@ -6,7 +6,7 @@ define("DBPASS", $_ENV['DB_PASSWORD']);
 define("DBNAME", $_ENV['DB_NAME' ]);
 
 define("ROOTURL", "https://www.easyrogs.com/");
-define("ROOTPATH", "/home/easyrogs/public_html/"); 
+define("ROOTPATH", "/home/easyrogs/code/easyrogs/"); 
 
 define("SYSTEMPATH",	ROOTPATH."system/");
 define("DOMAIN", 	ROOTURL."system/application/");
