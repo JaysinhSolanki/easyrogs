@@ -139,7 +139,7 @@ if( $res_attr_uid ) {
 							</div>
 							<div class="col-md-8" align="right">
 								<!-- <a href="javascript:;" class="btn btn-warning join-case-btn" data-toggle="modal" data-target="#join-case-modal"><i class="fa fa-arrow-circle-right"></i> Join a Case</a> -->
-								<a href="javascript:;" class="btn btn-success add-new-case-btn" ><i class="fa fa-plus"></i> Add a Case</a>
+								<a href="javascript:;" class="btn btn-success add-new-case-btn" id="newcase" onclick="javascript: selecttab('46_tab','get-case.php','46');" ><i class="fa fa-plus"></i> Add a Case</a>
 							</div>
             </div>
             </div>

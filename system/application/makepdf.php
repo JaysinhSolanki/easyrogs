@@ -4,7 +4,7 @@ require_once __DIR__ . '/../bootstrap.php';
 include_once("../library/classes/functions.php");
 
 //$logger->info("MakePDF: starting");
-$logger->clearLogs();
+// $logger->clearLogs();
 
 $view				= $_GET['view'] ?: Discovery::VIEW_RESPONDING;
 $downloadORwrite	= @$_GET['downloadORwrite'] ?: 0;
@@ -361,6 +361,7 @@ ob_start();
 <head>
 <meta charset="utf-8">
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
 <style>
     .tabela	{
         width:100% !important;
@@ -410,7 +411,9 @@ ob_start();
     .h-interrogatory,
     .h-objection,
     .h-response {
+        font-family:"times";
         page-break-after: avoid;
+        font-size:24px;
     }
     .q-subquestion,
     .q-objection,
@@ -419,6 +422,8 @@ ob_start();
     }
 </style>
 </head>
+
+<div class="custom-pdf-conatiner" style="padding:0px 40px; font-size:24px;">
 <!-- =================================================== 	-->
 <!-- 			HEADER PAGE 								-->
 <!-- =================================================== 	-->
@@ -808,6 +813,8 @@ ob_start();
         <tr>
             <td width="60%"></td>
             <td>
+            <h4>Signature Block</h4>
+
                 <br/>
                 <hr/>
             </td>
@@ -826,6 +833,7 @@ ob_start();
     </tbody>
 </table>
 </div>
+
 
 <!-- =================================================== -->
 <!-- 			VERIFICATION PAGE 						 -->
@@ -884,12 +892,13 @@ if( $is_served && $pos_text) {
 }
 ?>
 
+</div>
 <?php
 $html = ob_get_contents();
 
 ob_clean();
 
-$footertext			= '<table width="100%" style="margin-top:30px;">
+$footertext			= '<table width="100%" style="margin-top:30px;margin-bottom:30px;">
                         <tr>
                             <td width="5%" style="line-height:3px"></td>
                             <td style="line-height:18px" align="center">{PAGENO}<br/>
@@ -930,7 +939,7 @@ else {
 
 try {
     pdf( $filePath, $headerFooterConfiguration, @$downloadORwrite );
-    if ($_ENV['APP_ENV'] != 'prod') {
+    //if ($_ENV['APP_ENV'] != 'prod') {
         //$logger->debug("PDF created and ". ( $downloadORwrite == 1 ? "saved to" : "sent to browser as"). " '$filePath', generated from html:\n\r\n\r$html\n\r\n\r\n\r" );
 
         // Save copy of the last PDF generated
@@ -943,7 +952,7 @@ try {
         if ($downloadORwrite == 1) {
             copy( $filePath,   $savedir. '/last-pdf.pdf' );
         }
-    }
+   // }
 }
 catch( Exception $e ) {
     $logger->error(['MakePDF failed: ', $e->getMessage(), $e]);
