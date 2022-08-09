@@ -412,7 +412,7 @@ ob_start();
     .h-objection,
     .h-response {
         page-break-after: avoid;
-    line-height: 37.2px;
+    /* line-height: 50px; */
     }
     .q-subquestion,
     .q-objection,
@@ -422,7 +422,7 @@ ob_start();
 </style>
 </head>
 
-<div class="custom-pdf-conatiner" style="padding:0px 40px; line-height:37.2px;">
+<div class="custom-pdf-conatiner" style="padding:0px 40px; line-height:49.7px;">
 <!-- =================================================== 	-->
 <!-- 			HEADER PAGE 								-->
 <!-- =================================================== 	-->
