@@ -24,7 +24,8 @@ h5 {
 }
 .custom-font
 {
-    font-size: 24px ;
+    /* font-size: 24px ; */
+    line-height: 37.2px;
 }
 </style>
 <?php // $logger->debug(['$discovery_data',$discovery_data]); ?>

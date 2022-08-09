@@ -411,9 +411,8 @@ ob_start();
     .h-interrogatory,
     .h-objection,
     .h-response {
-        font-family:"times";
         page-break-after: avoid;
-        font-size:24px;
+    line-height: 37.2px;
     }
     .q-subquestion,
     .q-objection,
@@ -423,7 +422,7 @@ ob_start();
 </style>
 </head>
 
-<div class="custom-pdf-conatiner" style="padding:0px 40px; font-size:24px;">
+<div class="custom-pdf-conatiner" style="padding:0px 40px; line-height:37.2px;">
 <!-- =================================================== 	-->
 <!-- 			HEADER PAGE 								-->
 <!-- =================================================== 	-->
