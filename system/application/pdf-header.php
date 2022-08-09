@@ -99,7 +99,7 @@ h5 {
         <td colspan="2" align="center"><h3><u>PRELIMINARY STATEMENT</u></h3></td>
     </tr>
 </table>
-<p style="line-height:25px">
+<p style="line-height: 49.7px">
     <?php if ($finaldraft_instruction): ?>
         <?= $finaldraft_instruction ?>
     <?php else: ?>
