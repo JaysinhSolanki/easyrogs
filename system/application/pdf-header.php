@@ -35,11 +35,10 @@ h5 {
         <th colspan="2"><h2 align="center"></h2></th>
     </tr>
     <tr>
-        <td style="font-size: 1.09em;"><?= nl2br($masterhead) ?></td>
+        <td style="font-size: 1.09em; line-height: 20px "><?= nl2br($masterhead) ?></td>
     </tr>
     <tr>
-    	<td style="font-size: 1.09em;">
-        	<br />
+    	<td style="font-size: 1.09em; padding-top:15px">
             <?= "Attorney for $att_for_client_role" ?><br />
             <?= $att_for_client_name ?><br />
         </td>
@@ -50,7 +49,7 @@ h5 {
         </td>
     </tr>
     <tr>
-    	<td style="border-right:1px solid;border-bottom:1px solid; font-size:1.09em;" width="50% ">
+    	<td style="border-right:1px solid;border-bottom:1px solid; font-size:1.09em;padding-right:30px; padding-bottom:30px" width="50% ">
         	<?= $plaintiff ?>
             <br />
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plaintiff(s)<br />
@@ -58,7 +57,7 @@ h5 {
            <?= $defendant ?><br />
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defendant(s).
         </td>
-        <td style="border-bottom:1px solid; font-size:1.09em; ">
+        <td style="border-bottom:1px solid; font-size:1.09em; padding-left:30px">
             Case No. <?= $case_number ?>
             <br /><br />
             <h3 style="font-weight:normal;font-size:1em;">

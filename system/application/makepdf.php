@@ -419,10 +419,13 @@ ob_start();
     .q-response {
         page-break-before: avoid;
     }
+
 </style>
 </head>
 
 <div class="custom-pdf-conatiner" style="padding:0px 40px; line-height:49.7px;">
+
+
 <!-- =================================================== 	-->
 <!-- 			HEADER PAGE 								-->
 <!-- =================================================== 	-->
@@ -716,7 +719,7 @@ ob_start();
                             echo "	<h3 class='h-bu h-objection'>Objection</h3>
                                     <p class='q-objection'> $objection </p>";
                         }
-                echo "	<br/><br/>
+                echo "<br/>
                         </div>";
             }
         }
@@ -897,7 +900,7 @@ $html = ob_get_contents();
 
 ob_clean();
 
-$footertext			= '<table width="100%" style="margin-top:30px;margin-bottom:30px;">
+$footertext	= '<table width="100%" style="margin-top:30px;margin-bottom:30px;">
                         <tr>
                             <td width="5%" style="line-height:3px"></td>
                             <td style="line-height:18px" align="center">{PAGENO}<br/>
@@ -906,7 +909,12 @@ $footertext			= '<table width="100%" style="margin-top:30px;margin-bottom:30px;"
                             </td>
                             <td width="5%"  style="text-align: right; line-height:3px"></td>
                         </tr>
-                        </table>';
+                        </table>
+';
+
+
+           
+
 $oddEvenConfiguration = [
     'L' => [
       'content' => '',

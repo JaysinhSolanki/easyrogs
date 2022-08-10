@@ -191,6 +191,20 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
     // file_put_contents( ROOTPATH .'logs/html-dom.htm', $doc->saveHTML() );
     //return;
 
+//     $test = '<div style="position: fixed; bottom: 0; left: 10mm; top:50mm; rotate: -90; text-align: center; width: 25mm;">
+//     Text
+//     <br>
+//     Text #2
+// </div>';
+// $mpdf->WriteFixedPosHTML($test, 0, 10, 0, 90, 'auto');
+
+// $mpdf->SetHTMLFooter('<div style="position: fixed; left: -5mm; top:100mm; rotate: -90; text-align: center; width: 100mm;">
+// AI4Discovery.com
+// <br>
+// (888) 7300-LAW
+// </div>');
+
+
     $mpdf->WriteHTML($doc->saveHTML());
     if ($filename!="") {
         if ($downloadORwrite != 1) {
