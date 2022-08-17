@@ -158,7 +158,7 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
         require_once($path . '/vendor/autoload.php');
         $mpdfConfig = array(
                 'mode' => 'utf-8',
-                'format' => 'A4',             // format - A4, for example, default ''
+                'format' => [215.9, 279.4],             // format - A4, for example, default ''
                 'default_font_size' => 0,     // font size - default 0
                 'default_font' => '',         // default font family
                 'margin_left' => 10,          // 15 margin_left
@@ -169,6 +169,10 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
                 'margin_footer' => 10,        // 9 margin footer
                 'orientation' => 'P'          // L - landscape, P - portrait
             );
+
+            
+            // 'format' => 'A4',   
+            
         $mpdf = new \Mpdf\Mpdf($mpdfConfig);
     } else {
         $path = $_SESSION['library_path'].'pdf/mpdf/610';
@@ -204,6 +208,9 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
 // (888) 7300-LAW
 // </div>');
 
+
+
+$mpdf->SetHTMLHeader();
 
     $mpdf->WriteHTML($doc->saveHTML());
     if ($filename!="") {

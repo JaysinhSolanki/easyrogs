@@ -22,15 +22,20 @@ h5 {
 @page :right {
 	footer: htmlpagefooter ;
 }
-.custom-font
+.custom-leading
 {
     /* font-size: 24px ; */
-    line-height: 49.7px;
+    line-height: 28px;
+}
+.instruction-leading
+{
+    /* font-size: 24px ; */
+    line-height: 34px;
 }
 </style>
 <?php // $logger->debug(['$discovery_data',$discovery_data]); ?>
 
-<table class="tabela1" style="border:none !important; font-size:1.09em !important; font-family:timesnewroman">
+<table class="tabela1" style="border:none !important; font-size:1.09em !important; font-family:timesnewroman; line-height: 20px ">
     <tr>
         <th colspan="2"><h2 align="center"></h2></th>
     </tr>
@@ -38,7 +43,7 @@ h5 {
         <td style="font-size: 1.09em; line-height: 20px "><?= nl2br($masterhead) ?></td>
     </tr>
     <tr>
-    	<td style="font-size: 1.09em; padding-top:15px">
+    	<td style="font-size: 1.09em; padding-top:15px; line-height: 20px ">
             <?= "Attorney for $att_for_client_role" ?><br />
             <?= $att_for_client_name ?><br />
         </td>
@@ -49,7 +54,7 @@ h5 {
         </td>
     </tr>
     <tr>
-    	<td style="border-right:1px solid;border-bottom:1px solid; font-size:1.09em;padding-right:30px; padding-bottom:30px" width="50% ">
+    	<td style="border-right:1px solid;border-bottom:1px solid; font-size:1.09em;padding-right:10px; padding-bottom:10px;line-height: 20px" width="50% ">
         	<?= $plaintiff ?>
             <br />
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plaintiff(s)<br />
@@ -57,7 +62,7 @@ h5 {
            <?= $defendant ?><br />
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defendant(s).
         </td>
-        <td style="border-bottom:1px solid; font-size:1.09em; padding-left:30px">
+        <td style="border-bottom:1px solid; font-size:1.09em; padding-left:10px;line-height: 20px">
             Case No. <?= $case_number ?>
             <br /><br />
             <h3 style="font-weight:normal;font-size:1em;">
@@ -72,16 +77,16 @@ h5 {
         </td>
     </tr>
     <tr>
-        <td class="custom-font">PROPOUNDING PARTY:</td>
-        <td class="custom-font"><?= strtoupper($proponding_name) ?></td>
+        <td class="custom-leading">PROPOUNDING PARTY:</td>
+        <td class="custom-leading"><?= strtoupper($proponding_name) ?></td>
     </tr>
     <tr>
-        <td class="custom-font">RESPONDING PARTY:</td>
-        <td class="custom-font"><?= strtoupper($responding_name) ?></td>
+        <td class="custom-leading">RESPONDING PARTY:</td>
+        <td class="custom-leading"><?= strtoupper($responding_name) ?></td>
     </tr>
     <tr>
-        <td class="custom-font">SET NO.:</td>
-        <td class="custom-font"><?= numberTowords(strtoupper($set_number)) ?></td>
+        <td class="custom-leading">SET NO.:</td>
+        <td class="custom-leading"><?= numberTowords(strtoupper($set_number)) ?></td>
     </tr>
 </table>
 <?php
@@ -98,7 +103,7 @@ h5 {
         <td colspan="2" align="center"><h3><u>PRELIMINARY STATEMENT</u></h3></td>
     </tr>
 </table>
-<p style="line-height: 49.7px">
+<p style="line-height: 34px">
     <?php if ($finaldraft_instruction): ?>
         <?= $finaldraft_instruction ?>
     <?php else: ?>
@@ -110,7 +115,7 @@ h5 {
     else {
         if( trim($instructions) || !in_array($form_id,array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS)) ) {
 ?>
-    <table class="tabela1" style="border:none !important;overflow: wrap">
+    <table class="tabela1" style="border:none !important;overflow: wrap; margin-top:35px">
         <tr>
             <td colspan="2" align="center"><h3><u>INSTRUCTIONS</u></h3></td>
         </tr>
@@ -119,7 +124,7 @@ h5 {
         }
 	if( in_array( $form_id, [Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS, Discovery::FORM_CA_RPDS] ) ) {
 ?>
-    <div class="custom-font"> <?= html_entity_decode($instructions) ?> </div>
+    <div class="instruction-leading"> <?= html_entity_decode($instructions) ?> </div>
 <?php
 	}
 	else {

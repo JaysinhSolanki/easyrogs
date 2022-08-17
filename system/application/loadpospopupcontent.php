@@ -103,10 +103,13 @@ $discovery_name = $respond
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 
 <style>
-.tabela
+ .tabela
 	{
 		width:100% !important;
-	}
+    border: 1px solid #A2A9B1;
+   border-collapse: collapse;
+   line-height:25px;
+	} 
    .tabela tbody tr th{
    background: #999;
    color: white;
@@ -115,11 +118,6 @@ $discovery_name = $respond
    text-align:center !important
    }
 
-   .tabela {
-   border: 1px solid #A2A9B1;
-   border-collapse: collapse;
-   line-height:25px;
-   }
 td, th {
     padding: 5px;
 }
@@ -127,7 +125,10 @@ td, th {
    border: 1px solid #A2A9B1;
    border-collapse: collapse;
     line-height:25px;
-   }
+   } 
+
+
+   
 </style>
 </head>
 <div class="row">
@@ -163,27 +164,28 @@ td, th {
           </tbody>
 		</table>
         <br />
-        <table class="tabela" style="1px solid #ddd">
+        <table class="tabela" style="border: 1px solid #A2A9B1;">
           <tbody>
           	<tr>
-                <th align="center">Person Served</th>
-                <th align="center">Party Served</th>
-                <th align="center">E-service Address</th>
+                <th  style="border: 1px solid #A2A9B1;" align="center">Person Served</th>
+                <th  style="border: 1px solid #A2A9B1;" align="center">Party Served</th>
+                <th  style="border: 1px solid #A2A9B1;" align="center">Email</th>
             </tr>
 			<?php foreach($serviceList as $user): ?>
 				<?php if ($user['clients']): ?>
 					<?php foreach($user['clients'] as $client): ?>
 						<tr>
-							<td align="left"><?= $user['attorney_name'] ?></td>
-							<td align="left"><?= $client['client_name'] ?></td>
-							<td align="left"><?= $user['attorney_email'] ?></td>
+							<td  style="border: 1px solid #A2A9B1;" align="left"><?= $user['attorney_name'] ?></td>
+							<td  style="border: 1px solid #A2A9B1;" align="left"><?= $client['client_name'] ?></td>
+							<td  style="border: 1px solid #A2A9B1;" align="left"><?= $user['attorney_email'] ?></td>
 						</tr>
 					<?php endforeach; ?>
 				<?php endif; ?>
 			<?php endforeach; ?>
           </tbody>
 		</table>
-        <table class="tabela1" style="border:none !important">
+
+        <table class="tabela1" style="border:none !important;">
           <tbody>
             <tr>
                 <td align="justify">
@@ -199,7 +201,7 @@ td, th {
           <tbody>
             <tr>
                 <td align="left"><?= date('F j, Y') ?></td>
-                <td align="right">By: <?= $senderName ?><br /> Signed electronically,<br />
+                <td align="right" style="line-height:20px; padding-top:42px">By: <?= $senderName ?><br /> Signed electronically,<br />
                 <img src="<?= ASSETS_URL ?>images/court.png" style="width: 18px;padding-right: 3px;">Cal. Rules of Court, rule 2.257</td>
             </tr>
           </tbody>
