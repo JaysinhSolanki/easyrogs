@@ -842,21 +842,19 @@ ob_start();
         }
         ?>
 
-        <table>
+        <table style="margin-top:30px">
             <tbody>
                 <tr>
                     <td width="60%"></td>
-                    <!-- <td>
-            <h4>Signature Block</h4>
-
-                <br/>
-                <hr/>
+                    <!-- <td style="margin:0; padding:0;line-height:0px">
+                <hr style="margin:0; padding:0; line-height:0px"/>
             </td> -->
-                    <br />
+
                 </tr>
                 <tr>
                     <td align="left" valign="top"><?php echo date('F j, Y'); ?></td>
                     <td align="right" style="line-height: 20px">
+                    <hr style="margin-top:0px; margin-bottom:6px; padding-top:0px; line-height:0px"/>
                         By: <?= $usersModel->getFullName($signingAttorney) ?><br />
                         Attorney for <?= $att_for_client_role ?><br />
                         <?= $att_for_client_name ?><br />
