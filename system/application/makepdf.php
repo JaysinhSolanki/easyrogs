@@ -459,7 +459,7 @@ ob_start();
     </style>
 </head>
 
-<div class="custom-pdf-conatiner" style="padding:0px 40px; line-height: 34px;">
+<div class="custom-pdf-conatiner" style="padding:0px 40px 0 100px; line-height: 34px;">
 
 
     <!-- =================================================== 	-->
@@ -846,15 +846,11 @@ ob_start();
             <tbody>
                 <tr>
                     <td width="60%"></td>
-                    <!-- <td style="margin:0; padding:0;line-height:0px">
-                <hr style="margin:0; padding:0; line-height:0px"/>
-            </td> -->
-
                 </tr>
                 <tr>
                     <td align="left" valign="top"><?php echo date('F j, Y'); ?></td>
                     <td align="right" style="line-height: 20px">
-                    <hr style="margin-top:0px; margin-bottom:6px; padding-top:0px; line-height:0px"/>
+                        <hr style="margin-top:0px; margin-bottom:6px; padding-top:0px; line-height:0px" />
                         By: <?= $usersModel->getFullName($signingAttorney) ?><br />
                         Attorney for <?= $att_for_client_role ?><br />
                         <?= $att_for_client_name ?><br />
@@ -934,17 +930,29 @@ ob_clean();
 
 
 
-$footertext    = '<div style="position: fixed; left: -5mm; bottom:5mm; text-align: center; width: 200mm; ">
+$footertext    = '<div style="position: fixed; left: 7mm; bottom:5mm; text-align: center; width: 200mm; ">
 {PAGENO}<br/>
 <br/>' . $formNAME . '<br/>
 All rights reserved © ' . date("Y") . ' AI4Discovery. U.S. Patent Pending
 </div>';
 
-$left_stamp    = '<div style="position: fixed; left: -5mm; top:100mm; rotate: -90; text-align: center; width: 100mm;">
-AI4Discovery.com
- <br>
- (888) 7300-LAW
-</div>';
+
+
+
+$left_stamp .= '<div  style="position: fixed; left: 10mm; top:15mm; text-align: center; width: 10mm;">';
+for ($i = 1; $i <= 50; $i++) {
+    $left_stamp .=  $i;
+    $left_stamp .=  "<br>";
+}
+$left_stamp .= '</div><br>';
+$left_stamp .= '<div style="position: fixed; left: 19mm; top:5mm; text-align: center; width: 0.6mm; background:#000;  height:270mm">
+ 
+     </div>';
+$left_stamp .= '<div style="position: fixed; left: -5mm; top:100mm; rotate: -90; text-align: center; width: 100mm;">
+    AI4Discovery.com
+      <br>
+      (888) 7300-LAW
+     </div>';
 
 $hide_section    = '<div style="text-align: center; width: 100mm;margin-top:400px;margin-bottom:400px;padding-top:400px;padding-bottom:400px;">
 AI4Discovery.com
@@ -963,16 +971,6 @@ AI4Discovery.com
  <br>
 </div>';
 
-// <table width="100%" style="margin-top:30px;margin-bottom:30px;">
-// <tr>
-//     <td width="5%" style="line-height:3px"></td>
-//     <td style="line-height:18px" align="center">{PAGENO}<br/>
-//         <br/>' . $formNAME . '<br/>
-//         All rights reserved © ' . date("Y") . ' AI4Discovery. U.S. Patent Pending
-//     </td>
-//     <td width="5%"  style="text-align: right; line-height:3px"></td>
-// </tr>
-// </table>
 
 $oddEvenConfiguration = [
     'L' => [

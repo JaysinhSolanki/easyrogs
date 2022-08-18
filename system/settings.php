@@ -1,12 +1,12 @@
 <?php
+ 
+define("DBHOST", 'localhost');
+define("DBUSER", 'root');
+define("DBPASS", '');
+define("DBNAME", 'easyrogs_prod');
 
-define("DBHOST", $_ENV['DB_HOST']);
-define("DBUSER", $_ENV['DB_USERNAME']);
-define("DBPASS", $_ENV['DB_PASSWORD']);
-define("DBNAME", $_ENV['DB_NAME' ]);
-
-define("ROOTURL", $_ENV['ROOTURL']);
-define("ROOTPATH", $_ENV['ROOTPATH']); 
+define("ROOTURL", 'http://localhost/easyrogs/');
+define("ROOTPATH",'C:/xampp/htdocs/easyrogs/'); 
 
 define("SYSTEMPATH",	ROOTPATH."system/");
 define("DOMAIN", 	ROOTURL."system/application/");
@@ -20,11 +20,11 @@ define("DOCS_CACHE_DIR", 	ROOTPATH . "system/docs_cache/");
 define("TMP_DIR", ROOTPATH . 'tmp');
 
 // Payments
-define('STRIPE_API_KEY',                $_ENV['STRIPE_API_KEY']);
-define('STRIPE_PUBLISHABLE_KEY',        $_ENV['STRIPE_PUBLISHABLE_KEY']);
-define('STRIPE_WEBHOOK_SIGNING_SECRET', $_ENV['STRIPE_WEBHOOK_SIGNING_SECRET']);
+define('STRIPE_API_KEY',              'sk_live_TzHCSxDGfOZaabcvshK93jpo00MUHeebpt');
+define('STRIPE_PUBLISHABLE_KEY',      'pk_live_pX6vFTs3fFjjqkZ8lY5IggWl001I1qlWh3');
+define('STRIPE_WEBHOOK_SIGNING_SECRET', 'whsec_xljT2SocEC1QsfNGYBGQQE20K3Whrg4R');
 
-define("SECRET_KEY", $_ENV['SECRET_KEY']);
+define("SECRET_KEY", 'KGHI&^JH767hug78&hgjhjas7u&5HN65hjJHI-JKYUTUHGHNGHJ%6gh.fy6565tghghjfg545337678hjfgFG');
 
 define('SIGNUP_CREDITS', 3);
 define('SERVE_DISCOVERY_COST', 1000); // $10

@@ -1,39 +1,44 @@
 <?php
+
 /************************* Send Email *************************/
 
-require(__DIR__."/phpmailer/src/PHPMailer.php");
-require(__DIR__."/phpmailer/src/Exception.php");
+require(__DIR__ . "/phpmailer/src/PHPMailer.php");
+require(__DIR__ . "/phpmailer/src/Exception.php");
 
-function searchValue($haystack, $needle, $key = 'id') {
-   foreach($haystack as $k => $v) {
-       if( $v[$key] == $needle ) {
-           return $v;
-       }
-   }
-   return null;
+function searchValue($haystack, $needle, $key = 'id')
+{
+    foreach ($haystack as $k => $v) {
+        if ($v[$key] == $needle) {
+            return $v;
+        }
+    }
+    return null;
 }
-function findIndex($haystack, $needle, $key = 'id') {
-   foreach($haystack as $k => $v) {
-       if( $v[$key] == $needle ) {
-           return $k;
-       }
-   }
-   return null;
+function findIndex($haystack, $needle, $key = 'id')
+{
+    foreach ($haystack as $k => $v) {
+        if ($v[$key] == $needle) {
+            return $k;
+        }
+    }
+    return null;
 }
 
-function sanitize_file_name( $str ) {
-    $filename = preg_replace( '/[\r\n\t ]+/', ' ', $str );
-    $filename = preg_replace( '/[-]+/', '-', $filename );
-    $filename = preg_replace( '/[\'"<>:;?\/=&\$#\*()|~`!{}%\+«»’”“\\\\]+/', '_', $filename );
-    $filename = preg_replace( '/_+/', '_', $filename );
-    $filename = trim( $filename, '.-_ ' );
+function sanitize_file_name($str)
+{
+    $filename = preg_replace('/[\r\n\t ]+/', ' ', $str);
+    $filename = preg_replace('/[-]+/', '-', $filename);
+    $filename = preg_replace('/[\'"<>:;?\/=&\$#\*()|~`!{}%\+«»’”“\\\\]+/', '_', $filename);
+    $filename = preg_replace('/_+/', '_', $filename);
+    $filename = trim($filename, '.-_ ');
 
     return $filename;
 }
 
-function numToOrdinalWord($num) { // moved from discoverydetails.php
-    $first_word  = array('eth','First','Second','Third','Fourth','Fifth','Sixth','Seventh','Eighth','Ninth','Tenth','Eleventh','Twelfth','Thirteenth','Fourteenth','Fifteenth','Sixteenth','Seventeenth','Eighteenth','Nineteenth','Twentieth');
-    $second_word = array('','','Twenty','Thirty','Forty','Fifty');
+function numToOrdinalWord($num)
+{ // moved from discoverydetails.php
+    $first_word  = array('eth', 'First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth', 'Eleventh', 'Twelfth', 'Thirteenth', 'Fourteenth', 'Fifteenth', 'Sixteenth', 'Seventeenth', 'Eighteenth', 'Nineteenth', 'Twentieth');
+    $second_word = array('', '', 'Twenty', 'Thirty', 'Forty', 'Fifty');
 
     if ($num <= 20) {
         return $first_word[$num];
@@ -42,7 +47,7 @@ function numToOrdinalWord($num) { // moved from discoverydetails.php
     $first_num  = substr($num, -1, 1);
     $second_num = substr($num, -2, 1);
 
-    return $string = str_replace('y-eth', 'ieth', $second_word[$second_num].'-'.$first_word[$first_num]);
+    return $string = str_replace('y-eth', 'ieth', $second_word[$second_num] . '-' . $first_word[$first_num]);
 }
 
 function send_email($to = array(), $subject = "Testing Email", $bodyhtml, $fromemail = "service@easyrogs.com", $fromname = "AI4Discovery 
@@ -52,11 +57,11 @@ Service", $emailtype = 1, $cc = array(), $bcc = array(), $docsArray = array())
     $fromname  = "AI4Discovery Service";
     $fromemail = "service@easyrogs.com";
 
-    if ( $_ENV['APP_ENV'] != 'prod') {
-      $to = $cc = $bcc = [
-        'easyrogs@mailinator.com',
-        'easyrogs@gmail.com'
-      ];
+    if ($_ENV['APP_ENV'] != 'prod') {
+        $to = $cc = $bcc = [
+            'easyrogs@mailinator.com',
+            'easyrogs@gmail.com'
+        ];
     }
     if ($emailtype == 3) {
         $headers  = 'MIME-Version: 1.0' . "\r\n";
@@ -65,12 +70,11 @@ Service", $emailtype = 1, $cc = array(), $bcc = array(), $docsArray = array())
         $headers .=     "From: $fromname <$fromemail>\r\n";
         $headers .= "Reply-To: $fromemail\r\n";
         $headers .= "Return-Path: $fromemail\r\n";
-        if (sizeof($to)>0) {
+        if (sizeof($to) > 0) {
             $tos = implode(",", $to);
             mail($tos, $subject, $bodyhtml, $headers);
         }
-    }
-    elseif ($emailtype == 1) {
+    } elseif ($emailtype == 1) {
         $mail = new PHPMailer;
         $mail->isHTML(true);
         $mail->setFrom($fromemail, $fromname);
@@ -102,7 +106,8 @@ Service", $emailtype = 1, $cc = array(), $bcc = array(), $docsArray = array())
     }
 }
 
-function convertYoutube($string) {
+function convertYoutube($string)
+{
     return preg_replace(
         "/\s*[a-zA-Z\/\/:\.]*youtu(be.com\/watch\?v=|.be\/)([a-zA-Z0-9\-_]+)([a-zA-Z0-9\/\*\-\_\?\&\;\%\=\.]*)/i",
         "<br /><iframe src=\"//www.youtube.com/embed/$2\" allowfullscreen width='100%' height='400'></iframe>",
@@ -110,77 +115,79 @@ function convertYoutube($string) {
     );
 }
 
-function replaceUrls($string) {
-	$url = $string[0];
-	if (filter_var($url, FILTER_VALIDATE_URL)) {
-	    $images_allowed = array('gif', 'png', 'jpg', 'svg', 'jpeg');
-		$ext = pathinfo($string[0], PATHINFO_EXTENSION);
-		if (in_array($ext, $images_allowed)) {
-		    return '<br /><img src="'. $url .'" alt="." />';
-		}
-		$video_allowed = array('mp4');
-		if (in_array($ext, $video_allowed)) {
+function replaceUrls($string)
+{
+    $url = $string[0];
+    if (filter_var($url, FILTER_VALIDATE_URL)) {
+        $images_allowed = array('gif', 'png', 'jpg', 'svg', 'jpeg');
+        $ext = pathinfo($string[0], PATHINFO_EXTENSION);
+        if (in_array($ext, $images_allowed)) {
+            return '<br /><img src="' . $url . '" alt="." />';
+        }
+        $video_allowed = array('mp4');
+        if (in_array($ext, $video_allowed)) {
             return "<br /><video  style='position: relative; max-width: 99%; width: 100% !important; height: auto !important;' preload='none' x-autoplay controls data-src='$url'><source src='$url' type='video/mp4'></video>";
-		}
-	}
-	return $url;
+        }
+    }
+    return $url;
 }
 
-function enforceYesNo( &$value = null ) {
-    $value = trim( strtolower($value) );
-    if( $value == 'yes' ) {
-        $value= "Yes"; } // TODO
-    elseif( $value == 'no' ) {
+function enforceYesNo(&$value = null)
+{
+    $value = trim(strtolower($value));
+    if ($value == 'yes') {
+        $value = "Yes";
+    } // TODO
+    elseif ($value == 'no') {
         $value =  "No";
-    }
-    else {
+    } else {
         $value = "";
     }
     return $value;
 }
 
 /**
-* FUNCTION FOR GENERATE PDF
-**/
+ * FUNCTION FOR GENERATE PDF
+ **/
 function pdf($filename = "", $footertext = "", $downloadORwrite = '')
 {
-	ini_set("pcre.backtrack_limit", "1000000");
+    ini_set("pcre.backtrack_limit", "1000000");
     global $html, $logger;
-    if ($html=="") {
+    if ($html == "") {
         echo "Please provide HTML to PDF function";
         $logger->error("$html is empty");
         return;
     }
 
     //echo $html; exit;
-    if (phpversion()>= '7') {
-        $path = $_SESSION['library_path'].'pdf/mpdf/7';
+    if (phpversion() >= '7') {
+        $path = $_SESSION['library_path'] . 'pdf/mpdf/7';
         require_once($path . '/vendor/autoload.php');
         $mpdfConfig = array(
-                'mode' => 'utf-8',
-                'format' => [215.9, 279.4],             // format - A4, for example, default ''
-                'default_font_size' => 0,     // font size - default 0
-                'default_font' => '',         // default font family
-                'margin_left' => 10,          // 15 margin_left
-                'margin_right' => 10,         // 15 margin right
-                'margin_top' => 15,           // 16 margin top
-                'margin_bottom' => 8,         // margin bottom
-                'margin_header' => 0,         // 9 margin header
-                'margin_footer' => 10,        // 9 margin footer
-                'orientation' => 'P'          // L - landscape, P - portrait
-            );
+            'mode' => 'utf-8',
+            'format' => [215.9, 279.4],             // format - A4, for example, default ''
+            'default_font_size' => 0,     // font size - default 0
+            'default_font' => '',         // default font family
+            'margin_left' => 10,          // 15 margin_left
+            'margin_right' => 10,         // 15 margin right
+            'margin_top' => 15,           // 16 margin top
+            'margin_bottom' => 8,         // margin bottom
+            'margin_header' => 0,         // 9 margin header
+            'margin_footer' => 10,        // 9 margin footer
+            'orientation' => 'P'          // L - landscape, P - portrait
+        );
 
-            
-            // 'format' => 'A4',   
-            
+
+        // 'format' => 'A4',   
+
         $mpdf = new \Mpdf\Mpdf($mpdfConfig);
     } else {
-        $path = $_SESSION['library_path'].'pdf/mpdf/610';
-        require_once( $path .'/mpdf.php');
-        $mpdf=new mPDF();
+        $path = $_SESSION['library_path'] . 'pdf/mpdf/610';
+        require_once($path . '/mpdf.php');
+        $mpdf = new mPDF();
         //$mode='', $format='', $font_size='', $font='', $margin_left=3, $margin_right=3, $margin_top=3, $margin_bottom=3, $margin_header='', $margin_footer=6, $orientation=''
     }
-    define( '_MPDF_PATH', $path );
+    define('_MPDF_PATH', $path);
 
     $mpdf->setAutoTopMargin = 'stretch';
     $mpdf->setAutoBottomMargin = 'stretch';
@@ -195,25 +202,15 @@ function pdf($filename = "", $footertext = "", $downloadORwrite = '')
     // file_put_contents( ROOTPATH .'logs/html-dom.htm', $doc->saveHTML() );
     //return;
 
-//     $test = '<div style="position: fixed; bottom: 0; left: 10mm; top:50mm; rotate: -90; text-align: center; width: 25mm;">
-//     Text
-//     <br>
-//     Text #2
-// </div>';
-// $mpdf->WriteFixedPosHTML($test, 0, 10, 0, 90, 'auto');
-
-// $mpdf->SetHTMLFooter('<div style="position: fixed; left: -5mm; top:100mm; rotate: -90; text-align: center; width: 100mm;">
-// AI4Discovery.com
-// <br>
-// (888) 7300-LAW
-// </div>');
 
 
-
-$mpdf->SetHTMLHeader();
+    $mpdf->SetHTMLHeader();
 
     $mpdf->WriteHTML($doc->saveHTML());
-    if ($filename!="") {
+
+
+
+    if ($filename != "") {
         if ($downloadORwrite != 1) {
             $mpdf->Output($filename, "D");
         } else {
@@ -225,15 +222,16 @@ $mpdf->SetHTMLHeader();
     ob_end_flush();
 }
 /**
-* FUNCTION FOR DATE FORMAT
-**/
-function dateformat( $date, $type = 1 ) {
-    if ($date == "0000-00-00" || $date == "0000-00-00 00:00:00" || !$date ) {
+ * FUNCTION FOR DATE FORMAT
+ **/
+function dateformat($date, $type = 1)
+{
+    if ($date == "0000-00-00" || $date == "0000-00-00 00:00:00" || !$date) {
         $date = "";
     } else {
         // type = 1: n/j/Y to n-j-Y
         //        2: n-j-Y to n/j/Y
-        if( $type == 1 ) {
+        if ($type == 1) {
             $date   = date("n/j/Y", strtotime($date));
             $date   = str_replace("/", "-", $date);
         } else {
@@ -244,8 +242,8 @@ function dateformat( $date, $type = 1 ) {
     return $date;
 }
 /**
-* FUNCTION FOR EMAILS LOG
-**/
+ * FUNCTION FOR EMAILS LOG
+ **/
 function emaillog($discovery_id, $loggedin_id, $email_subject, $send_from, $to_values = array(), $email_salutation, $email_body, $bcc_values = array(), $cc_values = array(), $sender_type, $receiver_type, $sending_script)
 {
     global $AdminDAO;
@@ -253,70 +251,71 @@ function emaillog($discovery_id, $loggedin_id, $email_subject, $send_from, $to_v
     $email_bcc =    implode(',', $bcc_values);
     $email_cc   =   implode(',', $cc_values);
 
-    $fields     =   array('discovery_id','loggedin_id','email_subject','send_from','send_to','email_salutation','email_body','email_bcc','email_cc','sender_type','receiver_type','sending_script');
-    $values     =   array($discovery_id,$loggedin_id,$email_subject,$send_from,$send_to,$email_salutation,$email_body,$email_bcc,$email_cc,$sender_type,$receiver_type,$sending_script );
+    $fields     =   array('discovery_id', 'loggedin_id', 'email_subject', 'send_from', 'send_to', 'email_salutation', 'email_body', 'email_bcc', 'email_cc', 'sender_type', 'receiver_type', 'sending_script');
+    $values     =   array($discovery_id, $loggedin_id, $email_subject, $send_from, $send_to, $email_salutation, $email_body, $email_bcc, $email_cc, $sender_type, $receiver_type, $sending_script);
     $AdminDAO->insertrow("email_log", $fields, $values);
 }
 /**
-* FUNCTION FOR ADDRESS MAKE
-**/
+ * FUNCTION FOR ADDRESS MAKE
+ **/
 function getstate($pkaddressbookid)
 {
-	global $AdminDAO;
-    $results            =   $AdminDAO->getrows("system_addressbook,system_state", "*", "pkaddressbookid = :id AND fkstateid = pkstateid", array(":id"=>$pkaddressbookid));
+    global $AdminDAO;
+    $results            =   $AdminDAO->getrows("system_addressbook,system_state", "*", "pkaddressbookid = :id AND fkstateid = pkstateid", array(":id" => $pkaddressbookid));
     $data               =   $results[0];
     return $data['statecode'];
 }
 /**
-* FUNCTION FOR ADDRESS MAKE
-**/
+ * FUNCTION FOR ADDRESS MAKE
+ **/
 function makeaddress($pkaddressbookid, $issplit = 0)
 {
     global $AdminDAO;
-    $results = $AdminDAO->getrows("system_addressbook,system_state", "*", "pkaddressbookid = :id AND fkstateid = pkstateid", array(":id"=>$pkaddressbookid));
+    $results = $AdminDAO->getrows("system_addressbook,system_state", "*", "pkaddressbookid = :id AND fkstateid = pkstateid", array(":id" => $pkaddressbookid));
     $data    = $results[0];
-    if( $issplit ) {
+    if ($issplit) {
         $addbreak = "<br/>";
     } else {
         $addbreak = ", ";
     }
-    $address = $data['address'].", ".$data['street'].$addbreak.$data['cityname'].", ".$data['statecode']." ".$data['zip'];
+    $address = $data['address'] . ", " . $data['street'] . $addbreak . $data['cityname'] . ", " . $data['statecode'] . " " . $data['zip'];
     return $address;
 }
 /**
-* FUNCTION FOR GENERATE FINAL RESPONSE
-**/
-function finalResponseGenerate( $objection, $answer ) {
+ * FUNCTION FOR GENERATE FINAL RESPONSE
+ **/
+function finalResponseGenerate($objection, $answer)
+{
     $transitiontext = "However, in the spirit of cooperation and without waiving any objection, respondent responds: ";
     $objection = trim($objection);
     $answer = trim($answer);
 
-    if( !$objection && !$answer ) {
+    if (!$objection && !$answer) {
         $finalResponse = "";
     } else {
-        if( !$answer ) {
+        if (!$answer) {
             $finalResponse = $objection;
-        } elseif( !$objection ) {
+        } elseif (!$objection) {
             $finalResponse = $answer;
         } else {
-            if( !in_array(substr($objection, -1), array('!','.','?')) ) {
-                $objection = $objection.".";
+            if (!in_array(substr($objection, -1), array('!', '.', '?'))) {
+                $objection = $objection . ".";
             }
             $finalResponse = "$objection $transitiontext $answer";
         }
-        if( substr($finalResponse, -1) != "." ) {
-            $finalResponse = $finalResponse.".";
+        if (substr($finalResponse, -1) != ".") {
+            $finalResponse = $finalResponse . ".";
         }
     }
-    return htmlspecialchars( $finalResponse, ENT_DISALLOWED, "UTF-8", false );
+    return htmlspecialchars($finalResponse, ENT_DISALLOWED, "UTF-8", false);
 }
 /**
-* FUNCTION FOR INSTRUCTION
-**/
-function instruction($id, $color="")
+ * FUNCTION FOR INSTRUCTION
+ **/
+function instruction($id, $color = "")
 {
     global $AdminDAO;
-    $results            =   $AdminDAO->getrows("instructions", "*", "pkinstructionid = :id", array(":id"=>$id));
+    $results            =   $AdminDAO->getrows("instructions", "*", "pkinstructionid = :id", array(":id" => $id));
     $data               =   $results[0];
     $placement          =   $data['placement'];
     $title              =   $data['title'];
@@ -328,11 +327,11 @@ function instruction($id, $color="")
         $title = "No title found.";
     }
     $color = (($color) ? "color:$color" : '');
-    echo '<a href="#"><i style="font-size:16px;'. $color .'" data-placement="'.$placement.'" data-toggle="tooltip" title="'.$title.'" class="fa fa-info-circle tooltipshow" aria-hidden="true"></i></a>';
+    echo '<a href="#"><i style="font-size:16px;' . $color . '" data-placement="' . $placement . '" data-toggle="tooltip" title="' . $title . '" class="fa fa-info-circle tooltipshow" aria-hidden="true"></i></a>';
 }
 /**
-* FUNCTION FOR GETTING ANSWER OF DEPENDENT PARENT QUESTION
-**/
+ * FUNCTION FOR GETTING ANSWER OF DEPENDENT PARENT QUESTION
+ **/
 function getAnswerOfDependentParentQuestion($discovery_id, $questoin_id, $response_id)
 {
     global $AdminDAO;
@@ -364,29 +363,29 @@ function getAnswerOfDependentParentQuestion($discovery_id, $questoin_id, $respon
             $answer = "No";
         }
     }
-        return $answer;
+    return $answer;
 }
 /**
-* FUNCTION FOR DATE IS WEEKEND OR NOT
-**/
+ * FUNCTION FOR DATE IS WEEKEND OR NOT
+ **/
 function isWeekend($date)
 {
     return (date('N', strtotime($date)) >= 6);
 }
 /**
-* FUNCTION FOR GETTING WORKING DATE
-**/
+ * FUNCTION FOR GETTING WORKING DATE
+ **/
 function findWorkingDay($duedate, $extensiondays, $holidaysArray, $no_of_court_days = 0)
 {
     global $dateformate;
     if (in_array($duedate, $holidaysArray) || isWeekend($duedate)) {
         //echo 1;
-        $duedate    =   date('Y-m-d', strtotime($duedate. ' + 1 days'));
+        $duedate    =   date('Y-m-d', strtotime($duedate . ' + 1 days'));
         findWorkingDay($duedate, $extensiondays, $holidaysArray, $no_of_court_days);
     } else {
         $no_of_court_days++;
         if ($extensiondays == 2 && $no_of_court_days < 2) {   //echo 2;
-            $duedate    =   date('Y-m-d', strtotime($duedate. ' + 1 days'));
+            $duedate    =   date('Y-m-d', strtotime($duedate . ' + 1 days'));
             findWorkingDay($duedate, $extensiondays, $holidaysArray, $no_of_court_days);
         } else {
             //echo 3;
@@ -403,47 +402,47 @@ function numberTowords($num)
 {
 
     $ones = array(
-    0 =>"ZERO",
-    1 => "ONE",
-    2 => "TWO",
-    3 => "THREE",
-    4 => "FOUR",
-    5 => "FIVE",
-    6 => "SIX",
-    7 => "SEVEN",
-    8 => "EIGHT",
-    9 => "NINE",
-    10 => "TEN",
-    11 => "ELEVEN",
-    12 => "TWELVE",
-    13 => "THIRTEEN",
-    14 => "FOURTEEN",
-    15 => "FIFTEEN",
-    16 => "SIXTEEN",
-    17 => "SEVENTEEN",
-    18 => "EIGHTEEN",
-    19 => "NINETEEN",
-    "014" => "FOURTEEN"
+        0 => "ZERO",
+        1 => "ONE",
+        2 => "TWO",
+        3 => "THREE",
+        4 => "FOUR",
+        5 => "FIVE",
+        6 => "SIX",
+        7 => "SEVEN",
+        8 => "EIGHT",
+        9 => "NINE",
+        10 => "TEN",
+        11 => "ELEVEN",
+        12 => "TWELVE",
+        13 => "THIRTEEN",
+        14 => "FOURTEEN",
+        15 => "FIFTEEN",
+        16 => "SIXTEEN",
+        17 => "SEVENTEEN",
+        18 => "EIGHTEEN",
+        19 => "NINETEEN",
+        "014" => "FOURTEEN"
     );
     $tens = array(
-    0 => "ZERO",
-    1 => "TEN",
-    2 => "TWENTY",
-    3 => "THIRTY",
-    4 => "FORTY",
-    5 => "FIFTY",
-    6 => "SIXTY",
-    7 => "SEVENTY",
-    8 => "EIGHTY",
-    9 => "NINETY"
+        0 => "ZERO",
+        1 => "TEN",
+        2 => "TWENTY",
+        3 => "THIRTY",
+        4 => "FORTY",
+        5 => "FIFTY",
+        6 => "SIXTY",
+        7 => "SEVENTY",
+        8 => "EIGHTY",
+        9 => "NINETY"
     );
     $hundreds = array(
-    "HUNDRED",
-    "THOUSAND",
-    "MILLION",
-    "BILLION",
-    "TRILLION",
-    "QUARDRILLION"
+        "HUNDRED",
+        "THOUSAND",
+        "MILLION",
+        "BILLION",
+        "TRILLION",
+        "QUARDRILLION"
     ); /*limit t quadrillion */
     $num = number_format(intval($num), 2, ".", ",");
     $num_arr = explode(".", $num);
@@ -453,32 +452,32 @@ function numberTowords($num)
     krsort($whole_arr, 1);
     $rettxt = "";
     foreach ($whole_arr as $key => $i) {
-        while (substr($i, 0, 1)=="0") {
-            $i=substr($i, 1, 5);
+        while (substr($i, 0, 1) == "0") {
+            $i = substr($i, 1, 5);
         }
         if ($i < 20) {
             /* echo "getting:".$i; */
             $rettxt .= $ones[$i];
         } elseif ($i < 100) {
-            if (substr($i, 0, 1)!="0") {
+            if (substr($i, 0, 1) != "0") {
                 $rettxt .= $tens[substr($i, 0, 1)];
             }
-            if (substr($i, 1, 1)!="0") {
-                $rettxt .= " ".$ones[substr($i, 1, 1)];
+            if (substr($i, 1, 1) != "0") {
+                $rettxt .= " " . $ones[substr($i, 1, 1)];
             }
         } else {
-            if (substr($i, 0, 1)!="0") {
-                $rettxt .= $ones[substr($i, 0, 1)]." ".$hundreds[0];
+            if (substr($i, 0, 1) != "0") {
+                $rettxt .= $ones[substr($i, 0, 1)] . " " . $hundreds[0];
             }
-            if (substr($i, 1, 1)!="0") {
-                $rettxt .= " ".$tens[substr($i, 1, 1)];
+            if (substr($i, 1, 1) != "0") {
+                $rettxt .= " " . $tens[substr($i, 1, 1)];
             }
-            if (substr($i, 2, 1)!="0") {
-                $rettxt .= " ".$ones[substr($i, 2, 1)];
+            if (substr($i, 2, 1) != "0") {
+                $rettxt .= " " . $ones[substr($i, 2, 1)];
             }
         }
         if ($key > 0) {
-            $rettxt .= " ".$hundreds[$key]." ";
+            $rettxt .= " " . $hundreds[$key] . " ";
         }
     }
     if ($decnum > 0) {
@@ -487,7 +486,7 @@ function numberTowords($num)
             $rettxt .= $ones[$decnum];
         } elseif ($decnum < 100) {
             $rettxt .= $tens[substr($decnum, 0, 1)];
-            $rettxt .= " ".$ones[substr($decnum, 1, 1)];
+            $rettxt .= " " . $ones[substr($decnum, 1, 1)];
         }
     }
     return $rettxt;
