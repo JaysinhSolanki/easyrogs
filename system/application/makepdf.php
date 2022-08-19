@@ -459,7 +459,7 @@ ob_start();
     </style>
 </head>
 
-<div class="custom-pdf-conatiner" style="padding:0px 40px 0 100px; line-height: 34px;">
+<div class="custom-pdf-conatiner" style="padding:0px 40px 0 80px; line-height: 34px;">
 
 
     <!-- =================================================== 	-->
@@ -930,25 +930,30 @@ ob_clean();
 
 
 
-$footertext    = '<div style="position: fixed; left: 7mm; bottom:5mm; text-align: center; width: 200mm; ">
-{PAGENO}<br/>
-<br/>' . $formNAME . '<br/>
-All rights reserved © ' . date("Y") . ' AI4Discovery. U.S. Patent Pending
+$footertext   .=  '<div style="position: fixed; left: 50mm; bottom:5mm; text-align: center; width: 120mm;">
+{PAGENO}<br/>';
+$footertext   .= '<div style="position: fixed; left: 50mm;bottom:15.5mm;text-align: center;background:black;width:120mm; height:1px;"></div>';
+$footertext  .=  $formNAME . '<br/>';
+$footertext   .= 'All rights reserved © ' . date("Y") . ' AI4Discovery. U.S. Patent Pending
 </div>';
 
 
 
-
-$left_stamp .= '<div  style="position: fixed; left: 10mm; top:15mm; text-align: center; width: 10mm;">';
-for ($i = 1; $i <= 50; $i++) {
+$left_stamp .= '<div  style="position: fixed; left: 10.2mm; top:15mm; text-align: center; width: 10mm;">';
+for ($i = 1; $i <= 28; $i++) {
+    $left_stamp .=  "<div style='padding-bottom:20px;margin-bottom:20px;line-height:34px;font-size:2.4em'>";
     $left_stamp .=  $i;
+    $left_stamp .=  "</div>";
     $left_stamp .=  "<br>";
 }
 $left_stamp .= '</div><br>';
-$left_stamp .= '<div style="position: fixed; left: 19mm; top:5mm; text-align: center; width: 0.6mm; background:#000;  height:270mm">
+$left_stamp .= '<div style="position: fixed; left: 19mm; top:5mm; text-align: center; width: 0.25mm; background:#000;  height:270mm">
  
      </div>';
-$left_stamp .= '<div style="position: fixed; left: -5mm; top:100mm; rotate: -90; text-align: center; width: 100mm;">
+$left_stamp .= '<div style="position: fixed; left: 19.7mm; top:5mm; text-align: center; width: 0.25mm; background:#000;  height:270mm">
+ 
+     </div>';
+$left_stamp .= '<div style="position: fixed; left: -3mm; top:100mm; rotate: -90; text-align: center; width: 100mm;">
     AI4Discovery.com
       <br>
       (888) 7300-LAW
