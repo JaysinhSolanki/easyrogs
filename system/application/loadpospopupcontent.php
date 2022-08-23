@@ -173,13 +173,16 @@ td, th {
             </tr>
 			<?php foreach($serviceList as $user): ?>
 				<?php if ($user['clients']): ?>
-					<?php foreach($user['clients'] as $client): ?>
-						<tr>
+          <tr>
 							<td  style="border: 1px solid #A2A9B1;" align="left"><?= $user['attorney_name'] ?></td>
-							<td  style="border: 1px solid #A2A9B1;" align="left"><?= $client['client_name'] ?></td>
-							<td  style="border: 1px solid #A2A9B1;" align="left"><?= $user['attorney_email'] ?></td>
-						</tr>
+              <td  style="border: 1px solid #A2A9B1;" align="left">
+					<?php foreach($user['clients'] as $client): ?>
+							<?= $client['client_name'] ?>
+              <?php echo "</br>" ?>
 					<?php endforeach; ?>
+          </td>
+          <td  style="border: 1px solid #A2A9B1;" align="left"><?= $user['attorney_email'] ?></td>
+						</tr>
 				<?php endif; ?>
 			<?php endforeach; ?>
           </tbody>
