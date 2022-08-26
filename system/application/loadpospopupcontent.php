@@ -136,9 +136,14 @@ td, th {
     	<table class="tabela1" style="border:none !important">
           <tbody>
             <tr>
+              <td align="center" style="padding-bottom:4px;">
+              <h3 style="text-decoration:underline; font-size:15px; display:block;">PROOF OF SERVICE</h3>
+              </td>
+            </tr>
+            <tr>
                 <td align="center">
-                     <h4>
-                    <?= $case_title ?><br />
+                     <h4 >
+                    <?= $case_title ?><br/>
                     <?= "Case no. $case_number" ?>
                     </h4>
                 </td>

@@ -939,9 +939,9 @@ $footertext   .= 'All rights reserved © ' . date("Y") . ' AI4Discovery. U.S. Pa
 
 
 
-$left_stamp .= '<div  style="position: fixed; left: 10.2mm; top:15mm; text-align: center; width: 10mm;">';
+$left_stamp .= '<div  style="position: fixed; left: 10.2mm; top:17mm; text-align: center; width: 10mm;">';
 for ($i = 1; $i <= 28; $i++) {
-    $left_stamp .=  "<div style='padding-bottom:20px;margin-bottom:20px;line-height:34px;font-size:2.4em'>";
+    $left_stamp .=  "<div style='padding-bottom:20px;margin-bottom:20px;line-height:35px;font-size:2em'>";
     $left_stamp .=  $i;
     $left_stamp .=  "</div>";
     $left_stamp .=  "<br>";
@@ -958,6 +958,11 @@ $left_stamp .= '<div style="position: fixed; left: -3mm; top:100mm; rotate: -90;
       <br>
       (888) 7300-LAW
      </div>';
+     $left_stamp .= '<div style="position: fixed; right: 8.5mm; top:5mm; text-align: center; width: 0.22mm; background:#000;  height:270mm">
+ 
+     </div>';
+
+
 
 $hide_section    = '<div style="text-align: center; width: 100mm;margin-top:400px;margin-bottom:400px;padding-top:400px;padding-bottom:400px;">
 AI4Discovery.com
