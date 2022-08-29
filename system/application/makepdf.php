@@ -451,6 +451,7 @@ ob_start();
         /* 49.7px */
         .q-row {
             margin-bottom: 10px;
+            padding-top: 0.1px;
         }
 
         .q-question {

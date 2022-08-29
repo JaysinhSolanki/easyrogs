@@ -143,7 +143,29 @@ td, th {
             <tr>
                 <td align="center">
                      <h4 >
-                    <?= $case_title ?><br/>
+                      <?php 
+                          $word='v';
+                          $word1='v.';
+                          $mystring = $case_title;
+                          if(strpos($mystring, $word) !== false){
+                         $test = explode("v",$case_title);
+                         ?>
+                         <span style="text-transform:uppercase"><?=$test[0]?></span>v<span style="text-transform:uppercase"><?=$test[1]?></span><br/>
+                    <?php
+                        } elseif(strpos($mystring, $word1) !== false) {
+                          $test = explode("v.",$case_title);
+                          ?>
+                          <span style="text-transform:uppercase"><?=$test[0]?></span>v.<span style="text-transform:uppercase"><?=$test[1]?></span><br/>
+                       <?php
+                        }
+                        else{
+                          ?>
+                          <span style="text-transform:uppercase"><?= $case_title ?></span><br/>
+                        <?php
+                        }
+
+                          ?>
+  
                     <?= "Case no. $case_number" ?>
                     </h4>
                 </td>
