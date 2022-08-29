@@ -141,8 +141,8 @@ td, th {
               </td>
             </tr>
             <tr>
-                <td align="center">
-                     <h4 >
+                <td align="center" style="margin:0 !important; padding:0 !important; line-height:16px !important">
+                     <h4 style="margin:0; padding:0;">
                       <?php 
                           $word='v';
                           $word1='v.';
@@ -150,26 +150,32 @@ td, th {
                           if(strpos($mystring, $word) !== false){
                          $case_heading = explode("v",$case_title);
                          ?>
-                         <span style="text-transform:uppercase"><?=$case_heading[0]?></span>v<span style="text-transform:uppercase"><?=$case_heading[1]?></span><br/>
+                         <span style="text-transform:uppercase;"><?=$case_heading[0]?></span>v<span style="text-transform:uppercase"><?=$case_heading[1]?></span>
                     <?php
                         } elseif(strpos($mystring, $word1) !== false) {
                           $test = explode("v.",$case_title);
                           ?>
-                          <span style="text-transform:uppercase"><?=$case_heading[0]?></span>v.<span style="text-transform:uppercase"><?=$case_heading[1]?></span><br/>
+                          <span style="text-transform:uppercase;line-height:0px;display:block; "><?=$case_heading[0]?></span>v.<span style="text-transform:uppercase"><?=$case_heading[1]?></span>
                        <?php
                         }
                         else{
                           ?>
-                          <span style="text-transform:uppercase"><?= $case_title ?></span><br/>
+                          <span style="text-transform:uppercase"><?= $case_title ?></span>
                         <?php
                         }
-
                           ?>
-  
-                    <?= "Case no. $case_number" ?>
+                                
                     </h4>
+
                 </td>
             </tr>
+
+            <tr>
+              <td align="center" style="margin:0 !important; padding:0 !important;line-height:16px !important">
+              <h4 style="margin:0; padding:0;"><?= "Case no. $case_number" ?></h4>
+              </td>
+            </tr>
+       
             <tr>
                 <td align="center">
                     <h4>
