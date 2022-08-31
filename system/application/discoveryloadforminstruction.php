@@ -502,19 +502,21 @@ else {
                 <p> Unless there is an agreement or a court order providing otherwise, the answering party must respond in writing to requests for admission within 30 days after they are served, or within 5 days after service in an unlawful detainer action.
                     There may be significant penalties if an answering party fails to provide a timely written response to each request for admission.
                     These penalties may include, among other things, an order that the facts in issue are deemed true or the documents in issue are deemed genuine for purposes of the case. </p>
-                <p> Answers to <i>Requests for Admission</i> must be given under oath. The answering party should use the following language at the end of the responses: </p>
-                <table class='tabela1' style='border:none !important; border-spacing: 3em 0; overflow: wrap'>
+                <p> Answers to <i>Requests for Admission</i> must be given under oath. The answering party should use the following language at the end of the responses: </p>            
+                <table class='tabela1' style='border:none !important; border-spacing: 3em 0; overflow: wrap;margin-bottom:40px'>
                     <tr>
                         <td  align='center' colspan='2'><em>I declare under penalty of perjury under the laws of the State of California that the foregoing answers are true and correct.</em></td>
                     </tr>
+                    </table>
+                <table class='tabela1' style='border:none !important; border-spacing: 3em 0; overflow: wrap'>
+                
                     <tr>
-                        <td> </td>
-                        <td> </td>
-                    </tr>
-                    <tr>
-                        <td align='center' style='border-top: 1px solid black;' > (DATE)         </td>
-                        <td align='center' style='border-top: 1px solid black;' > (SIGNATURE)    </td>
-                    </tr>
+                    <td style='width:30px'></td>
+                    <td align='center' style='border-top: 1px solid black;width:90px'> DATE  </td>
+             <td style='width:160px'></td>
+                    <td align='center' style='border-top: 1px solid black;width:140px' > SIGNATURE   </td>
+                    <td style='width:30px'></td>
+                </tr>
                 </table>
                 <p> These instructions are only a summary and are not intended to provide complete information about requests for admission.
                     This <i>Requests for Admission</i> form does not change existing law relating to requests for admission, nor does it affect an answering party's right to assert any privilege or to make any objection. </p>

@@ -147,12 +147,12 @@ td, th {
                           $word='v';
                           $word1='v.';
                           $mystring = $case_title;
-                          if(strpos($mystring, $word) !== false){
+                          if(strpos($mystring, $word) !== false || strpos($mystring, 'V') !== false ){
                          $case_heading = explode("v",$case_title);
                          ?>
                          <span style="text-transform:uppercase;"><?=$case_heading[0]?></span>v<span style="text-transform:uppercase"><?=$case_heading[1]?></span>
                     <?php
-                        } elseif(strpos($mystring, $word1) !== false) {
+                        } elseif(strpos($mystring, $word1) !== false || strpos($mystring, 'V.') !== false) {
                           $test = explode("v.",$case_title);
                           ?>
                           <span style="text-transform:uppercase;line-height:0px;display:block; "><?=$case_heading[0]?></span>v.<span style="text-transform:uppercase"><?=$case_heading[1]?></span>

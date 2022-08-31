@@ -62,7 +62,7 @@ h5 {
            <?= $defendant ?><br />
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defendant(s).
         </td>
-        <td style="border-bottom:1px solid; font-size:1.09em; padding-left:10px;line-height: 20px">
+        <td style="border-bottom:1px solid; font-size:1.09em; padding-left:10px;line-height: 20px" width="50%">
             Case No. <?= $case_number ?>
             <br /><br />
             <h3 style="font-weight:normal;font-size:1em;">

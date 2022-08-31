@@ -883,7 +883,7 @@ ob_start();
                         <p class='declaration'>I am the <?= $verification_by_name ?> in this action, and I have read the foregoing <b><?= $formNAME ?></b> and know its contents. The matters stated therein are true based on my own knowledge, except as to those matters stated on information and belief, and as to those matters I believe them to be true.
                         </p>
                         <br />
-                        <p class='declaration'>I ssss declare under penalty of perjury under the laws of the State of California that the foregoing is true and correct. Executed on <?php echo date("F j, Y", strtotime($verification_datetime)); ?> at <?php echo $verification_city . ", " . $verification_state; ?>. <i>Electronically Signed at <?php echo date("n/j/Y", strtotime($verification_datetime)) . " " . str_replace(array('am', 'pm'), array('a.m', 'p.m'), date("g:i a", strtotime($verification_datetime))) ?>. Pacific Time.</i>
+                        <p class='declaration'>I declare under penalty of perjury under the laws of the State of California that the foregoing is true and correct. Executed on <?php echo date("F j, Y", strtotime($verification_datetime)); ?> at <?php echo $verification_city . ", " . $verification_state; ?>. <i>Electronically Signed at <?php echo date("n/j/Y", strtotime($verification_datetime)) . " " . str_replace(array('am', 'pm'), array('a.m', 'p.m'), date("g:i a", strtotime($verification_datetime))) ?>. Pacific Time.</i>
                         </p>
                     </td>
                 </tr>
@@ -931,16 +931,16 @@ ob_clean();
 
 
 
-$footertext   .=  '<div style="position: fixed; left: 50mm; bottom:5mm; text-align: center; width: 120mm;">
+$footertext   .=  '<div style="position: fixed; left: 21.1mm; bottom:5mm; text-align: center; width:164mm;">
 {PAGENO}<br/>';
-$footertext   .= '<div style="position: fixed; left: 50mm;bottom:15.5mm;text-align: center;background:black;width:120mm; height:1px;"></div>';
+$footertext   .= '<div style="position: fixed; left: 21.1mm;bottom:15.5mm;text-align: center;background:black;width:164mm; height:1px;"></div>';
 $footertext  .=  $formNAME . '<br/>';
 $footertext   .= 'All rights reserved © ' . date("Y") . ' AI4Discovery. U.S. Patent Pending
 </div>';
 
 
 
-$left_stamp .= '<div  style="position: fixed; left: 10.2mm; top:17mm; text-align: center; width: 10mm;">';
+$left_stamp .= '<div  style="position: fixed; left: 10.2mm; top:17.4mm; text-align: center; width: 10mm;">';
 for ($i = 1; $i <= 28; $i++) {
     $left_stamp .=  "<div style='padding-bottom:20px;margin-bottom:20px;line-height:35px;font-size:2em'>";
     $left_stamp .=  $i;
@@ -959,7 +959,7 @@ $left_stamp .= '<div style="position: fixed; left: -3mm; top:100mm; rotate: -90;
       <br>
       (888) 7300-LAW
      </div>';
-     $left_stamp .= '<div style="position: fixed; right: 8.5mm; top:5mm; text-align: center; width: 0.22mm; background:#000;  height:270mm">
+     $left_stamp .= '<div style="position: fixed; right: 9.1mm; top:5mm; text-align: center; width: 0.22mm; background:#000;  height:270mm">
  
      </div>';
 
