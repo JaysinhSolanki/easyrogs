@@ -1,42 +1,48 @@
 <?php
 @session_start();
-include_once( __DIR__ . "/../bootstrap.php" );
-include_once( __DIR__ . "/../library/classes/functions.php" );
+include_once(__DIR__ . "/../bootstrap.php");
+include_once(__DIR__ . "/../library/classes/functions.php");
 $type         = $_GET['type'];
 $discovery_id = $_GET['id'];
 $form_id      = $_GET['form_id'];
 $case_id      = $_GET['case_id'];
 $viewonly     = @$_GET['viewonly'];
-if( !$viewonly ) {
+if (!$viewonly) {
     $viewonly = 0;
 }
 
-if( $discovery_id ) {
-    $discoveries      = $AdminDAO->getrows( 'discoveries', "*",
-                                            "id	= :id ",
-                                            ['id' => $discovery_id] );
+if ($discovery_id) {
+    $discoveries      = $AdminDAO->getrows(
+        'discoveries',
+        "*",
+        "id	= :id ",
+        ['id' => $discovery_id]
+    );
     $discovery        = $discoveries[0];
     $incidentoption   = $discovery['incidentoption'];
     $incidenttext     = $discovery['incidenttext'];
-    $instruction_text = html_entity_decode( $discovery['discovery_instrunctions'] );
+    $instruction_text = html_entity_decode($discovery['discovery_instrunctions']);
 }
 
 //Attorney Details
-$attorneyDetails = $AdminDAO->getrows( "system_addressbook", "*",
-                                       "pkaddressbookid = :pkaddressbookid",
-                                       [":pkaddressbookid" => $_SESSION['addressbookid']] );
+$attorneyDetails = $AdminDAO->getrows(
+    "system_addressbook",
+    "*",
+    "pkaddressbookid = :pkaddressbookid",
+    [":pkaddressbookid" => $_SESSION['addressbookid']]
+);
 $attorneyDetail  = $attorneyDetails[0];
 $attorneyEmail   = $attorneyDetail['email'];
 $attorneyPhone   = $attorneyDetail['phone'];
-$attorneyName    = $attorneyDetail['firstname']." ".$attorneyDetail['lastname'];
+$attorneyName    = $attorneyDetail['firstname'] . " " . $attorneyDetail['lastname'];
 
 $sides                  = new Side();
-$currentSide            = $sides->getByUserAndCase( $currentUser->id, $case_id );
-$primaryAttorney        = $sides->getPrimaryAttorney( $currentSide['id'] );
+$currentSide            = $sides->getByUserAndCase($currentUser->id, $case_id);
+$primaryAttorney        = $sides->getPrimaryAttorney($currentSide['id']);
 $primaryAttorneyFirm    = $primaryAttorney['companyname'];
-$primaryAttorneyAddress = makeaddress( $primaryAttorney['pkaddressbookid'] );
+$primaryAttorneyAddress = makeaddress($primaryAttorney['pkaddressbookid']);
 
-if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) ) { // FROGS & FROGSE in EXTERNAL case
+if (in_array($form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE])) { // FROGS & FROGSE in EXTERNAL case
 ?>
     <div class="">
         <div class="<?= !$viewonly ? "col-sm-offset-2 col-sm-10 col-md-offset-1 col-md-11" : "col-md-12" ?>" style="padding:0">
@@ -50,47 +56,46 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                         </div>
 
                         <div class="col-sm-2 col-md-4">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                               aria-expanded="true" class="btn btn-primary pull-right"></a>
-<?php if( $viewonly && @$currentUser && $currentUser->isAttorney() ) { ?>
-                            <button type="button" id="btn-objections" class="btn btn-primary btn-sidebar-toggle pull-right hidden"
-                                    onclick="javascript:toggleKBSidebar(<?= $form_id ?>, ObjectionPanel);"><!--frogs/e-->
-                                <i class="fa fa-book" /><span>Objections</span>
-                            </button>
-<script>
-    setTimeout( _ => {
-        hasItems = $('textarea[name*="objection["]').length > 0;
-        if( hasItems ) {
-            $("#btn-objections").removeClass("hidden")
-            toggleKBSidebar( <?= $form_id ?>, ObjectionPanel, hasItems )
-        }
-    }, 1000 );
-</script>
-<?php } ?>
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" class="btn btn-primary pull-right"></a>
+                            <?php if ($viewonly && @$currentUser && $currentUser->isAttorney()) { ?>
+                                <button type="button" id="btn-objections" class="btn btn-primary btn-sidebar-toggle pull-right hidden" onclick="javascript:toggleKBSidebar(<?= $form_id ?>, ObjectionPanel);">
+                                    <!--frogs/e-->
+                                    <i class="fa fa-book" /><span>Objections</span>
+                                </button>
+                                <script>
+                                    setTimeout(_ => {
+                                        hasItems = $('textarea[name*="objection["]').length > 0;
+                                        if (hasItems) {
+                                            $("#btn-objections").removeClass("hidden")
+                                            toggleKBSidebar(<?= $form_id ?>, ObjectionPanel, hasItems)
+                                        }
+                                    }, 1000);
+                                </script>
+                            <?php } ?>
                         </div>
 
                     </div>
                 </div>
                 <div id="collapseOne" class="panel-collapse collapse in">
                     <div class="panel-body">
-<?php
-                        if( $form_id == Discovery::FORM_CA_FROGS ) {
-                            if( $viewonly ) {
+                        <?php
+                        if ($form_id == Discovery::FORM_CA_FROGS) {
+                            if ($viewonly) {
                                 $checkedimg    = '<img src="../uploads/icons/checkbox_checked_small.png" width="15px">';
                                 $uncheckedimg  = '<img src="../uploads/icons/checkbox_empty_small.png" width="15px">';
                                 $incidenttext1 = "&nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding the alleged accident, injury, or other occurrence or breach of contract giving rise to this action or proceeding.";
 
-                                if( $incidentoption == Discovery::INCIDENT_STANDARD ) {
+                                if ($incidentoption == Discovery::INCIDENT_STANDARD) {
                                     $incidenttext2 = "&nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled 'Sec. 4(a)(2)'):";
                                     $option1       = $checkedimg . $incidenttext1;
                                     $option2       = $uncheckedimg . $incidenttext2;
-                                } elseif( $incidentoption == Discovery::INCIDENT_CUSTOM ) {
+                                } elseif ($incidentoption == Discovery::INCIDENT_CUSTOM) {
                                     $incidenttext2 = "&nbsp;&nbsp;(2) $incidenttext";
                                     $option1       = $uncheckedimg . $incidenttext1;
                                     $option2       = $checkedimg . $incidenttext2;
                                 }
                             }
-?>
+                        ?>
                             <div id="instruction_data">
                                 <table class="table" style="border:none !important">
                                     <tr>
@@ -174,51 +179,43 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                     </tr>
                                     <tr>
                                         <td colspan="2" style="border:none;">
-<?php
-                                            if( $viewonly ) {
+                                            <?php
+                                            if ($viewonly) {
                                                 echo $option1;
                                             } else {
-?>
+                                            ?>
                                                 <div class='checkbox_replace1'>
-                                                    <input type="radio" name="incidentoption"
-                                                           value="<?= Discovery::INCIDENT_STANDARD ?>"
-                                                           <?= ( $discovery['incidentoption'] == Discovery::INCIDENT_STANDARD ) ? " checked " : '' ?>
-                                                           onclick="incidentmeans(<?= Discovery::INCIDENT_STANDARD ?>)" />
+                                                    <input type="radio" name="incidentoption" value="<?= Discovery::INCIDENT_STANDARD ?>" <?= ($discovery['incidentoption'] == Discovery::INCIDENT_STANDARD) ? " checked " : '' ?> onclick="incidentmeans(<?= Discovery::INCIDENT_STANDARD ?>)" />
                                                     &nbsp;&nbsp;(1) INCIDENT Includes the circumstances and events surrounding
                                                     the alleged accident, injury, or other occurrence or breach of contract
                                                     giving rise to this action or proceeding.
                                                 </div>
-<?php
+                                            <?php
                                             }
-?>
+                                            ?>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td colspan="2" style="border:none;">
-<?php
-                                            if( $viewonly ) {
+                                            <?php
+                                            if ($viewonly) {
                                                 echo $option2;
                                             } else {
-?>
+                                            ?>
                                                 <div class='checkbox_replace2'>
-                                                    <input type="radio" name="incidentoption"
-                                                                        value="<?= Discovery::INCIDENT_CUSTOM ?>"
-                                                                        <?= ( $discovery['incidentoption'] == Discovery::INCIDENT_CUSTOM ) ? " checked " : '' ?>
-                                                                        onclick="incidentmeans(<?= Discovery::INCIDENT_CUSTOM ?>)" />
+                                                    <input type="radio" name="incidentoption" value="<?= Discovery::INCIDENT_CUSTOM ?>" <?= ($discovery['incidentoption'] == Discovery::INCIDENT_CUSTOM) ? " checked " : '' ?> onclick="incidentmeans(<?= Discovery::INCIDENT_CUSTOM ?>)" />
                                                     &nbsp;&nbsp;(2) INCIDENT means (insert your definition here or on a separate, attached sheet labeled "Sec. 4(a)(2)"):
                                                 </div>
                                                 <div class='remove_incidenttext'>
-                                                    <div id="incidentDiv"
-                                                         <?= ( $discovery['incidentoption'] == Discovery::INCIDENT_STANDARD || $discovery['incidentoption'] == "" ) ? ' style="display:none" ' : '' ?>>
-                                                        <textarea class="form-control" rows="5" name="incidenttext"
-                                                                  id="incidenttext"><?=
-                                                            $discovery['incidenttext']
-                                                        ?></textarea>
+                                                    <div id="incidentDiv" <?= ($discovery['incidentoption'] == Discovery::INCIDENT_STANDARD || $discovery['incidentoption'] == "") ? ' style="display:none" ' : '' ?>>
+                                                        <textarea class="form-control" rows="5" name="incidenttext" id="incidenttext"><?=
+                                                                                                                                        $discovery['incidenttext']
+                                                                                                                                        ?></textarea>
                                                     </div>
                                                 </div>
-<?php
+                                            <?php
                                             }
-?>
+                                            ?>
                                         </td>
                                     </tr>
                                     <tr>
@@ -244,11 +241,11 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                     </tr>
                                 </table>
                             </div>
-<?php
-                        } elseif( $form_id == Discovery::FORM_CA_FROGSE ) {
+                        <?php
+                        } elseif ($form_id == Discovery::FORM_CA_FROGSE) {
                             $personnames2 = $discovery['personnames2'];
                             $personnames1 = $discovery['personnames1']
-?>
+                        ?>
                             <div id="instruction_data">
                                 <table class="table">
                                     <tr>
@@ -336,51 +333,48 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                             <p>(c) EMPLOYMENT means a relationship in which an EMPLOYEE provides services
                                                 requested by or on behalf of an EMPLOYER, other than an independent contractor
                                                 relationship.</p>
-<?php
-                                            if( $viewonly ) {
-                                                if( $personnames1 ) {
-?>
+                                            <?php
+                                            if ($viewonly) {
+                                                if ($personnames1) {
+                                            ?>
                                                     <p>(d) EMPLOYEE means a PERSON who provides services in an EMPLOYMENT
                                                         relationship and who is a party to this lawsuit. For purposes of these
                                                         interrogatories, EMPLOYEE refers to: <?= $personnames1 ?> </p>
-<?php
+                                                <?php
                                                 } else {
-?>
+                                                ?>
                                                     <p>(d) EMPLOYEE means all such PERSONS</p>
-<?php
+                                                <?php
                                                 }
-                                                if( $personnames2 ) {
-?>
+                                                if ($personnames2) {
+                                                ?>
                                                     <p>(e) EMPLOYER means a PERSON who employs an EMPLOYEE to provide services
                                                         in an EMPLOYMENT relationship and who is a party to this lawsuit. For
                                                         purposes of these interrogatories, EMPLOYER refers
                                                         to <?php echo $personnames2; ?>:</p>
-<?php
+                                                <?php
                                                 } else {
-?>
+                                                ?>
                                                     <p>(d) EMPLOYEE means all such PERSONS</p>
-<?php
+                                                <?php
                                                 }
-                                            }
-                                            else {
-?>
+                                            } else {
+                                                ?>
                                                 <p>(d) EMPLOYEE means a PERSON who provides services in an EMPLOYMENT
                                                     relationship and who is a party to this lawsuit. For purposes of these
                                                     interrogatories, EMPLOYEE refers to (insert name): </p>
-                                                <textarea class="form-control" rows="5" name="personnames1"
-                                                          id="personnames1"><?=
-                                                    $discovery['personnames1']
-                                                ?></textarea>
+                                                <textarea class="form-control" rows="5" name="personnames1" id="personnames1"><?=
+                                                                                                                                $discovery['personnames1']
+                                                                                                                                ?></textarea>
                                                 <p>(e) EMPLOYER means a PERSON who employs an EMPLOYEE to provide services in
                                                     an EMPLOYMENT relationship and who is a party to this lawsuit. For purposes
                                                     of these interrogatories, EMPLOYER refers to (insert name):</p>
-                                                <textarea class="form-control" rows="5"
-                                                          id="personnames2" name="personnames2"><?=
-                                                    $discovery['personnames2'];
-                                                ?></textarea>
-<?php
+                                                <textarea class="form-control" rows="5" id="personnames2" name="personnames2"><?=
+                                                                                                                                $discovery['personnames2'];
+                                                                                                                                ?></textarea>
+                                            <?php
                                             }
-?>
+                                            ?>
                                             <p>(f) ADVERSE EMPLOYMENT ACTION means any TERMINATION, suspension, demotion,
                                                 reprimand, loss of pay, failure or refusal to hire, failure or refusal to
                                                 promote, or other action or failure to act that adversely affects the
@@ -396,9 +390,9 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                                 complaint, answer, cross-complaint, or answer to cross-complaint.</p>
                                             <p>(j) BENEFIT means any benefit from an EMPLOYER, including an "employee welfare
                                                 benefit plan" or employee pension benefit plan" within the meaning of Title
-                                                    29 United States Code section 1002(1) or (2) or ERISA.</p>
+                                                29 United States Code section 1002(1) or (2) or ERISA.</p>
                                             <p>(k) HEALTH CARE PROVIDER includes any PERSON referred to in Code of Civil
-                                                    Procedure section 667.7(e)(3).</p>
+                                                Procedure section 667.7(e)(3).</p>
                                             <p>(l) DOCUMENT means a writing, as defined in Evidence Code section 250,
                                                 and includes the original or a copy of handwriting, typewriting, printing,
                                                 photostats, photographs, electronically stored information, and every other
@@ -411,61 +405,59 @@ if( in_array( $form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE] ) 
                                     </tr>
                                 </table>
                             </div>
-<?php
+                        <?php
                         }
-?>
+                        ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 <?php
-}
-else {
+} else {
 ?>
-        <div class="--row col-sm-12 col-md-12" style="padding:0">
-            <button type="button" id="btn-definitions" class="btn btn-primary btn-sidebar-toggle pull-right hidden"
-                    onclick="javascript:toggleKBSidebar(<?= $form_id ?>, DefinitionPanel);">
-                <i class="fa fa-book" /><span>Definitions</span>
-            </button>
-        </div>
-<script>
-    setTimeout( _ => {
-        hasItems = $('textarea[name*="question_titles["]').length > 0
-        if( hasItems ) {
-            $("#btn-definitions").removeClass("hidden")
-            toggleKBSidebar( <?= $form_id ?>, DefinitionPanel, hasItems )
-        }
-    }, 1000 );
-</script>
-<?php
-	if( !$discovery_id && $type == Discovery::TYPE_EXTERNAL ) {
-		if( $form_id == Discovery::FORM_CA_SROGS ) {
-                // [old instructions]
-                // <p> Each answer must be as complete and straightforward as the information reasonably available to you, including the
-                //     information possessed by your attorneys or agents, permits. If an interrogatory cannot be answered completely, answer it to
-                //     the extent possible. If you do not have enough personal knowledge to fully answer an interrogatory, say so, but make a
-                //     reasonable and good faith effort to get the information by asking other persons or organizations, unless the information is
-                //     equally available to the asking party. Whenever an interrogatory may be answered by referring to a document, the document
-                //     may be attached as an exhibit to the response and referred to in the response. If the document has more than one page,
-                //     refer to the page and section where the answer to the interrogatory can be found. You may respond by attaching a copy of
-                //     the document to your answers to these interrogatories. Whenever an address or telephone number for the same person are
-                //     requested in more than one interrogatory, you are required to furnish them in answering only the first interrogatory asking
-                //     for that information.</p><p>If you are asserting a privilege or making an objection to an interrogatory, you must
-                //     specifically assert the privilege or state the objection in your written response. Your answers to these interrogatories
-                //     must be verified, dated, signed, and the original must be included in your response.</p>
+    <div class="--row col-sm-12 col-md-12" style="padding:0">
+        <button type="button" id="btn-definitions" class="btn btn-primary btn-sidebar-toggle pull-right hidden" onclick="javascript:toggleKBSidebar(<?= $form_id ?>, DefinitionPanel);">
+            <i class="fa fa-book" /><span>Definitions</span>
+        </button>
+    </div>
+    <script>
+        setTimeout(_ => {
+            hasItems = $('textarea[name*="question_titles["]').length > 0
+            if (hasItems) {
+                $("#btn-definitions").removeClass("hidden")
+                toggleKBSidebar(<?= $form_id ?>, DefinitionPanel, hasItems)
+            }
+        }, 1000);
+    </script>
+    <?php
+    if (!$discovery_id && $type == Discovery::TYPE_EXTERNAL) {
+        if ($form_id == Discovery::FORM_CA_SROGS) {
+            // [old instructions]
+            // <p> Each answer must be as complete and straightforward as the information reasonably available to you, including the
+            //     information possessed by your attorneys or agents, permits. If an interrogatory cannot be answered completely, answer it to
+            //     the extent possible. If you do not have enough personal knowledge to fully answer an interrogatory, say so, but make a
+            //     reasonable and good faith effort to get the information by asking other persons or organizations, unless the information is
+            //     equally available to the asking party. Whenever an interrogatory may be answered by referring to a document, the document
+            //     may be attached as an exhibit to the response and referred to in the response. If the document has more than one page,
+            //     refer to the page and section where the answer to the interrogatory can be found. You may respond by attaching a copy of
+            //     the document to your answers to these interrogatories. Whenever an address or telephone number for the same person are
+            //     requested in more than one interrogatory, you are required to furnish them in answering only the first interrogatory asking
+            //     for that information.</p><p>If you are asserting a privilege or making an objection to an interrogatory, you must
+            //     specifically assert the privilege or state the objection in your written response. Your answers to these interrogatories
+            //     must be verified, dated, signed, and the original must be included in your response.</p>
 
-                // <h5 class='text-center'> INVALID OBJECTIONS </h5>
-                // <p> Calls for a legal conclusion: “An interrogatory is not objectionable because an answer to it involves an opinion or contention that relates to fact
-                //     or the application of law to fact, or would be based on information obtained or legal theories developed in anticipation of litigation or in preparation
-                //     for trial.” <i>Code Civ.Proc.</i>, § 2030.010, subd. (b). </p>
-                // <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery.
-                //     Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group 2019) ¶ 8:721-8:722. </p>
-                // <p> Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. <i>Cal. Judges Benchbook Civ. Proc. Discovery</i> (September 2018) § 18.36. </p>
+            // <h5 class='text-center'> INVALID OBJECTIONS </h5>
+            // <p> Calls for a legal conclusion: “An interrogatory is not objectionable because an answer to it involves an opinion or contention that relates to fact
+            //     or the application of law to fact, or would be based on information obtained or legal theories developed in anticipation of litigation or in preparation
+            //     for trial.” <i>Code Civ.Proc.</i>, § 2030.010, subd. (b). </p>
+            // <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery.
+            //     Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group 2019) ¶ 8:721-8:722. </p>
+            // <p> Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. <i>Cal. Judges Benchbook Civ. Proc. Discovery</i> (September 2018) § 18.36. </p>
             $instruction_text = "";
             $instruction_info = "
             <p>
-                <img src='". ASSETS_URL ."images/court.png' style='width: 18px;padding-right: 3px;'>
+                <img src='" . ASSETS_URL . "images/court.png' style='width: 18px;padding-right: 3px;'>
                 No preface or instruction is allowed.
                 <a href='#'>
                     <i style='font-size:16px;' data-placement='top' data-toggle='tooltip' title='' class='fa fa-info-circle tooltipshow client-btn' aria-hidden='true' data-original-title='
@@ -475,23 +467,22 @@ else {
                 </a>
             </p>
             ";
-		}
-		else if( $form_id == Discovery::FORM_CA_RFAS ) {
-                // [old instructions]
-                // <p> Pursuant to Code of Civil Procedure section 2030 et seq., propounding party hereby requests that responding party answer the
-                //     following Requests for Admission, under oath, within thirty (30) days from the date hereof. </p>
+        } else if ($form_id == Discovery::FORM_CA_RFAS) {
+            // [old instructions]
+            // <p> Pursuant to Code of Civil Procedure section 2030 et seq., propounding party hereby requests that responding party answer the
+            //     following Requests for Admission, under oath, within thirty (30) days from the date hereof. </p>
 
-                // <h5 class='text-center'><b> INVALID OBJECTIONS </b></h5>
-                // <p> Calls for a legal conclusion: “When a party is served with a request for admission concerning a legal question properly
-                //     raised in the pleadings he cannot object simply by asserting that the request calls for a conclusion of law. He should make
-                //     the admission if he is able to do so and does not in good faith intend to contest the issue at trial, thereby 'setting at
-                //     rest a triable issue.' Otherwise he should set forth in detail the reasons why he cannot truthfully admit or deny the
-                //     request.” <i>Burke v. Superior Court</i> (1969) 71 Cal.2d 276, 282, internal citations omitted. See also, <i>Cembrook v. Superior
-                //     Court In and For City and County of San Francisco</i> (1961) 56 Cal.2d 423, 429 [“calls for a legal conclusion” is not a valid
-                //     objection.]. </p>
-                // <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition,
-                //     not for written discovery. Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group
-                //     2019) ¶ 8:721-8:722. </p>
+            // <h5 class='text-center'><b> INVALID OBJECTIONS </b></h5>
+            // <p> Calls for a legal conclusion: “When a party is served with a request for admission concerning a legal question properly
+            //     raised in the pleadings he cannot object simply by asserting that the request calls for a conclusion of law. He should make
+            //     the admission if he is able to do so and does not in good faith intend to contest the issue at trial, thereby 'setting at
+            //     rest a triable issue.' Otherwise he should set forth in detail the reasons why he cannot truthfully admit or deny the
+            //     request.” <i>Burke v. Superior Court</i> (1969) 71 Cal.2d 276, 282, internal citations omitted. See also, <i>Cembrook v. Superior
+            //     Court In and For City and County of San Francisco</i> (1961) 56 Cal.2d 423, 429 [“calls for a legal conclusion” is not a valid
+            //     objection.]. </p>
+            // <p> Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition,
+            //     not for written discovery. Rylaarsdam et al., <i>California Practice Guide: Civil Procedure Before Trial</i> (The Rutter Group
+            //     2019) ¶ 8:721-8:722. </p>
             $instruction_text = "
                 <p> Requests for admission are written requests by a party to an action requiring that any other party to the action either admit or deny, under oath, the truth of certain facts or the genuineness of certain documents.
                     For information on timing, the number of admissions a party may request from any other party, service of requests and responses, restriction on the style, format, and scope of requests for admission and responses to requests, and other details, see <i>Code of Civil Procedure</i> sections 94&mdash;95, 1013 and 2033.010&mdash;2033.420 and the case law relating to those sections. </p>
@@ -523,7 +514,7 @@ else {
             ";
             $instruction_info = "
             <p>
-                <img src='". ASSETS_URL ."images/court.png' style='width: 18px;padding-right: 3px;'>
+                <img src='" . ASSETS_URL . "images/court.png' style='width: 18px;padding-right: 3px;'>
                 These are the only instructions allowed.
                 <a href='#'>
                     <i style='font-size:16px;' data-placement='top' data-toggle='tooltip' title='' class='fa fa-info-circle tooltipshow client-btn' aria-hidden='true' data-original-title='
@@ -533,11 +524,10 @@ else {
                 </a>
             </p>
             ";
-		}
-		else if( $form_id == Discovery::FORM_CA_RPDS ) {
+        } else if ($form_id == Discovery::FORM_CA_RPDS) {
             $instruction_text = "
                 <p>DEMAND IS HEREBY MADE UPON YOU, pursuant to Code of Civil Procedure section 2031, et seq. to produce the documents and
-                    things described herein at ". $primaryAttorneyFirm .", ". $primaryAttorneyAddress ." within thirty (30) days of service hereof. Each
+                    things described herein at " . $primaryAttorneyFirm . ", " . $primaryAttorneyAddress . " within thirty (30) days of service hereof. Each
                     respondent shall respond separately, under oath, to each item or category of item by any of the following:</p>
 
                 <ol>
@@ -577,81 +567,82 @@ else {
             ";
         }
     }
-    if( !$viewonly ) {
-?>
-    <div class="form-group" id="instruction_id1" style="clear:both;">
-        <label class=" col-sm-2 col-md-1 control-label">Instructions<span class="redstar" style="color:#F00"></span></label>
-        <div class="col-sm-10 col-md-11">
-            <?=
+    if (!$viewonly) {
+    ?>
+        <div class="form-group" id="instruction_id1" style="clear:both;">
+            <label class=" col-sm-2 col-md-1 control-label">Instructions<span class="redstar" style="color:#F00"></span></label>
+            <div class="col-sm-10 col-md-11">
+                <?=
                 $instruction_info
-            ?>
-            <textarea  rows="5" name="instruction" id="instruction" placeholder="Form Instruction"  class="form-control m-b"><?=
-                $instruction_text
-            ?></textarea>
-        </div>
-<?php
+                ?>
+                <textarea rows="5" name="instruction" id="instruction" placeholder="Form Instruction" class="form-control m-b"><?=
+                                                                                                                                $instruction_text
+                                                                                                                                ?></textarea>
+            </div>
+        <?php
     } else {
-?>
-        <div class="">
-            <div class="col-md-12">
-                <!-- Instructions Section load -->
-                <div class="panel panel-default">
-                    <div class="panel-heading instruction-collapse">
-                        <div class="row">
-                            <div class="col-sm-2 col-md-4"></div>
-                            <div class="col-sm-8 col-md-4 text-center">
-                                <h3> Instructions </h3>
-                            </div>
-                            <div class="col-sm-2 col-md-4" style="margin-top: 8px;">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true"
-                                   class="btn btn-primary pull-right"></a>
-<?php if( @$currentUser && $currentUser->isAttorney() ) { ?>
-                                <button type="button" id="btn-objections" class="btn btn-primary btn-sidebar-toggle pull-right hidden"
-                                        onclick="javascript:toggleKBSidebar(<?= $form_id ?>, ObjectionPanel);"><!--rfas/rfps/rdps-->
-                                    <i class="fa fa-book" /><span>Objections</span>
-                                </button>
-<script>
-    setTimeout( _ => {
-        hasItems = $('textarea[name*="objection["]').length > 0;
-        if( hasItems ) {
-            $("#btn-objections").removeClass("hidden")
-            toggleKBSidebar( <?= $form_id ?>, ObjectionPanel, hasItems )
-        }
-    }, 1000 );
-</script>
-<?php } ?>
+        ?>
+            <div class="">
+                <div class="col-md-12">
+                    <!-- Instructions Section load -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading instruction-collapse">
+                            <div class="row">
+                                <div class="col-sm-2 col-md-4"></div>
+                                <div class="col-sm-8 col-md-4 text-center">
+                                    <h3> Instructions </h3>
+                                </div>
+                                <div class="col-sm-2 col-md-4" style="margin-top: 8px;">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" class="btn btn-primary pull-right"></a>
+                                    <?php if (@$currentUser && $currentUser->isAttorney()) { ?>
+                                        <button type="button" id="btn-objections" class="btn btn-primary btn-sidebar-toggle pull-right hidden" onclick="javascript:toggleKBSidebar(<?= $form_id ?>, ObjectionPanel);">
+                                            <!--rfas/rfps/rdps-->
+                                            <i class="fa fa-book" /><span>Objections</span>
+                                        </button>
+                                        <script>
+                                            setTimeout(_ => {
+                                                hasItems = $('textarea[name*="objection["]').length > 0;
+                                                if (hasItems) {
+                                                    $("#btn-objections").removeClass("hidden")
+                                                    toggleKBSidebar(<?= $form_id ?>, ObjectionPanel, hasItems)
+                                                }
+                                            }, 1000);
+                                        </script>
+                                    <?php } ?>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="collapseOne" class="panel-collapse collapse in">
-                        <div class="panel-body"><?=
-                            $instruction_text
-                        ?></div>
+                        <div id="collapseOne" class="panel-collapse collapse in">
+                            <div class="panel-body"><?=
+                                                    $instruction_text
+                                                    ?></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-<?php
+    <?php
     }
 }
-$forms     = $AdminDAO->getrows( 'forms', "*" );
-$formNames = array_map( function( $item ) { return $item['short_form_name']; }, $forms );
-?>
-<script>
-    globalThis['discoveryType'] = "<?= $type ?>";
-    globalThis['discoveryForm'] = "<?= $form_id ?>";
-    globalThis['discoveryFormNames'] = <?= json_encode($formNames, JSON_PRETTY_PRINT) ?>;
+$forms     = $AdminDAO->getrows('forms', "*");
+$formNames = array_map(function ($item) {
+    return $item['short_form_name'];
+}, $forms);
+    ?>
+    <script>
+        globalThis['discoveryType'] = "<?= $type ?>";
+        globalThis['discoveryForm'] = "<?= $form_id ?>";
+        globalThis['discoveryFormNames'] = <?= json_encode($formNames, JSON_PRETTY_PRINT) ?>;
 
-jQuery( $ => {
-    const $instr = $('#loadinstructions'),
-          $form = $instr.parents('form'),
-          newFormName = "<?= $formNames[$form_id-1] ?>"
+        jQuery($ => {
+            const $instr = $('#loadinstructions'),
+                $form = $instr.parents('form'),
+                newFormName = "<?= $formNames[$form_id - 1] ?>"
 
-    $form.removeClass( (idx,classes) => {
-        return ( classes.match(/(^|\s)[-][-]form[-]\S+/g) || []).join(' ')
-    } )
-    $form.addClass( `--form-${newFormName}` )
+            $form.removeClass((idx, classes) => {
+                return (classes.match(/(^|\s)[-][-]form[-]\S+/g) || []).join(' ')
+            })
+            $form.addClass(`--form-${newFormName}`)
 
-    $instr.addClass('--loaded')
-});
-</script>
+            $instr.addClass('--loaded')
+        });
+    </script>
