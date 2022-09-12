@@ -436,31 +436,46 @@ ob_start();
         .h-objection,
         .h-response {
             page-break-after: avoid;
-            line-height: 5px;
+            line-height: 0px !important;
 
-
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         .q-subquestion,
         .q-objection,
         .q-response {
             page-break-before: avoid;
-
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 0px !important;
         }
 
         /* 49.7px */
         .q-row {
-            margin-bottom: 10px;
+            margin-top: 6.5px;
+            margin-bottom: 0px;
             padding-top: 0.1px;
+
         }
 
         .q-question {
             margin-bottom: 0px;
         }
+
+        h3 {
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 0px !important;
+        }
+        p{
+            margin: 0 !important;
+            padding: 0 !important; 
+        }
     </style>
 </head>
 
-<div class="custom-pdf-conatiner" style="padding:0px 40px 0 80px; line-height: 34px;">
+<div class="custom-pdf-conatiner" style="padding:0px 40px 0 80px; line-height: 32px;">
 
 
     <!-- =================================================== 	-->
@@ -743,10 +758,9 @@ ob_start();
 
                 echo "	<div class='q-row'>
                             <h3 class='h-request'>REQUEST NO. $question_number:</h3>
-                            <p class='q-question'> $question_title </p>";
+                            <p class='q-question' style='margin-top:4.5px; margin-left:0; margin-right:0;margin-bottom:0; padding:0 !important;color:red !important; line: height 2.2em;'> $question_title </p>";
                 if ($view == Discovery::VIEW_RESPONDING) {
-                    echo "	<br/>
-                                    <h3 class='h-bu h-response'>Response</h3>";
+                    echo "<h3 class='h-bu h-response'>Response</h3>";
                     if ($final_response) {
                         echo "	<p class='q-response'> $final_response </p>";
                     } else {
@@ -940,12 +954,11 @@ $footertext   .= 'All rights reserved © ' . date("Y") . ' AI4Discovery. U.S. Pa
 
 
 
-$left_stamp .= '<div  style="position: fixed; left: 10.2mm; top:17.4mm; text-align: center; width: 10mm;">';
+$left_stamp .= '<div  style="position: fixed; left: 10.2mm; top:17.2mm; text-align: center; width: 10mm;">';
 for ($i = 1; $i <= 28; $i++) {
-    $left_stamp .=  "<div style='padding-bottom:20px;margin-bottom:20px;line-height:35px;font-size:2em'>";
+    $left_stamp .=  "<div style='padding-bottom:11px;margin-bottom:11px;font-size:16px;line-height:0 !important'>";
     $left_stamp .=  $i;
     $left_stamp .=  "</div>";
-    $left_stamp .=  "<br>";
 }
 $left_stamp .= '</div><br>';
 $left_stamp .= '<div style="position: fixed; left: 19mm; top:5mm; text-align: center; width: 0.25mm; background:#000;  height:270mm">
@@ -959,7 +972,7 @@ $left_stamp .= '<div style="position: fixed; left: -3mm; top:100mm; rotate: -90;
       <br>
       (888) 7300-LAW
      </div>';
-     $left_stamp .= '<div style="position: fixed; right: 9.1mm; top:5mm; text-align: center; width: 0.22mm; background:#000;  height:270mm">
+$left_stamp .= '<div style="position: fixed; right: 9.1mm; top:5mm; text-align: center; width: 0.22mm; background:#000;  height:270mm">
  
      </div>';
 
