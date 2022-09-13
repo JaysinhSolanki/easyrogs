@@ -1,5 +1,5 @@
 // not const, need these in the global scope (window object)
-globalThis.API_BASE = '/system/application';
+globalThis.API_BASE = '/easyrogs/system/application';
 globalThis.FORMAT_JSON = 'json';
 globalThis.FORMAT_HTML = 'html';
 

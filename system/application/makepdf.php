@@ -436,8 +436,8 @@ ob_start();
         .h-objection,
         .h-response {
             page-break-after: avoid;
-            line-height: 0px !important;
-
+            /* line-height: 0px !important; */
+            font-size: 14.7px !important;
             margin: 0 !important;
             padding: 0 !important;
         }
@@ -448,12 +448,12 @@ ob_start();
             page-break-before: avoid;
             margin: 0 !important;
             padding: 0 !important;
-            line-height: 0px !important;
+            /* line-height: 0px !important; */
         }
 
         /* 49.7px */
         .q-row {
-            margin-top: 6.5px;
+            margin-top: 1.1px;
             margin-bottom: 0px;
             padding-top: 0.1px;
 
@@ -466,11 +466,12 @@ ob_start();
         h3 {
             margin: 0 !important;
             padding: 0 !important;
-            line-height: 0px !important;
+            /* line-height: 0px !important; */
         }
-        p{
+
+        p {
             margin: 0 !important;
-            padding: 0 !important; 
+            padding: 0 !important;
         }
     </style>
 </head>
@@ -574,13 +575,13 @@ ob_start();
                     }
                 }
                 echo "	<div class='q-row'>
-                            <h3 class='h-interrogatory'>INTERROGATORY NO. $question_number:</h3>";
+                            <h3 class='h-interrogatory' style='margin-top:0px;'>INTERROGATORY NO. $question_number:</h3>";
                 if ($view == Discovery::VIEW_RESPONDING && $question_type_id == QuestionType::NONE) {
                 } else {
                     if ($view == Discovery::VIEW_RESPONDING) {
                         echo "	<h3 class='h-bu h-interrogatory'>Interrogatory</h3>";
                     }
-                    echo "<p class='q-subquestion'> $question_title $subquestuions_string </p>";
+                    echo "<p class='q-subquestion' style='line-height:34px;font-size: 14.7px;dispaly:block;margin-top:1.1px; margin-left:0; margin-right:0;margin-bottom:0; padding:0;'> $question_title $subquestuions_string </p>";
                     if ($has_extra_text) {
                         echo "	<br/>
                                 <p class='q-extra'>
@@ -757,8 +758,8 @@ ob_start();
                 }
 
                 echo "	<div class='q-row'>
-                            <h3 class='h-request'>REQUEST NO. $question_number:</h3>
-                            <p class='q-question' style='margin-top:4.5px; margin-left:0; margin-right:0;margin-bottom:0; padding:0 !important;color:red !important; line: height 2.2em;'> $question_title </p>";
+                            <h3 class='h-request' style=''>REQUEST NO. $question_number:</h3>
+                            <p class='q-question' style='line-height:34px;font-size: 14.7px;dispaly:block;margin-top:1.1px; margin-left:0; margin-right:0;margin-bottom:0; padding:0;'> $question_title </p>";
                 if ($view == Discovery::VIEW_RESPONDING) {
                     echo "<h3 class='h-bu h-response'>Response</h3>";
                     if ($final_response) {
@@ -954,9 +955,9 @@ $footertext   .= 'All rights reserved © ' . date("Y") . ' AI4Discovery. U.S. Pa
 
 
 
-$left_stamp .= '<div  style="position: fixed; left: 10.2mm; top:17.2mm; text-align: center; width: 10mm;">';
+$left_stamp .= '<div  style="position: fixed; left: 10.2mm; top:17mm; text-align: center; width: 10mm;">';
 for ($i = 1; $i <= 28; $i++) {
-    $left_stamp .=  "<div style='padding-bottom:11px;margin-bottom:11px;font-size:16px;line-height:0 !important'>";
+    $left_stamp .=  "<div style='padding-bottom:14.5px;margin-bottom:14.5px;font-size:14.7px;line-height:0 !important'>";
     $left_stamp .=  $i;
     $left_stamp .=  "</div>";
 }
