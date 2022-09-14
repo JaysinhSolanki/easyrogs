@@ -578,10 +578,10 @@ if (in_array($form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE])) {
                     things described herein at " . $primaryAttorneyFirm . ", " . $primaryAttorneyAddress . " within thirty (30) days of service hereof. Each
                     respondent shall respond separately, under oath, to each item or category of item by any of the following:</p>
 
-                <ol>
-                    <li>A statement that you will comply with the demand;</li>
-                    <li>A representation that you lack the ability to comply with the demand; or</li>
-                    <li>An objection to the demand setting forth, in detail, the nature and factual basis for</li>
+                <ol style='margin:0;'>
+                    <li> A statement that you will comply with the demand;</li>
+                    <li> A representation that you lack the ability to comply with the demand; or</li>
+                    <li> An objection to the demand setting forth, in detail, the nature and factual basis for</li>
                 </ol>
 
                 <p> the objection. If objection is made on the basis of a privilege, then you must include a Privilege Log identifying each
@@ -591,7 +591,7 @@ if (in_array($form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE])) {
                     reasonably calculated to lead to the discovery of admissible evidence in this action.</p>
                 <br />
 
-                <h5 class='text-center'><b>DEFINITIONS</b></h5>
+                <h5 class='text-center' style='margin:0;padding:0'><b>DEFINITIONS</b></h5>
                 <p>Words in all CAPITALS are defined as follows: YOU or YOUR mean respondent or any of YOUR agents, representatives, and/or
                     affiliated entities or anyone acting or whom YOU know or believe is purporting to act on YOUR behalf or who has acted or
                     whom YOU know or believe is purporting to act on YOUR behalf. IDENTIFY, IDENTITY, or INDENTIFYING mean to provide the name,
