@@ -775,6 +775,8 @@ ob_start();
                         </div>";
             }
         } else if (in_array($form_id, [Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RPDS])) {
+
+            echo "<div style='margin-top:63px'></div>";
             foreach ($mainQuestions as $data) {
                 $question_id             = $data['question_id'];
                 $question_type_id         = $data['question_type_id'];
@@ -812,9 +814,9 @@ ob_start();
                 if ($form_id == Discovery::FORM_CA_RPDS) {
                     echo "	<h3 class='h-request' >REQUEST NO. $question_number:</h3>";
                 } else {
-                    echo "	<h3 class='h-interrogatory'>INTERROGATORY NO. $question_number :</h3>";
+                    echo "	<h3 class='h-interrogatory' style='margin-top:0px;'>INTERROGATORY NO. $question_number :</h3>";
                 }
-                echo "<p class='q-question'>$question_title</p>";
+                echo "<p class='q-question' style='line-height:34px;font-size: 14.7px;dispaly:block;margin-top:1.1px; margin-left:0; margin-right:0;margin-bottom:0; padding:0;'>$question_title</p>";
                 if ($view == Discovery::VIEW_RESPONDING) {
                     echo "	<br/>
                                 <h3 class='h-bu h-response'>Response</h3>";
