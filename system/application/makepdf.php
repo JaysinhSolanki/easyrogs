@@ -776,7 +776,7 @@ ob_start();
             }
         } else if (in_array($form_id, [Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RPDS])) {
 
-            echo "<div style='margin-top:63px'></div>";
+            echo "<div style='margin-top:29.6px'></div>";
             foreach ($mainQuestions as $data) {
                 $question_id             = $data['question_id'];
                 $question_type_id         = $data['question_type_id'];
