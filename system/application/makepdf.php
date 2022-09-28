@@ -862,19 +862,29 @@ ob_start();
 
         <table style="margin-top:30px">
             <tbody>
+         
                 <tr>
-                    <td width="60%"></td>
-                </tr>
-                <tr>
-                    <td align="left" valign="top"><?php echo date('F j, Y'); ?></td>
-                    <td align="right" style="line-height: 20px">
+                    <td align="left" width='50%' valign="top"><?php echo date('F j, Y'); ?></td>
+
+                    <td align="right" width='44%' style="line-height: 20px">
+                         <table  align="right"  width='100%'  style="float: right">
+                            <tbody>
+                                <tr>
+                                    <td  align="right"  style="line-height: 20px">
+                                    <div style="text-align:right">
                         <hr style="margin-top:0px; margin-bottom:6px; padding-top:0px; line-height:0px" />
                         By: <?= $usersModel->getFullName($signingAttorney) ?><br />
                         Attorney for <?= $att_for_client_role ?><br />
                         <?= $att_for_client_name ?><br />
                         Signed electronically,<br />
                         <img src="<?= ASSETS_URL ?>images/court.png" style="width: 18px;padding-right: 3px;" /> Cal. Rules of Court, rule 2.257
+                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                         </table>
                     </td>
+          
                 </tr>
             </tbody>
         </table>

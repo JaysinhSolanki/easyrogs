@@ -224,10 +224,10 @@ if ($view == Discovery::VIEW_RESPONDING) {
             <p>(e) HEALTH CARE PROVIDER includes any PERSON referred to in Code of Civil Procedure section 667.7(e)(3).</p>
             <p>(f) ADDRESS means the street address, including the city, state, and zip code.</p>
 
-            <h5 class="text-center manage-line-height">Sec. 5. INVALID OBJECTIONS</h5>
+            <!-- <h5 class="text-center manage-line-height">Sec. 5. INVALID OBJECTIONS</h5>
             <p>Calls for a legal conclusion: “An interrogatory is not objectionable because an answer to it involves an opinion or contention that relates to fact or the application of law to fact, or would be based on information obtained or legal theories developed in anticipation of litigation or in preparation for trial.” Code Civ.Proc., § 2030.010, subd. (b).</p>
             <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition, not for written discovery. Rylaarsdam et al., California Practice Guide: Civil Procedure Before Trial (The Rutter Group 2019) ¶ 8:721-8:722.</p>
-            <p>Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. Cal. Judges Benchbook Civ. Proc. Discovery (September 2018) § 18.36.</p>
+            <p>Lack of foundation: Lack, or insufficiency, of foundation is not a valid objection to an interrogatory. Cal. Judges Benchbook Civ. Proc. Discovery (September 2018) § 18.36.</p> -->
         <?php
         } else if ($form_id == Discovery::FORM_CA_FROGSE) {
         ?>
