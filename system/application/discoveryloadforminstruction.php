@@ -514,34 +514,44 @@ if (in_array($form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE])) {
             //     2019) ¶ 8:721-8:722. </p>
             $instruction_text = "
             
-            <p style='line-height:40px !important;font-size: 14.7px;dispaly:block'>
+            <p style='line-height:40px;font-size: 14.7px;'>
             Requests for admission are written requests by a party to an action requiring that any other party to the action either admit or deny, under oath, the truth of certain facts or the genuineness of certain documents.
             For information on timing, the number of admissions a party may request from any other party, service of requests and responses, restriction on the style, format, and scope of requests for admission and responses to requests, and other details, see <i>Code of Civil Procedure</i> sections 94&mdash;95, 1013 and 2033.010&mdash;2033.420 and the case law relating to those sections.
-      
             </p>
-
-            <p style='line-height:40px  !important;font-size: 14.7px;dispaly:block'>
+  <table style='margin-top:4.7px; margin-bottom:4.7px;padding:0' cellspacing='0' cellpadding='1'>
+  <tr style='margin:0;padding:0'>
+  <td style='margin:0;padding:0'>
+  </td>
+  </tr>
+  </table>
+            <p style='line-height:40px;font-size: 14.7px;'>
             An answering party should consider carefully whether to admit or deny the truth of facts or the genuineness of documents.
             With limited exceptions, an answering party will not be allowed to change an answer to a request for admission.
             There may be penalties if an answering party fails to admit the truth of any fact or the genuineness of any document when requested to do so and the requesting party later proves that the fact is true or that the document is genuine.
             These penalties may include, among other things, payment of the requesting party's attorney's fees incurred in making that proof. 
-      
             </p>
-
-            <p style='line-height:40px  !important;font-size: 14.7px;dispaly:block'>
+            <table style='margin-top:4.7px; margin-bottom:4.7px;padding:0' cellspacing='0' cellpadding='1'>
+            <tr style='margin:0;padding:0'>
+            <td style='margin:0;padding:0'>
+            </td>
+            </tr>
+            </table>
+            <p style='line-height:40px;font-size: 14.7px;'>
             Unless there is an agreement or a court order providing otherwise, the answering party must respond in writing to requests for admission within 30 days after they are served, or within 5 days after service in an unlawful detainer action.
             There may be significant penalties if an answering party fails to provide a timely written response to each request for admission.
             These penalties may include, among other things, an order that the facts in issue are deemed true or the documents in issue are deemed genuine for purposes of the case. 
             </p>
-
-
-
-            <p style='line-height:40px  !important;font-size: 14.7px;dispaly:block'>
+            <table style='margin-top:4.7px; margin-bottom:4.7px;padding:0' cellspacing='0' cellpadding='1'>
+            <tr style='margin:0;padding:0'>
+            <td style='margin:0;padding:0'>
+            </td>
+            </tr>
+            </table>
+            <p style='line-height:40px  !important;font-size: 14.7px;'>
             Answers to <i>Requests for Admission</i> must be given under oath. The answering party should use the following language at the end of the responses:
             </p>
 
-                
-                <table class='tabela1' style='border:none !important; border-spacing: 3em 0; overflow: wrap;margin-bottom:40px'>
+                <table class='tabela1' style='border:none !important; border-spacing: 3em 0; overflow: wrap;margin-bottom:40px;margin-top:0'>
                     <tr>
                         <td  align='center' colspan='2'><em>I declare under penalty of perjury under the laws of the State of California that the foregoing answers are true and correct.</em></td>
                     </tr>
@@ -558,7 +568,6 @@ if (in_array($form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE])) {
                 </table>
                 <p> These instructions are only a summary and are not intended to provide complete information about requests for admission.
                     This <i>Requests for Admission</i> form does not change existing law relating to requests for admission, nor does it affect an answering party's right to assert any privilege or to make any objection. </p>
-       
                     ";
             $instruction_info = "
             <p>
