@@ -88,13 +88,28 @@
         <td style="border-right:1px solid;border-bottom:1px solid; font-size:1.09em;padding-right:10px; padding-bottom:10px;line-height: 20px" width="50% ">
             <?= $plaintiff ?>
             <br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plaintiff(s)<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vs.<br />
+            <table style="margin:0; padding-bottom:12px" cellspacing="0">
+            <tr>
+                <td></td>
+            </tr>
+         </table>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plaintiff(s)<br/>
+         <table style="margin:0; padding-bottom:7px" cellspacing="0">
+            <tr>
+                <td></td>
+            </tr>
+         </table>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vs.<br/>
+            <table style="margin:0; padding-bottom:11px" cellspacing="0">
+            <tr>
+                <td></td>
+            </tr>
+         </table>
             <?= $defendant ?><br />
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defendant(s).
         </td>
-        <td style="border-bottom:1px solid; font-size:1.09em; padding-left:10px;line-height: 20px" width="50%">
-            Case No. <?= $case_number ?>
+        <td style="border-bottom:1px solid; font-size:1.09em; padding-left:10px;line-height: 20px;vertical-align: top;" width="50%">
+             Case No. <?= $case_number ?>
             <br /><br />
             <h3 style="font-weight:normal;font-size:1em;">
                 <?php
@@ -108,15 +123,15 @@
         </td>
     </tr>
     <tr>
-        <td class="custom-leading">PROPOUNDING PARTY:</td>
+        <td class="custom-leading"><?php echo str_repeat('&nbsp;', 8) ?> PROPOUNDING PARTY:</td>
         <td class="custom-leading"><?= strtoupper($proponding_name) ?></td>
     </tr>
     <tr>
-        <td class="custom-leading">RESPONDING PARTY:</td>
+        <td class="custom-leading"><?php echo str_repeat('&nbsp;', 8) ?>RESPONDING PARTY:</td>
         <td class="custom-leading"><?= strtoupper($responding_name) ?></td>
     </tr>
     <tr>
-        <td class="custom-leading">SET NO.:</td>
+        <td class="custom-leading"><?php echo str_repeat('&nbsp;', 8) ?>SET NO.:</td>
         <td class="custom-leading"><?= numberTowords(strtoupper($set_number)) ?></td>
     </tr>
 </table>
@@ -147,7 +162,7 @@ if ($view == Discovery::VIEW_RESPONDING) {
 } else {
     if (trim($instructions) || !in_array($form_id, array(Discovery::FORM_CA_SROGS, Discovery::FORM_CA_RFAS))) {
     ?>
-        <table class="tabela1" style="border:none !important;overflow: wrap; margin-top:35px">
+        <table class="tabela1" style="border:none !important;overflow: wrap; margin-top:31px">
             <tr>
                 <td colspan="2" align="center">
                     <h3><u>INSTRUCTIONS</u></h3>

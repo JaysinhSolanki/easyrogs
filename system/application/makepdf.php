@@ -496,7 +496,7 @@ ob_start();
                 $dependent_answer    = "";
                 $question_id             = $data['question_id'];
                 $question_type_id         = $data['question_type_id'];
-                $question_title         = $data['question_title'];
+                $question_title         =  str_repeat('&nbsp;', 8).$data['question_title'];
                 $question_number         = $data['question_number'];
                 $sub_part                 = $data['sub_part'];
                 $is_pre_defined         = $data['is_pre_defined'];
@@ -678,7 +678,7 @@ ob_start();
                                     $question_id             = $data['question_id'];
                                     $question_type_id         = $data['question_type_id'];
                                     $form_id                 = $data['form_id'];
-                                    $question_title         = $data['question_title'];
+                                    $question_title         =  str_repeat('&nbsp;', 8).$data['question_title'];
                                     $question_number         = $data['question_number'];
                                     $sub_part                 = $data['sub_part'];
                                     $is_pre_defined         = $data['is_pre_defined'];
@@ -724,7 +724,7 @@ ob_start();
             foreach ($mainQuestions ?: [] as $data) {
                 $question_id             = $data['question_id'];
                 $question_type_id         = $data['question_type_id'];
-                $question_title         = $data['question_title'];
+                $question_title         =  str_repeat('&nbsp;', 8).$data['question_title'];
                 $question_number         = $data['question_number'];
                 $sub_part                 = $data['sub_part'];
                 $is_pre_defined         = $data['is_pre_defined'];
@@ -757,9 +757,11 @@ ob_start();
                     $final_response            = "";
                 }
 
+                // $add_spacetext  .= '<p style="padding-left:50px">sss</p>'.$question_title;
+
                 echo "	<div class='q-row'>
-                            <h3 class='h-request' style=''>REQUEST NO. $question_number:</h3>
-                            <p class='q-question' style='line-height:34px;font-size: 14.7px;dispaly:block;margin-top:1.1px; margin-left:0; margin-right:0;margin-bottom:0; padding:0;'> $question_title </p>";
+                            <h3 class='h-request' style=''>REQUEST sNO. $question_number:</h3>
+                            <p class='q-question' style='line-height:34px;font-size: 14.7px;dispaly:block;margin-top:1.1px; margin-left:0; margin-right:0;margin-bottom:0; padding:0;'>  $question_title </p>";
                 if ($view == Discovery::VIEW_RESPONDING) {
                     echo "<h3 class='h-bu h-response'>Response</h3>";
                     if ($final_response) {
@@ -780,7 +782,7 @@ ob_start();
             foreach ($mainQuestions as $data) {
                 $question_id             = $data['question_id'];
                 $question_type_id         = $data['question_type_id'];
-                $question_title         = $data['question_title'];
+                $question_title         =  str_repeat('&nbsp;', 8).$data['question_title'];
                 $question_number         = $data['question_number'];
                 $sub_part                 = $data['sub_part'];
                 $is_pre_defined         = $data['is_pre_defined'];

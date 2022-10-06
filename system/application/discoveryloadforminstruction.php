@@ -518,12 +518,7 @@ if (in_array($form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE])) {
             Requests for admission are written requests by a party to an action requiring that any other party to the action either admit or deny, under oath, the truth of certain facts or the genuineness of certain documents.
             For information on timing, the number of admissions a party may request from any other party, service of requests and responses, restriction on the style, format, and scope of requests for admission and responses to requests, and other details, see <i>Code of Civil Procedure</i> sections 94&mdash;95, 1013 and 2033.010&mdash;2033.420 and the case law relating to those sections.
             </p>
-  <table style='margin-top:4.7px; margin-bottom:4.7px;padding:0' cellspacing='0' cellpadding='1'>
-  <tr style='margin:0;padding:0'>
-  <td style='margin:0;padding:0'>
-  </td>
-  </tr>
-  </table>
+
             <p style='line-height:40px;font-size: 14.7px;'>
             An answering party should consider carefully whether to admit or deny the truth of facts or the genuineness of documents.
             With limited exceptions, an answering party will not be allowed to change an answer to a request for admission.
