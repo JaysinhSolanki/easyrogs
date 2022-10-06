@@ -593,8 +593,10 @@ if (in_array($form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE])) {
                 <p><b>THE DOCUMENTS DEMANDED HEREIN ARE LIMITED TO THOSE IN THE POSSESSION, CUSTODY OR CONTROL OF RESPONDING PARTY, OR THAT
                     PARTY'S ATTORNEY, INSURERS OR AGENTS</b>. Said documents are relevant to the subject matter of this action, or
                     reasonably calculated to lead to the discovery of admissible evidence in this action.</p>
+        
+            <p style='padding-top:16.7px; padding-bottom:16.7px;margin:0'></p>
 
-                <h5 class='text-center' style='margin-top:34.5px;margin-bottom:34.5px;padding:0'><b>DEFINITIONS</b></h5>
+                <h5 class='text-center' style='margin:0;padding:0'><b>DEFINITIONS</b></h5>
                 <p>Words in all CAPITALS are defined as follows: YOU or YOUR mean respondent or any of YOUR agents, representatives, and/or
                     affiliated entities or anyone acting or whom YOU know or believe is purporting to act on YOUR behalf or who has acted or
                     whom YOU know or believe is purporting to act on YOUR behalf. IDENTIFY, IDENTITY, or INDENTIFYING mean to provide the name,
@@ -607,14 +609,15 @@ if (in_array($form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE])) {
                     procedures, handbooks, guidelines, and rules. DISCIPLINARY ACTION means an action including but not limited to, a warning
                     or admonishment, whether oral or written, any reduction in rank, seniority, duties, schedule changes, title, benefits, pay,
                     suspension, or termination.</p>
-
-                <h5 class='text-center' style='margin-top:34.5px;margin-bottom:34.5px;padding:0'><b>INVALID OBJECTIONS</b></h5>
+                    <p style='padding-top:16.7px; padding-bottom:16.7px;margin:0'></p>
+                <h5 class='text-center' style='margin:0;padding:0'><b>INVALID OBJECTIONS</b></h5>
                 <p>Calls for a legal conclusion: Although there is no authority directly on point, such requests in both Requests for Admission
                     and Interrogatories are non-objectionable. <i>Burke v. Superior Court</i> (1969) 71 Cal.2d 276, 282 and Code Civ.Proc.,
                     §2030.010(b).</p>
                 <p>Calls for speculation: This is an objection to the form of the question. Such objections are appropriate only at deposition,
                     not for written discovery. Rylaarsdam et al., California Practice Guide: Civil Procedure Before Trial (The Rutter Group
                     2019) ¶ 8:721-8:722.</p>
+                    <p style='padding-top:16.7px; padding-bottom:16.7px;margin:0'></p>
             ";
         }
     }

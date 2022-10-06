@@ -192,7 +192,7 @@ if ($view == Discovery::VIEW_RESPONDING) {
             }
         ?>
             <h4 class="text-center manage-line-height">Sec. 1. Instructions to All Parties</h4>
-            <p>(a) Interrogatories are written questions prepared by a party to an action that are sent to any other party in the action to be answered under oath. The interrogatories below are form interrogatories approved for use in civil cases.</p>
+            <p>(a) ss Interrogatories are written questions prepared by a party to an action that are sent to any other party in the action to be answered under oath. The interrogatories below are form interrogatories approved for use in civil cases.</p>
 
             <p>(b) For time limitations, requirements for service on other parties, and other details, see Code of Civil Procedure section 2030 and the cases construing it.</p>
             <p>(c) These form interrogatories do not change existing law relating to interrogatories nor do they affect an answering party's right to assert any privilege or make any objection.</p>
@@ -202,6 +202,8 @@ if ($view == Discovery::VIEW_RESPONDING) {
             <p>(c) You may insert your own definition of INCIDENT in Section 4, but only where the action arises from a course of conduct or a series of events occurring over a period of time.</p>
             <p>(d) The interrogatories in section 16.0, Defendant's Contentions -- Personal Injury, should not be used until the defendant has had a reasonable opportunity to conduct an investigation or discovery of plaintiff's injuries and damages.</p>
             <p>(e) Additional interrogatories may be attached.</p>
+
+            <p style="padding-top:16.7px; padding-bottom:16.7px;margin:0"></p>
 
             <h4 class="text-center manage-line-height">Sec. 3. Instructions to the Answering Party</h4>
             <p>(a) An answer or other appropriate response must be given to each interrogatory checked by the asking party.</p>
@@ -227,7 +229,9 @@ if ($view == Discovery::VIEW_RESPONDING) {
                 </tr>
             </table>
 
-            <h4 class="text-center manage-line-height">Sec. 4. Definitions</h4>
+            <p style="padding-top:16.7px; padding-bottom:16.7px;margin:0"></p>
+
+            <h4 class="text-center manage-line-height">Sec. 4. dd Definitions</h4>
             <p>Words in BOLDFACE CAPITALS in these interrogatories are defined as follows:</p>
             <p>(a) (Check one of the following):</p>
             <p><?= @$option1 ?: '' ?></p>
@@ -238,6 +242,8 @@ if ($view == Discovery::VIEW_RESPONDING) {
             <p>(d) DOCUMENT means a writing, as defined in Evidence Code section 250, and includes the original or a copy of handwriting, typewriting, printing, photostats, photographs, electronically stored information, and every other means of recording upon any tangible thing and form of communicating or representation, including letters, words, pictures, sounds, or symbols, or combinations of them.</p>
             <p>(e) HEALTH CARE PROVIDER includes any PERSON referred to in Code of Civil Procedure section 667.7(e)(3).</p>
             <p>(f) ADDRESS means the street address, including the city, state, and zip code.</p>
+
+            <p style="padding-top:16.7px; padding-bottom:16.7px;margin:0"></p>
 
             <!-- <h5 class="text-center manage-line-height">Sec. 5. INVALID OBJECTIONS</h5>
             <p>Calls for a legal conclusion: “An interrogatory is not objectionable because an answer to it involves an opinion or contention that relates to fact or the application of law to fact, or would be based on information obtained or legal theories developed in anticipation of litigation or in preparation for trial.” Code Civ.Proc., § 2030.010, subd. (b).</p>
@@ -258,6 +264,8 @@ if ($view == Discovery::VIEW_RESPONDING) {
                 <p>(c) Check the box next to each interrogatory that you want the answering party to answer. Use care in choosing those interrogatories that are applicable to the case.</p>
                 <p>(d) The interrogatories in section 211.0, Loss of Income Interrogatories to Employer, should not be used until the employer has had a reasonable opportunity to conduct an investigation or discovery of the employee's injuries and damages.</p>
                 <p>(e) Additional interrogatories may be attached.</p>
+                
+                <p style="padding-top:16.7px; padding-bottom:16.7px;margin:0"></p>
 
                 <h4 class="text-center manage-line-height">Sec. 3. Instructions to the Answering Party</h4>
                 <p>(a) You must answer or provide another appropriate response to each interrogatory that has been checked below.</p>
@@ -280,6 +288,8 @@ if ($view == Discovery::VIEW_RESPONDING) {
                     <td style='width:30px'></td>
                 </tr>
             </table>
+
+            <p style="padding-top:16.7px; padding-bottom:16.7px;margin:0"></p>
 
             <h4 class="text-center manage-line-height">Sec. 4. Definitions</h4>
             <p>Words in BOLDFACE CAPITALS in these interrogatories are defined as follows:</p>
@@ -320,6 +330,7 @@ if ($view == Discovery::VIEW_RESPONDING) {
             <p>(k) HEALTH CARE PROVIDER includes any PERSON referred to in Code of Civil Procedure section 667.7(e)(3).</p>
             <p>(l) DOCUMENT means a writing, as defined in Evidence Code section 250, and includes the original or a copy of handwriting, typewriting, printing, photostats, photographs, electronically stored information, and every other means of recording upon any tangible thing and form of communicating or representation, including letters, words, pictures, sounds, or symbols, or combinations of them.</p>
             <p>(m) ADDRESS means the street address, including the city, state, and zip code.</p>
+            <p style="padding-top:16.7px; padding-bottom:16.7px;margin:0"></p>
 <?php
         }
     }
