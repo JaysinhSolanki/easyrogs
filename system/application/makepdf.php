@@ -760,7 +760,7 @@ ob_start();
                 // $add_spacetext  .= '<p style="padding-left:50px">sss</p>'.$question_title;
 
                 echo "	<div class='q-row'>
-                            <h3 class='h-request' style=''>REQUEST sNO. $question_number:</h3>
+                            <h3 class='h-request' style=''>REQUEST NO. $question_number:</h3>
                             <p class='q-question' style='line-height:34px;font-size: 14.7px;dispaly:block;margin-top:1.1px; margin-left:0; margin-right:0;margin-bottom:0; padding:0;'>  $question_title </p>";
                 if ($view == Discovery::VIEW_RESPONDING) {
                     echo "<h3 class='h-bu h-response'>Response</h3>";

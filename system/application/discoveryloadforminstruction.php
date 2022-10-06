@@ -563,6 +563,7 @@ if (in_array($form_id, [Discovery::FORM_CA_FROGS, Discovery::FORM_CA_FROGSE])) {
                 </table>
                 <p> These instructions are only a summary and are not intended to provide complete information about requests for admission.
                     This <i>Requests for Admission</i> form does not change existing law relating to requests for admission, nor does it affect an answering party's right to assert any privilege or to make any objection. </p>
+                    <p style='padding-top:16.7px; padding-bottom:16.7px;margin:0'></p>
                     ";
             $instruction_info = "
             <p>

@@ -231,7 +231,7 @@ if ($view == Discovery::VIEW_RESPONDING) {
 
             <p style="padding-top:16.7px; padding-bottom:16.7px;margin:0"></p>
 
-            <h4 class="text-center manage-line-height">Sec. 4. dd Definitions</h4>
+            <h4 class="text-center manage-line-height">Sec. 4. Definitions</h4>
             <p>Words in BOLDFACE CAPITALS in these interrogatories are defined as follows:</p>
             <p>(a) (Check one of the following):</p>
             <p><?= @$option1 ?: '' ?></p>
