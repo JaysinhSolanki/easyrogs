@@ -21,6 +21,7 @@
 
   // current user is the only attorney left... allow delete case.
   $attorneysLeft = $casesModel->usersCount($caseId, User::ATTORNEY_GROUP_ID);
+  
 	$canDeleteCase = $side && # side exists and..
                    (
                      $attorneysLeft === 0 || # there are no attorneys left in the case or...
@@ -29,6 +30,7 @@
                      )
                    );
 ?>
+
 
 <style type="text/css">
 	body.modal-open
@@ -53,6 +55,57 @@
 	}
 </style>
 
+
+
+<?php
+$cases = new CaseModel();
+$sides = new Side();
+
+$case_attonry_data = @$cases->getUsers($caseId);
+
+
+echo "<pre>";
+print_r($case_attonry_data);
+echo "</pre>";
+
+usort($case_attonry_data, function($v1, $v2) { return strcmp($v1['firstname'], $v2['firstname']); });
+
+
+echo "**********";
+foreach($case_attonry_data as $val){
+	echo $val['fkgroupid'];
+}
+
+echo "+++++";
+
+usort($case_attonry_data, function($v1, $v2) { return strcmp($v1['firstname'], $v2['firstname']); });
+
+echo "<pre>";
+print_r($case_attonry_data);
+echo "</pre>";
+
+$i=0;
+$count = 0;
+foreach($case_attonry_data as $val){
+	if($val['fkgroupid']==3 && $val['is_primary'] == ''){
+$count=1;
+		break;
+	}
+	$i++;
+}
+
+
+echo "++++++++++++++++++++++++++++++++++++++++";
+echo $count;
+echo $i;
+
+
+echo "+++++++++++++++++++data+++++++++++++++++++++";
+echo $case_attonry_data[$i]['firstname'];
+
+
+?>
+
 <div id="screenfrmdiv" style="display: block;">
 
 <div class="col-lg-12">
@@ -73,9 +126,9 @@
 						<div class="col-md-5" align="right">
 							<?php if (!$isDraft): ?>
                 <?php if($canDeleteCase): ?>
-									<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
+									<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> SS Delete </a>
 								<?php else: ?>
-									<a href="javascript:;" class="btn btn-black" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-sign-out"></i> Leave Case</a>
+									<a href="javascript:;" class="btn btn-danger" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-trash"></i> Delete Case</a>
 								<?php endif; ?>
 							<?php endif; ?>
 						</div>
@@ -157,6 +210,8 @@
                 <label>Lead Counsel<span class="redstar" style="color:#F00" title="This field is compulsory">*</span></label>
               </div>
               <div class="col-md-3">
+
+	
 							  <select class="er-team-attorney-select form-control" name="case_attorney" id="case_attorney" data-value="<?= $currentPrimaryAttorneyId ?>"></select>
 							</div>
 							<div class="col-md-2">
@@ -201,6 +256,9 @@
 								<label>Team</label>
 							</div>
 							<div class="col-md-8" id="loadusers"></div>
+
+
+
 							<div class="col-md-1"></div>
             </div>
 
@@ -228,7 +286,7 @@
 									<?php if($canDeleteCase): ?>
 										<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
 									<?php else: ?>
-										<a href="javascript:;" class="btn btn-black" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-sign-out"></i> Leave Case</a>
+										<a href="javascript:;" class="btn btn-danger" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-trash"></i> Delete Case</a>
 									<?php endif; ?>
 								<?php endif; ?>
 							</div>
@@ -321,6 +379,9 @@
         </div>
         <div class="form-group" id="div_attr" style="display:none;">
 					<label for="caseteam_attr_name">Attorney:</label><span class="redstar" style="color:#F00" title="This field is compulsory">*</span>
+
+						
+
 					<select class="er-team-attorney-select form-control" name="primary_attorney_id" id="primary_attorney_id" value="<?= $currentPrimaryAttorneyId ?>"></select>
         </div>
 				<div class="form-group" style="display: none" id="div_attr_email">
@@ -568,7 +629,17 @@ function loadCasePeople(case_id) {
 		} );
 	$("#service-list").load(`get-service-list.php?format=html&case_id=${case_id}`);
 	loadSides(case_id);
+
+
+
+	$("#test").load(`get-case-users.php?format=html&case_id=${case_id}`, _ => {
+			addTooltips();
+		} );
+
+
 }
+
+
 
 function loadSides(caseId)
 {
@@ -700,6 +771,8 @@ function loadmasterhead()
 
   erInviteControl();
   <?php if( $currentPrimaryAttorneyId && !$isDraft ): ?>
+
+	
     erTeamAttorneySelectControl(<?= $caseId ?>);
   <?php else: ?>
     erTeamAttorneySelectControl(<?= $caseId ?>, setMastHead);
