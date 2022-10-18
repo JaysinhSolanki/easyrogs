@@ -4,6 +4,8 @@
 
 	$action	=	$_POST['delete_or_leave'];
 	$caseId	=	$_POST['case_id'];
+	$selected_button_value = $_POST['value_selected_button'];
+	$deleteteam = $_POST['deleteteam'];
 
 	/**
 	 * 
@@ -12,7 +14,10 @@
 	 * 
 	 */
 
+if($deleteteam == 'entire_case'){
+
 	switch( $action ) {
+
 		case 1: // delete case
 			//attorney
 			$AdminDAO->deleterows('attorney'," case_id = :case_id", array("case_id"=>$caseId));
@@ -50,4 +55,13 @@
 				$sidesModel->removeUser($currentSide['id'], $currentUser->id);
 			}
 		break;
+	}
+}
+
+	if($deleteteam){
+
+		$AdminDAO->deleterows('sides_users'," side_id = ".$deleteteam, array("side_id"=>$deleteteam));
+
+		// $AdminDAO->deleterows('attorney'," case_id = :case_id", array("case_id"=>$caseId));
+	
 	}
