@@ -26,14 +26,14 @@ if (!$newCase && !$side) {
 }
 
 // current user is the only attorney left... allow delete case.
-$attorneysLeft = $casesModel->usersCount($caseId, User::ATTORNEY_GROUP_ID);
+// $attorneysLeft = $casesModel->usersCount($caseId, User::ATTORNEY_GROUP_ID);
 
-$canDeleteCase = $side && # side exists and..
-	($attorneysLeft === 0 || # there are no attorneys left in the case or...
-		( # there is only one attorney left and is the current user v
-			$attorneysLeft === 1 && $currentUser->user['fkgroupid'] == User::ATTORNEY_GROUP_ID
-		)
-	);
+// $canDeleteCase = $side && # side exists and..
+// 	($attorneysLeft === 0 || # there are no attorneys left in the case or...
+// 		( # there is only one attorney left and is the current user v
+// 			$attorneysLeft === 1 && $currentUser->user['fkgroupid'] == User::ATTORNEY_GROUP_ID
+// 		)
+// 	);
 ?>
 
 
@@ -82,19 +82,29 @@ echo "</pre>";
 
 $i = 0;
 $count = 0;
-$current_login_user = $_SESSION['addressbookid'];
+$attorney_count = 0;
+$current_login_user = $currentUser->id;
 
 foreach ($case_attonry_data as $val) {
 	if ($val['fkgroupid'] == 3 && $val['id'] != $current_login_user) {
 		$count = 1;
 		break;
 	}
+
 	$i++;
 }
 
-$fin_another_attorney = $case_attonry_data[$i]['firstname'];
+foreach ($case_attonry_data as $val) {
+	if ($val['fkgroupid'] == 3) {
+		$attorney_count++;
+	}
+}
 
+$find_another_attorney = $case_attonry_data[$i]['pkaddressbookid'] ? $case_attonry_data[$i]['pkaddressbookid'] : '';
+$another_attorney_master_header = $case_attonry_data[$i]['masterhead'] ? $case_attonry_data[$i]['masterhead'] : '';
 
+echo "find-another-atorney";
+echo $find_another_attorney;
 
 echo "opopopopopopop";
 echo "<pre>";
@@ -103,10 +113,30 @@ echo "</pre>";
 echo "opopopopopopop";
 
 echo "attonney-left";
-print_r($attorneysLeft);
+print_r($attorney_count);
+print_r($j);
 
-$get_side_id = $side['id'] !='' ? $side['id'] : "";
+echo "master-head";
 
+echo $another_attorney_master_header;
+
+
+
+
+
+$get_side_id = $side['id'] != '' ? $side['id'] : "";
+
+$current_logged_in_user_id =  $currentUser->id;
+
+
+$attorneysLeft = $attorney_count;
+
+$canDeleteCase = $side && # side exists and..
+	($attorneysLeft === 0 || # there are no attorneys left in the case or...
+		( # there is only one attorney left and is the current user v
+			$attorneysLeft === 1 && $currentUser->user['fkgroupid'] == User::ATTORNEY_GROUP_ID
+		)
+	);
 
 
 ?>
@@ -625,6 +655,12 @@ $get_side_id = $side['id'] !='' ? $side['id'] : "";
 	});
 
 	function deleteLeaveCases(case_id, delete_or_leave) {
+
+		var entire_case_text;
+		if (delete_or_leave == 1) {
+
+			entire_case_text = "Entire case"
+		}
 		swal({
 				title: (delete_or_leave == 1) ? "Are you sure to delete this case?" : "Are you sure to want to leave this case?",
 				text: "You will not be able to undo this action!",
@@ -633,7 +669,7 @@ $get_side_id = $side['id'] !='' ? $side['id'] : "";
 				// buttons: [true, delete_or_leave == 1 ? "The entire case" : 'Yes, leave!',delete_or_leave == 1 ? "My entire case team" : 'Yes, leave!'],
 				// buttons: ["Stop", "Do it!"],
 				buttons: {
-					entirecase: delete_or_leave == 1 ? "The entire case" : '',
+					entirecase: entire_case_text,
 					caseteam: delete_or_leave == 1 ? "My entire case team" : 'My entire case team',
 					justme: delete_or_leave == 1 ? "Just Me" : 'Just Me',
 					cancel: "Cancel",
@@ -643,21 +679,45 @@ $get_side_id = $side['id'] !='' ? $side['id'] : "";
 			})
 			.then(result => {
 
-			
+
 				if (result == "entirecase") {
-					$.post( "deleteleavecase.php", { case_id: case_id, delete_or_leave: delete_or_leave,deleteteam: 'entire_case'})
-						.done( data => { selecttab('44_tab','get-cases.php','44'); });
+					$.post("deleteleavecase.php", {
+							case_id: case_id,
+							delete_or_leave: delete_or_leave,
+							deleteteam: 'entire_case'
+						})
+						.done(data => {
+							selecttab('44_tab', 'get-cases.php', '44');
+						});
+					// swal(`The returned value is: ${result}`);
+				} else if (result == "caseteam") {
+					$.post("deleteleavecase.php", {
+							case_id: case_id,
+							deleteteam: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>
+						})
+						.done(data => {
+							selecttab('44_tab', 'get-cases.php', '44');
+						});
 					// swal(`The returned value is: ${result}`);
 				}
-				else if(result == "caseteam"){
-					$.post( "deleteleavecase.php", { case_id: case_id,deleteteam: <?php  echo $get_side_id !='' ? $get_side_id : "false"; ?>})
-						.done( data => { selecttab('44_tab','get-cases.php','44'); });
-// swal(`The returned value is: ${result}`);
+				 else if (result == "justme") {
+
+					master_header = "<?php   echo preg_replace('/\s+/', ' ', $another_attorney_master_header); ?>";
+
+					$.post("deleteleavecase.php", {
+							case_id: case_id,
+							current_logged_in_id: <?php echo $current_logged_in_user_id != '' ? $current_logged_in_user_id : "false"; ?>,
+							another_attorney_id: <?php echo $find_another_attorney != '' ? $find_another_attorney : "false"; ?>,
+							deleteme: 'deleteme',another_attorney_master_header: master_header != '' ? master_header : "false",
+							side: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>
+						})
+						.done(data => {
+							selecttab('44_tab', 'get-cases.php', '44');
+						});
 				}
+
 			});
 		$(".swal-button-container:first").css("float", "right");
-
-
 
 	}
 
