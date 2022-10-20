@@ -76,9 +76,9 @@ usort($case_attonry_data, function ($v1, $v2) {
 });
 
 
-echo "<pre>";
-print_r($case_attonry_data);
-echo "</pre>";
+// echo "<pre>";
+// print_r($case_attonry_data);
+// echo "</pre>";
 
 $i = 0;
 $count = 0;
@@ -103,25 +103,22 @@ foreach ($case_attonry_data as $val) {
 $find_another_attorney = $case_attonry_data[$i]['pkaddressbookid'] ? $case_attonry_data[$i]['pkaddressbookid'] : '';
 $another_attorney_master_header = $case_attonry_data[$i]['masterhead'] ? $case_attonry_data[$i]['masterhead'] : '';
 
-echo "find-another-atorney";
-echo $find_another_attorney;
+// echo "find-another-atorney";
+// echo $find_another_attorney;
 
-echo "opopopopopopop";
-echo "<pre>";
-print_r($side['id']);
-echo "</pre>";
-echo "opopopopopopop";
+// echo "opopopopopopop";
+// echo "<pre>";
+// print_r($side['id']);
+// echo "</pre>";
+// echo "opopopopopopop";
 
-echo "attonney-left";
-print_r($attorney_count);
-print_r($j);
+// echo "attonney-left";
+// print_r($attorney_count);
+// print_r($j);
 
-echo "master-head";
+// echo "master-head";
 
-echo $another_attorney_master_header;
-
-
-
+// echo $another_attorney_master_header;
 
 
 $get_side_id = $side['id'] != '' ? $side['id'] : "";
@@ -163,7 +160,7 @@ $canDeleteCase = $side && # side exists and..
 
 							<?php if (!$isDraft) : ?>
 								<?php if ($canDeleteCase) : ?>
-									<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> entire Delete </a>
+									<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
 								<?php else : ?>
 									<a href="javascript:;" class="btn btn-danger" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-trash"></i> Leave Delete Case</a>
 								<?php endif; ?>

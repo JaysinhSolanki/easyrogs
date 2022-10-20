@@ -262,18 +262,60 @@ class AdminDAO
 		$statement = self::$dbConn->prepare($this->query);
 
 
-		// print_r($this->query);
-
-		// print_r($statement);
-		// print_r($parameters);
-		// exit;
 
 		if ($statement->execute($parameters)) {
 			return 1;
 		} else {
 			return 0;
 		}
-	} //end of updaterow
+	}
+	function updaterowSide($table, $field, $value, $where = "", $whereparameters = array())
+	{
+
+	
+		$this->connect();
+		$fieldstr	=	"";
+		$valuestr	=	"";
+		$parameters		=	array();
+
+		/*
+		* UPDATE table SET field1 = :f1, field2=:f2 WHERE field3 > :f3 AND field4 = 2190
+
+		array(":f1"=>Umar, ":f2"=>Kashif, ":f3"=>"2016" )
+		*/
+
+		//$fieldstr	=	implode(",", $field);
+		foreach ($field as $fieldname) {
+			$fieldstr	.=	"$fieldname = :$fieldname,";
+		}
+		$fieldstr	= trim($fieldstr, ",");
+
+
+		for ($i = 0; $i < sizeof($field); ++$i) {
+			$parameters[":{$field[$i]}"] = $value[$i];
+		}
+
+		if (sizeof($whereparameters)  > 0) {
+			foreach ($whereparameters as $wpkey => $wpvalue) {
+				$parameters[":{$wpkey}"] = $this->filter($wpvalue);
+			}
+		}
+
+		$this->query = "UPDATE $table SET $fieldstr WHERE $where";
+		$this->displayquery($this->query, $parameters);
+		$statement = self::$dbConn->prepare($this->query);
+
+
+
+		if ($statement->execute($parameters)) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+
+	//end of updaterow
 	/*************************************deleterows()****************************************/
 	//@params: NONE
 	//Who/When: Gumption Technologies / 16 May 2016
