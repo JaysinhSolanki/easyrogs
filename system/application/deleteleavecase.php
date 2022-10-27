@@ -9,7 +9,7 @@ $deleteteam = $_POST['deleteteam'];
 $deleteme = $_POST['deleteme'];
 $current_logged_in_id = $_POST['current_logged_in_id'];
 $another_attorney_id = $_POST['another_attorney_id'] == 'false' ? 'null' : $_POST['another_attorney_id'];
-
+$lead_id =  $_POST['lead_id'];
 
 $another_attorney_master_header = $_POST['another_attorney_master_header'];
 $side_id = $_POST['side'];
@@ -77,7 +77,9 @@ if ($deleteteam) {
 
 if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'null') {
 
-	if ($deleteme) {
+	if ($deleteme && $lead_id == $current_logged_in_id ) {
+
+
 
 		$fields = array('primary_attorney_id');
 		$values = array($another_attorney_id);
@@ -93,6 +95,13 @@ if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'nu
 
 		$AdminDAO->updaterow('sides', $fields_side, $values_side, "id = $side_id");
 	}
+else
+{
+	$AdminDAO->deleterows('sides_users', " side_id = " . $side_id, array("side_id" => $side_id));
+
+	$AdminDAO->deleterows('sides_clients', " side_id = " . $side_id, array("side_id" => $side_id));
+}
+
 } else {
 
 	$blank_value = 320;

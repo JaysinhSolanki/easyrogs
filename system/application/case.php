@@ -103,6 +103,8 @@ foreach ($case_attonry_data as $val) {
 $find_another_attorney = $case_attonry_data[$i]['pkaddressbookid'] ? $case_attonry_data[$i]['pkaddressbookid'] : '';
 $another_attorney_master_header = $case_attonry_data[$i]['masterhead'] ? $case_attonry_data[$i]['masterhead'] : '';
 
+
+
 // echo "find-another-atorney";
 // echo $find_another_attorney;
 
@@ -122,6 +124,12 @@ $another_attorney_master_header = $case_attonry_data[$i]['masterhead'] ? $case_a
 
 
 $get_side_id = $side['id'] != '' ? $side['id'] : "";
+
+if($get_side_id){
+	$lead_id = $side['primary_attorney_id'] != '' ? $side['primary_attorney_id'] : "";
+}
+
+
 
 $current_logged_in_user_id =  $currentUser->id;
 
@@ -162,7 +170,7 @@ $canDeleteCase = $side && # side exists and..
 								<?php if ($canDeleteCase) : ?>
 									<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
 								<?php else : ?>
-									<a href="javascript:;" class="btn btn-danger" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-trash"></i> Leave Delete Case</a>
+									<a href="javascript:;" class="btn btn-danger" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-trash"></i> Delete</a>
 								<?php endif; ?>
 							<?php endif; ?>
 						</div>
@@ -656,10 +664,11 @@ $canDeleteCase = $side && # side exists and..
 		var entire_case_text;
 		if (delete_or_leave == 1) {
 
-			entire_case_text = "Entire case"
+			entire_case_text = "The Entire case"
 		}
 		swal({
-				title: (delete_or_leave == 1) ? "Are you sure to delete this case?" : "Are you sure to want to leave this case?",
+			className: "sweet-pop",
+				title: (delete_or_leave == 1) ? "Who do you want to delete from this case?" : "Who do you want to delete from this case??",
 				text: "You will not be able to undo this action!",
 				icon: 'warning',
 				dangerMode: true,
@@ -706,7 +715,8 @@ $canDeleteCase = $side && # side exists and..
 							current_logged_in_id: <?php echo $current_logged_in_user_id != '' ? $current_logged_in_user_id : "false"; ?>,
 							another_attorney_id: <?php echo $find_another_attorney != '' ? $find_another_attorney : "false"; ?>,
 							deleteme: 'deleteme',another_attorney_master_header: master_header != '' ? master_header : "false",
-							side: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>
+							side: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>,
+							lead_id: <?php echo $lead_id != '' ? $lead_id : "false"; ?>
 						})
 						.done(data => {
 							selecttab('44_tab', 'get-cases.php', '44');
