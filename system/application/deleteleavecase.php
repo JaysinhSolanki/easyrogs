@@ -21,6 +21,8 @@ $side_id = $_POST['side'];
  * 
  */
 
+
+
 if ($deleteteam == 'entire_case') {
 
 	switch ($action) {
@@ -75,14 +77,17 @@ if ($deleteteam) {
 // UPDATE sides
 // SET primary_attorney_id = 306 WHERE primary_attorney_id =94 AND case_id=217;
 
+
+
 if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'null') {
+
 
 	if ($deleteme && $lead_id == $current_logged_in_id ) {
 
 
-
 		$fields = array('primary_attorney_id');
 		$values = array($another_attorney_id);
+
 		$AdminDAO->updaterow('sides', $fields, $values, "primary_attorney_id = $current_logged_in_id AND case_id=$caseId");
 
 		$fields_case = array('attorney_id', 'case_attorney',);
@@ -94,6 +99,9 @@ if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'nu
 		$values_side = array($another_attorney_master_header);
 
 		$AdminDAO->updaterow('sides', $fields_side, $values_side, "id = $side_id");
+	
+		$AdminDAO->deleterows('sides_users', " side_id = $side_id AND system_addressbook_id = $current_logged_in_id");
+		
 	}
 else
 {
