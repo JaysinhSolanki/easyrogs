@@ -125,6 +125,10 @@ $another_attorney_master_header = $case_attonry_data[$i]['masterhead'] ? $case_a
 
 $get_side_id = $side['id'] != '' ? $side['id'] : "";
 
+
+$get_side_role = $side['role'] != '' ? $side['role'] : "";
+
+
 if($get_side_id){
 	$lead_id = $side['primary_attorney_id'] != '' ? $side['primary_attorney_id'] : "";
 }
@@ -686,11 +690,17 @@ $canDeleteCase = $side && # side exists and..
 			.then(result => {
 
 
+
+				client_role = "<?php echo $get_side_role != '' ? $get_side_role : "false"; ?>";
+
 				if (result == "entirecase") {
 					$.post("deleteleavecase.php", {
 							case_id: case_id,
 							delete_or_leave: delete_or_leave,
-							deleteteam: 'entire_case'
+							deleteteam: 'entire_case',
+							side: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>,
+							side_role: client_role
+
 						})
 						.done(data => {
 							selecttab('44_tab', 'get-cases.php', '44');

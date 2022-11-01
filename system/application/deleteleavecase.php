@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../bootstrap.php';
 require_once("adminsecurity.php");
 
+use function EasyRogs\_assert as _assert;
+
 $action	=	$_POST['delete_or_leave'];
 $caseId	=	$_POST['case_id'];
 $selected_button_value = $_POST['value_selected_button'];
@@ -13,6 +15,30 @@ $lead_id =  $_POST['lead_id'];
 
 $another_attorney_master_header = $_POST['another_attorney_master_header'];
 $side_id = $_POST['side'];
+
+$side_role = $_POST['side_role'];
+
+
+function checkSides( $userId1, $userId2 = null ) {
+	global $sidesModel, $currentUser, $logger,
+	$caseId;
+	static $usersAndSides;
+
+	if( !isset($usersAndSides) ) $usersAndSides = $sidesModel->getSidesUsersByCase($caseId);
+	if( !isset($userId2) ) $userId2 = $currentUser->id;
+
+	_assert( [$userId1, $userId2] );
+	$user1 = searchValue($usersAndSides, $userId1, 'user_id' );
+	$user2 = searchValue($usersAndSides, $userId2, 'user_id' );
+	_assert( [$user1, $user2], "Something seems wrong with the DB.. corrupted?" );
+
+	return ($user1['side_id'] == $user2['side_id']) ? Side::SAME_SIDE : Side::OTHER_SIDE;
+}
+
+echo checkSides(311);
+
+echo "******";
+exit;
 
 /**
  * 
@@ -28,34 +54,41 @@ if ($deleteteam == 'entire_case') {
 	switch ($action) {
 
 		case 1: // delete case
+
+
+
 			//attorney
-			$AdminDAO->deleterows('attorney', " case_id = :case_id", array("case_id" => $caseId));
+			// $AdminDAO->deleterows('attorney', " case_id = :case_id AND side_id = $side_id", array("case_id" => $caseId));
+
+
 
 			//attorneys_cases
-			$AdminDAO->deleterows('attorneys_cases', " case_id = :case_id", array("case_id" => $caseId));
+			// $AdminDAO->deleterows('attorneys_cases', " case_id = :case_id", array("case_id" => $caseId));
+
 
 			//clients
-			$AdminDAO->deleterows('clients', " case_id = :case_id", array("case_id" => $caseId));
+			// $AdminDAO->deleterows('clients', " case_id = :case_id AND client_role = $side_role", array("case_id" => $caseId));
 
-			//questions
-			$allDescoveries	=	$AdminDAO->getrows("discoveries", "GROUP_CONCAT(id) as ids", " case_id = :case_id", array("case_id" => $caseId));
 
-			if (sizeof($allDescoveries) > 0) {
-				$discoveryids	=	$allDescoveries[0]['ids'];
-				$alldiscoveries			=	explode(",", $discoveryids);
-				foreach ($alldiscoveries as $discovery_id) {
-					$AdminDAO->deleterows('discovery_questions', " discovery_id = :discovery_id", array("discovery_id" => $discovery_id));
-				}
-			}
+			// //questions
+			// $allDescoveries	=	$AdminDAO->getrows("discoveries", "GROUP_CONCAT(id) as ids", " case_id = :case_id", array("case_id" => $caseId));
+
+			// if (sizeof($allDescoveries) > 0) {
+			// 	$discoveryids	=	$allDescoveries[0]['ids'];
+			// 	$alldiscoveries			=	explode(",", $discoveryids);
+			// 	foreach ($alldiscoveries as $discovery_id) {
+			// 		$AdminDAO->deleterows('discovery_questions', " discovery_id = :discovery_id", array("discovery_id" => $discovery_id));
+			// 	}
+			// }
 
 			//discoveries
 			$AdminDAO->deleterows('discoveries', " case_id = :case_id", array("case_id" => $caseId));
 
-			//documents
-			$AdminDAO->deleterows('documents', " case_id = :case_id", array("case_id" => $caseId));
+			// //documents
+			// $AdminDAO->deleterows('documents', " case_id = :case_id", array("case_id" => $caseId));
 
-			//cases
-			$AdminDAO->deleterows('cases', " id = :case_id", array("case_id" => $caseId));
+			// //cases
+			// $AdminDAO->deleterows('cases', " id = :case_id", array("case_id" => $caseId));
 			break;
 
 		default: // leave case

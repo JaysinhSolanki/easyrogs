@@ -8,7 +8,11 @@ $loggedin_email	= $currentUser->user['email'];//$_SESSION['loggedin_email'];
 $case_id = $_GET['pid'];
 
 $discoveries = $discoveriesModel->getByUserAndCase($currentUser->id, $case_id );
+
+
+
 $currentSide = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
+
 Side::legacyTranslateCaseData($case_id, $discoveries);
 
 function checkSides( $userId1, $userId2 = null ) {
@@ -107,6 +111,12 @@ function partyEmailAddrs( $clientId ) { global $AdminDAO, $case_id;
 <?php
 					}
 					else {
+
+
+
+
+
+
 						foreach( $discoveries as $discovery ) {
 							$id  = $discovery['id'];
 							$uid = $discovery['uid'];
