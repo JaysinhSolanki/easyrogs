@@ -35,10 +35,27 @@ function checkSides( $userId1, $userId2 = null ) {
 	return ($user1['side_id'] == $user2['side_id']) ? Side::SAME_SIDE : Side::OTHER_SIDE;
 }
 
-echo checkSides(311);
+// $sides = new Side();
+// $test =  $sides->getByUserAndCase($currentUser->id, $caseId);
 
-echo "******";
-exit;
+
+
+// $test1 = $AdminDAO->getrows('attorney', "side_id = $side_id AND case_id = $caseId", array("side_id" =>$side_id));
+// $group_row	=	$AdminDAO->getrows("system_groups","*"," pkgroupid = :groupid", array(":groupid"=>3));
+
+// $getAllCases = $AdminDAO->getrows("attorney","*","side_id = $side_id AND case_id = $case_id",array("side_id"=>$side_id,"case_id"=>$case_id));	
+
+
+// print_r($getAllCases);
+
+// print_r('dd');
+
+// exit;
+
+// echo checkSides(306);
+
+// echo "******";
+// exit;
 
 /**
  * 
@@ -56,6 +73,32 @@ if ($deleteteam == 'entire_case') {
 		case 1: // delete case
 
 
+			// $discoveries = $discoveriesModel->getByUserAndCase($current_logged_in_id, $caseId);
+
+			// // Side::legacyTranslateCaseData($case_id, $discoveries);
+
+			// foreach( $discoveries as $discovery ) {
+			// 	$id  = $discovery['id'];
+			// 	$uid = $discovery['uid'];
+			// 	$propoundingClient = $discovery['propounding'];
+			// 	$propoundingAttorney = $discovery['propounding_attorney'] ?: -1;
+			// 	$respondingClient = $discovery['responding'];
+			// 	$creator_id  = $discovery['creator_id'];
+			// 	//$is_submitted	= $discovery['is_submitted'];
+			// 	$is_served		= $discovery['is_served'];
+			// 	$discoveryType	= $discovery['type'];
+
+			// 	$RequestPDF_FileName  = UPLOAD_URL ."documents/". $uid ."/". $discoveriesModel->getTitle($discovery) .".pdf";
+			// 	$ResponsePDF_FileName = UPLOAD_URL ."documents/". $uid ."/". $responsesModel->getTitle(0,$discovery) .".pdf";
+			// 	$totalChilds			= 0;
+			// 	$totalChildsNotIncludes	= 0;
+
+			// }
+
+			// echo $id;
+			// echo "huree";
+
+
 
 			//attorney
 			// $AdminDAO->deleterows('attorney', " case_id = :case_id AND side_id = $side_id", array("case_id" => $caseId));
@@ -71,7 +114,7 @@ if ($deleteteam == 'entire_case') {
 
 
 			// //questions
-			// $allDescoveries	=	$AdminDAO->getrows("discoveries", "GROUP_CONCAT(id) as ids", " case_id = :case_id", array("case_id" => $caseId));
+			  //$allDescoveries	=	$AdminDAO->getrows("discoveries", "GROUP_CONCAT(id) as ids", " case_id = :case_id", array("case_id" => $caseId));
 
 			// if (sizeof($allDescoveries) > 0) {
 			// 	$discoveryids	=	$allDescoveries[0]['ids'];
@@ -82,7 +125,7 @@ if ($deleteteam == 'entire_case') {
 			// }
 
 			//discoveries
-			$AdminDAO->deleterows('discoveries', " case_id = :case_id", array("case_id" => $caseId));
+			// $AdminDAO->deleterows('discoveries', " case_id = :case_id", array("case_id" => $caseId));
 
 			// //documents
 			// $AdminDAO->deleterows('documents', " case_id = :case_id", array("case_id" => $caseId));
@@ -102,9 +145,16 @@ if ($deleteteam == 'entire_case') {
 
 if ($deleteteam) {
 
-	$AdminDAO->deleterows('sides_users', " side_id = " . $deleteteam, array("side_id" => $deleteteam));
 
-	$AdminDAO->deleterows('sides_clients', " side_id = " . $deleteteam, array("side_id" => $deleteteam));
+	$fields_case_delete_team = array('is_deleted');
+	$values_case_delete_team = array('0');
+	// $AdminDAO->updaterow('sides_users', " side_id = " . $deleteteam, array("side_id" => $deleteteam));
+
+	$AdminDAO->updaterowSide('sides_users', $fields_case_delete_team, $values_case_delete_team, "side_id= $deleteteam");
+	$AdminDAO->updaterowSide('sides_clients', $fields_case_delete_team, $values_case_delete_team, "side_id= $deleteteam");
+	echo "yoyo";
+
+	// $AdminDAO->deleterows('sides_clients', " side_id = " . $deleteteam, array("side_id" => $deleteteam));
 }
 
 // UPDATE sides

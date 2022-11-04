@@ -89,6 +89,7 @@ class AdminDAO
 
 	function getrows($tbl, $fields, $where = '', $parameters = array(), $sort_index = '', $sort_order = '', $start = '', $limit = '')
 	{
+
 		$sort		=	"";
 		$records	=	"";
 		if ($sort_index != '' && $sort_order != '') {
@@ -102,6 +103,8 @@ class AdminDAO
 			$where = " WHERE $where ";
 		}
 
+		
+		// exit;
 
 		$this->query = "SELECT
 						$fields
@@ -113,19 +116,24 @@ class AdminDAO
 		$this->displayquery($this->query, $parameters);
 		//echo "<Pre>";
 		//print_r($fieldvaluesarray);
-		$this->connect();
 
+		$this->connect();
 
 		if (!$statement = self::$dbConn->prepare($this->query)) //"select id from some_table where name = :name")
 		{
 			$this->displayquery($this->query, $parameters);
 		}
+	
 		//echo "statment ...<br>";
 		//print_r($statement);
 		if (@sizeof($parameters) > 0) {
-			$statement->execute($parameters);
+
+				$statement->execute($parameters);		
+
 		} else {
+
 			$statement->execute();
+
 		}
 
 		$allrows_array	=	$statement->fetchAll(PDO::FETCH_ASSOC);

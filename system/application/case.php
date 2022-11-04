@@ -696,6 +696,7 @@ $canDeleteCase = $side && # side exists and..
 				if (result == "entirecase") {
 					$.post("deleteleavecase.php", {
 							case_id: case_id,
+							current_logged_in_id: <?php echo $current_logged_in_user_id != '' ? $current_logged_in_user_id : "false"; ?>,
 							delete_or_leave: delete_or_leave,
 							deleteteam: 'entire_case',
 							side: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>,

@@ -111,7 +111,7 @@
                                         ON s.id = su.side_id
                                     WHERE s.case_id = :case_id AND
                                           su.active = 1',
-
+                                                                
       ]);
     }
 
