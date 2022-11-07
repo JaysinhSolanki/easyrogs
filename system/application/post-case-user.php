@@ -11,6 +11,8 @@
     HttpResponse::malformed('Name & Email are required.');
   }
 
+
+
   $users = new User();
   $sides = new Side();
 
@@ -19,7 +21,12 @@
     HttpResponse::notFound('Please set a lead counsel before adding team users.');
   }
   $user = User::publishable($users->expressFindOrCreate($name, $email));
+
+
   $added = $sides->addUser($side['id'], $user);
+
+
+  
   if (!$added) {
     HttpResponse::conflict("User is already in another side of the case.");
   }

@@ -64,6 +64,8 @@ function checkSides( $userId1, $userId2 = null ) {
  * 
  */
 
+ 
+
 
 
 if ($deleteteam == 'entire_case') {

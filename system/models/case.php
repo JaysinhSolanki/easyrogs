@@ -135,6 +135,26 @@
 
       return $users;
     }
+
+
+    function getUsersFlag($caseId) {
+
+    global $currentUser;
+
+    $sides = new Side();
+    $userSide = $sides->getByUserAndCase($currentUser->id, $caseId);
+    $users = $sides->getUsersFlag($userSide['id']);
+    $primaryAttorney = $sides->getPrimaryAttorney($userSide['id']);
+    if ( $primaryAttorney && !User::inCollection($primaryAttorney, $users) ) {
+      $users[] = array_merge(
+        User::publishable($primaryAttorney), 
+        ['is_primary' => 'true']
+      );
+    }
+    return $users;
+    
+  }
+
     
     // TODO: solve with query
     function usersCount($case, $role = null) {

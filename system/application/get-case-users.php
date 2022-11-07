@@ -11,7 +11,10 @@
   
   if ( !$caseId ) { HttpResponse::malformed('Case ID is required'); }
   
-  $users = @$cases->getUsers($caseId);
+  // $users = @$cases->getUsers($caseId);
+
+  $users = @$cases->getUsersFlag($caseId);
+
   if ($users) {
     foreach($users as &$user) {
       $user['is_current_user'] = $user['pkaddressbookid'] == $currentUser->id;
