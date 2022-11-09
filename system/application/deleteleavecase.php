@@ -67,6 +67,7 @@ function checkSides( $userId1, $userId2 = null ) {
  
 
 
+// entire case
 
 if ($deleteteam == 'entire_case') {
 
@@ -98,42 +99,40 @@ if ($deleteteam == 'entire_case') {
 			// }
 
 			// echo $id;
-			// echo "huree";
+
+
+			// attorney
+			$AdminDAO->deleterows('attorney', " case_id = :case_id AND side_id = $side_id", array("case_id" => $caseId));
 
 
 
-			//attorney
-			// $AdminDAO->deleterows('attorney', " case_id = :case_id AND side_id = $side_id", array("case_id" => $caseId));
+			// attorneys_cases
+			$AdminDAO->deleterows('attorneys_cases', " case_id = :case_id", array("case_id" => $caseId));
 
 
-
-			//attorneys_cases
-			// $AdminDAO->deleterows('attorneys_cases', " case_id = :case_id", array("case_id" => $caseId));
-
-
-			//clients
-			// $AdminDAO->deleterows('clients', " case_id = :case_id AND client_role = $side_role", array("case_id" => $caseId));
+			// clients
+			$AdminDAO->deleterows('clients', " case_id = :case_id AND client_role = $side_role", array("case_id" => $caseId));
 
 
-			// //questions
-			  //$allDescoveries	=	$AdminDAO->getrows("discoveries", "GROUP_CONCAT(id) as ids", " case_id = :case_id", array("case_id" => $caseId));
+			//questions
+			  $allDescoveries	=	$AdminDAO->getrows("discoveries", "GROUP_CONCAT(id) as ids", " case_id = :case_id", array("case_id" => $caseId));
 
-			// if (sizeof($allDescoveries) > 0) {
-			// 	$discoveryids	=	$allDescoveries[0]['ids'];
-			// 	$alldiscoveries			=	explode(",", $discoveryids);
-			// 	foreach ($alldiscoveries as $discovery_id) {
-			// 		$AdminDAO->deleterows('discovery_questions', " discovery_id = :discovery_id", array("discovery_id" => $discovery_id));
-			// 	}
-			// }
+			if (sizeof($allDescoveries) > 0) {
+				$discoveryids	=	$allDescoveries[0]['ids'];
+				$alldiscoveries			=	explode(",", $discoveryids);
+				foreach ($alldiscoveries as $discovery_id) {
+					$AdminDAO->deleterows('discovery_questions', " discovery_id = :discovery_id", array("discovery_id" => $discovery_id));
+				}
+			}
 
-			//discoveries
-			// $AdminDAO->deleterows('discoveries', " case_id = :case_id", array("case_id" => $caseId));
+			// discoveries
+			$AdminDAO->deleterows('discoveries', " case_id = :case_id", array("case_id" => $caseId));
 
-			// //documents
-			// $AdminDAO->deleterows('documents', " case_id = :case_id", array("case_id" => $caseId));
+			//documents
+			$AdminDAO->deleterows('documents', " case_id = :case_id", array("case_id" => $caseId));
 
-			// //cases
-			// $AdminDAO->deleterows('cases', " id = :case_id", array("case_id" => $caseId));
+			//cases
+			$AdminDAO->deleterows('cases', " id = :case_id", array("case_id" => $caseId));
 			break;
 
 		default: // leave case
@@ -144,6 +143,8 @@ if ($deleteteam == 'entire_case') {
 			break;
 	}
 }
+
+// delete team
 
 if ($deleteteam) {
 
@@ -163,6 +164,9 @@ if ($deleteteam) {
 // SET primary_attorney_id = 306 WHERE primary_attorney_id =94 AND case_id=217;
 
 
+
+
+// delete me
 
 if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'null') {
 

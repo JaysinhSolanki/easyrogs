@@ -306,9 +306,6 @@ WHERE s.id = :side_id AND is_deleted = 1'
     // print_r($store_team_member_id);
     // array_push($store_team_member_id,)
 
-
-
-
     if ($active && User::isAttorney($user)) {
       $this->updateServiceLists($side, $user);
       if (!Side::hasPrimaryAttorney($side)) {
