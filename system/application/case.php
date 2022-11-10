@@ -313,9 +313,8 @@ $canDeleteCase = $side && # side exists and..
 					<div id="service-list"></div>
 
 					<br />
-
-					<div class="container">
-						<div id="sides-container"></div>
+					<!-- <div class="container">
+						<div id="sides-container"></div> -->
 
 						<input type="hidden" name="id" value="<?php echo $caseId; ?>" />
 						<input type="hidden" name="uid" value="<?php echo $uid; ?>" />
@@ -749,9 +748,9 @@ $canDeleteCase = $side && # side exists and..
 
 
 
-		$("#test").load(`get-case-users.php?format=html&case_id=${case_id}`, _ => {
-			addTooltips();
-		});
+		// $("#test").load(`get-case-users.php?format=html&case_id=${case_id}`, _ => {
+		// 	addTooltips();
+		// });
 
 
 	}

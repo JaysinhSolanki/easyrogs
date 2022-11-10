@@ -89,7 +89,7 @@ class BaseMailer
 
       if ($_ENV['APP_ENV'] != 'prod') {
         // Save copy of the last email
-        $savedir = __DIR__ . '/../_dev';
+        $savedir = _DIR_ . '/../_dev';
         if (!is_dir($savedir)) {
           mkdir($savedir, 0755, true);
         }

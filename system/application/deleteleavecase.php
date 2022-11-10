@@ -4,6 +4,8 @@ require_once("adminsecurity.php");
 
 use function EasyRogs\_assert as _assert;
 
+
+
 $action	=	$_POST['delete_or_leave'];
 $caseId	=	$_POST['case_id'];
 $selected_button_value = $_POST['value_selected_button'];
@@ -18,6 +20,9 @@ $side_id = $_POST['side'];
 
 $side_role = $_POST['side_role'];
 
+
+// print_r($case_id);
+// die(); 
 
 function checkSides( $userId1, $userId2 = null ) {
 	global $sidesModel, $currentUser, $logger,
@@ -64,7 +69,7 @@ function checkSides( $userId1, $userId2 = null ) {
  * 
  */
 
- 
+
 
 
 // entire case
@@ -100,10 +105,20 @@ if ($deleteteam == 'entire_case') {
 
 			// echo $id;
 
+			$attorney = $AdminDAO->getrows("attorney", "id", " case_id = :case_id AND fkaddressbookid = $current_logged_in_id", array("case_id" => $caseId));
+
+			$attorney_id = $attorney[0]['id'];
+			
+			$dscvry	=	$AdminDAO->getrows('discoveries',  "id", " case_id = :case_id AND attorney_id = $attorney_id AND served =''", array("case_id" => $caseId));
+			$dscvry_id = $dscvry[0]['id'];
+
+			
+
+			print_r($dscvry);
+			die();
 
 			// attorney
 			$AdminDAO->deleterows('attorney', " case_id = :case_id AND side_id = $side_id", array("case_id" => $caseId));
-
 
 
 			// attorneys_cases
@@ -125,11 +140,24 @@ if ($deleteteam == 'entire_case') {
 				}
 			}
 
+			$attorney = $AdminDAO->getrows("attorney", "id", " case_id = :case_id AND fkaddressbookid = $current_logged_in_id", array("case_id" => $caseId));
+
+			$attorney_id = $attorney[0]['id'];
+
+
 			// discoveries
-			$AdminDAO->deleterows('discoveries', " case_id = :case_id", array("case_id" => $caseId));
+			$AdminDAO->deleterows('discoveries', " case_id = :case_id AND attorney_id = $attorney_id AND served =''", array("case_id" => $caseId));
+
+			
+			$dscvry	=	$AdminDAO->getrows('discoveries',  "id", " case_id = :case_id AND attorney_id = $attorney_id", array("case_id" => $caseId));
+			$dscvry_id = $dscvry[0]['id'];
+			
 
 			//documents
-			$AdminDAO->deleterows('documents', " case_id = :case_id", array("case_id" => $caseId));
+			$AdminDAO->deleterows('documents', " case_id = :case_id AND discovery_id = $dscvry_id" , array("case_id" => $caseId));
+
+
+			
 
 			//cases
 			$AdminDAO->deleterows('cases', " id = :case_id", array("case_id" => $caseId));
@@ -171,7 +199,20 @@ if ($deleteteam) {
 if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'null') {
 
 
+
+
+
+
 	if ($deleteme && $lead_id == $current_logged_in_id ) {
+
+	
+
+		echo"Hello anupam";
+print_r($side_id);
+
+
+exit();
+
 
 
 		$fields = array('primary_attorney_id');
@@ -200,6 +241,7 @@ else
 }
 
 } else {
+	
 
 	$blank_value = 320;
 	$fields_delete_me = array('primary_attorney_id','masterhead');
