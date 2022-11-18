@@ -5,7 +5,6 @@ require_once("adminsecurity.php");
 use function EasyRogs\_assert as _assert;
 
 
-
 $action	=	$_POST['delete_or_leave'];
 $caseId	=	$_POST['case_id'];
 $selected_button_value = $_POST['value_selected_button'];
@@ -20,29 +19,25 @@ $side_id = $_POST['side'];
 
 $side_role = $_POST['side_role'];
 
-
-// print_r($case_id);
-// die(); 
-
-function checkSides( $userId1, $userId2 = null ) {
+function checkSides($userId1, $userId2 = null)
+{
 	global $sidesModel, $currentUser, $logger,
-	$caseId;
+		$caseId;
 	static $usersAndSides;
 
-	if( !isset($usersAndSides) ) $usersAndSides = $sidesModel->getSidesUsersByCase($caseId);
-	if( !isset($userId2) ) $userId2 = $currentUser->id;
+	if (!isset($usersAndSides)) $usersAndSides = $sidesModel->getSidesUsersByCase($caseId);
+	if (!isset($userId2)) $userId2 = $currentUser->id;
 
-	_assert( [$userId1, $userId2] );
-	$user1 = searchValue($usersAndSides, $userId1, 'user_id' );
-	$user2 = searchValue($usersAndSides, $userId2, 'user_id' );
-	_assert( [$user1, $user2], "Something seems wrong with the DB.. corrupted?" );
+	_assert([$userId1, $userId2]);
+	$user1 = searchValue($usersAndSides, $userId1, 'user_id');
+	$user2 = searchValue($usersAndSides, $userId2, 'user_id');
+	_assert([$user1, $user2], "Something seems wrong with the DB.. corrupted?");
 
 	return ($user1['side_id'] == $user2['side_id']) ? Side::SAME_SIDE : Side::OTHER_SIDE;
 }
 
 // $sides = new Side();
 // $test =  $sides->getByUserAndCase($currentUser->id, $caseId);
-
 
 
 // $test1 = $AdminDAO->getrows('attorney', "side_id = $side_id AND case_id = $caseId", array("side_id" =>$side_id));
@@ -105,17 +100,41 @@ if ($deleteteam == 'entire_case') {
 
 			// echo $id;
 
-			$attorney = $AdminDAO->getrows("attorney", "id", " case_id = :case_id AND fkaddressbookid = $current_logged_in_id", array("case_id" => $caseId));
+			// $attorney = $AdminDAO->getrows("attorney", "id", " case_id = :case_id AND fkaddressbookid = $current_logged_in_id", array("case_id" => $caseId));
 
-			$attorney_id = $attorney[0]['id'];
-			
-			$dscvry	=	$AdminDAO->getrows('discoveries',  "id", " case_id = :case_id AND attorney_id = $attorney_id AND served =''", array("case_id" => $caseId));
-			$dscvry_id = $dscvry[0]['id'];
+			// $attorney_id = $attorney[0]['id'];
 
-			
+			// $dscvry	=	$AdminDAO->getrows('discoveries',  "id", " case_id = :case_id", array("case_id" => '226'));
+			// // print_r($dscvry);
+			// // die();
 
-			print_r($dscvry);
-			die();
+			// $fields		=	array('is_deleted');
+			// $values		=	array('1');
+			// $qry = $AdminDAO->updaterow('sides', $fields, $values, "case_id = '$caseId' AND role = '$side_role'");
+
+			// $isdeleted = $AdminDAO->getrows('sides', "id", "case_id = :case_id AND is_deleted = '1'", array("case_id" => $caseId));
+
+			// $fields		=	array('is_deleted');
+			// $values		=	array('1');
+			// $qry = $AdminDAO->updaterow('cases', $fields, $values, "id = '$caseId'");
+
+			// $isdeleted = $AdminDAO->getrows('sides', "is_deleted", "case_id = :case_id", array("case_id" => $caseId));
+			// $dt = [];
+			// $sidecount = count($isdeleted);
+			// foreach ($isdeleted as $isdltd) {
+			// 	$dltd_sum = array_sum($isdltd);
+			// 	array_push($dt, $dltd_sum);
+			// }
+
+			// if($sidecount == array_sum($dt)){
+			// 	$fields		=	array('is_deleted');
+			// 	$values		=	array('1');
+			// 	$qry = $AdminDAO->updaterow('cases', $fields, $values, "id = '$caseId'");
+			// 	break;
+			// } else{
+			// 	break;
+			// }
+			// die();
 
 			// attorney
 			$AdminDAO->deleterows('attorney', " case_id = :case_id AND side_id = $side_id", array("case_id" => $caseId));
@@ -126,11 +145,11 @@ if ($deleteteam == 'entire_case') {
 
 
 			// clients
-			$AdminDAO->deleterows('clients', " case_id = :case_id AND client_role = $side_role", array("case_id" => $caseId));
+			$AdminDAO->deleterows('clients', " case_id = :case_id AND client_role = '$side_role'", array("case_id" => $caseId));
 
 
 			//questions
-			  $allDescoveries	=	$AdminDAO->getrows("discoveries", "GROUP_CONCAT(id) as ids", " case_id = :case_id", array("case_id" => $caseId));
+			$allDescoveries	=	$AdminDAO->getrows("discoveries", "GROUP_CONCAT(id) as ids", " case_id = :case_id", array("case_id" => $caseId));
 
 			if (sizeof($allDescoveries) > 0) {
 				$discoveryids	=	$allDescoveries[0]['ids'];
@@ -140,28 +159,45 @@ if ($deleteteam == 'entire_case') {
 				}
 			}
 
-			$attorney = $AdminDAO->getrows("attorney", "id", " case_id = :case_id AND fkaddressbookid = $current_logged_in_id", array("case_id" => $caseId));
+			$attorney = $AdminDAO->getrows("attorney", "id", " case_id = :case_id AND fkaddressbookid = '$current_logged_in_id'", array("case_id" => $caseId));
 
 			$attorney_id = $attorney[0]['id'];
 
 
 			// discoveries
-			$AdminDAO->deleterows('discoveries', " case_id = :case_id AND attorney_id = $attorney_id AND served =''", array("case_id" => $caseId));
+			$AdminDAO->deleterows('discoveries', " case_id = :case_id AND attorney_id = '$attorney_id' AND served =''", array("case_id" => $caseId));
 
-			
-			$dscvry	=	$AdminDAO->getrows('discoveries',  "id", " case_id = :case_id AND attorney_id = $attorney_id", array("case_id" => $caseId));
+
+			$dscvry	=	$AdminDAO->getrows('discoveries',  "id", " case_id = :case_id AND attorney_id = '$attorney_id'", array("case_id" => $caseId));
 			$dscvry_id = $dscvry[0]['id'];
-			
+
 
 			//documents
-			$AdminDAO->deleterows('documents', " case_id = :case_id AND discovery_id = $dscvry_id" , array("case_id" => $caseId));
+			$AdminDAO->deleterows('documents', " case_id = :case_id AND discovery_id = '$dscvry_id'", array("case_id" => $caseId));
 
 
-			
+			// sides 
+			$fields		=	array('is_deleted');
+			$values		=	array('1');
+			$qry = $AdminDAO->updaterow('sides', $fields, $values, "case_id = '$caseId' AND role = '$side_role'");
 
 			//cases
-			$AdminDAO->deleterows('cases', " id = :case_id", array("case_id" => $caseId));
-			break;
+			$isdeleted = $AdminDAO->getrows('sides', "is_deleted", "case_id = :case_id", array("case_id" => $caseId));
+			$dt = [];
+			$sidecount = count($isdeleted);
+			foreach ($isdeleted as $isdltd) {
+				$dltd_sum = array_sum($isdltd);
+				array_push($dt, $dltd_sum);
+			}
+			if($sidecount == array_sum($dt)){
+				$fields		=	array('is_deleted');
+				$values		=	array('1');
+				$qry = $AdminDAO->updaterow('cases', $fields, $values, "id = '$caseId'");
+				break;
+			} else{
+				break;
+			}
+
 
 		default: // leave case
 			$currentSide = $sidesModel->getByUserAndCase($currentUser->id, $caseId);
@@ -181,8 +217,8 @@ if ($deleteteam) {
 	$values_case_delete_team = array('0');
 	// $AdminDAO->updaterow('sides_users', " side_id = " . $deleteteam, array("side_id" => $deleteteam));
 
-	$AdminDAO->updaterowSide('sides_users', $fields_case_delete_team, $values_case_delete_team, "side_id= $deleteteam");
-	$AdminDAO->updaterowSide('sides_clients', $fields_case_delete_team, $values_case_delete_team, "side_id= $deleteteam");
+	$AdminDAO->updaterowSide('sides_users', $fields_case_delete_team, $values_case_delete_team, "side_id= '$deleteteam'");
+	$AdminDAO->updaterowSide('sides_clients', $fields_case_delete_team, $values_case_delete_team, "side_id= '$deleteteam'");
 	echo "yoyo";
 
 	// $AdminDAO->deleterows('sides_clients', " side_id = " . $deleteteam, array("side_id" => $deleteteam));
@@ -199,20 +235,7 @@ if ($deleteteam) {
 if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'null') {
 
 
-
-
-
-
-	if ($deleteme && $lead_id == $current_logged_in_id ) {
-
-	
-
-		echo"Hello anupam";
-print_r($side_id);
-
-
-exit();
-
+	if ($deleteme && $lead_id == $current_logged_in_id) {
 
 
 		$fields = array('primary_attorney_id');
@@ -229,29 +252,26 @@ exit();
 		$values_side = array($another_attorney_master_header);
 
 		$AdminDAO->updaterow('sides', $fields_side, $values_side, "id = $side_id");
-	
+
 		$AdminDAO->deleterows('sides_users', " side_id = $side_id AND system_addressbook_id = $current_logged_in_id");
-		
+	} else {
+
+		$AdminDAO->deleterows('sides_users', " side_id = " . $side_id, array("side_id" => $side_id));
+
+		$AdminDAO->deleterows('sides_clients', " side_id = " . $side_id, array("side_id" => $side_id));
 	}
-else
-{
-	$AdminDAO->deleterows('sides_users', " side_id = " . $side_id, array("side_id" => $side_id));
-
-	$AdminDAO->deleterows('sides_clients', " side_id = " . $side_id, array("side_id" => $side_id));
-}
-
 } else {
-	
 
 	$blank_value = 320;
-	$fields_delete_me = array('primary_attorney_id','masterhead');
-	$values_delete_me = array($blank_value,'');
-	$AdminDAO->updaterowSide('sides', $fields_delete_me, $values_delete_me, "primary_attorney_id = $current_logged_in_id AND case_id= $caseId");
-	
-	$AdminDAO->deleterows('sides_users', " side_id = $side AND system_addressbook_id = $current_logged_in_id");
+	$fields_delete_me = array('primary_attorney_id', 'masterhead');
+	$values_delete_me = array($blank_value, '');
 
-	$fields_case_delete_me = array('attorney_id','case_attorney');
-	$values_case_delete_me = array($blank_value,$blank_value);
+	$AdminDAO->updaterowSide('sides', $fields_delete_me, $values_delete_me, "primary_attorney_id = '$current_logged_in_id' AND case_id= '$caseId'");
+
+
+	$AdminDAO->deleterows('sides_users', " side_id = '$side' AND system_addressbook_id = '$current_logged_in_id'");
+
+	$fields_case_delete_me = array('attorney_id', 'case_attorney');
+	$values_case_delete_me = array($blank_value, $blank_value);
 	$AdminDAO->updaterow('cases', $fields_case_delete_me, $values_case_delete_me, "id = $caseId");
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 }

@@ -9,8 +9,6 @@ $case_id = $_GET['pid'];
 
 $discoveries = $discoveriesModel->getByUserAndCase($currentUser->id, $case_id );
 
-
-
 $currentSide = $sidesModel->getByUserAndCase($currentUser->id, $case_id);
 
 Side::legacyTranslateCaseData($case_id, $discoveries);
