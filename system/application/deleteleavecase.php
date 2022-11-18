@@ -104,20 +104,6 @@ if ($deleteteam == 'entire_case') {
 
 			// $attorney_id = $attorney[0]['id'];
 
-			// $dscvry	=	$AdminDAO->getrows('discoveries',  "id", " case_id = :case_id", array("case_id" => '226'));
-			// // print_r($dscvry);
-			// // die();
-
-			// $fields		=	array('is_deleted');
-			// $values		=	array('1');
-			// $qry = $AdminDAO->updaterow('sides', $fields, $values, "case_id = '$caseId' AND role = '$side_role'");
-
-			// $isdeleted = $AdminDAO->getrows('sides', "id", "case_id = :case_id AND is_deleted = '1'", array("case_id" => $caseId));
-
-			// $fields		=	array('is_deleted');
-			// $values		=	array('1');
-			// $qry = $AdminDAO->updaterow('cases', $fields, $values, "id = '$caseId'");
-
 			// $isdeleted = $AdminDAO->getrows('sides', "is_deleted", "case_id = :case_id", array("case_id" => $caseId));
 			// $dt = [];
 			// $sidecount = count($isdeleted);
