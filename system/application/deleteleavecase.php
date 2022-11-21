@@ -11,6 +11,7 @@ $selected_button_value = $_POST['value_selected_button'];
 $deleteteam = $_POST['deleteteam'];
 $deleteme = $_POST['deleteme'];
 $current_logged_in_id = $_POST['current_logged_in_id'];
+
 $another_attorney_id = $_POST['another_attorney_id'] == 'false' ? 'null' : $_POST['another_attorney_id'];
 $lead_id =  $_POST['lead_id'];
 
@@ -45,7 +46,8 @@ function checkSides($userId1, $userId2 = null)
 
 // $getAllCases = $AdminDAO->getrows("attorney","*","side_id = $side_id AND case_id = $case_id",array("side_id"=>$side_id,"case_id"=>$case_id));	
 
-
+// print_r($current_logged_in_id);
+// 	die();
 // print_r($getAllCases);
 
 // print_r('dd');
@@ -112,9 +114,9 @@ if ($deleteteam == 'entire_case') {
 			// 	array_push($dt, $dltd_sum);
 			// }
 
-			// if($sidecount == array_sum($dt)){
+			// if(array_sum($dt) == 0){
 			// 	$fields		=	array('is_deleted');
-			// 	$values		=	array('1');
+			// 	$values		=	array('0');
 			// 	$qry = $AdminDAO->updaterow('cases', $fields, $values, "id = '$caseId'");
 			// 	break;
 			// } else{
@@ -164,7 +166,7 @@ if ($deleteteam == 'entire_case') {
 
 			// sides 
 			$fields		=	array('is_deleted');
-			$values		=	array('1');
+			$values		=	array('0');
 			$qry = $AdminDAO->updaterow('sides', $fields, $values, "case_id = '$caseId' AND role = '$side_role'");
 
 			//cases
@@ -175,9 +177,10 @@ if ($deleteteam == 'entire_case') {
 				$dltd_sum = array_sum($isdltd);
 				array_push($dt, $dltd_sum);
 			}
-			if($sidecount == array_sum($dt)){
+			
+			if(array_sum($dt) == 0){
 				$fields		=	array('is_deleted');
-				$values		=	array('1');
+				$values		=	array('0');
 				$qry = $AdminDAO->updaterow('cases', $fields, $values, "id = '$caseId'");
 				break;
 			} else{
@@ -198,12 +201,13 @@ if ($deleteteam == 'entire_case') {
 
 if ($deleteteam) {
 
+	
 
 	$fields_case_delete_team = array('is_deleted');
 	$values_case_delete_team = array('0');
 	// $AdminDAO->updaterow('sides_users', " side_id = " . $deleteteam, array("side_id" => $deleteteam));
 
-	$AdminDAO->updaterowSide('sides_users', $fields_case_delete_team, $values_case_delete_team, "side_id= '$deleteteam'");
+	$AdminDAO->updaterowSide('sides_users', $fields_case_delete_team, $values_case_delete_team, "system_addressbook_id != '$current_logged_in_id' AND  side_id= '$deleteteam'");
 	$AdminDAO->updaterowSide('sides_clients', $fields_case_delete_team, $values_case_delete_team, "side_id= '$deleteteam'");
 	echo "yoyo";
 
@@ -214,8 +218,6 @@ if ($deleteteam) {
 // SET primary_attorney_id = 306 WHERE primary_attorney_id =94 AND case_id=217;
 
 
-
-
 // delete me
 
 if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'null') {
@@ -223,29 +225,30 @@ if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'nu
 
 	if ($deleteme && $lead_id == $current_logged_in_id) {
 
-
 		$fields = array('primary_attorney_id');
 		$values = array($another_attorney_id);
 
-		$AdminDAO->updaterow('sides', $fields, $values, "primary_attorney_id = $current_logged_in_id AND case_id=$caseId");
+		$AdminDAO->updaterow('sides', $fields, $values, "primary_attorney_id = $current_logged_in_id AND case_id= '$caseId'");
 
 		$fields_case = array('attorney_id', 'case_attorney',);
 		$values_case = array($another_attorney_id, $another_attorney_id);
 
-		$AdminDAO->updaterow('cases', $fields_case, $values_case, "id = $caseId");
+		$AdminDAO->updaterow('cases', $fields_case, $values_case, "id = '$caseId'");
 
 		$fields_side = array('masterhead');
 		$values_side = array($another_attorney_master_header);
 
-		$AdminDAO->updaterow('sides', $fields_side, $values_side, "id = $side_id");
+		$AdminDAO->updaterow('sides', $fields_side, $values_side, "id = '$side_id'");
 
-		$AdminDAO->deleterows('sides_users', " side_id = $side_id AND system_addressbook_id = $current_logged_in_id");
+		$AdminDAO->deleterows('sides_users', " side_id = '$side_id' AND system_addressbook_id = '$current_logged_in_id'");
+
 	} else {
 
 		$AdminDAO->deleterows('sides_users', " side_id = " . $side_id, array("side_id" => $side_id));
 
 		$AdminDAO->deleterows('sides_clients', " side_id = " . $side_id, array("side_id" => $side_id));
 	}
+
 } else {
 
 	$blank_value = 320;
@@ -254,10 +257,10 @@ if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'nu
 
 	$AdminDAO->updaterowSide('sides', $fields_delete_me, $values_delete_me, "primary_attorney_id = '$current_logged_in_id' AND case_id= '$caseId'");
 
-
-	$AdminDAO->deleterows('sides_users', " side_id = '$side' AND system_addressbook_id = '$current_logged_in_id'");
+	$AdminDAO->deleterows('sides_users', " side_id = '$side' AND system_addressbook_id != '$current_logged_in_id'");
 
 	$fields_case_delete_me = array('attorney_id', 'case_attorney');
 	$values_case_delete_me = array($blank_value, $blank_value);
 	$AdminDAO->updaterow('cases', $fields_case_delete_me, $values_case_delete_me, "id = $caseId");
+	
 }

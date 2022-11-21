@@ -709,6 +709,7 @@ $canDeleteCase = $side && # side exists and..
 				} else if (result == "caseteam") {
 					$.post("deleteleavecase.php", {
 							case_id: case_id,
+							current_logged_in_id: <?php echo $current_logged_in_user_id != '' ? $current_logged_in_user_id : "false"; ?>,
 							deleteteam: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>
 						})
 						.done(data => {

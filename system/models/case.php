@@ -22,8 +22,8 @@
                             ON c.id = s.case_id
                           LEFT JOIN sides_users AS su
                             ON su.side_id = s.id
-                        WHERE (su.system_addressbook_id = :user_id AND su.active = 1 AND s.is_deleted = 0 AND c.is_deleted = 0)
-                              OR s.primary_attorney_id = :user_id AND s.is_deleted = 0 AND C.is_deleted = 0
+                        WHERE (su.system_addressbook_id = :user_id AND su.active = 1 AND s.is_deleted = 1 AND c.is_deleted = 1)
+                              OR s.primary_attorney_id = :user_id AND s.is_deleted = 1 AND C.is_deleted = 1
                         GROUP BY c.id
                         ORDER BY c.case_title ASC',
         

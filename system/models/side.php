@@ -44,7 +44,7 @@ class Side extends BaseModel
                               ON su.system_addressbook_id = u.pkaddressbookid
                             INNER JOIN sides AS s
                               ON s.id = su.side_id
-                       WHERE s.id = :side_id',
+                       WHERE su.is_deleted = 1 AND s.id = :side_id',
 
       'getClients' => 'SELECT c.*
                          FROM clients as c
