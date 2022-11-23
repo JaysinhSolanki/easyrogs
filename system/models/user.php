@@ -222,6 +222,7 @@ use function EasyRogs\_assert as _assert;
       preg_match( '/(\S+)\s+(?:(\S+)\s+|)(.*)/', preg_replace('/\s+/', ' ', trim($fullname)), $nameParts );
       return $nameParts;
     }
+    
     public function asUser($user) {
       if( !is_array($user) ) {
         $user = ( strlen($user) >= 16 )

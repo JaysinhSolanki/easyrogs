@@ -710,7 +710,9 @@ $canDeleteCase = $side && # side exists and..
 					$.post("deleteleavecase.php", {
 							case_id: case_id,
 							current_logged_in_id: <?php echo $current_logged_in_user_id != '' ? $current_logged_in_user_id : "false"; ?>,
-							deleteteam: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>
+							side: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>,
+							deleteteam: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>,
+							side_role: client_role
 						})
 						.done(data => {
 							selecttab('44_tab', 'get-cases.php', '44');
@@ -765,6 +767,7 @@ $canDeleteCase = $side && # side exists and..
 	}
 
 	function addCaseClient(case_id) {
+		console.log('click');
 		var other_attorney_id = {};
 
 		var id = $("#party_client_id").val();

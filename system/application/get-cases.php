@@ -10,7 +10,7 @@
     $userSide = $sidesModel->getByUserAndCase($currentUser->id, $case['id']);
     $case = Side::caseData($userSide);
   }
-  unset($case);
+  unset($case); 
 
   // LEGACY --------------------------------------------------------------------
   require_once __DIR__ . '/cases.php';
