@@ -561,6 +561,8 @@ $canDeleteCase = $side && # side exists and..
 		});
 	}
 
+
+
 	function addparty(id = '', caseId) {
 		$("#party_client_id").val(0);
 		$('#partyModal').modal('show');
@@ -587,6 +589,8 @@ $canDeleteCase = $side && # side exists and..
 			});
 		}
 	}
+
+
 
 	function showCaseUser(ev) {
 		debugger;
@@ -623,6 +627,7 @@ $canDeleteCase = $side && # side exists and..
 			showResponseMessage(JSON.parse(response.responseText));
 		});
 	}
+
 	$(document).ready(function() {
 		$('#submit-user-form').on('submit', (e) => {
 			e.preventDefault();
