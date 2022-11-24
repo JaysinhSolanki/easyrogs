@@ -21,8 +21,8 @@
     );
   }
 
-  print_r($serviceList);
-  die();
+  // print_r($serviceList);
+  // die();
 
   if ( $format == 'html') {
     $smarty->assign([
