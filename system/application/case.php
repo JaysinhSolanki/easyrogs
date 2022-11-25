@@ -646,7 +646,13 @@ $canDeleteCase = $side && # side exists and..
 				showResponseMessage(JSON.parse(response.responseText));
 			});
 		});
-		$('#add-user-btn').on('click', () => $('#userModal').modal('show'));
+		$('#add-user-btn').on('click', () => {
+			
+			$('#user_name'). val('');
+			$('#user_email'). val('');
+			$('#userModal').modal('show')
+		
+		});
 		$(document).on('click', '.delete-user-btn', async (e) => {
 			const params = $(e.target).parent().data();
 			confirm = await confirmAction();
