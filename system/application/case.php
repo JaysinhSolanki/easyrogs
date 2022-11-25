@@ -716,7 +716,7 @@ $canDeleteCase = $side && # side exists and..
 							case_id: case_id,
 							current_logged_in_id: <?php echo $current_logged_in_user_id != '' ? $current_logged_in_user_id : "false"; ?>,
 							side: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>,
-							deleteteam: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>,
+							deleteteam: 'caseteam',
 							side_role: client_role
 						})
 						.done(data => {
@@ -732,6 +732,7 @@ $canDeleteCase = $side && # side exists and..
 							case_id: case_id,
 							current_logged_in_id: <?php echo $current_logged_in_user_id != '' ? $current_logged_in_user_id : "false"; ?>,
 							another_attorney_id: <?php echo $find_another_attorney != '' ? $find_another_attorney : "false"; ?>,
+							deleteteam: 'justme',
 							deleteme: 'deleteme',another_attorney_master_header: master_header != '' ? master_header : "false",
 							side: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>,
 							lead_id: <?php echo $lead_id != '' ? $lead_id : "false"; ?>
