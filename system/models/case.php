@@ -23,7 +23,7 @@
                           LEFT JOIN sides_users AS su
                             ON su.side_id = s.id
                         WHERE (su.system_addressbook_id = :user_id AND su.is_deleted = 1 AND su.active = 1 AND s.is_deleted = 0 AND c.is_deleted = 0)
-                              OR s.primary_attorney_id = :user_id AND su.is_deleted = 1 AND s.is_deleted = 0 AND c.is_deleted = 0
+                              OR s.primary_attorney_id = :user_id 
                         GROUP BY c.id
                         ORDER BY c.case_title ASC',
         
