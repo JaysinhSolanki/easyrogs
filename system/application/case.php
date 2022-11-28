@@ -332,7 +332,7 @@ $canDeleteCase = $side && # side exists and..
 									<?php if ($canDeleteCase) : ?>
 										<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
 									<?php else : ?>
-										<a href="javascript:;" class="btn btn-danger" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-trash"></i> Delete Case</a>
+										<a href="javascript:;" class="btn btn-danger" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-trash"></i> Delete</a>
 									<?php endif; ?>
 								<?php endif; ?>
 							</div>
