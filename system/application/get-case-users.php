@@ -8,9 +8,9 @@
 
   $cases = new CaseModel();
   $sides = new Side();
-  
+
   if ( !$caseId ) { HttpResponse::malformed('Case ID is required'); }
-  
+
   $users = @$cases->getUsers($caseId);
 
   // $users = @$cases->getUsersFlag($caseId);

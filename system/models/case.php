@@ -126,11 +126,12 @@
       $userSide = $sides->getByUserAndCase($currentUser->id, $caseId);
       $users = $sides->getUsers($userSide['id']);
       $primaryAttorney = $sides->getPrimaryAttorney($userSide['id']);
-      if ( $primaryAttorney && !User::inCollection($primaryAttorney, $users) ) {
+      if ( $primaryAttorney && User::inCollection($primaryAttorney, $users) ) {
         $users[] = array_merge(
           User::publishable($primaryAttorney), 
           ['is_primary' => 'true']
         );
+
       }
 
       return $users;

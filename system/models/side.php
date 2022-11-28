@@ -28,7 +28,7 @@ class Side extends BaseModel
                                     LEFT JOIN sides_users AS su
                                       ON s.id = su.side_id
                                WHERE s.case_id = :case_id AND su.is_deleted = 1
-                                     AND ( s.primary_attorney_id = :user_id
+                                     AND ( s.primary_attorney_id = :user_id AND su.is_deleted = 1
                                            OR su.system_addressbook_id = :user_id )',
 
       'getByClientAndCase' => 'SELECT s.*
@@ -66,8 +66,10 @@ class Side extends BaseModel
       'getPrimaryAttorney' => 'SELECT u.*
                                  FROM system_addressbook as u
                                       INNER JOIN sides AS s
-                                        ON s.primary_attorney_id = u.pkaddressbookid
-                                 WHERE s.id = :side_id',
+                                        ON s.primary_attorney_id = u.pkaddressbookid 
+                                        INNER JOIN sides_users AS su
+                                        ON su.side_id = s.id 
+                                 WHERE s.id = :side_id AND su.is_deleted = 1',
       'cleanupCase' => 'DELETE
                           FROM sides
                           WHERE case_id = :case_id
@@ -186,6 +188,7 @@ WHERE s.id = :side_id AND is_deleted = 1'
   function createServiceList($newSide)
   {
     global $casesModel, $usersModel;
+    
     $sides = $casesModel->getSides($newSide['case_id']);
     foreach ($sides as $side) {
       if ($side['id'] == $newSide['id']) {
@@ -277,7 +280,7 @@ WHERE s.id = :side_id AND is_deleted = 1'
     $get_side_team_memebers = $this->getUsers($sideId);
 
 
-    echo "id:" . $user['pkaddressbookid'];
+    // echo "id:" . $user['pkaddressbookid'];
 
     $store_team_member_id = array();
 
@@ -765,6 +768,7 @@ WHERE s.id = :side_id AND is_deleted = 1'
       ['id' => $sideId]
     );
   }
+
 
   static function hasPrimaryAttorney($side)
   {

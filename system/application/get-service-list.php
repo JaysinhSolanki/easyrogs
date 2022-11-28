@@ -11,7 +11,7 @@
   $currentSide = $sidesModel->getByUserAndCase($currentUser->id, $caseId);
   $clients     = $casesModel->getAllClients($caseId);
   
-  
+
 
   $serviceList = [];
   if ($currentSide) {
@@ -20,10 +20,7 @@
       ['clients', 'attorney_id', 'attorney_name', 'attorney_email']
     );
   }
-
-  // print_r($serviceList);
-  // die();
-
+  
   if ( $format == 'html') {
     $smarty->assign([
       'caseId'      => $caseId, 
