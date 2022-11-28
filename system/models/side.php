@@ -27,9 +27,9 @@ class Side extends BaseModel
                                FROM sides AS s
                                     LEFT JOIN sides_users AS su
                                       ON s.id = su.side_id
-                               WHERE s.case_id = :case_id  AND su.is_deleted = 1
-                                     AND ( s.primary_attorney_id = :user_id AND su.is_deleted = 1
-                                           OR su.system_addressbook_id = :user_id  AND su.is_deleted = 1)',
+                               WHERE s.case_id = :case_id AND su.is_deleted = 1
+                                     AND ( s.primary_attorney_id = :user_id 
+                                           OR su.system_addressbook_id = :user_id)',
 
       'getByClientAndCase' => 'SELECT s.*
                                    FROM sides AS s
