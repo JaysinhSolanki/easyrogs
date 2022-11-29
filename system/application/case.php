@@ -69,7 +69,7 @@ if (!$newCase && !$side) {
 $cases = new CaseModel();
 $sides = new Side();
 
-$case_attonry_data = @$cases->getUsers($caseId);
+$case_attonry_data = @$cases->getActvUsers($caseId);
 
 usort($case_attonry_data, function ($v1, $v2) {
 	return strcmp($v1['firstname'], $v2['firstname']);

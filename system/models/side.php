@@ -286,8 +286,7 @@ WHERE s.id = :side_id AND is_deleted = 1'
     // ================= get side team-members ==================
 
     $get_side_team_memebers = $this->getUsers($sideId);
-
-
+    
     // echo "id:" . $user['pkaddressbookid'];
 
     $store_team_member_id = array();
@@ -295,13 +294,16 @@ WHERE s.id = :side_id AND is_deleted = 1'
     foreach ($get_side_team_memebers as $val) {
       array_push($store_team_member_id, $val['pkaddressbookid']);
     }
-
+  
     if (in_array($user['pkaddressbookid'], $store_team_member_id)) {
       echo "Match found";
-
+     
       $this->update('sides_users', [
-        'is_deleted'             => 1
-      ], true);
+        'is_deleted'             => 1,
+      ],
+      [
+        'system_addressbook_id' =>  $user['pkaddressbookid']
+      ] ,true);
     } else {
       $this->insert('sides_users', [
         'side_id'               => $sideId,
