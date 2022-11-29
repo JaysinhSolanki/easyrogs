@@ -327,7 +327,7 @@ $canDeleteCase = $side && # side exists and..
 								</button>
 								<?php buttoncancel(44, 'get-cases.php'); ?>
 							</div>
-							<div class="col-md-5" align="right">
+							<div class="col-sm-offset-3 col-sm-3" align="right">
 								<?php if (!$isDraft) : ?>
 									<?php if ($canDeleteCase) : ?>
 										<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
