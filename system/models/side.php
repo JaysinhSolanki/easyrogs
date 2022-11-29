@@ -27,7 +27,7 @@ class Side extends BaseModel
                                FROM sides AS s
                                     LEFT JOIN sides_users AS su
                                       ON s.id = su.side_id
-                               WHERE s.case_id = :case_id AND su.is_deleted = 1
+                               WHERE s.case_id = :case_id
                                      AND ( s.primary_attorney_id = :user_id 
                                            OR su.system_addressbook_id = :user_id)',
 
@@ -44,7 +44,7 @@ class Side extends BaseModel
                               ON su.system_addressbook_id = u.pkaddressbookid
                             INNER JOIN sides AS s
                               ON s.id = su.side_id
-                       WHERE su.is_deleted = 1 AND s.id = :side_id',
+                       WHERE s.id = :side_id',
 
       'getClients' => 'SELECT c.*
                          FROM clients as c
@@ -115,6 +115,14 @@ class Side extends BaseModel
                                         ON s.id = su.side_id
                                     WHERE s.case_id = :case_id AND
                                           su.active = 1',
+
+      'getActvUsers' => 'SELECT u.*, su.active AS side_active, su.is_deleted
+      FROM system_addressbook AS u
+           INNER JOIN sides_users AS su
+             ON su.system_addressbook_id = u.pkaddressbookid
+           INNER JOIN sides AS s
+             ON s.id = su.side_id
+      WHERE su.is_deleted = 1 AND s.id = :side_id',
 
       'getUsersFlag' =>  'SELECT u.*, su.active AS side_active
                        FROM system_addressbook AS u
@@ -188,7 +196,7 @@ WHERE s.id = :side_id AND is_deleted = 1'
   function createServiceList($newSide)
   {
     global $casesModel, $usersModel;
-    
+
     $sides = $casesModel->getSides($newSide['case_id']);
     foreach ($sides as $side) {
       if ($side['id'] == $newSide['id']) {
@@ -288,17 +296,12 @@ WHERE s.id = :side_id AND is_deleted = 1'
       array_push($store_team_member_id, $val['pkaddressbookid']);
     }
 
-    print_r($store_team_member_id);
-    die();
-
     if (in_array($user['pkaddressbookid'], $store_team_member_id)) {
       echo "Match found";
 
       $this->update('sides_users', [
         'is_deleted'             => 1
       ], true);
-
-
     } else {
       $this->insert('sides_users', [
         'side_id'               => $sideId,
@@ -306,7 +309,7 @@ WHERE s.id = :side_id AND is_deleted = 1'
         'active'                => $active,
         'is_deleted'             => 1
       ], true);
-    } 
+    }
 
 
     // print_r($store_team_member_id);
@@ -343,6 +346,14 @@ WHERE s.id = :side_id AND is_deleted = 1'
   function getUsers($sideId)
   {
     $query = $this->queryTemplates['getUsers'];
+    return User::publishable(
+      $this->readQuery($query, ['side_id' => $sideId])
+    );
+  }
+
+  function getActvUsers($sideId)
+  {
+    $query = $this->queryTemplates['getActvUsers'];
     return User::publishable(
       $this->readQuery($query, ['side_id' => $sideId])
     );

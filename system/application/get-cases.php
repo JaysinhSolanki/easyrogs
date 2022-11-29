@@ -3,7 +3,7 @@
   require_once("adminsecurity.php");
   
 
-  $cases = $casesModel->getByUser($currentUser->id, );
+  $cases = $casesModel->getActvCaseByUser($currentUser->id, );
 
   // TODO: solve this with a query?
   foreach($cases as &$case) {

@@ -23,8 +23,8 @@ class CaseModel extends BaseModel
                             ON c.id = s.case_id
                           LEFT JOIN sides_users AS su
                             ON su.side_id = s.id
-                        WHERE (su.system_addressbook_id = :user_id AND su.is_deleted = 1 AND su.active = 1 AND s.is_deleted = 0 AND c.is_deleted = 0)
-                              OR s.primary_attorney_id = :user_id AND s.is_deleted = 1
+                        WHERE (su.system_addressbook_id = :user_id AND su.active = 1 )
+                              OR s.primary_attorney_id = :user_id
                         GROUP BY c.id
                         ORDER BY c.case_title ASC',
 
@@ -52,6 +52,18 @@ class CaseModel extends BaseModel
                      GROUP BY cases.id
                      ORDER BY cases.id DESC
                      LIMIT 10',
+
+       'getActvCaseByUser' =>'SELECT c.*
+       FROM cases AS c
+         INNER JOIN sides AS s
+           ON c.id = s.case_id
+         LEFT JOIN sides_users AS su
+           ON su.side_id = s.id
+       WHERE (su.system_addressbook_id = :user_id AND su.active = 1 AND su.is_deleted = 1 )
+             OR s.primary_attorney_id = :user_id 
+       GROUP BY c.id
+       ORDER BY c.case_title ASC',
+
     ]);
     $this->sides = new Side();
     $this->users = new User();
@@ -144,8 +156,31 @@ class CaseModel extends BaseModel
         User::publishable($primaryAttorney),
         ['is_primary' => 'true']
       );
+    }
+
+
+    return $users;
+  }
+
+  function getActvUsers($caseId)
+  {
+    global $currentUser;
+
+    $sides = new Side();
+    $userSide = $sides->getByUserAndCase($currentUser->id, $caseId);
+    $users = $sides->getActvUsers($userSide['id']);
+
+    $primaryAttorney = $sides->getPrimaryAttorney($userSide['id']);
+
+
+    if ($primaryAttorney && !User::inCollection($primaryAttorney, $users)) {
+
+      $users[] = array_merge(
+        User::publishable($primaryAttorney),
+        ['is_primary' => 'true']
+      );
     } 
-    else if($primaryAttorney && User::inCollection($primaryAttorney, $users)) {
+    else if ($primaryAttorney && User::inCollection($primaryAttorney, $users)) {
       $usrs = [];
       foreach ($users as $usr) {
         if ($primaryAttorney['pkaddressbookid'] != $usr['pkaddressbookid']) {
@@ -156,7 +191,7 @@ class CaseModel extends BaseModel
         User::publishable($primaryAttorney),
         ['is_primary' => 'true']
       );
-      $users= $usrs;
+      $users = $usrs;
     }
 
     return $users;
@@ -198,6 +233,12 @@ class CaseModel extends BaseModel
   function getByUser($userId)
   {
     $query = $this->queryTemplates['getByUser'];
+    return $this->readQuery($query, ['user_id' => $userId]);
+  }
+
+  function getActvCaseByUser($userId)
+  {
+    $query = $this->queryTemplates['getActvCaseByUser'];
     return $this->readQuery($query, ['user_id' => $userId]);
   }
 

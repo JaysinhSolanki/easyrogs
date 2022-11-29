@@ -11,9 +11,9 @@
 
   if ( !$caseId ) { HttpResponse::malformed('Case ID is required'); }
 
-  $users = @$cases->getUsers($caseId);
+  // $users = @$cases->getUsers($caseId);
 
-  // $users = @$cases->getUsersFlag($caseId);
+  $users = @$cases->getActvUsers($caseId);
 
   if ($users) {
     foreach($users as &$user) {
