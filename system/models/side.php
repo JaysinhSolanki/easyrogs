@@ -38,7 +38,7 @@ class Side extends BaseModel
                                  WHERE s.case_id = :case_id
                                        AND sc.client_id = :client_id',
 
-      'getUsers' => 'SELECT u.*, su.active AS side_active
+      'getUsers' => 'SELECT u.*, su.active AS side_active, su.is_deleted
                        FROM system_addressbook AS u
                             INNER JOIN sides_users AS su
                               ON su.system_addressbook_id = u.pkaddressbookid
@@ -287,6 +287,9 @@ WHERE s.id = :side_id AND is_deleted = 1'
     foreach ($get_side_team_memebers as $val) {
       array_push($store_team_member_id, $val['pkaddressbookid']);
     }
+
+    print_r($store_team_member_id);
+    die();
 
     if (in_array($user['pkaddressbookid'], $store_team_member_id)) {
       echo "Match found";
