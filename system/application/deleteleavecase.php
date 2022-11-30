@@ -195,7 +195,7 @@ if ($deleteteam == 'entire_case') {
 
 else if ($deleteteam == 'caseteam') {
 
-	echo "caseteam";
+	echo "case team";
 	$sd = $AdminDAO->getrows('sides', "primary_attorney_id", "id = '$side_id'");
 	$ld_id = $sd[0]['primary_attorney_id'];
 
