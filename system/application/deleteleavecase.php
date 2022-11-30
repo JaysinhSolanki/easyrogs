@@ -344,8 +344,7 @@ else if ($deleteteam == 'justme') {
 				array_push($dc, $gid);
 			}
 		}
-print_r(count($dc));
-die();
+
 		$count_dc = count($dc);
 		if ($count_dc == 0) {
 			$fields		=	array('is_deleted');
