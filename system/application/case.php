@@ -18,7 +18,8 @@ if ($isDraft) {
 
 $side = $newCase ? null : $sides->getByUserAndCase($currentUser->id, $caseId);
 
-
+$get_side_id = $side['id'] != '' ? $side['id'] : "";
+$get_side_role = $side['role'] != '' ? $side['role'] : "";
 
 
 if (!$newCase && !$side) {
@@ -75,10 +76,40 @@ usort($case_attonry_data, function ($v1, $v2) {
 	return strcmp($v1['firstname'], $v2['firstname']);
 });
 
+$sides = $AdminDAO->getrows("sides", "id", " case_id = :case_id", array("case_id" => $caseId));
+$sides_id = [];
+foreach ($sides as $sds) {
+	if($sds['id'] != $get_side_id){
+	array_push($sides_id, $sds['id']);
+	}
+}
 
-// echo "<pre>";
-// print_r($case_attonry_data);
-// echo "</pre>";
+$sds_usr_id = [];
+foreach ($sides_id as $id) {
+	$sides_users = $AdminDAO->getrows("sides_users", "system_addressbook_id", " side_id = $id AND is_deleted = 1");
+	if ($sides_users) {
+		array_push($sds_usr_id, $sides_users);
+	}
+}
+
+$sdu_count = count($sds_usr_id);
+$suid = [];
+for ($i = 0; $i < $sdu_count; $i++) {
+	foreach ($sds_usr_id[$i] as $sdu) {
+		array_push($suid, $sdu['system_addressbook_id']);
+	}
+}
+
+$fkgrp_id = [];
+foreach ($suid as $aid) {
+	$fk_group_id = $AdminDAO->getrows("system_addressbook", "pkaddressbookid", " pkaddressbookid = $aid AND emailverified = 1 AND fkgroupid = 3");
+	if ($fk_group_id) {
+		array_push($fkgrp_id, $fk_group_id);
+	}
+}
+$other_atty_count = count($fkgrp_id);
+echo"Count===";
+print_r($other_atty_count);
 
 $i = 0;
 $count = 0;
@@ -104,50 +135,19 @@ $find_another_attorney = $case_attonry_data[$i]['pkaddressbookid'] ? $case_atton
 $another_attorney_master_header = $case_attonry_data[$i]['masterhead'] ? $case_attonry_data[$i]['masterhead'] : '';
 
 
-
-// echo "find-another-atorney";
-// echo $find_another_attorney;
-
-// echo "opopopopopopop";
-// echo "<pre>";
-// print_r($side['id']);
-// echo "</pre>";
-// echo "opopopopopopop";
-
-// echo "attonney-left";
-// print_r($attorney_count);
-// print_r($j);
-
-// echo "master-head";
-
-// echo $another_attorney_master_header;
-
-
-$get_side_id = $side['id'] != '' ? $side['id'] : "";
-
-
-$get_side_role = $side['role'] != '' ? $side['role'] : "";
-
-
-if($get_side_id){
+if ($get_side_id) {
 	$lead_id = $side['primary_attorney_id'] != '' ? $side['primary_attorney_id'] : "";
 }
 
-
-
 $current_logged_in_user_id =  $currentUser->id;
-
-
 $attorneysLeft = $attorney_count;
 
 $canDeleteCase = $side && # side exists and..
-	($attorneysLeft === 0 || # there are no attorneys left in the case or...
+	($attorneysLeft === 0 && $other_atty_count === 0 || # there are no attorneys left in the case or...
 		( # there is only one attorney left and is the current user v
-			$attorneysLeft === 1 && $currentUser->user['fkgroupid'] == User::ATTORNEY_GROUP_ID
+			$attorneysLeft === 1 && $other_atty_count === 0   && $currentUser->user['fkgroupid'] == User::ATTORNEY_GROUP_ID
 		)
 	);
-
-
 ?>
 
 <div id="screenfrmdiv" style="display: block;">
@@ -168,7 +168,6 @@ $canDeleteCase = $side && # side exists and..
 							<?php buttoncancel(44, 'get-cases.php'); ?>
 						</div>
 						<div class="col-md-5" align="right">
-
 
 							<?php if (!$isDraft) : ?>
 								<?php if ($canDeleteCase) : ?>
@@ -316,27 +315,27 @@ $canDeleteCase = $side && # side exists and..
 					<!-- <div class="container">
 						<div id="sides-container"></div> -->
 
-						<input type="hidden" name="id" value="<?php echo $caseId; ?>" />
-						<input type="hidden" name="uid" value="<?php echo $uid; ?>" />
+					<input type="hidden" name="id" value="<?php echo $caseId; ?>" />
+					<input type="hidden" name="uid" value="<?php echo $uid; ?>" />
 
-						<div class="form-group">
-							<div class="col-sm-offset-3 col-sm-3" align="left">
-								<button type="button" class="btn btn-success buttonid save-case-btn" data-style="zoom-in">
-									<i class="fa fa-save"></i>
-									<span class="ladda-label">Save</span><span class="ladda-spinner"></span>
-								</button>
-								<?php buttoncancel(44, 'get-cases.php'); ?>
-							</div>
-							<div class="col-sm-offset-3 col-sm-3" align="right">
-								<?php if (!$isDraft) : ?>
-									<?php if ($canDeleteCase) : ?>
-										<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
-									<?php else : ?>
-										<a href="javascript:;" class="btn btn-danger" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-trash"></i> Delete</a>
-									<?php endif; ?>
-								<?php endif; ?>
-							</div>
+					<div class="form-group">
+						<div class="col-sm-offset-3 col-sm-3" align="left">
+							<button type="button" class="btn btn-success buttonid save-case-btn" data-style="zoom-in">
+								<i class="fa fa-save"></i>
+								<span class="ladda-label">Save</span><span class="ladda-spinner"></span>
+							</button>
+							<?php buttoncancel(44, 'get-cases.php'); ?>
 						</div>
+						<div class="col-sm-offset-3 col-sm-3" align="right">
+							<?php if (!$isDraft) : ?>
+								<?php if ($canDeleteCase) : ?>
+									<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
+								<?php else : ?>
+									<a href="javascript:;" class="btn btn-danger" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-trash"></i> Delete</a>
+								<?php endif; ?>
+							<?php endif; ?>
+						</div>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -647,11 +646,11 @@ $canDeleteCase = $side && # side exists and..
 			});
 		});
 		$('#add-user-btn').on('click', () => {
-			
-			$('#user_name'). val('');
-			$('#user_email'). val('');
+
+			$('#user_name').val('');
+			$('#user_email').val('');
 			$('#userModal').modal('show')
-		
+
 		});
 		$(document).on('click', '.delete-user-btn', async (e) => {
 			const params = $(e.target).parent().data();
@@ -681,7 +680,7 @@ $canDeleteCase = $side && # side exists and..
 			entire_case_text = "The Entire case"
 		}
 		swal({
-			className: "sweet-pop",
+				className: "sweet-pop",
 				title: (delete_or_leave == 1) ? "Who do you want to delete from this case?" : "Who do you want to delete from this case??",
 				text: "You will not be able to undo this action!",
 				icon: 'warning',
@@ -729,17 +728,17 @@ $canDeleteCase = $side && # side exists and..
 							selecttab('44_tab', 'get-cases.php', '44');
 						});
 					// swal(`The returned value is: ${result}`);
-				}
-				 else if (result == "justme") {
+				} else if (result == "justme") {
 
-					master_header = "<?php   echo preg_replace('/\s+/', ' ', $another_attorney_master_header); ?>";
+					master_header = "<?php echo preg_replace('/\s+/', ' ', $another_attorney_master_header); ?>";
 
 					$.post("deleteleavecase.php", {
 							case_id: case_id,
 							current_logged_in_id: <?php echo $current_logged_in_user_id != '' ? $current_logged_in_user_id : "false"; ?>,
 							another_attorney_id: <?php echo $find_another_attorney != '' ? $find_another_attorney : "false"; ?>,
 							deleteteam: 'justme',
-							deleteme: 'deleteme',another_attorney_master_header: master_header != '' ? master_header : "false",
+							deleteme: 'deleteme',
+							another_attorney_master_header: master_header != '' ? master_header : "false",
 							side: <?php echo $get_side_id != '' ? $get_side_id : "false"; ?>,
 							lead_id: <?php echo $lead_id != '' ? $lead_id : "false"; ?>
 						})
