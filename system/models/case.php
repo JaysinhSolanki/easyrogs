@@ -36,6 +36,11 @@ class CaseModel extends BaseModel
                                 ON s.id = sc.side_id
                             WHERE s.case_id = :case_id',
 
+      'getActvCases' => 'SELECT c.*
+                          FROM cases AS c
+                          WHERE c.id = :case_id 
+                          AND c.is_deleted = 0',
+
       'userInCase' => 'SELECT COUNT(*) AS `count`
                          FROM sides_users
                            INNER JOIN sides ON sides_users.side_id = sides.id
@@ -53,7 +58,7 @@ class CaseModel extends BaseModel
                      ORDER BY cases.id DESC
                      LIMIT 10',
 
-       'getActvCaseByUser' =>'SELECT c.*
+      'getActvCaseByUser' => 'SELECT c.*
        FROM cases AS c
          INNER JOIN sides AS s
            ON c.id = s.case_id
@@ -179,8 +184,7 @@ class CaseModel extends BaseModel
         User::publishable($primaryAttorney),
         ['is_primary' => 'true']
       );
-    } 
-    else if ($primaryAttorney && User::inCollection($primaryAttorney, $users)) {
+    } else if ($primaryAttorney && User::inCollection($primaryAttorney, $users)) {
       $usrs = [];
       foreach ($users as $usr) {
         if ($primaryAttorney['pkaddressbookid'] != $usr['pkaddressbookid']) {
@@ -194,15 +198,14 @@ class CaseModel extends BaseModel
       $users = $usrs;
     }
 
+
     return $users;
   }
 
 
   function getUsersFlag($caseId)
   {
-
     global $currentUser;
-
     $sides = new Side();
     $userSide = $sides->getByUserAndCase($currentUser->id, $caseId);
     $users = $sides->getUsersFlag($userSide['id']);
@@ -248,6 +251,12 @@ class CaseModel extends BaseModel
     return $this->readQuery($query, ['case_id' => $caseId]);
   }
 
+  function getActvCases($caseId)
+  {
+    $query = $this->queryTemplates['getActvCases'];
+    return $this->readQuery($query, ['case_id' => $caseId]);
+  }
+
   function removeUser($caseId, $userId, $cleanupSides = false)
   {
     $query = $this->queryTemplates['removeUser'];
@@ -266,9 +275,10 @@ class CaseModel extends BaseModel
     $sides = $this->getBy('sides', ['normalized_number' => $number]);
 
     $case = null;
+
     if ($requireClients) {
       foreach ($sides as $side) {
-        if ($this->getAllClients($side['case_id'])) {
+        if ($this->getActvCases($side['case_id'])) {
           $case = Side::caseData($side);
           break;
         };
@@ -276,7 +286,6 @@ class CaseModel extends BaseModel
     } elseif ($sides) {
       $case = $this->find($sides[0]['case_id']);
     }
-
     return $case;
   }
 

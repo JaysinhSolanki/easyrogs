@@ -25,7 +25,7 @@ function checkSides( $userId1, $userId2 = null ) {
 	$user1 = searchValue($usersAndSides, $userId1, 'user_id' );
 	$user2 = searchValue($usersAndSides, $userId2, 'user_id' );
 	_assert( [$user1, $user2], "Something seems wrong with the DB.. corrupted?" );
-
+	
 	return ($user1['side_id'] == $user2['side_id']) ? Side::SAME_SIDE : Side::OTHER_SIDE;
 }
 
