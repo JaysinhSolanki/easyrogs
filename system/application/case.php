@@ -26,15 +26,7 @@ if (!$newCase && !$side) {
 	HttpResponse::unauthorized();
 }
 
-// current user is the only attorney left... allow delete case.
-// $attorneysLeft = $casesModel->usersCount($caseId, User::ATTORNEY_GROUP_ID);
 
-// $canDeleteCase = $side && # side exists and..
-// 	($attorneysLeft === 0 || # there are no attorneys left in the case or...
-// 		( # there is only one attorney left and is the current user v
-// 			$attorneysLeft === 1 && $currentUser->user['fkgroupid'] == User::ATTORNEY_GROUP_ID
-// 		)
-// 	);
 ?>
 
 
@@ -108,8 +100,6 @@ foreach ($suid as $aid) {
 	}
 }
 $other_atty_count = count($fkgrp_id);
-echo"Count===";
-print_r($other_atty_count);
 
 $i = 0;
 $count = 0;
@@ -121,7 +111,6 @@ foreach ($case_attonry_data as $val) {
 		$count = 1;
 		break;
 	}
-
 	$i++;
 }
 
@@ -143,12 +132,16 @@ $current_logged_in_user_id =  $currentUser->id;
 $attorneysLeft = $attorney_count;
 
 $canDeleteCase = $side && # side exists and..
-	($attorneysLeft === 0 && $other_atty_count === 0 || # there are no attorneys left in the case or...
+	(
+		($currentPrimaryAttorneyId === $current_login_user && $other_atty_count === 0)
+		
+		|| $attorneysLeft === 0 && $other_atty_count === 0 || # there are no attorneys left in the case or...
 		( # there is only one attorney left and is the current user v
 			$attorneysLeft === 1 && $other_atty_count === 0   && $currentUser->user['fkgroupid'] == User::ATTORNEY_GROUP_ID
 		)
 	);
 ?>
+
 
 <div id="screenfrmdiv" style="display: block;">
 
