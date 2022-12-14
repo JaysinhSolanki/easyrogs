@@ -5,9 +5,13 @@ class BaseMailer
 
   // ['easyrogs@mailinator.com', 'easyrogs@gmail.com', 'optimizenetz@gmail.com', 'jeff@jeffschwartzlaw.com'];
   // prod = 'easyrogs@gmail.com';
+  // const TESTING_DOMAIN         = 'ezrogs.com';
+  // const TESTING_DEV_RECIPIENTS = ['optimizenetz@gmail.com', 'testnetz321@gmail.com'];
+  // const TESTING_PROD_RECIPIENT = 'testnetz321@gmail.com';
+
   const TESTING_DOMAIN         = 'ezrogs.com';
-  const TESTING_DEV_RECIPIENTS = ['optimizenetz@gmail.com', 'testnetz321@gmail.com'];
-  const TESTING_PROD_RECIPIENT = 'testnetz321@gmail.com';
+  const TESTING_DEV_RECIPIENTS = ['easyrogs@gmail.com'];
+  const TESTING_PROD_RECIPIENT = 'easyrogs@gmail.com';
   // const TESTING_DOMAIN         = 'ezrogs.com';
   // const TESTING_DEV_RECIPIENTS = ['easyrogs@mailinator.com', 'easyrogs@gmail.com', 'optimizenetz@gmail.com', 'jeff@jeffschwartzlaw.com'];
   // const TESTING_PROD_RECIPIENT = 'easyrogs@gmail.com';
