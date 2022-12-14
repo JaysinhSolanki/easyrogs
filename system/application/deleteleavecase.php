@@ -35,26 +35,6 @@ function checkSides($userId1, $userId2 = null)
 	return ($user1['side_id'] == $user2['side_id']) ? Side::SAME_SIDE : Side::OTHER_SIDE;
 }
 
-// $sides = new Side();
-// $test =  $sides->getByUserAndCase($currentUser->id, $caseId);
-
-
-// $test1 = $AdminDAO->getrows('attorney', "side_id = $side_id AND case_id = $caseId", array("side_id" =>$side_id));
-// $group_row	=	$AdminDAO->getrows("system_groups","*"," pkgroupid = :groupid", array(":groupid"=>3));
-
-// $getAllCases = $AdminDAO->getrows("attorney","*","side_id = $side_id AND case_id = $case_id",array("side_id"=>$side_id,"case_id"=>$case_id));	
-
-// print_r($getAllCases);
-
-// print_r('dd');
-
-// exit;
-
-// echo checkSides(306);
-
-// echo "******";
-// exit;
-
 /**
  * 
  * TODO: refactor this some day, DB needs cascading constraints, just removing the case should be enough...
@@ -63,62 +43,13 @@ function checkSides($userId1, $userId2 = null)
  */
 
 
-
-
 // entire case
 
 if ($deleteteam == 'entire_case') {
-	echo "entire_case";
+
 	switch ($action) {
 
 		case 1: // delete case
-
-
-			// $discoveries = $discoveriesModel->getByUserAndCase($current_logged_in_id, $caseId);
-
-			// // Side::legacyTranslateCaseData($case_id, $discoveries);
-
-			// foreach( $discoveries as $discovery ) {
-			// 	$id  = $discovery['id'];
-			// 	$uid = $discovery['uid'];
-			// 	$propoundingClient = $discovery['propounding'];
-			// 	$propoundingAttorney = $discovery['propounding_attorney'] ?: -1;
-			// 	$respondingClient = $discovery['responding'];
-			// 	$creator_id  = $discovery['creator_id'];
-			// 	//$is_submitted	= $discovery['is_submitted'];
-			// 	$is_served		= $discovery['is_served'];
-			// 	$discoveryType	= $discovery['type'];
-
-			// 	$RequestPDF_FileName  = UPLOAD_URL ."documents/". $uid ."/". $discoveriesModel->getTitle($discovery) .".pdf";
-			// 	$ResponsePDF_FileName = UPLOAD_URL ."documents/". $uid ."/". $responsesModel->getTitle(0,$discovery) .".pdf";
-			// 	$totalChilds			= 0;
-			// 	$totalChildsNotIncludes	= 0;
-
-			// }
-
-			// echo $id;
-
-			// $attorney = $AdminDAO->getrows("attorney", "id", " case_id = :case_id AND fkaddressbookid = $current_logged_in_id", array("case_id" => $caseId));
-
-			// $attorney_id = $attorney[0]['id'];
-
-			// $isdeleted = $AdminDAO->getrows('sides', "is_deleted", "case_id = :case_id", array("case_id" => $caseId));
-			// $dt = [];
-			// $sidecount = count($isdeleted);
-			// foreach ($isdeleted as $isdltd) {
-			// 	$dltd_sum = array_sum($isdltd);
-			// 	array_push($dt, $dltd_sum);
-			// }
-
-			// if(array_sum($dt) == 0){
-			// 	$fields		=	array('is_deleted');
-			// 	$values		=	array('0');
-			// 	$qry = $AdminDAO->updaterow('cases', $fields, $values, "id = '$caseId'");
-			// 	break;
-			// } else{
-			// 	break;
-			// }
-			// die();
 
 			// attorney
 			$AdminDAO->deleterows('attorney', " case_id = :case_id AND side_id = $side_id", array("case_id" => $caseId));
@@ -163,7 +94,7 @@ if ($deleteteam == 'entire_case') {
 			// sides 
 			$fields		=	array('is_deleted');
 			$values		=	array('1');
-			$qry = $AdminDAO->updaterowSide('sides', $fields, $values, "case_id = '$caseId' AND role = '$side_role'");
+			$qry = $AdminDAO->updaterowSide('sides', $fields, $values, "case_id = '$caseId' AND id = '$side_id'");
 
 			//cases
 			$isdeleted = $AdminDAO->getrows('sides', "is_deleted", "case_id = :case_id", array("case_id" => $caseId));
@@ -191,11 +122,13 @@ if ($deleteteam == 'entire_case') {
 	}
 }
 
+
+
 // delete team
 
 else if ($deleteteam == 'caseteam') {
 
-	echo "caseteam";
+
 	$sd = $AdminDAO->getrows('sides', "primary_attorney_id", "id = '$side_id'");
 	$ld_id = $sd[0]['primary_attorney_id'];
 
@@ -249,19 +182,19 @@ else if ($deleteteam == 'caseteam') {
 		$values		=	array('1');
 		$qry = $AdminDAO->updaterowSide('sides', $fields, $values, "case_id = '$caseId' AND id = '$side_id'");
 	}
-	echo "yoyo";
+	
 }
 
 
 // delete me
 else if ($deleteteam == 'justme') {
 
-	echo "justme";
+	
 	if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'null') {
 
 
 		if ($deleteme && $lead_id == $current_logged_in_id) {
-			echo "c3";
+			
 			$fields = array('primary_attorney_id');
 			$values = array($another_attorney_id);
 
@@ -281,7 +214,7 @@ else if ($deleteteam == 'justme') {
 			$values		=	array('0');
 			$qry = $AdminDAO->updaterowSide('sides_users', $fields, $values, " side_id = '$side_id' AND system_addressbook_id = '$current_logged_in_id'");
 		} else {
-			echo"c4";
+			
 			$fields		=	array('is_deleted');
 			$values		=	array('0');
 			$qry = $AdminDAO->updaterowSide('sides_users', $fields, $values, " side_id = '$side_id' AND system_addressbook_id = '$current_logged_in_id'");
@@ -309,7 +242,7 @@ else if ($deleteteam == 'justme') {
 					array_push($dc, $gid);
 				}
 			}
-
+			
 			$count_dc = count($dc);
 			if ($count_dc == 0) {
 				$fields		=	array('is_deleted');
@@ -318,7 +251,7 @@ else if ($deleteteam == 'justme') {
 			}
 		}
 	} else {
-		echo"c5";
+		
 		$fields		=	array('is_deleted');
 		$values		=	array('0');
 		$qry = $AdminDAO->updaterowSide('sides_users', $fields, $values, " side_id = '$side_id' AND system_addressbook_id = '$current_logged_in_id'");
