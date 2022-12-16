@@ -68,38 +68,47 @@ usort($case_attonry_data, function ($v1, $v2) {
 	return strcmp($v1['firstname'], $v2['firstname']);
 });
 
-$sides = $AdminDAO->getrows("sides", "id", " case_id = :case_id", array("case_id" => $caseId));
-$sides_id = [];
-foreach ($sides as $sds) {
-	if($sds['id'] != $get_side_id){
-	array_push($sides_id, $sds['id']);
+// $sides = $AdminDAO->getrows("sides", "id", " case_id = :case_id", array("case_id" => $caseId));
+// $sides_id = [];
+// foreach ($sides as $sds) {
+// 	if($sds['id'] != $get_side_id){
+// 	array_push($sides_id, $sds['id']);
+// 	}
+// }
+
+// $sds_usr_id = [];
+// foreach ($sides_id as $id) {
+// 	$sides_users = $AdminDAO->getrows("sides_users", "system_addressbook_id", " side_id = $id AND is_deleted = 1");
+// 	if ($sides_users) {
+// 		array_push($sds_usr_id, $sides_users);
+// 	}
+// }
+
+// $sdu_count = count($sds_usr_id);
+// $suid = [];
+// for ($i = 0; $i < $sdu_count; $i++) {
+// 	foreach ($sds_usr_id[$i] as $sdu) {
+// 		array_push($suid, $sdu['system_addressbook_id']);
+// 	}
+// }
+
+// $fkgrp_id = [];
+// foreach ($suid as $aid) {
+// 	$fk_group_id = $AdminDAO->getrows("system_addressbook", "pkaddressbookid", " pkaddressbookid = $aid AND emailverified = 1 AND fkgroupid = 3");
+// 	if ($fk_group_id) {
+// 		array_push($fkgrp_id, $fk_group_id);
+// 	}
+// }
+
+$attorney = $AdminDAO->getrows("attorney", "side_id", " case_id = $caseId");
+$sd_id = [];
+foreach ($attorney as $attr){
+	if($attr['side_id'] == $get_side_id){
+		array_push($sd_id, $attr['side_id']);
 	}
 }
 
-$sds_usr_id = [];
-foreach ($sides_id as $id) {
-	$sides_users = $AdminDAO->getrows("sides_users", "system_addressbook_id", " side_id = $id AND is_deleted = 1");
-	if ($sides_users) {
-		array_push($sds_usr_id, $sides_users);
-	}
-}
-
-$sdu_count = count($sds_usr_id);
-$suid = [];
-for ($i = 0; $i < $sdu_count; $i++) {
-	foreach ($sds_usr_id[$i] as $sdu) {
-		array_push($suid, $sdu['system_addressbook_id']);
-	}
-}
-
-$fkgrp_id = [];
-foreach ($suid as $aid) {
-	$fk_group_id = $AdminDAO->getrows("system_addressbook", "pkaddressbookid", " pkaddressbookid = $aid AND emailverified = 1 AND fkgroupid = 3");
-	if ($fk_group_id) {
-		array_push($fkgrp_id, $fk_group_id);
-	}
-}
-$other_atty_count = count($fkgrp_id);
+$other_atty_count = count($sd_id);
 
 $i = 0;
 $count = 0;
