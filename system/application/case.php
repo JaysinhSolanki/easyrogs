@@ -26,7 +26,6 @@ if (!$newCase && !$side) {
 	HttpResponse::unauthorized();
 }
 
-
 ?>
 
 
@@ -55,8 +54,6 @@ if (!$newCase && !$side) {
 		font-size: 15px !important;
 	}
 </style>
-
-
 
 <?php
 $cases = new CaseModel();
@@ -102,8 +99,8 @@ usort($case_attonry_data, function ($v1, $v2) {
 
 $attorney = $AdminDAO->getrows("attorney", "side_id", " case_id = $caseId");
 $sd_id = [];
-foreach ($attorney as $attr){
-	if($attr['side_id'] == $get_side_id){
+foreach ($attorney as $attr) {
+	if ($attr['side_id'] == $get_side_id) {
 		array_push($sd_id, $attr['side_id']);
 	}
 }
@@ -142,11 +139,11 @@ $attorneysLeft = $attorney_count;
 
 $canDeleteCase = $side && # side exists and..
 	(
-		($currentPrimaryAttorneyId === $current_login_user && $other_atty_count === 0)
-		
-		|| $attorneysLeft === 0 && $other_atty_count === 0 || # there are no attorneys left in the case or...
+		($currentPrimaryAttorneyId === $current_login_user)
+
+		|| $attorneysLeft === 0  || # there are no attorneys left in the case or...
 		( # there is only one attorney left and is the current user v
-			$attorneysLeft === 1 && $other_atty_count === 0   && $currentUser->user['fkgroupid'] == User::ATTORNEY_GROUP_ID
+			$attorneysLeft === 1  && $currentUser->user['fkgroupid'] == User::ATTORNEY_GROUP_ID
 		)
 	);
 ?>
@@ -173,6 +170,7 @@ $canDeleteCase = $side && # side exists and..
 
 							<?php if (!$isDraft) : ?>
 								<?php if ($canDeleteCase) : ?>
+									<?php if ($srvc_count > 1) ?>
 									<a href="javascript:;" class="btn btn-danger" title="Delete case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',1);"><i class="fa fa-trash"></i> Delete </a>
 								<?php else : ?>
 									<a href="javascript:;" class="btn btn-danger" title="Leave case" id="newcase" onclick="javascript: deleteLeaveCases('<?= $caseId; ?>',2);"><i class="fa fa-trash"></i> Delete</a>
@@ -762,8 +760,6 @@ $canDeleteCase = $side && # side exists and..
 		$("#service-list").load(`get-service-list.php?format=html&case_id=${case_id}`);
 		loadSides(case_id);
 
-
-
 		// $("#test").load(`get-case-users.php?format=html&case_id=${case_id}`, _ => {
 		// 	addTooltips();
 		// });
@@ -771,7 +767,10 @@ $canDeleteCase = $side && # side exists and..
 
 	}
 
+	function countservice_list() {
 
+		$()
+	}
 
 	function loadSides(caseId) {
 		<?php if (in_array($_ENV['APP_ENV'], ['dev', 'local', 'development'])) : ?>

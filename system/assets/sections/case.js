@@ -152,6 +152,15 @@ $(document).on('click', '.delete-service-list-user-btn', async function(e) {
 
 });
 
+$(document).on('click', '#newcase', (e) => {
+  var srvc_count = $('.delete-service-list-user-btn').length;
+  if(srvc_count == 0){
+    $('.swal-button--entirecase').css('display','block');
+  } else{
+    $('.swal-button--entirecase').css('display','none');
+  }
+});
+
 $(document).off('click', '.edit-service-list-user-btn');
 $(document).on('click', '.edit-service-list-user-btn', (e) => {
   const element      = $(e.target).parent();
