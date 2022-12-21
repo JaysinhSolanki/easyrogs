@@ -36,10 +36,13 @@ class CaseModel extends BaseModel
                                 ON s.id = sc.side_id
                             WHERE s.case_id = :case_id',
 
-      'getActvCases' => 'SELECT c.*
-                          FROM cases AS c
-                          WHERE c.id = :case_id 
-                          AND c.is_deleted = 0',
+      'getActvCases' => 'SELECT COUNT(*) AS `count`
+                         FROM sides_users
+                         INNER JOIN sides ON sides_users.side_id = sides.id
+                         WHERE ( sides_users.system_addressbook_id = :user_id 
+                         OR sides.primary_attorney_id = :user_id)
+                         AND sides.case_id = :case_id 
+                         AND sides.is_deleted = 0',
 
       'userInCase' => 'SELECT COUNT(*) AS `count`
                          FROM sides_users
@@ -251,10 +254,14 @@ class CaseModel extends BaseModel
     return $this->readQuery($query, ['case_id' => $caseId]);
   }
 
-  function getActvCases($caseId)
+  function getActvCases($caseId, $userId)
   {
     $query = $this->queryTemplates['getActvCases'];
-    return $this->readQuery($query, ['case_id' => $caseId]);
+
+    return $this->readQuery($query, [
+      'user_id' => $userId,
+      'case_id' => $caseId
+    ])[0]['count'] > 0;
   }
 
   function removeUser($caseId, $userId, $cleanupSides = false)
@@ -278,7 +285,7 @@ class CaseModel extends BaseModel
 
     if ($requireClients) {
       foreach ($sides as $side) {
-        if ($this->getActvCases($side['case_id'])) {
+        if ($this->getAllClients($side['case_id'])) {
           $case = Side::caseData($side);
           break;
         };
@@ -293,10 +300,10 @@ class CaseModel extends BaseModel
   {
     $query = $this->queryTemplates['userInCase'];
 
-    return $this->readQuery($query, [
+    print_r( $this->readQuery($query, [
       'user_id' => $userId,
       'case_id' => $caseId
-    ])[0]['count'] > 0;
+    ])[0]['count'] > 0);
   }
 
   function search($term)

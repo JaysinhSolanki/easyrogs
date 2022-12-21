@@ -11,6 +11,7 @@
   }
 
   $case = $casesModel->getByNumber($caseNumber, $requireClients);
-  $case['team_member'] = $casesModel->userInCase($case['id'], $currentUser->id); // current user is part of the case team
+  
+  $case['team_member'] = $casesModel->getActvCases($case['id'], $currentUser->id); // current user is part of the case team
   
   HttpResponse::successPayload($case);
