@@ -443,7 +443,7 @@ WHERE s.id = :side_id AND is_deleted = 1'
     $teamMembers = $teams->getMembers($team['id']);
 
     $side = $this->find($sideId);
-    $this->cleanupUsers($sideId);
+    // $this->cleanupUsers($sideId);
 
     foreach ($teamMembers as $teamMember) {
       $userId = $teamMember['pkaddressbookid'];

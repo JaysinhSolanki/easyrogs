@@ -132,7 +132,9 @@ else if ($deleteteam == 'caseteam') {
 	$sd = $AdminDAO->getrows('sides', "primary_attorney_id", "id = '$side_id'");
 	$ld_id = $sd[0]['primary_attorney_id'];
 
-	$cu = $AdminDAO->getrows('sides_users', "system_addressbook_id", "system_addressbook_id != '$ld_id' AND system_addressbook_id != '$current_logged_in_id' AND  side_id= '$side_id'");
+	// $cu = $AdminDAO->getrows('sides_users', "system_addressbook_id", "system_addressbook_id != '$ld_id' AND system_addressbook_id != '$current_logged_in_id' AND  side_id= '$side_id'");             // EXcept LC and Current login.
+
+	$cu = $AdminDAO->getrows('sides_users', "system_addressbook_id", "side_id= '$side_id'");
 
 	$tm_id = [];
 	foreach ($cu as $c_id) {
@@ -154,7 +156,9 @@ else if ($deleteteam == 'caseteam') {
 
 	$AdminDAO->updaterowSide('sides_clients', $fields_case_delete_team, $values_case_delete_team, "side_id= '$side_id'");
 
+
 	$sideusers = $AdminDAO->getrows("sides_users", "system_addressbook_id", " side_id = '$side_id' AND is_deleted = '1'");
+
 
 	$sdu = [];
 	foreach ($sideusers as $sdusr) {
@@ -182,19 +186,18 @@ else if ($deleteteam == 'caseteam') {
 		$values		=	array('1');
 		$qry = $AdminDAO->updaterowSide('sides', $fields, $values, "case_id = '$caseId' AND id = '$side_id'");
 	}
-	
 }
 
 
 // delete me
 else if ($deleteteam == 'justme') {
 
-	
+
 	if ($another_attorney_id != $current_logged_in_id && $another_attorney_id != 'null') {
 
 
 		if ($deleteme && $lead_id == $current_logged_in_id) {
-			
+
 			$fields = array('primary_attorney_id');
 			$values = array($another_attorney_id);
 
@@ -214,7 +217,7 @@ else if ($deleteteam == 'justme') {
 			$values		=	array('0');
 			$qry = $AdminDAO->updaterowSide('sides_users', $fields, $values, " side_id = '$side_id' AND system_addressbook_id = '$current_logged_in_id'");
 		} else {
-			
+
 			$fields		=	array('is_deleted');
 			$values		=	array('0');
 			$qry = $AdminDAO->updaterowSide('sides_users', $fields, $values, " side_id = '$side_id' AND system_addressbook_id = '$current_logged_in_id'");
@@ -242,7 +245,7 @@ else if ($deleteteam == 'justme') {
 					array_push($dc, $gid);
 				}
 			}
-			
+
 			$count_dc = count($dc);
 			if ($count_dc == 0) {
 				$fields		=	array('is_deleted');
@@ -251,7 +254,7 @@ else if ($deleteteam == 'justme') {
 			}
 		}
 	} else {
-		
+
 		$fields		=	array('is_deleted');
 		$values		=	array('0');
 		$qry = $AdminDAO->updaterowSide('sides_users', $fields, $values, " side_id = '$side_id' AND system_addressbook_id = '$current_logged_in_id'");

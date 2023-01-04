@@ -120,6 +120,13 @@ class CaseModel extends BaseModel
     $masterHeadChanged = $caseData['masterhead']
       && $side['masterhead'] != $caseData['masterhead'];
 
+      $side_added   = $caseData['case_attorney']
+      && $side['primary_attorney_id'] = $caseData['case_attorney'];
+
+    if ($side_added) {
+      $this->setSideAttorney($side, $caseData['case_attorney'], $updateTeam);
+    }
+
     if ($attorneyChanged) {
       $this->setSideAttorney($side, $caseData['case_attorney'], $updateTeam);
     }
