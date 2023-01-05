@@ -138,7 +138,10 @@ FROM system_addressbook AS u
        ON su.system_addressbook_id = u.pkaddressbookid 
      INNER JOIN sides AS s
        ON s.id = su.side_id
-WHERE s.id = :side_id AND is_deleted = 1'
+WHERE s.id = :side_id AND is_deleted = 1',
+
+      'getDeletedSideUsers' =>  'SELECT system_addressbook_id AS deleted_users
+FROM sides_users AS su WHERE su.side_id = :side_id AND is_deleted = 0'
 
     ]);
   }
@@ -286,7 +289,7 @@ WHERE s.id = :side_id AND is_deleted = 1'
     // ================= get side team-members ==================
 
     $get_side_team_memebers = $this->getUsers($sideId);
-    
+
     // echo "id:" . $user['pkaddressbookid'];
 
     $store_team_member_id = array();
@@ -294,16 +297,20 @@ WHERE s.id = :side_id AND is_deleted = 1'
     foreach ($get_side_team_memebers as $val) {
       array_push($store_team_member_id, $val['pkaddressbookid']);
     }
-  
+
     if (in_array($user['pkaddressbookid'], $store_team_member_id)) {
       echo "Match found";
-     
-      $this->update('sides_users', [
-        'is_deleted'             => 1,
-      ],
-      [
-        'system_addressbook_id' =>  $user['pkaddressbookid']
-      ] ,true);
+
+      $this->update(
+        'sides_users',
+        [
+          'is_deleted'             => 1,
+        ],
+        [
+          'system_addressbook_id' =>  $user['pkaddressbookid']
+        ],
+        true
+      );
     } else {
       $this->insert('sides_users', [
         'side_id'               => $sideId,
@@ -313,9 +320,6 @@ WHERE s.id = :side_id AND is_deleted = 1'
       ], true);
     }
 
-
-    // print_r($store_team_member_id);
-    // array_push($store_team_member_id,)
 
     if ($active && User::isAttorney($user)) {
       $this->updateServiceLists($side, $user);
@@ -360,6 +364,7 @@ WHERE s.id = :side_id AND is_deleted = 1'
       $this->readQuery($query, ['side_id' => $sideId])
     );
   }
+
 
   function  getUsersFlag($sideId)
   {
@@ -408,6 +413,12 @@ WHERE s.id = :side_id AND is_deleted = 1'
     return $this->deleteBy('sides_users', ['side_id' => $sideId]);
   }
 
+  function getDeletedSideUsers($sideId)
+  {
+    $query = $this->queryTemplates['getDeletedSideUsers'];
+    return $this->readQuery($query, ['side_id' => $sideId]);
+  }
+
   function cleanupClients($sideId)
   {
     return $this->deleteBy('sides_clients', ['side_id' => $sideId]);
@@ -416,10 +427,13 @@ WHERE s.id = :side_id AND is_deleted = 1'
 
   function removeUser($sideId, $userId, $alsoRemovePrimaryAttorney = true)
   {
-    $this->deleteBy('sides_users', [
-      'side_id' => $sideId,
-      'system_addressbook_id' => $userId
-    ]);
+
+    $this->update('sides_users', ['is_deleted' => 0], ['side_id' => $sideId, 'system_addressbook_id' => $userId]);  // SOFT DELETE
+
+    // $this->deleteBy('sides_users', [
+    //   'side_id' => $sideId,
+    //   'system_addressbook_id' => $userId
+    // ]);
 
     if ($alsoRemovePrimaryAttorney) {
       $side = $this->find($sideId);
@@ -445,8 +459,20 @@ WHERE s.id = :side_id AND is_deleted = 1'
     $side = $this->find($sideId);
     // $this->cleanupUsers($sideId);
 
+    $deleted_User = $this->getDeletedSideUsers($sideId);
+    $dltd_usr = [];
+    foreach ($deleted_User as $dl_usr) {
+      array_push($dltd_usr, $dl_usr['deleted_users']);
+    }
+
+    $team_members = [];
     foreach ($teamMembers as $teamMember) {
-      $userId = $teamMember['pkaddressbookid'];
+      array_push($team_members, $teamMember['pkaddressbookid']);
+    }
+    $result_team = array_diff($team_members, $dltd_usr);
+
+    foreach ($result_team as $teamMember) {
+      $userId = $teamMember;
       $caseId = $side['case_id'];
       // check the user is not already in another side of the case.
       if (!$casesModel->userInCase($caseId, $userId)) {
