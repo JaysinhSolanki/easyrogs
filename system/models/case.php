@@ -307,10 +307,10 @@ class CaseModel extends BaseModel
   {
     $query = $this->queryTemplates['userInCase'];
 
-    print_r( $this->readQuery($query, [
+    return $this->readQuery($query, [
       'user_id' => $userId,
       'case_id' => $caseId
-    ])[0]['count'] > 0);
+    ])[0]['count'] > 0;
   }
 
   function search($term)
