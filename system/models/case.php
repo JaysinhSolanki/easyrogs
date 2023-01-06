@@ -29,16 +29,20 @@ class CaseModel extends BaseModel
                         ORDER BY c.case_title ASC',
 
       'getAllClients' => 'SELECT c.*
-                          FROM clients AS c
-                          INNER JOIN sides_clients AS sc
-                          ON c.id = sc.client_id
-                          INNER JOIN sides AS s
-                          ON s.id = sc.side_id
-                          INNER JOIN cases ON cases.id = s.case_id 
-                          WHERE s.case_id = :case_id
-                          AND cases.is_deleted = 0',
+                            FROM clients AS c
+                              INNER JOIN sides_clients AS sc
+                                ON c.id = sc.client_id
+                              INNER JOIN sides AS s
+                                ON s.id = sc.side_id
+                            WHERE s.case_id = :case_id',
 
-      'getActvCases' => 'SELECT COUNT(*) AS `count`
+      'getActvCases' => 'SELECT c.* FROM cases AS c 
+                          INNER JOIN sides AS s 
+                          ON s.case_id = c.id 
+                          WHERE s.case_id = :case_id
+                          AND c.is_deleted = 0',
+
+      'getActvUserInCase' => 'SELECT COUNT(*) AS `count`
                          FROM sides_users
                          INNER JOIN sides ON sides_users.side_id = sides.id
                          WHERE ( sides_users.system_addressbook_id = :user_id 
@@ -257,15 +261,21 @@ class CaseModel extends BaseModel
     return $this->readQuery($query, ['user_id' => $userId]);
   }
 
+  function getActvCases($caseId)
+  {
+    $query = $this->queryTemplates['getActvCases'];
+    return $this->readQuery($query, ['case_id' => $caseId]);
+  }
+
   function getAllClients($caseId)
   {
     $query = $this->queryTemplates['getAllClients'];
     return $this->readQuery($query, ['case_id' => $caseId]);
   }
 
-  function getActvCases($caseId, $userId)
+  function getActvUserInCase($caseId, $userId)
   {
-    $query = $this->queryTemplates['getActvCases'];
+    $query = $this->queryTemplates['getActvUserInCase'];
 
     return $this->readQuery($query, [
       'user_id' => $userId,
@@ -294,7 +304,7 @@ class CaseModel extends BaseModel
 
     if ($requireClients) {
       foreach ($sides as $side) {
-        if ($this->getAllClients($side['case_id'])) {
+        if ($this->getActvCases($side['case_id'])) {
           $case = Side::caseData($side);
           break;
         };
