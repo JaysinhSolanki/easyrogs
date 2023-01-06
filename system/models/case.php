@@ -29,12 +29,14 @@ class CaseModel extends BaseModel
                         ORDER BY c.case_title ASC',
 
       'getAllClients' => 'SELECT c.*
-                            FROM clients AS c
-                              INNER JOIN sides_clients AS sc
-                                ON c.id = sc.client_id
-                              INNER JOIN sides AS s
-                                ON s.id = sc.side_id
-                            WHERE s.case_id = :case_id',
+                          FROM clients AS c
+                          INNER JOIN sides_clients AS sc
+                          ON c.id = sc.client_id
+                          INNER JOIN sides AS s
+                          ON s.id = sc.side_id
+                          INNER JOIN cases ON cases.id = s.case_id 
+                          WHERE s.case_id = :case_id
+                          AND cases.is_deleted = 0',
 
       'getActvCases' => 'SELECT COUNT(*) AS `count`
                          FROM sides_users
@@ -120,7 +122,7 @@ class CaseModel extends BaseModel
     $masterHeadChanged = $caseData['masterhead']
       && $side['masterhead'] != $caseData['masterhead'];
 
-      $side_added   = $caseData['case_attorney']
+    $side_added   = $caseData['case_attorney']
       && $side['primary_attorney_id'] = $caseData['case_attorney'];
 
     if ($side_added) {

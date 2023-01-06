@@ -186,7 +186,21 @@ else if ($deleteteam == 'caseteam') {
 		$values		=	array('1');
 		$qry = $AdminDAO->updaterowSide('sides', $fields, $values, "case_id = '$caseId' AND id = '$side_id'");
 	}
+
+	$sides = $AdminDAO->getrows("sides", "id", "case_id = :case_id AND is_deleted = '0'", array("case_id" => $caseId));
+
+	echo">>";
+	$count_actv_sides = count($sides);
+	print_r($count_actv_sides);
+
+	if($count_actv_sides == 0){
+		$fields		=	array('is_deleted');
+		$values		=	array('1');
+		$qry = $AdminDAO->updaterowSide('cases', $fields, $values, "id = '$caseId'");
+	}
+
 }
+
 
 
 // delete me
