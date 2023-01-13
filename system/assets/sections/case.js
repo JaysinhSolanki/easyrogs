@@ -138,7 +138,7 @@ $(document).on('click', '.delete-service-list-user-btn', async function(e) {
   const element = $(e.target).parent();
   const userId  = element.data('userId');
   const caseId  = element.data('caseId');
-  
+
   confirm = await confirmAction();
   if ( confirm ) {
     deleteServiceListUser(userId, caseId, 
@@ -149,15 +149,17 @@ $(document).on('click', '.delete-service-list-user-btn', async function(e) {
       (error)    => showResponseMessage(error)
     );
   }
-
 });
 
 $(document).on('click', '#newcase', (e) => {
   var srvc_count = $('.delete-service-list-user-btn').length;
   if(srvc_count == 0){
     $('.swal-button--entirecase').css('display','block');
+    $('.swal-button--caseteam').css('display','none');
+    
   } else{
     $('.swal-button--entirecase').css('display','none');
+    $('.swal-button--caseteam').css('display','block');
   }
 });
 

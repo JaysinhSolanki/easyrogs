@@ -94,7 +94,8 @@ class Side extends BaseModel
                              FROM system_addressbook AS u
                                INNER JOIN attorney AS a
                                  ON (a.fkaddressbookid = u.pkaddressbookid)
-                             WHERE a.side_id = :side_id
+                             WHERE a.side_id = :side_id 
+                             AND a.is_deleted = 0
                              GROUP BY u.pkaddressbookid',
 
       'getUserServiceListClients' => 'SELECT c.*
