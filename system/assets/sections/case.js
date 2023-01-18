@@ -155,7 +155,6 @@ $(document).on('click', '#newcase', (e) => {
   var srvc_count = $('.delete-service-list-user-btn').length;
 
     var email_verify = ($(".edit-service-list-user-btn").attr("emailverify"));
-    alert(email_verify);
 
     if(srvc_count == 0){
       $('.swal-button--entirecase').css('display','block');
