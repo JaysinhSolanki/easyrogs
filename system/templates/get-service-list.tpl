@@ -35,7 +35,7 @@
                 {/foreach}
               </td>
               <td class="text-center">
-                <a title="Edit" class="edit-service-list-user-btn" emailverify="{$user.emailverified}" data-user-id="{$user.id}" data-case-id="{$caseId}" data-sl-attorney-id="{$user.attorney_id}">
+                <a title="Edit" class="edit-service-list-user-btn" fkgid="{$user.fkgroupid}" emailverify="{$user.emailverified}" data-user-id="{$user.id}" data-case-id="{$caseId}" data-sl-attorney-id="{$user.attorney_id}">
                   <i class="fa fa-edit fa-2x"></i>
                 </a>
                 <a title="Delete" class="delete-service-list-user-btn" data-user-id="{$user.id}" data-case-id="{$caseId}" data-sl-attorney-id="{$user.attorney_id}">

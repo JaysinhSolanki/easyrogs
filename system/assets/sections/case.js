@@ -154,13 +154,18 @@ $(document).on('click', '.delete-service-list-user-btn', async function(e) {
 $(document).on('click', '#newcase', (e) => {
   var srvc_count = $('.delete-service-list-user-btn').length;
 
-    var email_verify = ($(".edit-service-list-user-btn").attr("emailverify"));
+    var email_verify = $(".edit-service-list-user-btn").attr("emailverify");
+    var fkgrp_id = $(".edit-service-list-user-btn").attr("fkgid");
 
     if(srvc_count == 0){
       $('.swal-button--entirecase').css('display','block');
       $('.swal-button--caseteam').css('display','none');
   
     } else if(srvc_count != 0 && email_verify != 1){
+    $('.swal-button--entirecase').css('display','block');
+    $('.swal-button--caseteam').css('display','none');
+
+  } else if(srvc_count != 0 && email_verify == 1 && fkgrp_id == 4){
     $('.swal-button--entirecase').css('display','block');
     $('.swal-button--caseteam').css('display','none');
 
