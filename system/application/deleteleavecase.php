@@ -96,6 +96,27 @@ if ($deleteteam == 'entire_case') {
 			$values		=	array('1');
 			$qry = $AdminDAO->updaterowSide('sides', $fields, $values, "case_id = '$caseId' AND id = '$side_id'");
 
+			//sides_users & attorney
+			$cu = $AdminDAO->getrows('sides_users', "system_addressbook_id", "side_id= '$side_id'");
+
+			$tm_id = [];
+			foreach ($cu as $c_id) {
+				$tmid = $c_id['system_addressbook_id'];
+				array_push($tm_id, $tmid);
+			}
+
+			$fields_case_delete_team = array('is_deleted');
+			$values_case_delete_team = array('0');
+			$value1 = array('1');
+
+			foreach ($tm_id as $tm) {
+
+				$AdminDAO->updaterowSide('sides_users', $fields_case_delete_team, $values_case_delete_team, "side_id= '$side_id' AND system_addressbook_id = '$tm'");
+
+				$AdminDAO->updaterowSide('attorney', $fields_case_delete_team, $value1, "case_id= '$caseId' AND fkaddressbookid = '$tm'");
+			}
+
+
 			//cases
 			$isdeleted = $AdminDAO->getrows('sides', "is_deleted", "case_id = :case_id", array("case_id" => $caseId));
 			$dt = [];
@@ -153,10 +174,6 @@ else if ($deleteteam == 'caseteam') {
 		$AdminDAO->updaterowSide('attorney', $fields_case_delete_team, $value1, "case_id= '$caseId' AND fkaddressbookid = '$tm'");
 
 	}
-
-	// $fields_case_delete_team = array('is_deleted');
-	// $values_case_delete_team = array('0');
-	// $AdminDAO->updaterowSide('sides_users', $fields_case_delete_team, $values_case_delete_team, "side_id= '$side_id' AND system_addressbook_id != '$current_logged_in_id'");
 
 	$AdminDAO->updaterowSide('sides_clients', $fields_case_delete_team, $values_case_delete_team, "side_id= '$side_id'");
 
@@ -276,7 +293,7 @@ else if ($deleteteam == 'justme') {
 
 		$fields		=	array('is_deleted');
 		$values		=	array('0');
-		$value1 	=   array('1');	
+		$value1 	=   array('1');
 		$qry = $AdminDAO->updaterowSide('sides_users', $fields, $values, " side_id = '$side_id' AND system_addressbook_id = '$current_logged_in_id'");
 
 		$AdminDAO->updaterowSide('attorney', $fields, $value1, "case_id= '$caseId' AND fkaddressbookid = '$current_logged_in_id'");
