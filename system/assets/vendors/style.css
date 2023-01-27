@@ -4745,3 +4745,7 @@ ul.h-list li:hover a {
   text-transform: uppercase;
   vertical-align: middle;
 }
+
+.swal-button-container:first-child{
+  float: right;
+}
