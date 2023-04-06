@@ -49,6 +49,11 @@ getAttorney = (id, success, error) => {
 	 .fail(error);
 }
 
+getSidesLetterHead = (caseId, userId, success, error) => {
+	$.get(API_BASE + '/get-sides-letter.php', {caseId: caseId, userId: userId}, success, FORMAT_JSON)
+	 .fail(error);
+}
+
 joinCase = (caseId, clientId, success, error) => {
 	$.post(API_BASE + '/post-request-join-case.php', {case_id: caseId, client_id: clientId}, success)
 	 .fail(error);

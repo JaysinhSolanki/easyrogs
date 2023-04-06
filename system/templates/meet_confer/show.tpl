@@ -13,9 +13,10 @@
     <input type="hidden" name="id" value="{$mc.id}" />
 
     {if $editable}
-      <textarea name="masterhead" class="er-mc-masterhead">{$masterhead}</textarea>
+      {* <textarea name="masterhead" class="er-mc-masterhead">{$masterhead}</textarea> *}
     {else}
-      <div class="er-mc-masterhead">{$masterhead|nl2br}</div>
+      {* <div class="er-mc-masterhead">{$masterhead|nl2br}</div> *}
+      {* <div class="er-mc-masterhead">{$letterhead|nl2br}</div> *}
     {/if}
 
     {if $mc.served_at}
@@ -23,8 +24,6 @@
     {else}
       <div class="er-mc-date">{date('F j, Y')}</div>
     {/if}
-
-    <br/>
 
     {if $editable}
       <textarea name="attorney_masterhead" class="er-mc-attorney-masterhead" placeholder="Recipient letterhead...">{$attorney_masterhead}</textarea>
