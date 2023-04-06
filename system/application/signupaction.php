@@ -3,6 +3,9 @@
 	require_once("../bootstrap.php");
 	include_once("../library/classes/functions.php");
 
+	// Add GLobal User Model
+	global $usersModel;
+
 	$invited_uid = $_POST['uid'];
 	if(@sizeof($_POST) > 0) { extract($_POST); }
 
@@ -52,9 +55,58 @@ if(!empty($_SESSION['addressbookid']) && $invited_uid == "" && $newsignup == '')
 			msg(334,2);
 		}
 	}
+
+		// Get Old Letterhead File
+	$old_letterhead				=	$usersModel->find($_SESSION['addressbookid']);
+
+	// Upload Letter Head File on Server
+	if(isset($_FILES['letterhead']['name']) && !empty($_FILES['letterhead']['name'])){
+
+		$letter_head_file 			=	$_FILES['letterhead'];
+		$letter_head_file_name 		=	$_FILES['letterhead']['name'];
+		$letter_head_filename_array = 	explode(".", $letter_head_file_name);
+		$letter_head_filename 		= 	str_replace("-", " ", $letter_head_filename_array[0]);
+		$letter_head_file_ext 		= 	end((explode(".", $letter_head_file_name)));
+		$letter_head_filename 		= 	"Letter-Head-".$_SESSION['addressbookid']."-".date("YmdHis").".".$letter_head_file_ext;
+
+		$upload_letterhead_path 	=	__DIR__."/../uploads/profile-letters";
+		$upload_letter_path 		=	$upload_letterhead_path."/".$letter_head_filename;
+		$old_letter_path 			=	$upload_letterhead_path."/".$old_letterhead['letterhead'];
+		
+		// Check Directory is Present or NOT
+		if ( !is_dir( $upload_letterhead_path ) ) {
+			mkdir( $upload_letterhead_path, 0755, true );
+		}
+
+		// check File Already Exist or not
+		if (file_exists($old_letter_path)) {
+			unlink($old_letter_path);
+		} 
+
+		// Upload PDF file on Server
+		move_uploaded_file($letter_head_file["tmp_name"], $upload_letter_path);
+
+	} else {
+		//$letter_head_filename = !empty($_POST['letterhead']) ? $_POST['letterhead'] : $old_letterhead['letterhead'];
+		$letter_head_filename = !empty($_POST['letterhead']) ? $_POST['letterhead'] : null;
+
+		if(empty($letter_head_filename)){
+			$upload_letterhead_path 	=	__DIR__."/../uploads/profile-letters";
+			$old_letter_path 			=	$upload_letterhead_path."/".$old_letterhead['letterhead'];
+
+			// check File Already Exist or not
+			if (file_exists($old_letter_path)) {
+				unlink($old_letter_path);
+			} 
+		}
+	}
+
+	// set header/footer Value
+	$header_height 	=	!empty($_POST['header_height']) ? $_POST['header_height'] : null;
+	$footer_height	=	!empty($_POST['footer_height']) ? $_POST['footer_height'] : null;
 	
-	$fields =	array('email','firstname','middlename','lastname','companyname','address','street','cityname','fkstateid','zip','phone','fkadmittedstateid','barnumber','fkcountryid','fkgroupid', 'masterhead');
-	$values =	array($email,$firstname,$middlename,$lastname,$companyname,$address,$street,$city,$fkstateid,$zipcode,$phone,$fkadmittedstateid,$barnumber,254,$fkgroupid, $masterhead);
+	$fields =	array('email','firstname','middlename','lastname','companyname','address','street','cityname','fkstateid','zip','phone','fkadmittedstateid','barnumber','fkcountryid','fkgroupid', 'masterhead', 'letterhead', 'header_height','footer_height');
+	$values =	array($email,$firstname,$middlename,$lastname,$companyname,$address,$street,$city,$fkstateid,$zipcode,$phone,$fkadmittedstateid,$barnumber,254,$fkgroupid, $masterhead, $letter_head_filename, $header_height, $footer_height);
 	$AdminDAO->updaterow('system_addressbook',$fields,$values," pkaddressbookid = {$_SESSION['addressbookid']}");
 	$_SESSION['groupid']		=	$fkgroupid;
 	$_SESSION['loggedin_email']	=	$email;

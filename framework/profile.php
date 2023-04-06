@@ -13,14 +13,35 @@ $groups	=	$AdminDAO->getrows('system_groups','*',"pkgroupid IN (3,4)");
 /****************************************************************************/
 ?>
 <style>
-body.modal-open {
+/*body.modal-open {
     padding-right: 0 !important;
     position: static;
-}
+}*/
 .swal2-popup {
   font-size: 15px !important;
 }
+
+#pdf-modal .modal-dialog {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#pdf-modal .modal-content {
+  height: 100%;
+  min-height: 100%;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#pdf-modal .modal-body{
+    height: 100%;
+}
 </style>
+<link href="<?= ROOTURL ?>system/assets/sections/example.css" media="screen" rel="stylesheet" type="text/css" />
+<link href="<?= ROOTURL ?>system/assets/sections/jquery.selectareas.css" media="screen" rel="stylesheet" type="text/css" />
 <div id="screenfrmdiv" style="display: block;">
     <div class="col-lg-12">
         <div class="hpanel">
@@ -144,10 +165,33 @@ body.modal-open {
                       
                       <div class="col-md-3">
                         <div class="form-group" id="attorneyMastheadDiv" <?php if(!$currentUser->isAttorney()) { ?>style="display:none;"<?php } ?>>
-                          <label>Letterhead</label>
+                          <label>Masthead</label>
                           <textarea name="masterhead"  class="form-control" cols="50" rows="10" style="height: 12em;" wrap="off"><?= $user['masterhead'] ?></textarea>
                         </div>
                       </div>
+
+                        <div class="col-md-3">
+                            <div class="" id="attorneyMastheadDivs" <?php if(!$currentUser->isAttorney()) { ?>style="display:none;"<?php } ?>>
+                                <label>Letterhead</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 letter_head_div" <?php if(!$currentUser->isAttorney()) { ?>style="display:none;"<?php } ?>>
+                            <?php if(isset($user['letterhead']) && !empty($user['letterhead'])): ?>
+                                <a href="<?php echo ROOTURL."system/uploads/profile-letters/".$user['letterhead'] ?>" target="_blank" style="margin-right:40px !important">
+                                    <img src="<?php echo ASSETS_URL."images/pdf_icons.png" ?>" height="50" width="50" id="edit_letterhead_img">
+                                </a>
+                                <a class="btn btn-primary edit_letterhead_btn" onclick="letterHeadChanged()" href="javascript:;">Edit</a>
+                                <input type="file" id="letterhead_edit_field" name="letterhead" accept="application/pdf,.pdf" value="" class="hide">
+                                <input type="hidden" id="letterhead_edit" name="letterhead" value="<?php echo $user['letterhead']; ?>" class="show">
+                                <input type="hidden" id="header_height" name="header_height" value="<?php echo $user['header_height']; ?>" class="show">
+                                <input type="hidden" id="footer_height" name="footer_height" value="<?php echo $user['footer_height']; ?>" class="show">
+                            <?php else: ?>
+                                <input type="file" id="letterhead" name="letterhead" accept="application/pdf,.pdf">
+                                <input type="hidden" id="header_height" name="header_height" value="20" class="show">
+                                <input type="hidden" id="footer_height" name="footer_height" value="20" class="show">
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div class="row">
                       	 <br />
@@ -184,5 +228,32 @@ body.modal-open {
     </div>
   </div>
 </div>
+
+<!-- Profile-modal-->
+<div id="pdf-modal" class="modal fade" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-fullscreen" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding:10px">
+                <h5 class="modal-title text-center">Set PDF Header-Footer Height</h5>
+                <div class="control-display">
+                    <div class="rightddd">
+                            <input type="button" class="btn btn-submit btn-success" id="btnView" value="Go For PDF" class="actionOn" />
+                    </div>                   
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="pdf-display">
+                    <iframe src="" id="pdfIframe"></iframe>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="submit" class="btn btn-submit btn-success">Submit</button>
+                <button type="button" class="btn btn-close btn-danger" data-dismiss="modal">Close</button> -->
+            </div>
+        </div>
+    </div>
+</div><!-- Profile-modal-end -->
+
 <script src="<?= VENDOR_URL ?>sweetalert/lib/sweet-alert.min.js"></script>
+<script src="<?= ROOTURL ?>system/assets/sections/jquery.selectareas.js" type="text/javascript"></script>
 <script src="<?= ROOTURL ?>system/assets/sections/profile.js"></script>

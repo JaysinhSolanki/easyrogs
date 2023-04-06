@@ -8,7 +8,7 @@ use function EasyRogs\_assert as _assert;
     const PUBLISHABLE_KEYS = [
       'pkaddressbookid', 'firstname', 'middlename', 'lastname', 'email',
       'address', 'barnumber', 'masterhead', 'fkgroupid', 'side_active',
-      'emailverified', 'credits'
+      'emailverified', 'credits','letterhead','header_height','footer_height'
     ];
 
     const SEARCH_FIELDS = [
@@ -183,6 +183,21 @@ use function EasyRogs\_assert as _assert;
       }
 
       return $masterhead;
+    }
+
+    function getLetterhead($user, $update = true) {
+      $user = $this->asUser($user);
+
+      $letterhead = $user['letterhead'] ?: $this->buildMasterHead($user);
+
+      if (!$user['letterhead'] && $update && $letterhead) {
+        $this->update('system_addressbook',
+          ['letterhead' => $letterhead],
+          ['pkaddressbookid' => $user['pkaddressbookid']]
+        );
+      }
+
+      return $letterhead;
     }
 
     function buildMasterHead($user) {
